@@ -2,7 +2,6 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { signOut } from '@/lib/auth/actions'
 
 const TABS = [
   { href: '/', label: '홈' },
@@ -33,14 +32,12 @@ export function PartnerNav() {
             </Link>
           )
         })}
-        <form action={signOut} className="flex flex-1 justify-center">
-          <button
-            type="submit"
-            className="py-1 text-xs text-text-muted transition-colors hover:text-text"
-          >
-            로그아웃
-          </button>
-        </form>
+        <Link
+          href="/request"
+          className="flex flex-1 flex-col items-center gap-0.5 py-1 text-xs font-medium text-primary transition-colors hover:text-primary-light"
+        >
+          사장님 전환
+        </Link>
       </div>
     </nav>
   )
