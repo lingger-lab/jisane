@@ -64,8 +64,27 @@ export interface DealWorkflowRow {
 export interface PartnerRow {
   id: string
   auth_user_id: string
+  provider: string | null
+  email: string
+  contact: string | null
   name: string | null
   field: string | null
   career_yrs: number | null
   grade: string
+  status: string
+  created_at: string
+  updated_at: string
+}
+
+// Matching
+export type MatchingStatus = 'proposed' | 'accepted' | 'rejected'
+
+export interface MatchingRow {
+  id: string
+  request_id: string
+  partner_id: string
+  manager: string | null
+  status: MatchingStatus
+  created_at: string
+  updated_at: string
 }

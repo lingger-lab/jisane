@@ -1,6 +1,7 @@
 import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
+import { PartnerNav } from '@/components/partner-nav'
 
 export default async function PartnerLayout({ children }: { children: React.ReactNode }) {
   const cookieStore = await cookies()
@@ -11,5 +12,10 @@ export default async function PartnerLayout({ children }: { children: React.Reac
     redirect('/')
   }
 
-  return <>{children}</>
+  return (
+    <div className="flex min-h-screen flex-col pb-14">
+      {children}
+      <PartnerNav />
+    </div>
+  )
 }
