@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server'
 import { cookies } from 'next/headers'
 import { createClient } from '@/lib/supabase/server'
 import { adminClient } from '@/lib/supabase/admin'
-import { calcMatchFee } from '@/lib/pricing'
+import { calcMatchFee, calcGuaranteeFee } from '@/lib/pricing'
 import type { WorkflowStep } from '@/lib/types'
 
 export async function GET(
@@ -136,7 +136,7 @@ export async function PATCH(
   await adminClient.from('settlement').insert({
     deal_id: deal.id,
     escrow_status: 'pending',
-    guarantee_fee: 0,
+    guarantee_fee: calcGuaranteeFee(matchFee),
   })
 
   // workflow 5 steps

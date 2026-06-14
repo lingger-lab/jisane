@@ -25,6 +25,14 @@ export function calcMatchFee(workFee: number): number {
   return Math.round(workFee * 0.05)
 }
 
+/**
+ * 곁에 책임 적립금 (마스터문서 v3.3 §5.2)
+ * matchFee의 10%를 guarantee_fund_ledger에 적립
+ */
+export function calcGuaranteeFee(matchFee: number, rate = 0.1): number {
+  return Math.round(matchFee * rate)
+}
+
 export function calcTotalPay(workFee: number): {
   workFee: number
   matchFee: number

@@ -4,7 +4,7 @@ import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { adminClient } from '@/lib/supabase/admin'
-import { calcMatchFee } from '@/lib/pricing'
+import { calcMatchFee, calcGuaranteeFee } from '@/lib/pricing'
 import type { WorkflowStep } from '@/lib/types'
 
 async function getPartnerIdFromAuth(): Promise<{ partnerId: string; authUserId: string }> {
@@ -104,7 +104,7 @@ export async function acceptMatching(matchingId: string): Promise<{ error?: stri
     .insert({
       deal_id: deal.id,
       escrow_status: 'pending',
-      guarantee_fee: 0,
+      guarantee_fee: calcGuaranteeFee(matchFee),
     })
 
   // 4. deal_workflow 5행 생성
