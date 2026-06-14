@@ -188,6 +188,26 @@ export default async function StatusDetailPage(props: PageProps) {
         </div>
       )}
 
+      {/* 서류 다운로드 */}
+      {deal && (
+        <div className="mt-4 flex gap-2">
+          <Link
+            href={`/docs/quote/${deal.id}`}
+            target="_blank"
+            className="rounded-lg border border-border px-4 py-2.5 text-sm font-medium text-text-muted hover:bg-surface hover:text-text"
+          >
+            견적서 보기
+          </Link>
+          <Link
+            href={`/docs/statement/${deal.id}`}
+            target="_blank"
+            className="rounded-lg border border-border px-4 py-2.5 text-sm font-medium text-text-muted hover:bg-surface hover:text-text"
+          >
+            거래명세서 보기
+          </Link>
+        </div>
+      )}
+
       {/* 의뢰 상세 내용 */}
       <div className="mt-6 rounded-lg border border-border p-4">
         <h3 className="mb-2 text-sm font-semibold text-text">의뢰 내용</h3>

@@ -13,14 +13,18 @@ export async function POST(request: Request) {
   // HMAC-SHA256 서명 검증
   const signature = request.headers.get('toss-signature')
   const webhookSecret = process.env.TOSS_WEBHOOK_SECRET
-  if (webhookSecret && signature) {
-    const expected = crypto
-      .createHmac('sha256', webhookSecret)
-      .update(body)
-      .digest('base64')
-    if (signature !== expected) {
-      return NextResponse.json({ error: 'Invalid signature' }, { status: 401 })
-    }
+  if (!webhookSecret) {
+    return NextResponse.json({ error: 'Webhook secret not configured' }, { status: 500 })
+  }
+  if (!signature) {
+    return NextResponse.json({ error: 'Missing signature' }, { status: 401 })
+  }
+  const expected = crypto
+    .createHmac('sha256', webhookSecret)
+    .update(body)
+    .digest('base64')
+  if (signature !== expected) {
+    return NextResponse.json({ error: 'Invalid signature' }, { status: 401 })
   }
 
   let payload: Record<string, unknown>

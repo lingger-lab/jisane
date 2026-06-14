@@ -28,15 +28,15 @@ export async function GET(request: Request) {
     return NextResponse.json({ error: 'Request not found' }, { status: 404 })
   }
 
-  // 활성 파트너 전체 조회
+  // 활성 파트너 조회 (contact, email 등 민감 필드 제외)
   const { data: partners } = await adminClient
     .from('partner')
-    .select('*')
+    .select('id, auth_user_id, name, field, career_yrs, intro, status, grade')
     .eq('status', 'active')
 
   const candidates = findCandidates(
     { title: req.title, detail: req.detail, req_type: req.req_type },
-    (partners || []) as PartnerRow[]
+    (partners || []) as unknown as PartnerRow[]
   )
 
   return NextResponse.json({

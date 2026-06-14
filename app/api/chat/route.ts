@@ -17,6 +17,10 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: 'question is required' }, { status: 400 })
   }
 
+  if (question.trim().length > 500) {
+    return NextResponse.json({ error: '질문은 500자 이내로 입력해주세요.' }, { status: 400 })
+  }
+
   // FAQ 매칭 시도
   const { faq } = matchFaq(question)
 

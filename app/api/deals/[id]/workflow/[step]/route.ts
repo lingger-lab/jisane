@@ -52,6 +52,29 @@ export async function PATCH(
     return NextResponse.json({ error: 'Invalid status' }, { status: 400 })
   }
 
+  // 현재 상태 조회 후 전이 검증 (pending→in_progress→done)
+  const { data: workflow } = await adminClient
+    .from('deal_workflow')
+    .select('status')
+    .eq('deal_id', dealId)
+    .eq('step', step)
+    .single()
+
+  if (workflow) {
+    const currentStatus = workflow.status
+    const VALID_TRANSITIONS: Record<string, string[]> = {
+      pending: ['in_progress'],
+      in_progress: ['done'],
+      done: [],
+    }
+    if (!VALID_TRANSITIONS[currentStatus]?.includes(newStatus)) {
+      return NextResponse.json(
+        { error: `상태 전이 불가: ${currentStatus} → ${newStatus}` },
+        { status: 400 }
+      )
+    }
+  }
+
   const updateData: Record<string, unknown> = { status: newStatus }
   if (note !== undefined) {
     updateData.note = note

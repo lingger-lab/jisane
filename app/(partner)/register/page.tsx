@@ -75,6 +75,7 @@ export default function RegisterPage() {
                 key={chip}
                 type="button"
                 onClick={() => toggleField(chip)}
+                aria-pressed={selectedFields.includes(chip)}
                 className={`rounded-full border px-3 py-1.5 text-sm transition-colors ${
                   selectedFields.includes(chip)
                     ? 'border-accent bg-accent/10 font-semibold text-accent'

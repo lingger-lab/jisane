@@ -34,7 +34,7 @@ export async function POST(
   // settlement 조회
   const { data: settlement } = await adminClient
     .from('settlement')
-    .select('id, deal_id, escrow_status, payment_key, refunded_amt, guarantee_fee')
+    .select('id, deal_id, escrow_status, payment_key, refunded_amt, guarantee_fee, total_pay')
     .eq('id', settlementId)
     .single()
 
@@ -49,6 +49,15 @@ export async function POST(
     )
   }
 
+  // 환불 초과 검증
+  const newRefundedAmt = (settlement.refunded_amt || 0) + amount
+  if (newRefundedAmt > settlement.total_pay) {
+    return NextResponse.json(
+      { error: `환불 금액 초과: 총 결제액 ${settlement.total_pay}원, 누적 환불 요청 ${newRefundedAmt}원` },
+      { status: 400 }
+    )
+  }
+
   // Toss 결제 취소 (payment_key가 있는 경우)
   if (settlement.payment_key) {
     const cancelResult = await cancelPayment(settlement.payment_key, reason, amount)
@@ -59,9 +68,6 @@ export async function POST(
       )
     }
   }
-
-  // settlement 업데이트
-  const newRefundedAmt = (settlement.refunded_amt || 0) + amount
   const { error: updateError } = await adminClient
     .from('settlement')
     .update({

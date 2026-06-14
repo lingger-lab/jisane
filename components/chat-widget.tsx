@@ -101,7 +101,11 @@ export function ChatWidget() {
 
       {/* 챗 패널 */}
       {isOpen && (
-        <div className="fixed bottom-0 right-0 z-50 flex h-[32rem] w-full flex-col rounded-t-2xl border border-border bg-background shadow-2xl sm:bottom-6 sm:right-4 sm:w-96 sm:rounded-2xl">
+        <div
+          role="dialog"
+          aria-label="곁에 매니저 채팅"
+          className="fixed bottom-0 right-0 z-50 flex h-[32rem] w-full flex-col rounded-t-2xl border border-border bg-background shadow-2xl sm:bottom-6 sm:right-4 sm:w-96 sm:rounded-2xl"
+        >
           {/* 헤더 */}
           <div className="flex items-center justify-between rounded-t-2xl bg-accent px-4 py-3">
             <div>
@@ -121,7 +125,7 @@ export function ChatWidget() {
           </div>
 
           {/* 메시지 영역 */}
-          <div className="flex-1 overflow-y-auto px-4 py-3">
+          <div className="flex-1 overflow-y-auto px-4 py-3" aria-live="polite">
             {messages.length === 0 && (
               <div>
                 <p className="mb-3 text-sm text-text-muted">자주 묻는 질문</p>
@@ -185,6 +189,7 @@ export function ChatWidget() {
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 placeholder="질문을 입력하세요..."
+                aria-label="질문 입력"
                 className="flex-1 rounded-full border border-border bg-surface px-4 py-2 text-sm text-text placeholder:text-text-muted focus:border-accent focus:outline-none"
                 disabled={loading}
               />

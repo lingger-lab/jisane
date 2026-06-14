@@ -24,7 +24,7 @@ export async function GET() {
 
   const { data: requests, error } = await adminClient
     .from('request')
-    .select('*')
+    .select('id, client_id, title, detail, req_type, scope, budget_hope, status, created_at, updated_at')
     .eq('client_id', client.id)
     .order('created_at', { ascending: false })
 
@@ -59,6 +59,13 @@ export async function POST(request: Request) {
 
   if (!title?.trim() || !detail?.trim()) {
     return NextResponse.json({ error: 'title and detail are required' }, { status: 400 })
+  }
+
+  if (title.trim().length > 200) {
+    return NextResponse.json({ error: '제목은 200자 이내로 입력해주세요.' }, { status: 400 })
+  }
+  if (detail.trim().length > 5000) {
+    return NextResponse.json({ error: '내용은 5000자 이내로 입력해주세요.' }, { status: 400 })
   }
 
   const { data, error } = await adminClient.from('request').insert({
