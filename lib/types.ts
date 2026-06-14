@@ -88,3 +88,28 @@ export interface MatchingRow {
   created_at: string
   updated_at: string
 }
+
+// Review
+export type ReviewAuthorType = 'client' | 'partner' | 'gyeotae'
+
+export interface ReviewRow {
+  id: string
+  deal_id: string
+  author_type: ReviewAuthorType
+  rating: number
+  comment: string | null
+  internal_note: string | null
+  created_at: string
+}
+
+// Guarantee Fund Ledger
+export type LedgerEntryType = 'accrue' | 'payout'
+
+export interface GuaranteeFundLedgerRow {
+  id: string
+  settlement_id: string
+  entry_type: LedgerEntryType
+  amount: number
+  note: string | null
+  created_at: string
+}
