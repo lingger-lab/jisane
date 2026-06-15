@@ -237,7 +237,7 @@ export default async function Home() {
                 관리자 대시보드
               </Link>
             ) : (
-              <form action={signInWithGoogle.bind(null, 'client')}>
+              <form action={signInWithKakao.bind(null, 'client')}>
                 <button
                   type="submit"
                   className="text-xs text-text-subtle hover:text-text-muted transition-colors"
