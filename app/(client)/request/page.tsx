@@ -43,6 +43,7 @@ export default function RequestPage() {
                 key={chip}
                 type="button"
                 onClick={() => setSelectedChip(selectedChip === chip ? null : chip)}
+                aria-pressed={selectedChip === chip}
                 className={`rounded-full border px-3 py-1.5 text-sm transition-colors ${
                   selectedChip === chip
                     ? 'border-accent bg-accent/10 font-medium text-accent'

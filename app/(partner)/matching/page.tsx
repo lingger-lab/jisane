@@ -1,8 +1,10 @@
+import { Suspense } from 'react'
 import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
 import { adminClient } from '@/lib/supabase/admin'
+import { SuccessToast } from '@/components/toast'
 import type { MatchingStatus } from '@/lib/types'
 
 const STATUS_LABELS: Record<MatchingStatus, string> = {
@@ -47,6 +49,7 @@ export default async function MatchingListPage() {
 
   return (
     <div className="flex flex-1 flex-col px-4 py-5 sm:px-6 sm:py-8 animate-fade-in">
+      <Suspense><SuccessToast /></Suspense>
       <h1 className="mb-6 text-2xl font-bold text-accent">매칭 제안</h1>
 
       {matchingList.length === 0 ? (

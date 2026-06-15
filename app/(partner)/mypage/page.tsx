@@ -3,6 +3,7 @@
 import { useActionState, useState, useEffect } from 'react'
 import { updatePartnerProfile } from '@/lib/partner/actions'
 import { SubmitButton } from '@/components/submit-button'
+import { SuccessToast } from '@/components/toast'
 
 const FIELD_CHIPS = [
   '창업코칭',
@@ -84,6 +85,7 @@ export default function MyPage() {
 
   return (
     <div className="flex flex-1 flex-col px-4 py-5 sm:px-6 sm:py-8 animate-fade-in">
+      <SuccessToast />
       <h1 className="mb-2 text-2xl font-bold text-accent">마이페이지</h1>
       <p className="mb-6 text-sm text-text-muted">
         내 프로필을 확인하고 수정할 수 있습니다.
@@ -179,7 +181,7 @@ export default function MyPage() {
           <input
             id="contact"
             name="contact"
-            type="text"
+            type="tel"
             defaultValue={profile.contact || ''}
             placeholder="전화번호 또는 이메일"
             className="w-full rounded-xl border border-border-light bg-background px-4 py-3 text-sm text-text placeholder:text-text-subtle focus:border-accent focus:ring-1 focus:ring-accent/20 focus:outline-none transition-colors"

@@ -126,7 +126,7 @@ export default function RegisterPage() {
           <input
             id="contact"
             name="contact"
-            type="text"
+            type="tel"
             placeholder="전화번호 또는 이메일"
             className="w-full rounded-xl border border-border-light bg-background px-4 py-3 text-sm text-text placeholder:text-text-subtle focus:border-accent focus:ring-1 focus:ring-accent/20 focus:outline-none transition-colors"
           />

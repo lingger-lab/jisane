@@ -69,5 +69,5 @@ export async function createRequest(
     return { error: '의뢰 등록에 실패했습니다. 다시 시도해주세요.' }
   }
 
-  redirect('/status')
+  redirect('/status?success=request_created')
 }

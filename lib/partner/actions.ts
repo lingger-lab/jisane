@@ -56,5 +56,6 @@ export async function updatePartnerProfile(
   }
 
   const redirectTo = (formData.get('redirect_to') as string) || '/matching'
-  redirect(redirectTo)
+  const successKey = redirectTo === '/mypage' ? 'profile_updated' : 'partner_registered'
+  redirect(`${redirectTo}?success=${successKey}`)
 }

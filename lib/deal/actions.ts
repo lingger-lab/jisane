@@ -58,7 +58,7 @@ export async function approveDeal(dealId: string): Promise<{ error?: string }> {
     return { error: '견적 승인에 실패했습니다.' }
   }
 
-  redirect(`/status/${requestId}`)
+  redirect(`/status/${requestId}?success=deal_approved`)
 }
 
 export async function confirmDeal(dealId: string): Promise<{ error?: string }> {
@@ -95,7 +95,7 @@ export async function confirmDeal(dealId: string): Promise<{ error?: string }> {
     console.error('[confirmDeal] settlement update failed:', settlementErr.message)
   }
 
-  redirect(`/status/${requestId}`)
+  redirect(`/status/${requestId}?success=deal_confirmed`)
 }
 
 export async function requestRevision(dealId: string, reason: string): Promise<{ error?: string }> {

@@ -1,9 +1,11 @@
+import { Suspense } from 'react'
 import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
 import { adminClient } from '@/lib/supabase/admin'
 import { ProgressBar } from '@/components/progress-bar'
+import { SuccessToast } from '@/components/toast'
 import type { RequestRow, DealRow, DealWorkflowRow, PartnerRow } from '@/lib/types'
 import { QuoteSection } from './quote-section'
 import { InspectionSection } from './inspection-section'
@@ -87,6 +89,7 @@ export default async function StatusDetailPage(props: PageProps) {
 
   return (
     <div className="flex flex-1 flex-col px-4 py-5 sm:px-6 sm:py-8 animate-fade-in">
+      <Suspense><SuccessToast /></Suspense>
       {/* 뒤로가기 */}
       <Link href="/status" className="mb-4 text-sm text-text-muted hover:text-text transition-colors">
         &larr; 의뢰 목록
