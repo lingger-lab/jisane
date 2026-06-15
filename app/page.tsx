@@ -14,6 +14,7 @@ export default async function Home() {
   // 로그인 상태: 역할 정보 조회
   let hasClient = false
   let hasPartner = false
+  let isAdmin = false
   if (user) {
     const [clientRes, partnerRes] = await Promise.all([
       adminClient.from('client').select('id').eq('auth_user_id', user.id).single(),
@@ -21,6 +22,7 @@ export default async function Home() {
     ])
     hasClient = !!clientRes.data
     hasPartner = !!partnerRes.data
+    isAdmin = (process.env.ADMIN_EMAILS || '').split(',').map(e => e.trim()).includes(user.email || '')
   }
 
   return (
@@ -178,6 +180,47 @@ export default async function Home() {
           <OpenChatButton />
         </main>
       </div>
+
+      {/* 푸터 */}
+      <footer className="border-t border-border-light bg-surface py-8">
+        <div className="mx-auto flex max-w-md flex-col gap-4 px-6">
+          <div className="flex items-start justify-between">
+            <div>
+              <p className="text-sm font-semibold text-text">곁에 <span className="font-normal text-text-muted">(yourside)</span></p>
+              <p className="mt-1 text-xs text-text-subtle">부울경 로컬 인력매칭 플랫폼</p>
+            </div>
+            <p className="text-xs text-text-subtle">운영: 엔터랩스</p>
+          </div>
+
+          <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-text-subtle">
+            <span>문의: 곁에 매니저 (카카오 채널)</span>
+            <span>이메일: admin@enterlabs.kr</span>
+          </div>
+
+          <hr className="border-border-light" />
+
+          <div className="flex items-center justify-between">
+            <p className="text-xs text-text-subtle">&copy; 2025 곁에. All rights reserved.</p>
+            {isAdmin ? (
+              <Link
+                href="/dashboard"
+                className="text-xs text-text-subtle hover:text-accent transition-colors"
+              >
+                관리자 대시보드
+              </Link>
+            ) : (
+              <form action={signInWithGoogle.bind(null, 'client')}>
+                <button
+                  type="submit"
+                  className="text-xs text-text-subtle hover:text-text-muted transition-colors"
+                >
+                  관리자
+                </button>
+              </form>
+            )}
+          </div>
+        </div>
+      </footer>
     </div>
   )
 }
