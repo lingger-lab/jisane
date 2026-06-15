@@ -216,8 +216,13 @@ export default async function Home() {
           </div>
 
           <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-text-subtle">
+            <span>사업자등록번호: 405-02-46113</span>
             <span>문의: 곁에 매니저 (카카오 채널)</span>
             <span>이메일: iamblackwhite86@gmail.com</span>
+          </div>
+
+          <div className="flex gap-3 text-xs">
+            <Link href="/privacy" className="text-text-subtle hover:text-text-muted transition-colors">개인정보처리방침</Link>
           </div>
 
           <hr className="border-border-light" />
