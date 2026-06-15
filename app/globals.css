@@ -102,6 +102,14 @@ body {
   animation: slide-up 0.5s ease-out both;
 }
 
+/* 인터랙티브 요소 커서 */
+button,
+[role="button"],
+a,
+summary {
+  cursor: pointer;
+}
+
 .card-hover {
   transition: box-shadow 0.2s ease, transform 0.2s ease;
 }

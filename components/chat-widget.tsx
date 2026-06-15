@@ -81,21 +81,15 @@ export function ChatWidget() {
         <button
           type="button"
           onClick={() => setIsOpen(true)}
-          className="fixed bottom-20 right-4 z-50 flex h-14 w-14 items-center justify-center rounded-full bg-accent shadow-float transition-all hover:scale-105 hover:shadow-lg sm:bottom-6"
+          className="fixed bottom-20 right-4 z-50 flex h-14 w-14 items-center justify-center rounded-full shadow-float transition-all hover:scale-105 hover:shadow-lg sm:bottom-6 overflow-hidden"
           aria-label="곁에 매니저 채팅 열기"
         >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="white"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            className="h-6 w-6"
-          >
-            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
-          </svg>
+          {/* A: 네이비 배경 / B: 라이트 배경 — 교체 시 src만 변경 */}
+          <img
+            src="/chat-icon-a.png"
+            alt="곁에 매니저"
+            className="h-full w-full object-cover"
+          />
         </button>
       )}
 

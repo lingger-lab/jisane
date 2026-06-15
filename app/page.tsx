@@ -122,7 +122,7 @@ export default async function Home() {
                   <form action={signInWithGoogle.bind(null, 'client')}>
                     <button
                       type="submit"
-                      className="flex h-12 w-full items-center justify-center gap-2 rounded-xl border border-border-light bg-white text-base font-medium text-text shadow-sm transition-all hover:bg-surface hover:shadow-md btn-press"
+                      className="flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-primary text-base font-medium text-white shadow-sm transition-all hover:bg-primary-light hover:shadow-md btn-press"
                     >
                       <GoogleIcon />
                       Google로 시작하기
@@ -169,7 +169,7 @@ export default async function Home() {
                   <form action={signInWithGoogle.bind(null, 'partner')}>
                     <button
                       type="submit"
-                      className="flex h-12 w-full items-center justify-center gap-2 rounded-xl border border-border-light bg-white text-base font-medium text-text shadow-sm transition-all hover:bg-surface hover:shadow-md btn-press"
+                      className="flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-primary text-base font-medium text-white shadow-sm transition-all hover:bg-primary-light hover:shadow-md btn-press"
                     >
                       <GoogleIcon />
                       Google로 시작하기
