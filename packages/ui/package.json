@@ -1,0 +1,25 @@
+{
+  "name": "@jisane/ui",
+  "version": "0.0.1",
+  "private": true,
+  "exports": {
+    "./styles/globals.css": "./styles/globals.css",
+    "./submit-button": "./components/submit-button.tsx",
+    "./progress-bar": "./components/progress-bar.tsx",
+    "./workflow-checklist": "./components/workflow-checklist.tsx",
+    "./print-button": "./components/print-button.tsx",
+    "./toast": "./components/toast.tsx",
+    "./chat-widget": "./components/chat-widget.tsx",
+    "./open-chat-button": "./components/open-chat-button.tsx",
+    "./icons/google": "./components/icons/google.tsx",
+    "./icons/kakao": "./components/icons/kakao.tsx"
+  },
+  "devDependencies": {
+    "typescript": "^5"
+  },
+  "peerDependencies": {
+    "next": ">=16",
+    "react": ">=19",
+    "react-dom": ">=19"
+  }
+}

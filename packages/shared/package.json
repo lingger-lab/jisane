@@ -1,0 +1,24 @@
+{
+  "name": "@jisane/shared",
+  "version": "0.0.1",
+  "private": true,
+  "exports": {
+    "./types": "./lib/types.ts",
+    "./pricing": "./lib/pricing.ts",
+    "./supabase/server": "./lib/supabase/server.ts",
+    "./supabase/client": "./lib/supabase/client.ts",
+    "./supabase/admin": "./lib/supabase/admin.ts",
+    "./auth/actions": "./lib/auth/actions.ts"
+  },
+  "dependencies": {
+    "@supabase/ssr": "^0.12.0",
+    "@supabase/supabase-js": "^2.108.1"
+  },
+  "devDependencies": {
+    "typescript": "^5"
+  },
+  "peerDependencies": {
+    "next": ">=16",
+    "react": ">=19"
+  }
+}

@@ -14,5 +14,6 @@
     "jsx": "react-jsx",
     "incremental": true
   },
-  "exclude": ["node_modules", "apps", "packages"]
+  "include": ["**/*.ts", "**/*.tsx"],
+  "exclude": ["node_modules"]
 }
