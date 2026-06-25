@@ -18,7 +18,7 @@ const QUICK_QUESTIONS = [
 
 const KAKAO_CHANNEL_URL = 'https://pf.kakao.com/_placeholder' // TODO: 실제 채널 URL로 교체
 
-export function ChatWidget() {
+export function ChatWidget({ chatApiUrl }: { chatApiUrl?: string }) {
   const [isOpen, setIsOpen] = useState(false)
   const [messages, setMessages] = useState<Message[]>([])
   const [input, setInput] = useState('')
@@ -45,7 +45,7 @@ export function ChatWidget() {
     setLoading(true)
 
     try {
-      const res = await fetch('/api/chat', {
+      const res = await fetch(chatApiUrl || '/api/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ question }),

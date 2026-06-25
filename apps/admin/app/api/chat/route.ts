@@ -5,20 +5,41 @@ import { adminClient } from '@jisane/shared/supabase/admin'
 import { matchFaq } from '@/lib/chat/faq-matcher'
 import { determineEscalation } from '@/lib/chat/escalation'
 
+const ALLOWED_ORIGINS = [
+  'https://partner.jisane.cloud',
+  'https://owner.jisane.cloud',
+  'https://jisane.cloud',
+]
+
+function getCorsHeaders(request: Request) {
+  const origin = request.headers.get('origin') || ''
+  const allowed = ALLOWED_ORIGINS.includes(origin) || process.env.NODE_ENV !== 'production'
+  return {
+    'Access-Control-Allow-Origin': allowed ? origin : '',
+    'Access-Control-Allow-Methods': 'POST, OPTIONS',
+    'Access-Control-Allow-Headers': 'Content-Type',
+  }
+}
+
+export async function OPTIONS(request: Request) {
+  return NextResponse.json(null, { headers: getCorsHeaders(request) })
+}
+
 /**
  * POST /api/chat — FAQ 정적 챗봇 (TRD §6 인터페이스 호환)
  * 비로그인 사용자도 FAQ 응답 가능, inquiry 생성은 로그인 시만
  */
 export async function POST(request: Request) {
+  const cors = getCorsHeaders(request)
   const body = await request.json()
   const { question } = body
 
   if (!question || typeof question !== 'string' || question.trim().length === 0) {
-    return NextResponse.json({ error: 'question is required' }, { status: 400 })
+    return NextResponse.json({ error: 'question is required' }, { status: 400, headers: cors })
   }
 
   if (question.trim().length > 500) {
-    return NextResponse.json({ error: '질문은 500자 이내로 입력해주세요.' }, { status: 400 })
+    return NextResponse.json({ error: '질문은 500자 이내로 입력해주세요.' }, { status: 400, headers: cors })
   }
 
   // FAQ 매칭 시도
@@ -30,7 +51,7 @@ export async function POST(request: Request) {
       escalated: false,
       escalate_to: null,
       category: 'FAQ',
-    })
+    }, { headers: cors })
   }
 
   // 매칭 실패 → 에스컬레이션
@@ -87,5 +108,5 @@ export async function POST(request: Request) {
     escalate_to: escalateTo,
     category,
     inquiry_id: inquiryId,
-  })
+  }, { headers: cors })
 }

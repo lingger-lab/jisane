@@ -49,9 +49,9 @@ export async function POST(request: Request) {
     return NextResponse.json({ success: true, message: 'Ignored non-DONE status' })
   }
 
-  // orderId에서 dealId 추출: yourside_{dealId}_{timestamp}
+  // orderId에서 dealId 추출: jisane_{dealId}_{timestamp}
   const parts = orderId.split('_')
-  if (parts.length < 3 || parts[0] !== 'yourside') {
+  if (parts.length < 3 || parts[0] !== 'jisane') {
     return NextResponse.json({ error: 'Invalid orderId format' }, { status: 400 })
   }
   const dealId = parts[1]

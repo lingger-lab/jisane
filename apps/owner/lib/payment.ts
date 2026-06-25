@@ -26,7 +26,7 @@ export async function createCheckoutSession(
   amount: number,
   orderName: string
 ): Promise<CheckoutResult> {
-  const orderId = `yourside_${dealId}_${Date.now()}`
+  const orderId = `jisane_${dealId}_${Date.now()}`
 
   const res = await fetch(`${TOSS_BASE_URL}/payments`, {
     method: 'POST',
