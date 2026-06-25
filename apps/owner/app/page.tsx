@@ -59,7 +59,7 @@ export default async function OwnerHome() {
           <form action={signInWithGoogle}>
             <button
               type="submit"
-              className="flex h-14 w-full items-center justify-center gap-2 rounded-xl bg-primary text-base font-medium text-white shadow-sm transition-all hover:bg-primary-light hover:shadow-md btn-press"
+              className="flex h-14 w-full items-center justify-center gap-2 rounded-xl border border-border bg-white text-base font-medium text-[#1f1f1f] shadow-sm transition-all hover:bg-surface hover:shadow-md btn-press"
             >
               <GoogleIcon />
               Google로 시작하기

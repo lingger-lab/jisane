@@ -23,11 +23,18 @@ export function ChatWidget({ chatApiUrl }: { chatApiUrl?: string }) {
   const [messages, setMessages] = useState<Message[]>([])
   const [input, setInput] = useState('')
   const [loading, setLoading] = useState(false)
+  const [showTooltip, setShowTooltip] = useState(true)
   const messagesEndRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
   }, [messages])
+
+  // 말풍선 툴팁 3초 후 자동 숨김
+  useEffect(() => {
+    const timer = setTimeout(() => setShowTooltip(false), 3000)
+    return () => clearTimeout(timer)
+  }, [])
 
   // 외부에서 챗봇 열기 (커스텀 이벤트)
   useEffect(() => {
@@ -78,19 +85,26 @@ export function ChatWidget({ chatApiUrl }: { chatApiUrl?: string }) {
     <>
       {/* 플로팅 버블 */}
       {!isOpen && (
-        <button
-          type="button"
-          onClick={() => setIsOpen(true)}
-          className="fixed bottom-20 right-4 z-50 flex h-12 w-12 sm:h-14 sm:w-14 items-center justify-center rounded-full shadow-float transition-all hover:scale-105 hover:shadow-lg sm:bottom-6 overflow-hidden"
-          aria-label="지사네 매니저 채팅 열기"
-        >
-          {/* A: 네이비 배경 / B: 라이트 배경 — 교체 시 src만 변경 */}
-          <img
-            src="/chat-icon-a.png"
-            alt="지사네 매니저"
-            className="h-full w-full object-cover"
-          />
-        </button>
+        <div className="fixed bottom-6 right-4 z-50 flex items-end gap-2">
+          {showTooltip && (
+            <div className="mb-2 whitespace-nowrap rounded-lg bg-primary px-3 py-1.5 text-xs font-medium text-white shadow-md animate-fade-in">
+              무엇이든 물어보세요
+              <div className="absolute -right-1 bottom-3 h-2 w-2 rotate-45 bg-primary" />
+            </div>
+          )}
+          <button
+            type="button"
+            onClick={() => { setIsOpen(true); setShowTooltip(false) }}
+            className="flex h-14 w-14 items-center justify-center rounded-full shadow-lg ring-1 ring-black/5 transition-all hover:scale-105 hover:shadow-xl overflow-hidden"
+            aria-label="지사네 매니저 채팅 열기"
+          >
+            <img
+              src="/chat-icon-a.png"
+              alt="지사네 매니저"
+              className="h-full w-full object-cover"
+            />
+          </button>
+        </div>
       )}
 
       {/* 챗 패널 */}
