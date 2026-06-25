@@ -1,130 +1,32 @@
+import type { Database } from './database.types'
+
+// ── DB Row types (auto-generated 기반) ──────────────────────────
+export type ClientRow = Database['public']['Tables']['client']['Row']
+export type PartnerRow = Database['public']['Tables']['partner']['Row']
+export type RequestRow = Database['public']['Tables']['request']['Row']
+export type MatchingRow = Database['public']['Tables']['matching']['Row']
+export type DealRow = Database['public']['Tables']['deal']['Row']
+export type SettlementRow = Database['public']['Tables']['settlement']['Row']
+export type DealWorkflowRow = Database['public']['Tables']['deal_workflow']['Row']
+export type ReviewRow = Database['public']['Tables']['review']['Row']
+export type InquiryRow = Database['public']['Tables']['inquiry']['Row']
+export type GuaranteeFundLedgerRow = Database['public']['Tables']['guarantee_fund_ledger']['Row']
+
+// ── DB Enum types (auto-generated 기반) ─────────────────────────
+export type RequestStatus = Database['public']['Enums']['request_status']
+export type DealStatus = Database['public']['Enums']['deal_status']
+export type EscrowStatus = Database['public']['Enums']['escrow_status']
+export type WorkflowStep = Database['public']['Enums']['workflow_step']
+export type StepStatus = Database['public']['Enums']['step_status']
+export type MatchingStatus = Database['public']['Enums']['matching_status']
+export type ReviewAuthorType = Database['public']['Enums']['review_author']
+export type InquiryStatus = Database['public']['Enums']['inquiry_status']
+export type ManagerName = Database['public']['Enums']['manager_name']
+export type AuthProvider = Database['public']['Enums']['auth_provider']
+export type ClientStatus = Database['public']['Enums']['client_status']
+export type PartnerGrade = Database['public']['Enums']['partner_grade']
+export type PartnerStatus = Database['public']['Enums']['partner_status']
+
+// ── Custom types (DB에 없는 앱 전용 타입) ───────────────────────
 export type UserRole = 'client' | 'partner'
-
-// DB enum types
-export type RequestStatus = 'open' | 'matching' | 'dealt' | 'closed'
-export type DealStatus = 'quoted' | 'working' | 'done'
-export type EscrowStatus = 'pending' | 'deposited' | 'reviewing' | 'released' | 'refunded'
-export type WorkflowStep = 'intake' | 'structure' | 'generate' | 'verify' | 'deliver'
-export type StepStatus = 'pending' | 'in_progress' | 'done'
-
-// DB row types
-export interface RequestRow {
-  id: string
-  client_id: string
-  title: string
-  detail: string
-  req_type: string | null
-  scope: string | null
-  budget_hope: number | null
-  status: RequestStatus
-  created_at: string
-  updated_at: string
-}
-
-export interface DealRow {
-  id: string
-  matching_id: string | null
-  request_id: string | null
-  partner_id: string | null
-  work_fee: number
-  match_fee: number
-  total_pay: number
-  scope: string | null
-  due_date: string | null
-  status: DealStatus
-  created_at: string
-  updated_at: string
-}
-
-export interface SettlementRow {
-  id: string
-  deal_id: string
-  escrow_status: EscrowStatus
-  payment_key: string | null
-  guarantee_fee: number
-  refunded_amt: number
-  refund_reason: string | null
-  deposited_at: string | null
-  released_at: string | null
-  refunded_at: string | null
-  created_at: string
-  updated_at: string
-}
-
-export interface DealWorkflowRow {
-  id: string
-  deal_id: string
-  step: WorkflowStep
-  status: StepStatus
-  note: string | null
-  done_at: string | null
-  created_at: string
-}
-
-export interface PartnerRow {
-  id: string
-  auth_user_id: string
-  provider: string | null
-  email: string
-  contact: string | null
-  name: string | null
-  field: string | null
-  career_yrs: number | null
-  grade: string
-  status: string
-  created_at: string
-  updated_at: string
-}
-
-// Matching
-export type MatchingStatus = 'proposed' | 'accepted' | 'rejected'
-
-export interface MatchingRow {
-  id: string
-  request_id: string
-  partner_id: string
-  manager: string | null
-  status: MatchingStatus
-  created_at: string
-  updated_at: string
-}
-
-// Review
-export type ReviewAuthorType = 'client' | 'partner' | 'gyeotae'
-
-export interface ReviewRow {
-  id: string
-  deal_id: string
-  author_type: ReviewAuthorType
-  rating: number
-  comment: string | null
-  internal_note: string | null
-  created_at: string
-}
-
-// Guarantee Fund Ledger
 export type LedgerEntryType = 'accrue' | 'payout'
-
-export interface GuaranteeFundLedgerRow {
-  id: string
-  settlement_id: string
-  entry_type: LedgerEntryType
-  amount: number
-  note: string | null
-  created_at: string
-}
-
-// Inquiry
-export type InquiryStatus = 'open' | 'ai_answered' | 'human_routed' | 'closed'
-export type ManagerName = 'park' | 'brad' | 'kim'
-
-export interface InquiryRow {
-  id: string
-  author_id: string | null
-  author_type: ReviewAuthorType | null
-  category: string | null
-  content: string
-  status: InquiryStatus
-  created_at: string
-  updated_at: string
-}

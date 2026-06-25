@@ -10,7 +10,10 @@
   "scripts": {
     "dev": "turbo run dev",
     "build": "turbo run build",
-    "lint": "turbo run lint"
+    "lint": "turbo run lint",
+    "db:types": "supabase gen types typescript --project-id xbmxbsruvvqqtfkgyoae > packages/shared/lib/database.types.ts",
+    "db:push": "supabase db push",
+    "db:diff": "supabase db diff --schema public"
   },
   "devDependencies": {
     "turbo": "^2"

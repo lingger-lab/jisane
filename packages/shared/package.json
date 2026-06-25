@@ -4,6 +4,7 @@
   "private": true,
   "exports": {
     "./types": "./lib/types.ts",
+    "./database.types": "./lib/database.types.ts",
     "./pricing": "./lib/pricing.ts",
     "./supabase/server": "./lib/supabase/server.ts",
     "./supabase/client": "./lib/supabase/client.ts",
