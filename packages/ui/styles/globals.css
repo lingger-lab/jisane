@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@source "../components/**/*.tsx";
 
 :root {
   /* 색상 — 네이비 기반 신뢰감 팔레트 + 블루 포인트 */

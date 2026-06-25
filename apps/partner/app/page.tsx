@@ -60,18 +60,18 @@ export default async function PartnerHome() {
           <form action={signInWithKakao}>
             <button
               type="submit"
-              className="flex h-14 w-full items-center justify-center gap-2 rounded-xl bg-[#FEE500] text-base font-semibold text-[#191919] shadow-sm transition-all hover:bg-[#FDD800] hover:shadow-md btn-press"
+              className="flex h-14 w-full items-center justify-center gap-2 rounded-xl overflow-hidden bg-[#FEE500] text-base font-semibold text-[#191919] shadow-sm transition-all hover:bg-[#FDD800] hover:shadow-md btn-press"
             >
-              <KakaoIcon />
+              <KakaoIcon className="h-5 w-5 shrink-0" />
               카카오로 시작하기
             </button>
           </form>
           <form action={signInWithGoogle}>
             <button
               type="submit"
-              className="flex h-14 w-full items-center justify-center gap-2 rounded-xl border border-border bg-white text-base font-medium text-[#1f1f1f] shadow-sm transition-all hover:bg-surface hover:shadow-md btn-press"
+              className="flex h-14 w-full items-center justify-center gap-2 rounded-xl overflow-hidden border border-border bg-white text-base font-medium text-[#1f1f1f] shadow-sm transition-all hover:bg-surface hover:shadow-md btn-press"
             >
-              <GoogleIcon />
+              <GoogleIcon className="h-5 w-5 shrink-0" />
               Google로 시작하기
             </button>
           </form>
