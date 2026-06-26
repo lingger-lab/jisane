@@ -40,7 +40,7 @@ export default async function StatusPage() {
   // client_id 조회
   const { data: client } = await adminClient
     .from('client')
-    .select('id')
+    .select('id, email')
     .eq('auth_user_id', user.id)
     .single()
 
@@ -67,7 +67,7 @@ export default async function StatusPage() {
       {/* 대시보드 헤더 */}
       <div className="mb-5">
         <p className="text-lg font-bold text-text">안녕하세요</p>
-        <p className="text-xs text-text-muted">지사네 기업공간</p>
+        <p className="text-xs text-text-muted">{client.email} · 지사네 기업공간</p>
       </div>
 
       {/* 요약 카드 */}
