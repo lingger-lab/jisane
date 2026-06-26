@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { approveDeal } from '@/lib/deal/actions'
+import { sendDealInquiry } from '@/lib/message/actions'
 import { SubmitButton } from '@jisane/ui/submit-button'
 import type { DealRow, PartnerRow } from '@jisane/shared/types'
 
@@ -12,11 +13,26 @@ interface QuoteSectionProps {
 
 export function QuoteSection({ deal, partner }: QuoteSectionProps) {
   const [error, setError] = useState<string | null>(null)
+  const [showInquiry, setShowInquiry] = useState(false)
+  const [inquiryText, setInquiryText] = useState('')
+  const [inquirySent, setInquirySent] = useState(false)
 
   async function handleApprove() {
     const result = await approveDeal(deal.id)
     if (result?.error) {
       setError(result.error)
+    }
+  }
+
+  async function handleInquiry() {
+    if (!inquiryText.trim()) return
+    setError(null)
+    const result = await sendDealInquiry(deal.id, inquiryText.trim(), 'deal_quote')
+    if (result.error) {
+      setError(result.error)
+    } else {
+      setInquirySent(true)
+      setInquiryText('')
     }
   }
 
@@ -78,15 +94,54 @@ export function QuoteSection({ deal, partner }: QuoteSectionProps) {
             견적 승인
           </SubmitButton>
         </form>
-        <a
-          href="https://pf.kakao.com/_placeholder"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="flex items-center justify-center rounded-xl border border-border-light px-4 py-3 text-sm text-text-muted transition-colors hover:bg-surface"
-        >
-          금액 상의
-        </a>
+        {!showInquiry && !inquirySent && (
+          <button
+            type="button"
+            onClick={() => setShowInquiry(true)}
+            className="flex items-center justify-center rounded-xl border border-border-light px-4 py-3 text-sm text-text-muted transition-colors hover:bg-surface"
+          >
+            금액 상의
+          </button>
+        )}
       </div>
+
+      {showInquiry && !inquirySent && (
+        <form action={handleInquiry} className="mt-3 flex flex-col gap-2">
+          <textarea
+            value={inquiryText}
+            onChange={(e) => setInquiryText(e.target.value)}
+            rows={3}
+            placeholder="견적에 대해 궁금한 점이나 조정이 필요한 부분을 적어주세요."
+            className="w-full resize-none rounded-xl border border-border-light bg-background px-3 py-2 text-sm text-text placeholder:text-text-subtle focus:border-accent focus:ring-1 focus:ring-accent/20 focus:outline-none transition-colors"
+          />
+          <div className="flex gap-2">
+            <SubmitButton className="flex-1 rounded-xl bg-accent px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-accent/90 disabled:opacity-50">
+              메시지 전송
+            </SubmitButton>
+            <button
+              type="button"
+              onClick={() => { setShowInquiry(false); setInquiryText('') }}
+              className="rounded-xl border border-border-light px-4 py-2 text-sm text-text-muted transition-colors"
+            >
+              취소
+            </button>
+          </div>
+        </form>
+      )}
+
+      {inquirySent && (
+        <div className="mt-3 rounded-xl border border-success/20 bg-success-light p-3 text-center">
+          <p className="text-sm font-medium text-success">메시지가 전송되었습니다</p>
+          <p className="mt-1 text-xs text-success/70">매니저가 확인 후 안내드리겠습니다.</p>
+          <button
+            type="button"
+            onClick={() => { setInquirySent(false); setShowInquiry(true) }}
+            className="mt-2 text-xs font-medium text-accent hover:underline"
+          >
+            추가 메시지 보내기
+          </button>
+        </div>
+      )}
     </div>
   )
 }

@@ -9,6 +9,8 @@ import { SuccessToast } from '@jisane/ui/toast'
 import type { RequestRow, DealRow, DealWorkflowRow, PartnerRow } from '@jisane/shared/types'
 import { QuoteSection } from './quote-section'
 import { InspectionSection } from './inspection-section'
+import { MessageThread } from './message-thread'
+import { ReviewSection } from './review-section'
 
 interface PageProps {
   params: Promise<{ id: string }>
@@ -58,17 +60,34 @@ export default async function StatusDetailPage(props: PageProps) {
 
   const deal = (deals && deals.length > 0 ? deals[0] : null) as DealRow | null
 
-  // deal이 있으면 workflow + partner 정보 조회
+  // deal이 있으면 workflow + partner + messages + review 조회
   let workflows: DealWorkflowRow[] = []
   let partner: PartnerRow | null = null
+  let messages: Array<{ id: string; sender_type: string; content: string; created_at: string }> = []
+  let existingReview: { id: string; rating: number | null; comment: string | null } | null = null
 
   if (deal) {
-    const { data: wf } = await adminClient
-      .from('deal_workflow')
-      .select('*')
-      .eq('deal_id', deal.id)
-      .order('created_at', { ascending: true })
+    const [{ data: wf }, { data: msgs }, { data: review }] = await Promise.all([
+      adminClient
+        .from('deal_workflow')
+        .select('*')
+        .eq('deal_id', deal.id)
+        .order('created_at', { ascending: true }),
+      adminClient
+        .from('deal_message')
+        .select('id, sender_type, content, created_at')
+        .eq('deal_id', deal.id)
+        .order('created_at', { ascending: true }),
+      adminClient
+        .from('review')
+        .select('id, rating, comment')
+        .eq('deal_id', deal.id)
+        .eq('author_type', 'client')
+        .single(),
+    ])
     workflows = (wf || []) as DealWorkflowRow[]
+    messages = (msgs || []) as typeof messages
+    existingReview = review as typeof existingReview
 
     if (deal.partner_id) {
       const { data: p } = await adminClient
@@ -176,6 +195,9 @@ export default async function StatusDetailPage(props: PageProps) {
             </div>
           )}
 
+          {/* 메시지 스레드 */}
+          <MessageThread dealId={deal.id} messages={messages} />
+
           {/* 검수 섹션 */}
           <InspectionSection dealId={deal.id} />
         </div>
@@ -183,11 +205,21 @@ export default async function StatusDetailPage(props: PageProps) {
 
       {/* 완료 */}
       {deal && deal.status === 'done' && (
-        <div className="rounded-xl border border-success/20 bg-success-light p-4">
-          <h2 className="mb-2 font-semibold text-success">검수 완료</h2>
-          <p className="text-sm text-success/80">
-            작업이 완료되었습니다. 정산이 진행됩니다.
-          </p>
+        <div className="flex flex-col gap-4">
+          <div className="rounded-xl border border-success/20 bg-success-light p-4">
+            <h2 className="mb-2 font-semibold text-success">검수 완료</h2>
+            <p className="text-sm text-success/80">
+              작업이 완료되었습니다. 정산이 진행됩니다.
+            </p>
+          </div>
+
+          {/* 리뷰 섹션 */}
+          <ReviewSection dealId={deal.id} existingReview={existingReview} />
+
+          {/* 완료 후에도 메시지 확인 가능 */}
+          {messages.length > 0 && (
+            <MessageThread dealId={deal.id} messages={messages} />
+          )}
         </div>
       )}
 
