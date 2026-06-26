@@ -43,7 +43,7 @@ function MyIcon({ active }: { active: boolean }) {
 const TABS = [
   { href: '/matching', label: '홈', Icon: HomeIcon },
   { href: '/work', label: '작업', Icon: WorkIcon },
-  { href: '/mypage', label: '마이', Icon: MyIcon },
+  { href: '/mypage', label: '프로필', Icon: MyIcon },
 ] as const
 
 export function PartnerNav() {
