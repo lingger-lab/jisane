@@ -6,6 +6,7 @@ import type { DealWorkflowRow } from '@jisane/shared/types'
 import { MatchingTab } from './matching-tab'
 import { ProgressTab } from './progress-tab'
 import { SettlementTab } from './settlement-tab'
+import { ServiceTab } from './service-tab'
 import { InquiryTab } from './inquiry-tab'
 import { DashboardTabs } from './dashboard-tabs'
 
@@ -17,13 +18,14 @@ export default async function AdminDashboardPage() {
   if (!user) redirect('/')
 
   // 요약 카운트
-  const [requestsRes, dealsRes, settlementsRes, accrueRes, payoutRes, inquiryRes] = await Promise.all([
+  const [requestsRes, dealsRes, settlementsRes, accrueRes, payoutRes, inquiryRes, serviceOrdersRes] = await Promise.all([
     adminClient.from('request').select('id', { count: 'exact', head: true }).eq('status', 'open'),
     adminClient.from('deal').select('id', { count: 'exact', head: true }).eq('status', 'working'),
     adminClient.from('settlement').select('id', { count: 'exact', head: true }).in('escrow_status', ['deposited', 'reviewing']),
     adminClient.from('guarantee_fund_ledger').select('amount').eq('entry_type', 'accrue'),
     adminClient.from('guarantee_fund_ledger').select('amount').eq('entry_type', 'payout'),
     adminClient.from('inquiry').select('id', { count: 'exact', head: true }).in('status', ['open', 'human_routed']),
+    adminClient.from('service_order').select('id', { count: 'exact', head: true }).in('status', ['pending', 'paid', 'processing']),
   ])
 
   const accrueTotal = (accrueRes.data || []).reduce((sum, r) => sum + (r.amount || 0), 0)
@@ -35,6 +37,7 @@ export default async function AdminDashboardPage() {
     settlementReady: settlementsRes.count || 0,
     guaranteeFundBalance: accrueTotal - payoutTotal,
     inquiryOpen: inquiryRes.count || 0,
+    serviceOrders: serviceOrdersRes.count || 0,
   }
 
   // 매칭 대기 의뢰
@@ -88,6 +91,13 @@ export default async function AdminDashboardPage() {
     .order('created_at', { ascending: false })
     .limit(10)
 
+  // 서비스 주문
+  const { data: serviceOrders } = await adminClient
+    .from('service_order')
+    .select('*')
+    .order('created_at', { ascending: false })
+    .limit(50)
+
   // 문의 목록
   const { data: inquiries } = await adminClient
     .from('inquiry')
@@ -100,10 +110,11 @@ export default async function AdminDashboardPage() {
       <h1 className="mb-6 text-xl font-bold text-text">대시보드</h1>
 
       {/* 요약 카드 */}
-      <div className="mb-6 grid grid-cols-2 gap-3 sm:grid-cols-5">
+      <div className="mb-6 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
         <SummaryCard label="매칭 대기" value={summary.matchingWaiting} unit="건" color="text-info" />
         <SummaryCard label="진행 중" value={summary.inProgress} unit="건" color="text-warning" />
         <SummaryCard label="정산 대기" value={summary.settlementReady} unit="건" color="text-success" />
+        <SummaryCard label="서비스 주문" value={summary.serviceOrders} unit="건" color="text-primary" />
         <SummaryCard label="문의" value={summary.inquiryOpen} unit="건" color="text-error" />
         <SummaryCard
           label="적립금 잔액"
@@ -158,6 +169,22 @@ export default async function AdminDashboardPage() {
               created_at: string
             }>}
             fundBalance={summary.guaranteeFundBalance}
+          />
+        }
+        serviceTab={
+          <ServiceTab
+            orders={(serviceOrders || []) as unknown as Array<{
+              id: string
+              category: string
+              package_slug: string
+              package_name: string
+              price: number
+              status: string
+              detail: string | null
+              created_at: string
+              client_id: string | null
+              partner_id: string | null
+            }>}
           />
         }
         inquiryTab={

@@ -9,7 +9,8 @@
     "./supabase/server": "./lib/supabase/server.ts",
     "./supabase/client": "./lib/supabase/client.ts",
     "./supabase/admin": "./lib/supabase/admin.ts",
-    "./auth/actions": "./lib/auth/actions.ts"
+    "./auth/actions": "./lib/auth/actions.ts",
+    "./service-catalog": "./lib/service-catalog.ts"
   },
   "dependencies": {
     "@supabase/ssr": "^0.12.0",

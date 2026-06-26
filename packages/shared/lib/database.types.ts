@@ -494,6 +494,63 @@ export type Database = {
           },
         ]
       }
+      service_order: {
+        Row: {
+          id: string
+          client_id: string | null
+          partner_id: string | null
+          category: Database["public"]["Enums"]["service_category"]
+          package_slug: string
+          package_name: string
+          price: number
+          status: Database["public"]["Enums"]["order_status"]
+          detail: string | null
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          client_id?: string | null
+          partner_id?: string | null
+          category: Database["public"]["Enums"]["service_category"]
+          package_slug: string
+          package_name: string
+          price: number
+          status?: Database["public"]["Enums"]["order_status"]
+          detail?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          client_id?: string | null
+          partner_id?: string | null
+          category?: Database["public"]["Enums"]["service_category"]
+          package_slug?: string
+          package_name?: string
+          price?: number
+          status?: Database["public"]["Enums"]["order_status"]
+          detail?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "service_order_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "client"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "service_order_partner_id_fkey"
+            columns: ["partner_id"]
+            isOneToOne: false
+            referencedRelation: "partner"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
@@ -519,6 +576,8 @@ export type Database = {
       request_status: "open" | "matching" | "dealt" | "closed"
       review_author: "client" | "partner" | "gyeotae"
       step_status: "pending" | "in_progress" | "done"
+      order_status: "pending" | "paid" | "processing" | "completed" | "cancelled"
+      service_category: "ax_consulting" | "biz_consulting" | "education"
       workflow_step: "intake" | "structure" | "generate" | "verify" | "deliver"
     }
     CompositeTypes: {

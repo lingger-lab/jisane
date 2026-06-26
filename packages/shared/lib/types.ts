@@ -11,6 +11,7 @@ export type DealWorkflowRow = Database['public']['Tables']['deal_workflow']['Row
 export type ReviewRow = Database['public']['Tables']['review']['Row']
 export type InquiryRow = Database['public']['Tables']['inquiry']['Row']
 export type GuaranteeFundLedgerRow = Database['public']['Tables']['guarantee_fund_ledger']['Row']
+export type ServiceOrderRow = Database['public']['Tables']['service_order']['Row']
 
 // ── DB Enum types (auto-generated 기반) ─────────────────────────
 export type RequestStatus = Database['public']['Enums']['request_status']
@@ -26,6 +27,8 @@ export type AuthProvider = Database['public']['Enums']['auth_provider']
 export type ClientStatus = Database['public']['Enums']['client_status']
 export type PartnerGrade = Database['public']['Enums']['partner_grade']
 export type PartnerStatus = Database['public']['Enums']['partner_status']
+export type ServiceCategory = Database['public']['Enums']['service_category']
+export type OrderStatus = Database['public']['Enums']['order_status']
 
 // ── Custom types (DB에 없는 앱 전용 타입) ───────────────────────
 export type UserRole = 'client' | 'partner'
