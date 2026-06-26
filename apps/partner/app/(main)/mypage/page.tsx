@@ -2,6 +2,7 @@
 
 import { useActionState, useState, useEffect } from 'react'
 import { updatePartnerProfile } from '@/lib/partner/actions'
+import { signOut } from '@jisane/shared/auth/actions'
 import { SubmitButton } from '@jisane/ui/submit-button'
 import { SuccessToast } from '@jisane/ui/toast'
 
@@ -197,6 +198,16 @@ export default function MyPage() {
         <SubmitButton className="rounded-xl bg-accent px-6 py-3 font-semibold text-white shadow-sm transition-all hover:bg-accent/90 hover:shadow-md disabled:opacity-50">
           프로필 수정
         </SubmitButton>
+      </form>
+
+      {/* 로그아웃 */}
+      <form action={signOut} className="mt-8">
+        <button
+          type="submit"
+          className="w-full rounded-xl border border-border-light px-6 py-3 text-sm font-medium text-text-muted transition-colors hover:bg-surface hover:text-text"
+        >
+          로그아웃
+        </button>
       </form>
     </div>
   )
