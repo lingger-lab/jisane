@@ -5,7 +5,8 @@ import Link from 'next/link'
 import { createClient } from '@jisane/shared/supabase/server'
 import { adminClient } from '@jisane/shared/supabase/admin'
 import { SuccessToast } from '@jisane/ui/toast'
-import type { MatchingStatus } from '@jisane/shared/types'
+import type { MatchingStatus, ServiceOrderRow } from '@jisane/shared/types'
+import { OpportunitySection } from './opportunity-section'
 
 const STATUS_LABELS: Record<MatchingStatus, string> = {
   proposed: '제안',
@@ -17,6 +18,30 @@ const STATUS_COLORS: Record<MatchingStatus, string> = {
   proposed: 'bg-info-light text-info',
   accepted: 'bg-success-light text-success',
   rejected: 'bg-surface text-text-subtle',
+}
+
+const ORDER_STATUS_LABELS: Record<string, string> = {
+  pending: '접수',
+  paid: '결제 완료',
+  processing: '진행 중',
+  completed: '완료',
+  cancelled: '취소',
+}
+
+const ORDER_STATUS_COLORS: Record<string, string> = {
+  pending: 'bg-info-light text-info',
+  paid: 'bg-warning-light text-warning',
+  processing: 'bg-success-light text-success',
+  completed: 'bg-surface text-text-subtle',
+  cancelled: 'bg-error-light text-error',
+}
+
+const ORDER_STRIPE: Record<string, string> = {
+  pending: 'border-l-info',
+  paid: 'border-l-warning',
+  processing: 'border-l-success',
+  completed: 'border-l-border',
+  cancelled: 'border-l-error',
 }
 
 export default async function MatchingListPage() {
@@ -34,17 +59,40 @@ export default async function MatchingListPage() {
 
   if (!partner) redirect('/register')
 
-  const { data: matchings } = await adminClient
-    .from('matching')
-    .select('id, status, created_at, request:request!inner(id, title, req_type, budget_hope)')
-    .eq('partner_id', partner.id)
-    .order('created_at', { ascending: false })
+  const [{ data: matchings }, { data: serviceOrdersData }, { data: openRequests }, { data: myInterests }] = await Promise.all([
+    adminClient
+      .from('matching')
+      .select('id, status, created_at, request:request!inner(id, title, req_type, budget_hope)')
+      .eq('partner_id', partner.id)
+      .order('created_at', { ascending: false }),
+    adminClient
+      .from('service_order')
+      .select('*')
+      .eq('partner_id', partner.id)
+      .order('created_at', { ascending: false }),
+    adminClient
+      .from('request')
+      .select('id, title, req_type, budget_hope, detail, created_at')
+      .eq('status', 'open')
+      .order('created_at', { ascending: false })
+      .limit(10),
+    adminClient
+      .from('partner_interest')
+      .select('request_id')
+      .eq('partner_id', partner.id),
+  ])
 
   const matchingList = ((matchings || []) as unknown) as Array<{
     id: string
     status: MatchingStatus
     created_at: string
     request: { id: string; title: string; req_type: string | null; budget_hope: number | null }
+  }>
+
+  const serviceOrders = (serviceOrdersData || []) as ServiceOrderRow[]
+  const interestedIds = (myInterests || []).map((i) => i.request_id)
+  const opportunities = (openRequests || []) as Array<{
+    id: string; title: string; req_type: string | null; budget_hope: number | null; detail: string; created_at: string
   }>
 
   const proposedCount = matchingList.filter((m) => m.status === 'proposed').length
@@ -148,6 +196,52 @@ export default async function MatchingListPage() {
                   </span>
                 </div>
               </Link>
+            </li>
+          ))}
+        </ul>
+      )}
+
+      {/* 의뢰 탐색 */}
+      <h2 className="mb-3 mt-8 text-base font-bold text-text">새 의뢰 탐색</h2>
+      <p className="mb-3 text-xs text-text-muted">관심 있는 의뢰에 관심을 표현하면 매니저가 우선 검토합니다.</p>
+      <OpportunitySection requests={opportunities} interestedIds={interestedIds} />
+
+      {/* 교육·서비스 신청 현황 */}
+      <h2 className="mb-3 mt-8 text-base font-bold text-text">교육·서비스 신청 현황</h2>
+
+      {serviceOrders.length === 0 ? (
+        <div className="flex flex-col items-center gap-3 rounded-xl border border-dashed border-border-light py-8 text-center">
+          <p className="text-sm text-text-muted">신청한 교육·서비스가 없습니다.</p>
+          <Link
+            href="/education"
+            className="text-sm font-medium text-accent hover:underline"
+          >
+            교육 둘러보기
+          </Link>
+        </div>
+      ) : (
+        <ul className="flex flex-col gap-3">
+          {serviceOrders.map((order, i) => (
+            <li key={order.id} className={`animate-fade-in stagger-${Math.min(i + 1, 5)}`}>
+              <div className={`rounded-xl border border-border-light border-l-4 ${ORDER_STRIPE[order.status] || 'border-l-border'} p-4 shadow-xs`}>
+                <div className="flex items-start justify-between gap-3">
+                  <div className="min-w-0 flex-1">
+                    <h3 className="truncate font-medium text-text">{order.package_name}</h3>
+                    <p className="mt-1 text-xs text-text-muted">
+                      {new Date(order.created_at).toLocaleDateString('ko-KR')}
+                      {' · '}
+                      {order.price === 0 ? '무료' : `${order.price.toLocaleString('ko-KR')}원`}
+                    </p>
+                  </div>
+                  <span
+                    className={`shrink-0 rounded-full px-2.5 py-0.5 text-xs font-medium ${
+                      ORDER_STATUS_COLORS[order.status] || 'bg-surface text-text-subtle'
+                    }`}
+                  >
+                    {ORDER_STATUS_LABELS[order.status] || order.status}
+                  </span>
+                </div>
+              </div>
             </li>
           ))}
         </ul>

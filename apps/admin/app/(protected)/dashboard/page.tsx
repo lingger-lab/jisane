@@ -41,11 +41,27 @@ export default async function AdminDashboardPage() {
   }
 
   // 매칭 대기 의뢰
-  const { data: openRequests } = await adminClient
-    .from('request')
-    .select('id, title, detail, req_type, budget_hope, created_at')
-    .eq('status', 'open')
-    .order('created_at', { ascending: false })
+  const [{ data: openRequests }, { data: interestsData }] = await Promise.all([
+    adminClient
+      .from('request')
+      .select('id, title, detail, req_type, budget_hope, created_at')
+      .eq('status', 'open')
+      .order('created_at', { ascending: false }),
+    adminClient
+      .from('partner_interest')
+      .select('request_id, partner_id, note, created_at, partner:partner!inner(id, name, field)')
+      .order('created_at', { ascending: false }),
+  ])
+
+  // 의뢰별 관심 표현 카운트
+  const interestsByRequest = new Map<string, number>()
+  for (const interest of (interestsData || []) as Array<{ request_id: string }>) {
+    interestsByRequest.set(
+      interest.request_id,
+      (interestsByRequest.get(interest.request_id) || 0) + 1
+    )
+  }
+  const interestCounts = Object.fromEntries(interestsByRequest)
 
   // 진행 중 거래
   const { data: workingDeals } = await adminClient
@@ -127,7 +143,7 @@ export default async function AdminDashboardPage() {
       {/* 탭 영역 */}
       <DashboardTabs
         matchingTab={
-          <MatchingTab requests={openRequests || []} />
+          <MatchingTab requests={openRequests || []} interestCounts={interestCounts} />
         }
         progressTab={
           <ProgressTab

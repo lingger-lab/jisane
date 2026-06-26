@@ -12,6 +12,8 @@ export type ReviewRow = Database['public']['Tables']['review']['Row']
 export type InquiryRow = Database['public']['Tables']['inquiry']['Row']
 export type GuaranteeFundLedgerRow = Database['public']['Tables']['guarantee_fund_ledger']['Row']
 export type ServiceOrderRow = Database['public']['Tables']['service_order']['Row']
+export type PartnerInterestRow = Database['public']['Tables']['partner_interest']['Row']
+export type DealMessageRow = Database['public']['Tables']['deal_message']['Row']
 
 // ── DB Enum types (auto-generated 기반) ─────────────────────────
 export type RequestStatus = Database['public']['Enums']['request_status']

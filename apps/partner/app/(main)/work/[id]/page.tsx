@@ -6,6 +6,7 @@ import { adminClient } from '@jisane/shared/supabase/admin'
 import { WorkflowChecklist } from '@jisane/ui/workflow-checklist'
 import type { DealRow, DealWorkflowRow, RequestRow, SettlementRow } from '@jisane/shared/types'
 import { WorkflowForm } from './workflow-form'
+import { MessageThread } from './message-thread'
 
 interface PageProps {
   params: Promise<{ id: string }>
@@ -68,6 +69,17 @@ export default async function WorkDetailPage(props: PageProps) {
     .single()
 
   const settle = settlement as SettlementRow | null
+
+  // 메시지 조회
+  const { data: messagesData } = await adminClient
+    .from('deal_message')
+    .select('id, sender_type, content, created_at')
+    .eq('deal_id', dealId)
+    .order('created_at', { ascending: true })
+
+  const messages = (messagesData || []) as Array<{
+    id: string; sender_type: string; content: string; created_at: string
+  }>
 
   const allStepsDone = steps.length === 5 && steps.every((s) => s.status === 'done')
 
@@ -142,6 +154,11 @@ export default async function WorkDetailPage(props: PageProps) {
           </p>
         </div>
       )}
+
+      {/* 메시지 */}
+      <div className="mt-4">
+        <MessageThread dealId={dealId} messages={messages} />
+      </div>
 
       {/* 의뢰 상세 */}
       {request && (

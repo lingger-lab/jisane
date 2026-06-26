@@ -494,6 +494,80 @@ export type Database = {
           },
         ]
       }
+      partner_interest: {
+        Row: {
+          id: string
+          request_id: string
+          partner_id: string
+          note: string | null
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          request_id: string
+          partner_id: string
+          note?: string | null
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          request_id?: string
+          partner_id?: string
+          note?: string | null
+          created_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "partner_interest_request_id_fkey"
+            columns: ["request_id"]
+            isOneToOne: false
+            referencedRelation: "request"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "partner_interest_partner_id_fkey"
+            columns: ["partner_id"]
+            isOneToOne: false
+            referencedRelation: "partner"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      deal_message: {
+        Row: {
+          id: string
+          deal_id: string
+          sender_type: string
+          sender_id: string
+          content: string
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          deal_id: string
+          sender_type: string
+          sender_id: string
+          content: string
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          deal_id?: string
+          sender_type?: string
+          sender_id?: string
+          content?: string
+          created_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "deal_message_deal_id_fkey"
+            columns: ["deal_id"]
+            isOneToOne: false
+            referencedRelation: "deal"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       service_order: {
         Row: {
           id: string

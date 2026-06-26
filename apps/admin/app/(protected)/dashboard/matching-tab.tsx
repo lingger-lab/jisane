@@ -20,7 +20,13 @@ interface Candidate {
   score: number
 }
 
-export function MatchingTab({ requests }: { requests: RequestItem[] }) {
+export function MatchingTab({
+  requests,
+  interestCounts = {},
+}: {
+  requests: RequestItem[]
+  interestCounts?: Record<string, number>
+}) {
   const [expandedId, setExpandedId] = useState<string | null>(null)
   const [candidates, setCandidates] = useState<Candidate[]>([])
   const [loading, setLoading] = useState(false)
@@ -65,6 +71,11 @@ export function MatchingTab({ requests }: { requests: RequestItem[] }) {
                 )}
               </div>
               <p className="mt-2 line-clamp-2 text-sm text-text-muted">{req.detail}</p>
+              {(interestCounts[req.id] || 0) > 0 && (
+                <span className="mt-1 inline-flex items-center gap-1 rounded bg-accent/10 px-2 py-0.5 text-xs font-medium text-accent">
+                  관심 {interestCounts[req.id]}명
+                </span>
+              )}
             </div>
             <button
               type="button"
