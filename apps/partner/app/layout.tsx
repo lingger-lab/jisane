@@ -1,6 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import "@jisane/ui/styles/globals.css";
-import { ChatWidget } from "@jisane/ui/chat-widget";
+import { ChatWidgetLazy } from "@jisane/ui/chat-widget-lazy";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://partner.jisane.cloud"),
@@ -54,7 +54,7 @@ export default function RootLayout({
       </head>
       <body className="min-h-full flex flex-col bg-background text-foreground font-sans">
         {children}
-        <ChatWidget
+        <ChatWidgetLazy
           chatApiUrl={`${process.env.NEXT_PUBLIC_ADMIN_URL || 'https://jisane.cloud'}/api/chat`}
           role="partner"
           kakaoChannelUrl={process.env.NEXT_PUBLIC_KAKAO_CHANNEL_URL}
