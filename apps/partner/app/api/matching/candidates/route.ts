@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
 import { adminClient } from '@jisane/shared/supabase/admin'
-import { findCandidates } from '@/lib/matching-algo'
+import { findCandidates } from '@jisane/shared/matching-algo'
 import type { PartnerRow } from '@jisane/shared/types'
 
 export async function GET(request: Request) {
@@ -33,10 +33,11 @@ export async function GET(request: Request) {
     .from('partner')
     .select('id, auth_user_id, name, field, career_yrs, intro, status, grade')
     .eq('status', 'active')
+    .returns<PartnerRow[]>()
 
   const candidates = findCandidates(
     { title: req.title, detail: req.detail, req_type: req.req_type },
-    (partners || []) as unknown as PartnerRow[]
+    partners || []
   )
 
   return NextResponse.json({

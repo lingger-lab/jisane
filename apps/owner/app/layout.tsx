@@ -57,6 +57,7 @@ export default function RootLayout({
         <ChatWidget
           chatApiUrl={`${process.env.NEXT_PUBLIC_ADMIN_URL || 'https://jisane.cloud'}/api/chat`}
           role="owner"
+          kakaoChannelUrl={process.env.NEXT_PUBLIC_KAKAO_CHANNEL_URL}
           quickQuestions={[
             '일 맡기기는 어떻게 하나요?',
             '수수료가 어떻게 되나요?',

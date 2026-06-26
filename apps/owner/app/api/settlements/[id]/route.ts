@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server'
 import { cookies } from 'next/headers'
 import { createClient } from '@jisane/shared/supabase/server'
 import { adminClient } from '@jisane/shared/supabase/admin'
+import type { SettlementWithDealFlat } from '@jisane/shared/query-types'
 
 export async function GET(
   _request: Request,
@@ -22,6 +23,7 @@ export async function GET(
     .from('settlement')
     .select('*, deal:deal!inner(id, request_id, partner_id, work_fee, match_fee, total_pay, status)')
     .eq('id', settlementId)
+    .returns<SettlementWithDealFlat[]>()
     .single()
 
   if (!settlement) {
@@ -29,15 +31,7 @@ export async function GET(
   }
 
   // 소유권 확인: 기업(client) 또는 시니어
-  const deal = settlement.deal as unknown as {
-    id: string
-    request_id: string
-    partner_id: string
-    work_fee: number
-    match_fee: number
-    total_pay: number
-    status: string
-  }
+  const deal = settlement.deal
 
   // 파트너 확인
   const { data: partner } = await adminClient

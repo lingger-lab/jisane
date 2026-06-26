@@ -3,12 +3,20 @@ import { redirect } from 'next/navigation'
 import { createClient } from '@jisane/shared/supabase/server'
 import { adminClient } from '@jisane/shared/supabase/admin'
 import type { DealWorkflowRow } from '@jisane/shared/types'
+import type {
+  DealWithRelations,
+  SettlementWithDeal,
+  LedgerEntry,
+  ServiceOrderItem,
+  InquiryItem,
+} from '@jisane/shared/query-types'
 import { MatchingTab } from './matching-tab'
 import { ProgressTab } from './progress-tab'
 import { SettlementTab } from './settlement-tab'
 import { ServiceTab } from './service-tab'
 import { InquiryTab } from './inquiry-tab'
 import { DashboardTabs } from './dashboard-tabs'
+import { SummaryCard } from './summary-card'
 
 export default async function AdminDashboardPage() {
   const cookieStore = await cookies()
@@ -73,9 +81,10 @@ export default async function AdminDashboardPage() {
     `)
     .eq('status', 'working')
     .order('created_at', { ascending: false })
+    .returns<DealWithRelations[]>()
 
   // workflow + 메시지 카운트 조회
-  const dealIds = (workingDeals || []).map((d: Record<string, unknown>) => d.id as string)
+  const dealIds = (workingDeals || []).map((d) => d.id)
   let workflowData: DealWorkflowRow[] = []
   let messageCounts: Record<string, number> = {}
   if (dealIds.length > 0) {
@@ -109,6 +118,7 @@ export default async function AdminDashboardPage() {
     `)
     .in('escrow_status', ['deposited', 'reviewing'])
     .order('created_at', { ascending: false })
+    .returns<SettlementWithDeal[]>()
 
   // 적립금 원장
   const { data: ledgerEntries } = await adminClient
@@ -116,6 +126,7 @@ export default async function AdminDashboardPage() {
     .select('id, settlement_id, entry_type, amount, note, created_at')
     .order('created_at', { ascending: false })
     .limit(10)
+    .returns<LedgerEntry[]>()
 
   // 서비스 주문
   const { data: serviceOrders } = await adminClient
@@ -123,6 +134,7 @@ export default async function AdminDashboardPage() {
     .select('*')
     .order('created_at', { ascending: false })
     .limit(50)
+    .returns<ServiceOrderItem[]>()
 
   // 문의 목록
   const { data: inquiries } = await adminClient
@@ -130,6 +142,7 @@ export default async function AdminDashboardPage() {
     .select('id, author_type, category, content, status, created_at')
     .order('created_at', { ascending: false })
     .limit(50)
+    .returns<InquiryItem[]>()
 
   return (
     <div className="px-4 py-5 sm:px-6 sm:py-8 animate-fade-in">
@@ -157,98 +170,25 @@ export default async function AdminDashboardPage() {
         }
         progressTab={
           <ProgressTab
-            deals={(workingDeals || []) as unknown as Array<{
-              id: string
-              work_fee: number
-              match_fee: number
-              total_pay: number
-              status: string
-              created_at: string
-              request: { id: string; title: string; req_type: string | null }
-              partner: { id: string; name: string | null; field: string | null }
-            }>}
+            deals={workingDeals || []}
             workflows={workflowData}
             messageCounts={messageCounts}
           />
         }
         settlementTab={
           <SettlementTab
-            settlements={(pendingSettlements || []) as unknown as Array<{
-              id: string
-              deal_id: string
-              escrow_status: string
-              guarantee_fee: number
-              deposited_at: string | null
-              deal: {
-                id: string
-                work_fee: number
-                match_fee: number
-                total_pay: number
-                request: { id: string; title: string }
-                partner: { id: string; name: string | null }
-              }
-            }>}
-            ledgerEntries={(ledgerEntries || []) as unknown as Array<{
-              id: string
-              entry_type: string
-              amount: number
-              note: string | null
-              created_at: string
-            }>}
+            settlements={pendingSettlements || []}
+            ledgerEntries={ledgerEntries || []}
             fundBalance={summary.guaranteeFundBalance}
           />
         }
         serviceTab={
-          <ServiceTab
-            orders={(serviceOrders || []) as unknown as Array<{
-              id: string
-              category: string
-              package_slug: string
-              package_name: string
-              price: number
-              status: string
-              detail: string | null
-              created_at: string
-              client_id: string | null
-              partner_id: string | null
-            }>}
-          />
+          <ServiceTab orders={serviceOrders || []} />
         }
         inquiryTab={
-          <InquiryTab
-            inquiries={(inquiries || []) as unknown as Array<{
-              id: string
-              author_type: string | null
-              category: string | null
-              content: string
-              status: string
-              created_at: string
-            }>}
-          />
+          <InquiryTab inquiries={inquiries || []} />
         }
       />
-    </div>
-  )
-}
-
-function SummaryCard({
-  label,
-  value,
-  unit,
-  color,
-}: {
-  label: string
-  value: number | string
-  unit: string
-  color: string
-}) {
-  return (
-    <div className="rounded-xl border border-border-light bg-surface p-4 text-center shadow-sm card-hover">
-      <p className="text-xs text-text-muted">{label}</p>
-      <p className={`mt-1 text-xl sm:text-2xl font-bold ${color}`}>
-        {value}
-        <span className="text-sm font-normal text-text-muted">{unit}</span>
-      </p>
     </div>
   )
 }

@@ -4,7 +4,7 @@ import { useActionState, useState, useEffect } from 'react'
 import { updatePartnerProfile } from '@/lib/partner/actions'
 import { signOut } from '@jisane/shared/auth/actions'
 import { SubmitButton } from '@jisane/ui/submit-button'
-import { SuccessToast } from '@jisane/ui/toast'
+import { SuccessToast, ErrorToast } from '@jisane/ui/toast'
 
 const FIELD_CHIPS = [
   '창업코칭',
@@ -87,6 +87,7 @@ export default function MyPage() {
   return (
     <div className="flex flex-1 flex-col px-4 py-5 sm:px-6 sm:py-8 animate-fade-in">
       <SuccessToast />
+      <ErrorToast />
       <h1 className="mb-2 text-2xl font-bold text-accent">마이페이지</h1>
       <p className="mb-6 text-sm text-text-muted">
         내 프로필을 확인하고 수정할 수 있습니다.

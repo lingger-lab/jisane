@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
 import { adminClient } from '@jisane/shared/supabase/admin'
-import { cancelPayment } from '@/lib/payment'
+import { cancelPayment } from '@jisane/shared/payment'
 
 /**
  * 관리자 전용: 환불 처리

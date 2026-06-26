@@ -4,6 +4,7 @@ import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
 import { createClient } from '@jisane/shared/supabase/server'
 import { adminClient } from '@jisane/shared/supabase/admin'
+import type { DealWithOwnership } from '@jisane/shared/query-types'
 
 async function getAuthUserId(): Promise<string> {
   const cookieStore = await cookies()
@@ -20,13 +21,14 @@ async function verifyDealOwnership(dealId: string, authUserId: string) {
     .from('deal')
     .select('id, status, request_id, request:request!inner(id, client_id, client:client!inner(auth_user_id))')
     .eq('id', dealId)
+    .returns<DealWithOwnership[]>()
     .single()
 
   if (!deal) {
     return { error: '거래 정보를 찾을 수 없습니다.' }
   }
 
-  const request = deal.request as unknown as { id: string; client_id: string; client: { auth_user_id: string } }
+  const request = deal.request
   if (request.client.auth_user_id !== authUserId) {
     return { error: '접근 권한이 없습니다.' }
   }

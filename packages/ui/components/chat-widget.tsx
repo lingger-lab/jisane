@@ -18,9 +18,7 @@ const DEFAULT_QUICK_QUESTIONS = [
   '시니어 등록은 어떻게 하나요?',
 ]
 
-const KAKAO_CHANNEL_URL = 'https://pf.kakao.com/_placeholder' // TODO: 실제 채널 URL로 교체
-
-export function ChatWidget({ chatApiUrl, role, quickQuestions }: { chatApiUrl?: string; role?: AppRole; quickQuestions?: string[] }) {
+export function ChatWidget({ chatApiUrl, role, quickQuestions, kakaoChannelUrl }: { chatApiUrl?: string; role?: AppRole; quickQuestions?: string[]; kakaoChannelUrl?: string }) {
   const displayQuestions = quickQuestions || DEFAULT_QUICK_QUESTIONS
   const [isOpen, setIsOpen] = useState(false)
   const [messages, setMessages] = useState<Message[]>([])
@@ -168,9 +166,9 @@ export function ChatWidget({ chatApiUrl, role, quickQuestions }: { chatApiUrl?: 
                   }`}
                 >
                   <p className="whitespace-pre-wrap">{msg.text}</p>
-                  {msg.escalated && (
+                  {msg.escalated && kakaoChannelUrl && (
                     <a
-                      href={KAKAO_CHANNEL_URL}
+                      href={kakaoChannelUrl}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="mt-2 inline-block rounded-lg bg-warning px-3 py-1.5 text-xs font-medium text-white hover:bg-warning/90 transition-colors"

@@ -48,3 +48,48 @@ export function SuccessToast() {
     </div>
   )
 }
+
+const ERROR_MESSAGES: Record<string, string> = {
+  unauthorized: '로그인이 필요합니다',
+  forbidden: '접근 권한이 없습니다',
+  not_found: '요청한 정보를 찾을 수 없습니다',
+  payment_failed: '결제에 실패했습니다',
+  server_error: '서버 오류가 발생했습니다. 잠시 후 다시 시도해주세요',
+  deal_not_available: '해당 거래를 진행할 수 없습니다',
+  already_reviewed: '이미 리뷰를 작성하셨습니다',
+  invalid_input: '입력값을 확인해주세요',
+}
+
+export function ErrorToast() {
+  const searchParams = useSearchParams()
+  const router = useRouter()
+  const [message, setMessage] = useState<string | null>(null)
+
+  useEffect(() => {
+    const key = searchParams.get('error')
+    if (key) {
+      setMessage(ERROR_MESSAGES[key] || key)
+
+      const url = new URL(window.location.href)
+      url.searchParams.delete('error')
+      router.replace(url.pathname + url.search, { scroll: false })
+
+      const timer = setTimeout(() => setMessage(null), 4000)
+      return () => clearTimeout(timer)
+    }
+  }, [searchParams, router])
+
+  if (!message) return null
+
+  return (
+    <div
+      role="alert"
+      aria-live="assertive"
+      className="fixed top-16 left-1/2 z-50 -translate-x-1/2 animate-fade-in"
+    >
+      <div className="rounded-xl bg-error px-5 py-3 text-sm font-medium text-white shadow-lg">
+        {message}
+      </div>
+    </div>
+  )
+}

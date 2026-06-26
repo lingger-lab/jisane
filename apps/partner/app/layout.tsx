@@ -57,6 +57,7 @@ export default function RootLayout({
         <ChatWidget
           chatApiUrl={`${process.env.NEXT_PUBLIC_ADMIN_URL || 'https://jisane.cloud'}/api/chat`}
           role="partner"
+          kakaoChannelUrl={process.env.NEXT_PUBLIC_KAKAO_CHANNEL_URL}
           quickQuestions={[
             '시니어 등록은 어떻게 하나요?',
             '시니어는 수수료가 없나요?',

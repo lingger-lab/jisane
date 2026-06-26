@@ -4,12 +4,7 @@ import Link from 'next/link'
 import { createClient } from '@jisane/shared/supabase/server'
 import { adminClient } from '@jisane/shared/supabase/admin'
 import type { DealStatus } from '@jisane/shared/types'
-
-const STATUS_LABELS: Record<DealStatus, string> = {
-  quoted: '견적',
-  working: '진행 중',
-  done: '완료',
-}
+import { DEAL_STATUS_LABELS } from '@jisane/shared/labels'
 
 const STATUS_COLORS: Record<DealStatus, string> = {
   quoted: 'bg-info-light text-info',
@@ -98,7 +93,7 @@ export default async function WorkListPage() {
                       STATUS_COLORS[d.status]
                     }`}
                   >
-                    {STATUS_LABELS[d.status]}
+                    {DEAL_STATUS_LABELS[d.status]}
                   </span>
                 </div>
               </Link>

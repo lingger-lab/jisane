@@ -5,6 +5,7 @@ import { redirect } from 'next/navigation'
 import { revalidatePath } from 'next/cache'
 import { createClient } from '@jisane/shared/supabase/server'
 import { adminClient } from '@jisane/shared/supabase/admin'
+import type { DealWithClientId } from '@jisane/shared/query-types'
 
 async function getClientId(): Promise<string> {
   const cookieStore = await cookies()
@@ -29,14 +30,14 @@ async function verifyDealOwnership(dealId: string, clientId: string) {
     .from('deal')
     .select('id, request_id, request:request!inner(id, client_id)')
     .eq('id', dealId)
+    .returns<DealWithClientId[]>()
     .single()
 
   if (!deal) return null
 
-  const request = deal.request as unknown as { id: string; client_id: string }
-  if (request.client_id !== clientId) return null
+  if (deal.request.client_id !== clientId) return null
 
-  return { dealId: deal.id, requestId: request.id }
+  return { dealId: deal.id, requestId: deal.request.id }
 }
 
 export async function sendOwnerMessage(

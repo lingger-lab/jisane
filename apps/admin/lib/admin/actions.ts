@@ -4,8 +4,9 @@ import { cookies } from 'next/headers'
 import { revalidatePath } from 'next/cache'
 import { createClient } from '@jisane/shared/supabase/server'
 import { adminClient } from '@jisane/shared/supabase/admin'
-import { findCandidates } from '@/lib/matching-algo'
+import { findCandidates } from '@jisane/shared/matching-algo'
 import type { PartnerRow } from '@jisane/shared/types'
+import type { InterestWithPartner } from '@jisane/shared/query-types'
 
 async function verifyAdmin(): Promise<{ email: string }> {
   const cookieStore = await cookies()
@@ -36,7 +37,8 @@ export async function getCandidatesForRequest(requestId: string) {
     adminClient
       .from('partner_interest')
       .select('partner_id, note, partner:partner!inner(id, name, field, career_yrs)')
-      .eq('request_id', requestId),
+      .eq('request_id', requestId)
+      .returns<InterestWithPartner[]>(),
   ])
 
   if (!req) return { candidates: [] }
@@ -53,7 +55,7 @@ export async function getCandidatesForRequest(requestId: string) {
 
   // 관심 표현 파트너 매핑
   const interestMap = new Map<string, string | null>()
-  for (const i of (interests || []) as Array<{ partner_id: string; note: string | null }>) {
+  for (const i of (interests || [])) {
     interestMap.set(i.partner_id, i.note)
   }
 
@@ -70,7 +72,7 @@ export async function getCandidatesForRequest(requestId: string) {
   }))
 
   // 관심 표현했지만 알고리즘 후보가 아닌 파트너 추가
-  for (const i of (interests || []) as unknown as Array<{ partner_id: string; note: string | null; partner: { id: string; name: string | null; field: string | null; career_yrs: number | null } }>) {
+  for (const i of (interests || [])) {
     if (!candidateIds.has(i.partner_id)) {
       merged.push({
         partner_id: i.partner_id,

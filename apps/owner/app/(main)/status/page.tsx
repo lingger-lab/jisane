@@ -4,15 +4,9 @@ import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import { createClient } from '@jisane/shared/supabase/server'
 import { adminClient } from '@jisane/shared/supabase/admin'
-import { SuccessToast } from '@jisane/ui/toast'
+import { SuccessToast, ErrorToast } from '@jisane/ui/toast'
 import type { RequestRow, ServiceOrderRow } from '@jisane/shared/types'
-
-const STATUS_LABELS: Record<string, string> = {
-  open: '접수',
-  matching: '매칭 중',
-  dealt: '진행 중',
-  closed: '완료',
-}
+import { REQUEST_STATUS_LABELS, ORDER_STATUS_LABELS } from '@jisane/shared/labels'
 
 const STATUS_COLORS: Record<string, string> = {
   open: 'bg-info-light text-info',
@@ -26,14 +20,6 @@ const STRIPE_COLORS: Record<string, string> = {
   matching: 'border-l-warning',
   dealt: 'border-l-success',
   closed: 'border-l-border',
-}
-
-const ORDER_STATUS_LABELS: Record<string, string> = {
-  pending: '접수',
-  paid: '결제 완료',
-  processing: '진행 중',
-  completed: '완료',
-  cancelled: '취소',
 }
 
 const ORDER_STATUS_COLORS: Record<string, string> = {
@@ -94,7 +80,7 @@ export default async function StatusPage() {
 
   return (
     <div className="flex flex-1 flex-col px-4 py-5 sm:px-6 sm:py-8 animate-fade-in">
-      <Suspense><SuccessToast /></Suspense>
+      <Suspense><SuccessToast /><ErrorToast /></Suspense>
 
       {/* 대시보드 헤더 */}
       <div className="mb-5">
@@ -153,7 +139,7 @@ export default async function StatusPage() {
                       STATUS_COLORS[req.status] || 'bg-surface text-text-subtle'
                     }`}
                   >
-                    {STATUS_LABELS[req.status] || req.status}
+                    {REQUEST_STATUS_LABELS[req.status] || req.status}
                   </span>
                 </div>
               </Link>

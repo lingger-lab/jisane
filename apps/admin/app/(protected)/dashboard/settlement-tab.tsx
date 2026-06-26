@@ -83,7 +83,7 @@ export function SettlementTab({
       </div>
 
       {/* 정산 대기 목록 */}
-      {error && <p className="text-xs text-accent">{error}</p>}
+      {error && <p className="text-xs text-error">{error}</p>}
 
       {settlements.length === 0 ? (
         <p className="py-8 text-center text-sm text-text-muted">정산 대기 중인 건이 없습니다.</p>

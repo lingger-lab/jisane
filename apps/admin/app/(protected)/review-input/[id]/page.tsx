@@ -3,6 +3,7 @@ import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import { createClient } from '@jisane/shared/supabase/server'
 import { adminClient } from '@jisane/shared/supabase/admin'
+import type { DealForReview } from '@jisane/shared/query-types'
 import { ReviewForm } from './review-form'
 
 interface PageProps {
@@ -27,12 +28,13 @@ export default async function ReviewInputPage(props: PageProps) {
       partner:partner!inner(id, name, field, career_yrs)
     `)
     .eq('id', dealId)
+    .returns<DealForReview[]>()
     .single()
 
   if (!deal) redirect('/dashboard')
 
-  const req = deal.request as unknown as { id: string; title: string; req_type: string | null; detail: string }
-  const partner = deal.partner as unknown as { id: string; name: string | null; field: string | null; career_yrs: number | null }
+  const req = deal.request
+  const partner = deal.partner
 
   // 기존 리뷰 확인
   const { data: existingReview } = await adminClient

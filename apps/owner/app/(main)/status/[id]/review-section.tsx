@@ -60,11 +60,14 @@ export function ReviewSection({ dealId, existingReview }: ReviewSectionProps) {
       <p className="mb-3 text-xs text-text-muted">시니어 전문가의 작업에 대해 평가해주세요.</p>
 
       {/* 별점 */}
-      <div className="mb-3 flex items-center gap-1">
+      <div className="mb-3 flex items-center gap-1" role="radiogroup" aria-label="작업 평점">
         {[1, 2, 3, 4, 5].map((star) => (
           <button
             key={star}
             type="button"
+            role="radio"
+            aria-checked={rating === star}
+            aria-label={`${star}점`}
             onClick={() => setRating(star)}
             className={`text-2xl transition-colors ${
               star <= rating ? 'text-warning' : 'text-border hover:text-warning/50'
@@ -87,7 +90,7 @@ export function ReviewSection({ dealId, existingReview }: ReviewSectionProps) {
         className="mb-3 w-full resize-none rounded-xl border border-border-light bg-background px-3 py-2 text-sm text-text placeholder:text-text-subtle focus:border-accent focus:ring-1 focus:ring-accent/20 focus:outline-none transition-colors"
       />
 
-      {error && <p className="mb-2 text-xs text-error">{error}</p>}
+      {error && <p className="mb-2 text-xs text-error" role="alert" aria-live="polite">{error}</p>}
 
       <form action={handleSubmit}>
         <SubmitButton className="w-full rounded-xl bg-accent px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-accent/90 disabled:opacity-50">

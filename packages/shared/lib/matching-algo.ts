@@ -1,4 +1,4 @@
-import type { PartnerRow } from '@jisane/shared/types'
+import type { PartnerRow } from './types'
 
 export interface ScoredPartner {
   partner: PartnerRow

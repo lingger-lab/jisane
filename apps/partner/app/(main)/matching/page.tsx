@@ -4,28 +4,15 @@ import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import { createClient } from '@jisane/shared/supabase/server'
 import { adminClient } from '@jisane/shared/supabase/admin'
-import { SuccessToast } from '@jisane/ui/toast'
+import { SuccessToast, ErrorToast } from '@jisane/ui/toast'
 import type { MatchingStatus, ServiceOrderRow } from '@jisane/shared/types'
+import { MATCHING_STATUS_LABELS, ORDER_STATUS_LABELS } from '@jisane/shared/labels'
 import { OpportunitySection } from './opportunity-section'
-
-const STATUS_LABELS: Record<MatchingStatus, string> = {
-  proposed: '제안',
-  accepted: '수락',
-  rejected: '거절',
-}
 
 const STATUS_COLORS: Record<MatchingStatus, string> = {
   proposed: 'bg-info-light text-info',
   accepted: 'bg-success-light text-success',
   rejected: 'bg-surface text-text-subtle',
-}
-
-const ORDER_STATUS_LABELS: Record<string, string> = {
-  pending: '접수',
-  paid: '결제 완료',
-  processing: '진행 중',
-  completed: '완료',
-  cancelled: '취소',
 }
 
 const ORDER_STATUS_COLORS: Record<string, string> = {
@@ -107,7 +94,7 @@ export default async function MatchingListPage() {
 
   return (
     <div className="flex flex-1 flex-col px-4 py-5 sm:px-6 sm:py-8 animate-fade-in">
-      <Suspense><SuccessToast /></Suspense>
+      <Suspense><SuccessToast /><ErrorToast /></Suspense>
 
       {/* 대시보드 헤더 */}
       <div className="mb-5">
@@ -192,7 +179,7 @@ export default async function MatchingListPage() {
                       STATUS_COLORS[m.status]
                     }`}
                   >
-                    {STATUS_LABELS[m.status]}
+                    {MATCHING_STATUS_LABELS[m.status]}
                   </span>
                 </div>
               </Link>

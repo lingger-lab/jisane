@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
 import { adminClient } from '@jisane/shared/supabase/admin'
-import { confirmPayment } from '@/lib/payment'
+import { confirmPayment } from '@jisane/shared/payment'
 import crypto from 'crypto'
 
 /**

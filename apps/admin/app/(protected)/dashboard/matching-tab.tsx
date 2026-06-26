@@ -60,7 +60,7 @@ export function MatchingTab({
 
   return (
     <div className="flex flex-col gap-3">
-      {actionError && <p className="text-xs text-accent">{actionError}</p>}
+      {actionError && <p className="text-xs text-error">{actionError}</p>}
       {requests.map((req) => (
         <div key={req.id} className="rounded-lg border border-border p-4">
           <div className="flex items-start justify-between">

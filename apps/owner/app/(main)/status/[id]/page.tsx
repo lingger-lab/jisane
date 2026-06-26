@@ -5,8 +5,9 @@ import Link from 'next/link'
 import { createClient } from '@jisane/shared/supabase/server'
 import { adminClient } from '@jisane/shared/supabase/admin'
 import { ProgressBar } from '@jisane/ui/progress-bar'
-import { SuccessToast } from '@jisane/ui/toast'
+import { SuccessToast, ErrorToast } from '@jisane/ui/toast'
 import type { RequestRow, DealRow, DealWorkflowRow, PartnerRow } from '@jisane/shared/types'
+import { WORKFLOW_STEP_LABELS, STEP_STATUS_LABELS } from '@jisane/shared/labels'
 import { QuoteSection } from './quote-section'
 import { InspectionSection } from './inspection-section'
 import { MessageThread } from './message-thread'
@@ -108,7 +109,7 @@ export default async function StatusDetailPage(props: PageProps) {
 
   return (
     <div className="flex flex-1 flex-col px-4 py-5 sm:px-6 sm:py-8 animate-fade-in">
-      <Suspense><SuccessToast /></Suspense>
+      <Suspense><SuccessToast /><ErrorToast /></Suspense>
       {/* 뒤로가기 */}
       <Link href="/status" className="mb-4 text-sm text-text-muted hover:text-text transition-colors">
         &larr; 의뢰 목록
@@ -184,7 +185,7 @@ export default async function StatusDetailPage(props: PageProps) {
                       }`}
                     />
                     <span className="text-sm text-text">
-                      {WORKFLOW_LABELS[wf.step] || wf.step}
+                      {WORKFLOW_STEP_LABELS[wf.step] || wf.step}
                     </span>
                     <span className="text-xs text-text-muted">
                       {STEP_STATUS_LABELS[wf.status] || wf.status}
@@ -257,16 +258,3 @@ export default async function StatusDetailPage(props: PageProps) {
   )
 }
 
-const WORKFLOW_LABELS: Record<string, string> = {
-  intake: '요건 파악',
-  structure: '구조화',
-  generate: '작업 수행',
-  verify: '검증',
-  deliver: '납품',
-}
-
-const STEP_STATUS_LABELS: Record<string, string> = {
-  pending: '대기',
-  in_progress: '진행 중',
-  done: '완료',
-}

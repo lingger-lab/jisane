@@ -54,7 +54,7 @@ export default function RootLayout({
       </head>
       <body className="min-h-full flex flex-col bg-background text-foreground font-sans">
         {children}
-        <ChatWidget role="admin" />
+        <ChatWidget role="admin" kakaoChannelUrl={process.env.NEXT_PUBLIC_KAKAO_CHANNEL_URL} />
       </body>
     </html>
   );

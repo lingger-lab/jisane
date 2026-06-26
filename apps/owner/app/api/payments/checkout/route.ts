@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server'
 import { cookies } from 'next/headers'
 import { createClient } from '@jisane/shared/supabase/server'
 import { adminClient } from '@jisane/shared/supabase/admin'
-import { createCheckoutSession } from '@/lib/payment'
+import { createCheckoutSession } from '@jisane/shared/payment'
 
 export async function POST(request: Request) {
   const cookieStore = await cookies()
