@@ -72,7 +72,7 @@ export function SettlementTab({
                 <span className="text-text-muted">
                   {entry.entry_type === 'accrue' ? '적립' : '사용'} · {entry.note}
                 </span>
-                <span className={entry.entry_type === 'accrue' ? 'text-green-600' : 'text-red-600'}>
+                <span className={entry.entry_type === 'accrue' ? 'text-success' : 'text-error'}>
                   {entry.entry_type === 'accrue' ? '+' : '-'}
                   {entry.amount.toLocaleString('ko-KR')}원
                 </span>
@@ -100,8 +100,8 @@ export function SettlementTab({
                 </div>
                 <span className={`rounded-full px-2 py-0.5 text-xs font-medium ${
                   s.escrow_status === 'deposited'
-                    ? 'bg-blue-100 text-blue-700'
-                    : 'bg-yellow-100 text-yellow-700'
+                    ? 'bg-info-light text-info'
+                    : 'bg-warning-light text-warning'
                 }`}>
                   {s.escrow_status === 'deposited' ? '입금 완료' : '검수 중'}
                 </span>
@@ -126,7 +126,7 @@ export function SettlementTab({
                 type="button"
                 onClick={() => handleRelease(s.id)}
                 disabled={releasing === s.id}
-                className="mt-3 w-full rounded-lg bg-green-600 py-2 text-sm font-medium text-white hover:bg-green-700 disabled:opacity-50"
+                className="mt-3 w-full rounded-lg bg-success py-2 text-sm font-medium text-white hover:bg-success/90 disabled:opacity-50"
               >
                 {releasing === s.id ? '처리 중...' : '정산 실행'}
               </button>

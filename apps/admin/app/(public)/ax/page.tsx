@@ -47,10 +47,6 @@ export default function AXPage() {
 
   return (
     <div className="mx-auto max-w-2xl px-6 py-12">
-      <Link href="/" className="mb-8 inline-block text-sm text-text-muted hover:text-text transition-colors">
-        &larr; 홈으로
-      </Link>
-
       {/* 히어로 */}
       <section className="mb-12 animate-fade-in">
         <p className="mb-2 text-sm font-semibold text-accent tracking-wide">AI Transformation</p>

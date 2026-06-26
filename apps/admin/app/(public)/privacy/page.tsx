@@ -1,5 +1,3 @@
-import Link from 'next/link'
-
 export const metadata = {
   title: '개인정보처리방침 | 지사네',
 }
@@ -7,10 +5,6 @@ export const metadata = {
 export default function PrivacyPage() {
   return (
     <div className="mx-auto max-w-2xl px-6 py-12">
-      <Link href="/" className="mb-8 inline-block text-sm text-text-muted hover:text-text transition-colors">
-        &larr; 홈으로
-      </Link>
-
       <h1 className="text-2xl font-bold text-text mb-2">개인정보처리방침</h1>
       <p className="text-xs text-text-subtle mb-8">시행일: 2025년 6월 15일</p>
 

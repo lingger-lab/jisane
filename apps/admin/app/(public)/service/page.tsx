@@ -14,12 +14,11 @@ const STEPS = [
 ] as const
 
 export default function ServicePage() {
+  const ownerUrl = process.env.NEXT_PUBLIC_OWNER_URL || 'https://owner.jisane.cloud'
+  const partnerUrl = process.env.NEXT_PUBLIC_PARTNER_URL || 'https://partner.jisane.cloud'
+
   return (
     <div className="mx-auto max-w-2xl px-6 py-12">
-      <Link href="/" className="mb-8 inline-block text-sm text-text-muted hover:text-text transition-colors">
-        &larr; 홈으로
-      </Link>
-
       {/* 히어로 */}
       <section className="mb-12 animate-fade-in">
         <h1 className="text-3xl font-bold text-primary leading-tight">
@@ -94,12 +93,12 @@ export default function ServicePage() {
               기업 수수료 0% — 매칭비만 별도
             </li>
           </ul>
-          <Link
-            href="/signup?role=client"
+          <a
+            href={ownerUrl}
             className="mt-5 flex h-12 items-center justify-center rounded-xl bg-primary text-base font-semibold text-white shadow-sm transition-all hover:bg-primary-light hover:shadow-md btn-press"
           >
             시니어 인력 신청하기
-          </Link>
+          </a>
         </div>
       </section>
 
@@ -125,12 +124,12 @@ export default function ServicePage() {
               지사네 에스크로로 안전하게 보관
             </li>
           </ul>
-          <Link
-            href="/signup?role=partner"
+          <a
+            href={partnerUrl}
             className="mt-5 flex h-12 items-center justify-center rounded-xl border-2 border-accent text-base font-semibold text-accent transition-colors hover:bg-accent/5 btn-press"
           >
             기업 매칭 신청하기
-          </Link>
+          </a>
         </div>
       </section>
 

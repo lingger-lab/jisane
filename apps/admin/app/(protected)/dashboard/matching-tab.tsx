@@ -94,14 +94,14 @@ export function MatchingTab({ requests }: { requests: RequestItem[] }) {
                         <span className="ml-2 text-xs text-text-muted">
                           {c.field} · {c.career_yrs || 0}년
                         </span>
-                        <span className="ml-2 rounded bg-blue-100 px-1.5 py-0.5 text-xs font-medium text-blue-700">
+                        <span className="ml-2 rounded bg-info-light px-1.5 py-0.5 text-xs font-medium text-info">
                           {c.score}점
                         </span>
                       </div>
                       <button
                         type="button"
                         onClick={() => handleAssign(req.id, c.partner_id)}
-                        className="rounded-lg bg-green-600 px-3 py-1 text-xs font-medium text-white hover:bg-green-700"
+                        className="rounded-lg bg-success px-3 py-1 text-xs font-medium text-white hover:bg-success/90"
                       >
                         배정
                       </button>

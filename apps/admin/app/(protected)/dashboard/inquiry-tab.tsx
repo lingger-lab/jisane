@@ -10,10 +10,10 @@ interface InquiryItem {
 }
 
 const STATUS_LABELS: Record<string, { label: string; color: string }> = {
-  open: { label: '대기', color: 'bg-red-100 text-red-700' },
-  ai_answered: { label: 'AI 응답', color: 'bg-blue-100 text-blue-700' },
-  human_routed: { label: '사람 연결', color: 'bg-yellow-100 text-yellow-700' },
-  closed: { label: '종료', color: 'bg-gray-100 text-gray-600' },
+  open: { label: '대기', color: 'bg-error-light text-error' },
+  ai_answered: { label: 'AI 응답', color: 'bg-info-light text-info' },
+  human_routed: { label: '사람 연결', color: 'bg-warning-light text-warning' },
+  closed: { label: '종료', color: 'bg-surface text-text-muted' },
 }
 
 export function InquiryTab({ inquiries }: { inquiries: InquiryItem[] }) {

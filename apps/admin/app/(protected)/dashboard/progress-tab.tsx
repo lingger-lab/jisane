@@ -58,11 +58,11 @@ export function ProgressTab({
             </div>
 
             {allDone && (
-              <div className="mt-3 flex items-center justify-between rounded-md bg-green-50 p-2">
-                <span className="text-xs font-medium text-green-700">모든 단계 완료</span>
+              <div className="mt-3 flex items-center justify-between rounded-md bg-success-light p-2">
+                <span className="text-xs font-medium text-success">모든 단계 완료</span>
                 <Link
-                  href={`/admin/review-input/${deal.id}`}
-                  className="rounded bg-green-600 px-3 py-1 text-xs font-medium text-white hover:bg-green-700"
+                  href={`/review-input/${deal.id}`}
+                  className="rounded bg-success px-3 py-1 text-xs font-medium text-white hover:bg-success/90"
                 >
                   리뷰 입력
                 </Link>
