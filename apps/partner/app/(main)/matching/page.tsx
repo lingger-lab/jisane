@@ -101,7 +101,6 @@ export default async function MatchingListPage() {
         <p className="text-lg font-bold text-text">
           안녕하세요, {partner.name || '시니어'}님
         </p>
-        <p className="text-xs text-text-muted">{user.email} · 지사네 시니어공간</p>
       </div>
 
       {/* 프로필 미완성 배너 */}
