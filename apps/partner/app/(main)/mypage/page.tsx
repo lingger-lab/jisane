@@ -103,7 +103,7 @@ export default function MyPage() {
           </div>
         </div>
         <div className="mt-3 flex gap-3 text-xs text-text-muted">
-          <span className="rounded-full bg-accent/15 px-2.5 py-0.5 font-medium text-accent">{profile.grade === 'gold' ? '골드' : '스탠다드'}</span>
+          <span className="rounded-full bg-accent/15 px-2.5 py-0.5 font-medium text-accent">{profile.grade === 'veteran' ? '베테랑' : profile.grade === 'new' ? '신규' : '스탠다드'}</span>
           <span>가입: {new Date(profile.created_at).toLocaleDateString('ko-KR')}</span>
         </div>
       </div>

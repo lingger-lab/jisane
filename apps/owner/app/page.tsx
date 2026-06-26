@@ -13,7 +13,7 @@ export default async function OwnerHome() {
   const { data: { user } } = await supabase.auth.getUser()
 
   if (user) {
-    redirect('/request')
+    redirect('/status')
   }
 
   const adminUrl = process.env.NEXT_PUBLIC_ADMIN_URL || 'https://jisane.cloud'

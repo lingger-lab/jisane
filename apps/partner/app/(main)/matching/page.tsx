@@ -28,7 +28,7 @@ export default async function MatchingListPage() {
 
   const { data: partner } = await adminClient
     .from('partner')
-    .select('id')
+    .select('id, name, field')
     .eq('auth_user_id', user.id)
     .single()
 
@@ -47,17 +47,74 @@ export default async function MatchingListPage() {
     request: { id: string; title: string; req_type: string | null; budget_hope: number | null }
   }>
 
+  const proposedCount = matchingList.filter((m) => m.status === 'proposed').length
+
+  const { count: workingCount } = await adminClient
+    .from('deal')
+    .select('id', { count: 'exact', head: true })
+    .eq('partner_id', partner.id)
+    .eq('status', 'working')
+
+  const profileIncomplete = !partner.field
+
   return (
     <div className="flex flex-1 flex-col px-4 py-5 sm:px-6 sm:py-8 animate-fade-in">
       <Suspense><SuccessToast /></Suspense>
-      <h1 className="mb-6 text-2xl font-bold text-accent">매칭 제안</h1>
+
+      {/* 대시보드 헤더 */}
+      <div className="mb-5">
+        <p className="text-lg font-bold text-text">
+          안녕하세요, {partner.name || '시니어'}님
+        </p>
+        <p className="text-xs text-text-muted">지사네 시니어공간</p>
+      </div>
+
+      {/* 프로필 미완성 배너 */}
+      {profileIncomplete && (
+        <Link
+          href="/mypage"
+          className="mb-4 flex items-center gap-3 rounded-xl border border-warning/30 bg-warning/5 p-4 transition-colors hover:bg-warning/10"
+        >
+          <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-warning/15 text-sm">!</span>
+          <div className="flex-1">
+            <p className="text-sm font-medium text-text">프로필을 완성해주세요</p>
+            <p className="text-xs text-text-muted">전문 분야를 등록하면 매칭 확률이 높아집니다</p>
+          </div>
+          <span className="text-xs font-medium text-warning">완성하기</span>
+        </Link>
+      )}
+
+      {/* 요약 카드 */}
+      <div className="mb-6 grid grid-cols-2 gap-3">
+        <div className="rounded-xl border border-border-light bg-surface-warm p-4 text-center">
+          <p className="text-2xl font-bold text-accent">{proposedCount}</p>
+          <p className="text-xs text-text-muted">새 매칭 제안</p>
+        </div>
+        <Link href="/work" className="rounded-xl border border-border-light bg-surface-warm p-4 text-center transition-colors hover:bg-surface">
+          <p className="text-2xl font-bold text-accent">{workingCount || 0}</p>
+          <p className="text-xs text-text-muted">진행 중 작업</p>
+        </Link>
+      </div>
+
+      {/* 매칭 리스트 */}
+      <h2 className="mb-3 text-base font-bold text-text">매칭 제안</h2>
 
       {matchingList.length === 0 ? (
-        <div className="flex flex-1 flex-col items-center justify-center gap-4 text-center">
+        <div className="flex flex-1 flex-col items-center justify-center gap-4 text-center py-12">
           <p className="text-text-muted">아직 매칭 제안이 없습니다.</p>
-          <p className="text-xs text-text-subtle">
-            지사네 매니저가 적합한 의뢰를 연결해드립니다.
+          <p className="text-xs text-text-subtle max-w-xs">
+            {profileIncomplete
+              ? '프로필을 완성하면 지사네 매니저가 적합한 의뢰를 연결해드립니다.'
+              : '지사네 매니저가 적합한 의뢰를 연결해드립니다.'}
           </p>
+          {profileIncomplete && (
+            <Link
+              href="/mypage"
+              className="rounded-xl bg-accent px-6 py-3 font-semibold text-white shadow-sm transition-all hover:bg-accent/90 hover:shadow-md btn-press"
+            >
+              프로필 완성하기
+            </Link>
+          )}
         </div>
       ) : (
         <ul className="flex flex-col gap-3">

@@ -57,20 +57,48 @@ export default async function StatusPage() {
 
   const requestList = (requests || []) as RequestRow[]
 
+  const activeCount = requestList.filter((r) => ['open', 'matching', 'dealt'].includes(r.status)).length
+  const closedCount = requestList.filter((r) => r.status === 'closed').length
+
   return (
     <div className="flex flex-1 flex-col px-4 py-5 sm:px-6 sm:py-8 animate-fade-in">
       <Suspense><SuccessToast /></Suspense>
-      <h1 className="mb-6 text-2xl font-bold text-primary">의뢰 현황</h1>
+
+      {/* 대시보드 헤더 */}
+      <div className="mb-5">
+        <p className="text-lg font-bold text-text">안녕하세요</p>
+        <p className="text-xs text-text-muted">지사네 기업공간</p>
+      </div>
+
+      {/* 요약 카드 */}
+      <div className="mb-4 grid grid-cols-2 gap-3">
+        <div className="rounded-xl border border-border-light bg-surface-warm p-4 text-center">
+          <p className="text-2xl font-bold text-primary">{activeCount}</p>
+          <p className="text-xs text-text-muted">진행 중 의뢰</p>
+        </div>
+        <div className="rounded-xl border border-border-light bg-surface-warm p-4 text-center">
+          <p className="text-2xl font-bold text-primary">{closedCount}</p>
+          <p className="text-xs text-text-muted">완료된 의뢰</p>
+        </div>
+      </div>
+
+      {/* 새 의뢰 CTA */}
+      <Link
+        href="/request"
+        className="mb-6 flex items-center justify-center gap-2 rounded-xl bg-primary px-6 py-3 font-semibold text-white shadow-sm transition-all hover:bg-primary-light hover:shadow-md btn-press"
+      >
+        + 새 의뢰 등록
+      </Link>
+
+      {/* 의뢰 리스트 */}
+      <h2 className="mb-3 text-base font-bold text-text">의뢰 현황</h2>
 
       {requestList.length === 0 ? (
-        <div className="flex flex-1 flex-col items-center justify-center gap-4 text-center">
+        <div className="flex flex-1 flex-col items-center justify-center gap-4 text-center py-12">
           <p className="text-text-muted">아직 등록한 의뢰가 없습니다.</p>
-          <Link
-            href="/request"
-            className="rounded-xl bg-primary px-6 py-3 font-semibold text-white shadow-sm transition-all hover:bg-primary-light hover:shadow-md btn-press"
-          >
-            일 맡기기
-          </Link>
+          <p className="text-xs text-text-subtle max-w-xs">
+            시니어 전문가에게 맡길 작업을 등록하세요.
+          </p>
         </div>
       ) : (
         <ul className="flex flex-col gap-3">
