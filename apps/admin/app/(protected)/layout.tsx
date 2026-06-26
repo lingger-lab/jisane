@@ -19,15 +19,12 @@ export default async function AdminLayout({ children }: { children: React.ReactN
 
   return (
     <>
-      <header className="border-b border-border-light bg-background px-6 py-3">
-        <div className="mx-auto flex max-w-5xl items-center justify-between">
-          <div className="flex items-center gap-4">
-            <h1 className="text-lg font-bold text-primary">지사네 관리자</h1>
-            <Link href="/dashboard" className="text-sm text-text-muted hover:text-text">대시보드</Link>
-          </div>
-          <p className="text-xs text-text-muted">{user.email}</p>
+      <nav className="border-b border-border-light bg-background px-6 py-3">
+        <div className="mx-auto flex max-w-5xl items-center gap-4">
+          <span className="text-lg font-bold text-primary">관리자</span>
+          <Link href="/dashboard" className="text-sm text-text-muted hover:text-text">대시보드</Link>
         </div>
-      </header>
+      </nav>
       <main className="flex-1">{children}</main>
     </>
   )

@@ -18,18 +18,13 @@ export default async function AdminHome() {
 
   return (
     <div className="flex flex-1 flex-col">
-      <header className="sticky top-0 z-40 border-b border-border-light bg-background/80 backdrop-blur-lg">
-        <div className="mx-auto flex h-14 max-w-md items-center justify-between px-4">
-          <Link href="/" className="text-xl font-bold text-primary tracking-tight">지사네</Link>
-          <div className="flex items-center gap-3">
-            <Link href="/ax" className="text-xs text-text-muted hover:text-text transition-colors">AX 전환</Link>
-            <Link href="/service" className="text-xs text-text-muted hover:text-text transition-colors">서비스 안내</Link>
-            {isAdmin && (
-              <Link href="/dashboard" className="text-xs text-accent font-medium hover:text-accent/80 transition-colors">관리자</Link>
-            )}
-          </div>
-        </div>
-      </header>
+      <nav className="mx-auto flex w-full max-w-md items-center justify-end gap-3 px-4 py-2">
+        <Link href="/ax" className="text-xs text-text-muted hover:text-text transition-colors">AX 전환</Link>
+        <Link href="/service" className="text-xs text-text-muted hover:text-text transition-colors">서비스 안내</Link>
+        {isAdmin && (
+          <Link href="/dashboard" className="text-xs text-accent font-medium hover:text-accent/80 transition-colors">관리자</Link>
+        )}
+      </nav>
 
       <div className="flex flex-1 flex-col items-center justify-center px-4 py-10">
         <main className="flex w-full max-w-md flex-col items-center gap-8 text-center">

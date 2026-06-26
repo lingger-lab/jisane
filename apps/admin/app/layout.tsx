@@ -1,5 +1,9 @@
 import type { Metadata, Viewport } from "next";
 import "@jisane/ui/styles/globals.css";
+import { cookies } from "next/headers";
+import { createClient } from "@jisane/shared/supabase/server";
+import { signInWithGoogle, signInWithKakao, signOut } from "@jisane/shared/auth/actions";
+import { AppHeader } from "@jisane/ui/app-header";
 import { ChatWidgetLazy } from "@jisane/ui/chat-widget-lazy";
 
 export const metadata: Metadata = {
@@ -37,11 +41,15 @@ export const viewport: Viewport = {
   maximumScale: 1,
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const cookieStore = await cookies();
+  const supabase = createClient(cookieStore);
+  const { data: { user } } = await supabase.auth.getUser();
+
   return (
     <html lang="ko" className="h-full antialiased">
       <head>
@@ -53,6 +61,13 @@ export default function RootLayout({
         />
       </head>
       <body className="min-h-full flex flex-col bg-background text-foreground font-sans">
+        <AppHeader
+          appName="지사네"
+          userEmail={user?.email}
+          signOutAction={signOut}
+          signInWithKakao={signInWithKakao}
+          signInWithGoogle={signInWithGoogle}
+        />
         {children}
         <ChatWidgetLazy role="admin" kakaoChannelUrl={process.env.NEXT_PUBLIC_KAKAO_CHANNEL_URL} />
       </body>

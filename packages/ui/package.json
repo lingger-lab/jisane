@@ -12,7 +12,9 @@
     "./chat-widget": "./components/chat-widget.tsx",
     "./chat-widget-lazy": "./components/chat-widget-lazy.tsx",
     "./icons/google": "./components/icons/google.tsx",
-    "./icons/kakao": "./components/icons/kakao.tsx"
+    "./icons/kakao": "./components/icons/kakao.tsx",
+    "./app-header": "./components/app-header.tsx",
+    "./login-dropdown": "./components/login-dropdown.tsx"
   },
   "devDependencies": {
     "typescript": "^5"

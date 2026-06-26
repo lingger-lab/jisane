@@ -13,7 +13,7 @@ export default async function PartnerMainLayout({ children }: { children: React.
   }
 
   return (
-    <div className="flex min-h-screen flex-col pb-16">
+    <div className="flex flex-1 flex-col pb-16">
       {children}
       <PartnerNav />
     </div>
