@@ -27,11 +27,17 @@ async function verifyAdmin(): Promise<{ email: string }> {
 export async function getCandidatesForRequest(requestId: string) {
   await verifyAdmin()
 
-  const { data: req } = await adminClient
-    .from('request')
-    .select('id, title, detail, req_type')
-    .eq('id', requestId)
-    .single()
+  const [{ data: req }, { data: interests }] = await Promise.all([
+    adminClient
+      .from('request')
+      .select('id, title, detail, req_type')
+      .eq('id', requestId)
+      .single(),
+    adminClient
+      .from('partner_interest')
+      .select('partner_id, note, partner:partner!inner(id, name, field, career_yrs)')
+      .eq('request_id', requestId),
+  ])
 
   if (!req) return { candidates: [] }
 
@@ -45,15 +51,47 @@ export async function getCandidatesForRequest(requestId: string) {
     (partners || []) as PartnerRow[]
   )
 
-  return {
-    candidates: candidates.map((c) => ({
-      partner_id: c.partner.id,
-      name: c.partner.name,
-      field: c.partner.field,
-      career_yrs: c.partner.career_yrs,
-      score: c.score,
-    })),
+  // 관심 표현 파트너 매핑
+  const interestMap = new Map<string, string | null>()
+  for (const i of (interests || []) as Array<{ partner_id: string; note: string | null }>) {
+    interestMap.set(i.partner_id, i.note)
   }
+
+  // 알고리즘 후보에 관심 표현 플래그 추가
+  const candidateIds = new Set(candidates.map((c) => c.partner.id))
+  const merged = candidates.map((c) => ({
+    partner_id: c.partner.id,
+    name: c.partner.name,
+    field: c.partner.field,
+    career_yrs: c.partner.career_yrs,
+    score: c.score,
+    interested: interestMap.has(c.partner.id),
+    interest_note: interestMap.get(c.partner.id) || null,
+  }))
+
+  // 관심 표현했지만 알고리즘 후보가 아닌 파트너 추가
+  for (const i of (interests || []) as unknown as Array<{ partner_id: string; note: string | null; partner: { id: string; name: string | null; field: string | null; career_yrs: number | null } }>) {
+    if (!candidateIds.has(i.partner_id)) {
+      merged.push({
+        partner_id: i.partner_id,
+        name: i.partner.name,
+        field: i.partner.field,
+        career_yrs: i.partner.career_yrs,
+        score: 0,
+        interested: true,
+        interest_note: i.note,
+      })
+    }
+  }
+
+  // 관심 표현 파트너를 상단으로 정렬
+  merged.sort((a, b) => {
+    if (a.interested && !b.interested) return -1
+    if (!a.interested && b.interested) return 1
+    return b.score - a.score
+  })
+
+  return { candidates: merged }
 }
 
 export async function createMatching(
@@ -191,6 +229,32 @@ export async function submitReview(
     })
 
   if (insertError) return { error: insertError.message }
+
+  revalidatePath('/dashboard')
+  return {}
+}
+
+export async function getMessagesForDeal(dealId: string) {
+  await verifyAdmin()
+
+  const { data } = await adminClient
+    .from('deal_message')
+    .select('id, sender_type, sender_id, content, created_at')
+    .eq('deal_id', dealId)
+    .order('created_at', { ascending: true })
+
+  return { messages: data || [] }
+}
+
+export async function closeInquiry(inquiryId: string): Promise<{ error?: string }> {
+  await verifyAdmin()
+
+  const { error } = await adminClient
+    .from('inquiry')
+    .update({ status: 'closed' })
+    .eq('id', inquiryId)
+
+  if (error) return { error: error.message }
 
   revalidatePath('/dashboard')
   return {}

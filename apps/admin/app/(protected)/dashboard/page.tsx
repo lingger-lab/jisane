@@ -74,16 +74,26 @@ export default async function AdminDashboardPage() {
     .eq('status', 'working')
     .order('created_at', { ascending: false })
 
-  // workflow 조회
+  // workflow + 메시지 카운트 조회
   const dealIds = (workingDeals || []).map((d: Record<string, unknown>) => d.id as string)
   let workflowData: DealWorkflowRow[] = []
+  let messageCounts: Record<string, number> = {}
   if (dealIds.length > 0) {
-    const { data: wf } = await adminClient
-      .from('deal_workflow')
-      .select('*')
-      .in('deal_id', dealIds)
-      .order('created_at', { ascending: true })
+    const [{ data: wf }, { data: msgData }] = await Promise.all([
+      adminClient
+        .from('deal_workflow')
+        .select('*')
+        .in('deal_id', dealIds)
+        .order('created_at', { ascending: true }),
+      adminClient
+        .from('deal_message')
+        .select('deal_id')
+        .in('deal_id', dealIds),
+    ])
     workflowData = (wf || []) as DealWorkflowRow[]
+    for (const msg of (msgData || []) as Array<{ deal_id: string }>) {
+      messageCounts[msg.deal_id] = (messageCounts[msg.deal_id] || 0) + 1
+    }
   }
 
   // 정산 대기
@@ -158,6 +168,7 @@ export default async function AdminDashboardPage() {
               partner: { id: string; name: string | null; field: string | null }
             }>}
             workflows={workflowData}
+            messageCounts={messageCounts}
           />
         }
         settlementTab={
