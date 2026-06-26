@@ -54,7 +54,17 @@ export default function RootLayout({
       </head>
       <body className="min-h-full flex flex-col bg-background text-foreground font-sans">
         {children}
-        <ChatWidget chatApiUrl={`${process.env.NEXT_PUBLIC_ADMIN_URL || 'https://jisane.cloud'}/api/chat`} />
+        <ChatWidget
+          chatApiUrl={`${process.env.NEXT_PUBLIC_ADMIN_URL || 'https://jisane.cloud'}/api/chat`}
+          role="partner"
+          quickQuestions={[
+            '시니어 등록은 어떻게 하나요?',
+            '시니어는 수수료가 없나요?',
+            '작업료는 언제 받나요?',
+            '어떤 분야를 맡을 수 있나요?',
+            '지사네는 어떤 서비스인가요?',
+          ]}
+        />
       </body>
     </html>
   );

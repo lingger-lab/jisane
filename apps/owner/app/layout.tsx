@@ -54,7 +54,17 @@ export default function RootLayout({
       </head>
       <body className="min-h-full flex flex-col bg-background text-foreground font-sans">
         {children}
-        <ChatWidget chatApiUrl={`${process.env.NEXT_PUBLIC_ADMIN_URL || 'https://jisane.cloud'}/api/chat`} />
+        <ChatWidget
+          chatApiUrl={`${process.env.NEXT_PUBLIC_ADMIN_URL || 'https://jisane.cloud'}/api/chat`}
+          role="owner"
+          quickQuestions={[
+            '일 맡기기는 어떻게 하나요?',
+            '수수료가 어떻게 되나요?',
+            '선입금은 안전한가요?',
+            '검수 기한은 몇 일인가요?',
+            '환불은 어떻게 하나요?',
+          ]}
+        />
       </body>
     </html>
   );

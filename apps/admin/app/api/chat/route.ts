@@ -32,7 +32,7 @@ export async function OPTIONS(request: Request) {
 export async function POST(request: Request) {
   const cors = getCorsHeaders(request)
   const body = await request.json()
-  const { question } = body
+  const { question, role } = body
 
   if (!question || typeof question !== 'string' || question.trim().length === 0) {
     return NextResponse.json({ error: 'question is required' }, { status: 400, headers: cors })
@@ -42,8 +42,10 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: '질문은 500자 이내로 입력해주세요.' }, { status: 400, headers: cors })
   }
 
-  // FAQ 매칭 시도
-  const { faq } = matchFaq(question)
+  // FAQ 매칭 시도 (역할별 필터링)
+  const validRoles = ['admin', 'partner', 'owner'] as const
+  const validatedRole = validRoles.includes(role) ? role : undefined
+  const { faq } = matchFaq(question, validatedRole)
 
   if (faq) {
     return NextResponse.json({

@@ -8,17 +8,20 @@ interface Message {
   escalated?: boolean
 }
 
-const QUICK_QUESTIONS = [
+type AppRole = 'admin' | 'partner' | 'owner'
+
+const DEFAULT_QUICK_QUESTIONS = [
+  '지사네는 어떤 서비스인가요?',
   '수수료가 어떻게 되나요?',
   '선입금은 안전한가요?',
   '일 맡기기는 어떻게 하나요?',
   '시니어 등록은 어떻게 하나요?',
-  '지사네는 어떤 서비스인가요?',
 ]
 
 const KAKAO_CHANNEL_URL = 'https://pf.kakao.com/_placeholder' // TODO: 실제 채널 URL로 교체
 
-export function ChatWidget({ chatApiUrl }: { chatApiUrl?: string }) {
+export function ChatWidget({ chatApiUrl, role, quickQuestions }: { chatApiUrl?: string; role?: AppRole; quickQuestions?: string[] }) {
+  const displayQuestions = quickQuestions || DEFAULT_QUICK_QUESTIONS
   const [isOpen, setIsOpen] = useState(false)
   const [messages, setMessages] = useState<Message[]>([])
   const [input, setInput] = useState('')
@@ -55,7 +58,7 @@ export function ChatWidget({ chatApiUrl }: { chatApiUrl?: string }) {
       const res = await fetch(chatApiUrl || '/api/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ question }),
+        body: JSON.stringify({ question, role }),
       })
 
       const data = await res.json()
@@ -138,7 +141,7 @@ export function ChatWidget({ chatApiUrl }: { chatApiUrl?: string }) {
               <div>
                 <p className="mb-3 text-sm text-text-muted">자주 묻는 질문</p>
                 <div className="flex flex-wrap gap-2">
-                  {QUICK_QUESTIONS.map((q) => (
+                  {displayQuestions.map((q) => (
                     <button
                       key={q}
                       type="button"

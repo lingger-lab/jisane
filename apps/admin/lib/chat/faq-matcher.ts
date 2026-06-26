@@ -1,4 +1,4 @@
-import { FAQ_DATA, type FaqItem } from './faq-data'
+import { FAQ_DATA, type FaqItem, type AppRole } from './faq-data'
 
 const MATCH_THRESHOLD = 0.3
 
@@ -18,18 +18,25 @@ function tokenize(text: string): string[] {
 
 /**
  * FAQ 키워드 매칭
- * 질문 토큰과 FAQ 키워드 겹침 비율로 점수 산정
+ * role이 주어지면 해당 역할의 FAQ만 후보로 필터링한 뒤 스코어링
  */
-export function matchFaq(question: string): { faq: FaqItem | null; score: number } {
+export function matchFaq(
+  question: string,
+  role?: AppRole,
+): { faq: FaqItem | null; score: number } {
   const tokens = tokenize(question)
   if (tokens.length === 0) {
     return { faq: null, score: 0 }
   }
 
+  const candidates = role
+    ? FAQ_DATA.filter((f) => f.roles.includes(role))
+    : FAQ_DATA
+
   let bestFaq: FaqItem | null = null
   let bestScore = 0
 
-  for (const faq of FAQ_DATA) {
+  for (const faq of candidates) {
     const faqKeywords = faq.keywords.map((k) => k.toLowerCase())
 
     // 겹침 수 계산
