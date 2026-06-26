@@ -1,3 +1,4 @@
+import Image from 'next/image'
 import Link from 'next/link'
 import { cookies } from 'next/headers'
 import { createClient } from '@jisane/shared/supabase/server'
@@ -32,7 +33,15 @@ export default async function AdminHome() {
       <div className="flex flex-1 flex-col items-center justify-center px-4 py-10">
         <main className="flex w-full max-w-md flex-col items-center gap-8 text-center">
           <section className="flex flex-col items-center gap-3 animate-fade-in">
-            <h1 className="text-3xl font-bold text-primary leading-tight">지사네</h1>
+            <Image
+              src="/jisaneadmin-hero-image.png"
+              alt="지사네"
+              width={280}
+              height={100}
+              priority
+              className="h-auto w-[280px]"
+            />
+            <h1 className="sr-only">지사네</h1>
             <p className="text-base text-text-muted leading-relaxed">
               부울경 검증된 시니어 전문가를
               <br />

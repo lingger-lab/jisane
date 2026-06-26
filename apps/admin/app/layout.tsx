@@ -13,10 +13,10 @@ export const metadata: Metadata = {
     siteName: "지사네",
     images: [
       {
-        url: "/og-image.jpg",
+        url: "/jisane-og-image.png",
         width: 1200,
         height: 630,
-        type: "image/jpeg",
+        type: "image/png",
         alt: "지사네 — 부울경 로컬 인력매칭",
       },
     ],
@@ -27,7 +27,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "지사네 — 검증된 전문가, 부울경 인력매칭",
     description: "검증된 전문가를 사람이 직접 연결. 부울경 로컬 인력매칭 플랫폼.",
-    images: ["/og-image.jpg"],
+    images: ["/jisane-og-image.png"],
   },
 };
 

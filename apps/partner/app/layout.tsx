@@ -11,8 +11,23 @@ export const metadata: Metadata = {
     description: "경험으로 일하고, 정당한 대가를 받으세요.",
     url: "https://partner.jisane.cloud",
     siteName: "지사네",
+    images: [
+      {
+        url: "/jisane-og-image.png",
+        width: 1200,
+        height: 630,
+        type: "image/png",
+        alt: "지사네 시니어공간",
+      },
+    ],
     locale: "ko_KR",
     type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "지사네 시니어공간",
+    description: "경험으로 일하고, 정당한 대가를 받으세요.",
+    images: ["/jisane-og-image.png"],
   },
 };
 

@@ -1,3 +1,4 @@
+import Image from 'next/image'
 import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
 import { createClient } from '@jisane/shared/supabase/server'
@@ -30,9 +31,17 @@ export default async function PartnerHome() {
   return (
     <div className="flex flex-1 flex-col items-center justify-center px-4 py-12 animate-slide-up">
       <main className="flex w-full max-w-md flex-col items-center gap-8 text-center">
-        <div>
-          <h1 className="text-3xl font-bold text-accent">지사네 시니어공간</h1>
-          <p className="mt-3 text-base text-text-muted leading-relaxed">
+        <div className="flex flex-col items-center gap-3">
+          <Image
+            src="/jisanepartner-hero-image.png"
+            alt="지사네 시니어공간"
+            width={280}
+            height={100}
+            priority
+            className="h-auto w-[280px]"
+          />
+          <h1 className="sr-only">지사네 시니어공간</h1>
+          <p className="text-base text-text-muted leading-relaxed">
             경험으로 일하고,
             <br />
             정당한 대가를 받으세요

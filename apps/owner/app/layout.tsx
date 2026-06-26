@@ -11,8 +11,23 @@ export const metadata: Metadata = {
     description: "검증된 시니어 전문가에게 일을 맡기세요.",
     url: "https://owner.jisane.cloud",
     siteName: "지사네",
+    images: [
+      {
+        url: "/jisane-og-image.png",
+        width: 1200,
+        height: 630,
+        type: "image/png",
+        alt: "지사네 기업공간",
+      },
+    ],
     locale: "ko_KR",
     type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "지사네 기업공간",
+    description: "검증된 시니어 전문가에게 일을 맡기세요.",
+    images: ["/jisane-og-image.png"],
   },
 };
 

@@ -1,3 +1,4 @@
+import Image from 'next/image'
 import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
 import { createClient } from '@jisane/shared/supabase/server'
@@ -20,9 +21,17 @@ export default async function OwnerHome() {
   return (
     <div className="flex flex-1 flex-col items-center justify-center px-4 py-12 animate-slide-up">
       <main className="flex w-full max-w-md flex-col items-center gap-8 text-center">
-        <div>
-          <h1 className="text-3xl font-bold text-primary">지사네 기업공간</h1>
-          <p className="mt-3 text-base text-text-muted leading-relaxed">
+        <div className="flex flex-col items-center gap-3">
+          <Image
+            src="/jisaneowner-hero-image.png"
+            alt="지사네 기업공간"
+            width={280}
+            height={100}
+            priority
+            className="h-auto w-[280px]"
+          />
+          <h1 className="sr-only">지사네 기업공간</h1>
+          <p className="text-base text-text-muted leading-relaxed">
             검증된 시니어 전문가에게
             <br />
             일을 맡기세요
