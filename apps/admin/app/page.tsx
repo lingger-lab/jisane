@@ -22,6 +22,7 @@ export default async function AdminHome() {
         <div className="mx-auto flex h-14 max-w-md items-center justify-between px-4">
           <Link href="/" className="text-xl font-bold text-primary tracking-tight">지사네</Link>
           <div className="flex items-center gap-3">
+            <Link href="/ax" className="text-xs text-text-muted hover:text-text transition-colors">AX 전환</Link>
             <Link href="/service" className="text-xs text-text-muted hover:text-text transition-colors">서비스 안내</Link>
             {isAdmin && (
               <Link href="/dashboard" className="text-xs text-accent font-medium hover:text-accent/80 transition-colors">관리자</Link>
@@ -120,6 +121,7 @@ export default async function AdminHome() {
           <div className="flex gap-3 text-xs">
             <Link href="/privacy" className="text-text-subtle hover:text-text-muted transition-colors">개인정보처리방침</Link>
             <Link href="/service" className="text-text-subtle hover:text-text-muted transition-colors">서비스 안내</Link>
+            <Link href="/ax" className="text-text-subtle hover:text-text-muted transition-colors">AX 전환</Link>
           </div>
           <hr className="border-border-light" />
           <p className="text-xs text-text-subtle">&copy; 2025 (주)지사네. All rights reserved.</p>

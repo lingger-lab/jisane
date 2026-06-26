@@ -23,6 +23,20 @@ export default function ServicesPage() {
         기업 맞춤 전문 서비스를 신청하세요.
       </p>
 
+      {/* AX 소개 배너 */}
+      <a
+        href={`${process.env.NEXT_PUBLIC_ADMIN_URL || 'https://jisane.cloud'}/ax`}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="mb-5 block rounded-xl border border-primary/20 bg-surface-warm p-4 transition-all hover:border-primary/40 hover:shadow-sm"
+      >
+        <p className="text-xs font-semibold text-primary tracking-wide mb-0.5">AI Transformation</p>
+        <p className="text-sm font-medium text-text">AX(AI Transformation) 전환이란?</p>
+        <p className="mt-1 text-xs text-text-muted">
+          AI로 비용 절감·수익 향상·새 수익 모델을 만드는 전환 과정을 알아보세요.
+        </p>
+      </a>
+
       {/* 카테고리 탭 */}
       <div className="mb-5 flex gap-1 rounded-lg bg-surface p-1">
         {CATEGORY_TABS.map((tab) => (
@@ -84,7 +98,7 @@ export default function ServicesPage() {
               <div className="flex gap-2 ml-auto">
                 {pkg.axDashboardUrl && (
                   <a
-                    href={`${process.env.NEXT_PUBLIC_AX_DASHBOARD_URL || 'https://axdashboard.vercel.app'}${pkg.axDashboardUrl}`}
+                    href={`${process.env.NEXT_PUBLIC_ADMIN_URL || 'https://jisane.cloud'}${pkg.axDashboardUrl}`}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="rounded-lg border border-border-light px-3 py-1.5 text-xs font-medium text-text-muted transition-colors hover:border-primary/30 hover:text-primary"

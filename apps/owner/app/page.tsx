@@ -78,6 +78,7 @@ export default async function OwnerHome() {
 
         <div className="flex gap-4 text-xs text-text-subtle">
           <a href={`${adminUrl}/service`} className="hover:text-text-muted transition-colors">서비스 안내</a>
+          <a href={`${adminUrl}/ax`} className="hover:text-text-muted transition-colors">AX 전환</a>
           <a href={`${adminUrl}/privacy`} className="hover:text-text-muted transition-colors">개인정보처리방침</a>
         </div>
       </main>

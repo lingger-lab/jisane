@@ -152,6 +152,23 @@ export default function ServicePage() {
           </li>
         </ul>
       </section>
+
+      {/* AX 전환 프로모션 */}
+      <section className="mt-8 animate-fade-in stagger-5">
+        <Link
+          href="/ax"
+          className="block rounded-2xl border border-accent/20 bg-white p-6 shadow-sm transition-all hover:border-accent/40 hover:shadow-md"
+        >
+          <p className="text-xs font-semibold text-accent tracking-wide mb-1">AI Transformation</p>
+          <p className="font-bold text-text">AI로 비즈니스를 바꾸고 싶으신가요?</p>
+          <p className="mt-1 text-sm text-text-muted">
+            AX 전환으로 비용 절감·수익 향상·새 수익 모델을 만들어 보세요.
+          </p>
+          <span className="mt-3 inline-block text-sm font-semibold text-accent">
+            AX 전환 알아보기 &rarr;
+          </span>
+        </Link>
+      </section>
     </div>
   )
 }

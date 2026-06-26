@@ -18,9 +18,9 @@ export const SERVICE_PACKAGES: ServicePackage[] = [
     category: 'ax_consulting',
     name: 'AX 무료 진단',
     description:
-      '반복 업무·인건비가 새는 곳을 찾아 1곳으로 좁힙니다. 4기둥 우선순위 설계.',
+      'AX 5대 적용축(업무자동화·의사결정·리스크관리·마케팅·고객응대) 기반 진단. 비용 절감·수익 향상 포인트를 찾아 최우선 1곳으로 좁힙니다.',
     price: 0,
-    deliverables: ['통증 진단 리포트', '4기둥 우선순위 1개 선정', '첫 실험 계획서'],
+    deliverables: ['AX 5대 적용축 진단 리포트', '5가치 기반 우선순위 선정', '첫 AI 실험 계획서'],
     duration: '1주',
     axDashboardUrl: '/ax-process',
     targetAudience: 'owner',
@@ -31,9 +31,9 @@ export const SERVICE_PACKAGES: ServicePackage[] = [
     category: 'ax_consulting',
     name: 'AX 전환 코칭',
     description:
-      '작게 시작 → 효과 측정 → 확장까지 옆에서 동행합니다.',
+      '구현의 사다리(챗봇→업무자동화→AI Agent)를 따라 작게 시작, 효과 측정, 확장까지 동행합니다. 자체 LLM/RAG 설계 포함.',
     price: 500000,
-    deliverables: ['AI 도구 1개 적용 실험', '효과 측정 리포트', '확장 로드맵'],
+    deliverables: ['AI 도구 1개 적용 실험', '비용 절감·수익 향상 효과 측정 리포트', '자체 LLM/RAG 검토 보고서', '확장 로드맵'],
     duration: '1개월',
     axDashboardUrl: '/ax-process',
     targetAudience: 'owner',
@@ -43,11 +43,11 @@ export const SERVICE_PACKAGES: ServicePackage[] = [
     category: 'ax_consulting',
     name: 'AI 사업 진단',
     description:
-      'Claude AI 기반 사업 진단. 경력·강점 분석 후 맞춤 전환 전략 제공.',
+      'Claude AI 기반 사업 진단. AX 5가치(비용절감·수익향상·리스크감소·신규수익모델·고객만족) 관점에서 맞춤 전환 전략을 제공합니다.',
     price: 200000,
-    deliverables: ['AI 진단 카드', '분기별 실행 로드맵'],
+    deliverables: ['AX 5가치 기반 AI 진단 카드', 'AX 적용축 매핑 보고서', '분기별 실행 로드맵'],
     duration: '3일',
-    axDashboardUrl: '/lead-diagnosis',
+    axDashboardUrl: '/ax',
     targetAudience: 'owner',
   },
 

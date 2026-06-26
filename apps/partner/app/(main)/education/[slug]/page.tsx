@@ -23,7 +23,7 @@ export default function EducationDetailPage() {
     )
   }
 
-  const axDashboardBase = process.env.NEXT_PUBLIC_AX_DASHBOARD_URL || 'https://axdashboard.vercel.app'
+  const axDashboardBase = process.env.NEXT_PUBLIC_ADMIN_URL || 'https://jisane.cloud'
 
   return (
     <div className="flex flex-1 flex-col px-4 py-5 sm:px-6 sm:py-8 animate-fade-in">

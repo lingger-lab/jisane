@@ -49,7 +49,7 @@ export default function EducationPage() {
               <div className="flex gap-2 ml-auto">
                 {pkg.axDashboardUrl && (
                   <a
-                    href={`${process.env.NEXT_PUBLIC_AX_DASHBOARD_URL || 'https://axdashboard.vercel.app'}${pkg.axDashboardUrl}`}
+                    href={`${process.env.NEXT_PUBLIC_ADMIN_URL || 'https://jisane.cloud'}${pkg.axDashboardUrl}`}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="rounded-lg border border-border-light px-3 py-1.5 text-xs font-medium text-text-muted transition-colors hover:border-accent/30 hover:text-accent"
