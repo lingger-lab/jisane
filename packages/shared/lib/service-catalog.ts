@@ -9,6 +9,12 @@ export interface ServicePackage {
   axDashboardUrl?: string
   targetAudience: 'owner' | 'partner'
   featured?: boolean
+  /** 내부 데이터용 — 랜딩에서는 표시하지 않음 */
+  provider: string
+  /** 랜딩용 가치 설명 (가격 대신 표시) */
+  valueDesc: string
+  /** 무료 여부 */
+  isFree: boolean
 }
 
 export const SERVICE_PACKAGES: ServicePackage[] = [
@@ -25,6 +31,9 @@ export const SERVICE_PACKAGES: ServicePackage[] = [
     axDashboardUrl: '/ax-process',
     targetAudience: 'owner',
     featured: true,
+    provider: '엔터랩스',
+    valueDesc: 'AX 5대 적용축 진단으로 비용 절감 포인트 발견',
+    isFree: true,
   },
   {
     slug: 'ax-coaching',
@@ -37,6 +46,9 @@ export const SERVICE_PACKAGES: ServicePackage[] = [
     duration: '1개월',
     axDashboardUrl: '/ax-process',
     targetAudience: 'owner',
+    provider: '엔터랩스',
+    valueDesc: '구현의 사다리를 따라 AI 도입부터 확장까지',
+    isFree: false,
   },
   {
     slug: 'lead-diagnosis',
@@ -49,6 +61,9 @@ export const SERVICE_PACKAGES: ServicePackage[] = [
     duration: '3일',
     axDashboardUrl: '/ax',
     targetAudience: 'owner',
+    provider: '엔터랩스',
+    valueDesc: '데이터 기반 의사결정 진단',
+    isFree: false,
   },
 
   // ── 경영 컨설팅 (Owner용) ─────────────────────────
@@ -62,6 +77,9 @@ export const SERVICE_PACKAGES: ServicePackage[] = [
     deliverables: ['사업계획서 (DOCX/PDF)', '전문가 검수 코멘트'],
     duration: '1주',
     targetAudience: 'owner',
+    provider: '엔터랩스',
+    valueDesc: 'AI 기반 자동생성 + 전문가 검수',
+    isFree: false,
   },
   {
     slug: 'gov-subsidy-application',
@@ -73,6 +91,9 @@ export const SERVICE_PACKAGES: ServicePackage[] = [
     deliverables: ['지원사업 매칭 리포트', '신청서 완성본', '제출 대행'],
     duration: '2주',
     targetAudience: 'owner',
+    provider: '엔터랩스',
+    valueDesc: '50건+ 경험 기반 지원사업 선별·신청 대행',
+    isFree: false,
   },
   {
     slug: 'biz-diagnosis',
@@ -84,6 +105,9 @@ export const SERVICE_PACKAGES: ServicePackage[] = [
     deliverables: ['6단계 분석 보고서 (DOCX)', '실행 로드맵', '30일 액션플랜'],
     duration: '2주',
     targetAudience: 'owner',
+    provider: '엔터랩스',
+    valueDesc: '제1원칙 프레임워크 기반 사업 분석',
+    isFree: false,
   },
 
   // ── 교육 (Partner용) ──────────────────────────────
@@ -97,6 +121,9 @@ export const SERVICE_PACKAGES: ServicePackage[] = [
     deliverables: ['실습 환경 셋업', '핸즈온 가이드 (15~20p)', '수료증'],
     duration: '3시간',
     targetAudience: 'partner',
+    provider: '엔터랩스',
+    valueDesc: 'Claude, Cursor로 AI 코딩 환경 실습',
+    isFree: false,
   },
   {
     slug: 'content-pipeline-course',
@@ -108,6 +135,9 @@ export const SERVICE_PACKAGES: ServicePackage[] = [
     deliverables: ['5스킬 실습', '개인 파이프라인 셋업', '수료증'],
     duration: '2일',
     targetAudience: 'partner',
+    provider: '엔터랩스',
+    valueDesc: 'AX 5스킬 콘텐츠 파이프라인 구축',
+    isFree: false,
   },
   {
     slug: 'prompt-engineering',
@@ -119,6 +149,9 @@ export const SERVICE_PACKAGES: ServicePackage[] = [
     deliverables: ['실습 워크북', '프롬프트 템플릿 10종', '수료증'],
     duration: '3시간',
     targetAudience: 'partner',
+    provider: '엔터랩스',
+    valueDesc: 'CoT, ToT, ReAct 검증 기법 실습',
+    isFree: false,
   },
 ]
 

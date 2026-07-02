@@ -16,7 +16,8 @@
     "./categories": "./lib/categories.ts",
     "./payment": "./lib/payment.ts",
     "./query-types": "./lib/query-types.ts",
-    "./labels": "./lib/labels.ts"
+    "./labels": "./lib/labels.ts",
+    "./landing-stats": "./lib/landing-stats.ts"
   },
   "dependencies": {
     "@supabase/ssr": "^0.12.0",
