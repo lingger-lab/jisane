@@ -10,6 +10,12 @@ interface RequestItem {
   req_type: string | null
   budget_hope: number | null
   created_at: string
+  client: {
+    company: string | null
+    ceo_name: string | null
+    email: string
+    contact: string | null
+  }
 }
 
 interface Candidate {
@@ -73,6 +79,14 @@ export function MatchingTab({
                 )}
               </div>
               <p className="mt-2 line-clamp-2 text-sm text-text-muted">{req.detail}</p>
+              <div className="mt-2 flex flex-wrap items-center gap-x-2 gap-y-0.5 text-xs text-text-subtle">
+                {req.client.company && <span className="font-medium text-text-muted">{req.client.company}</span>}
+                {req.client.ceo_name && <span>{req.client.ceo_name}</span>}
+                {req.client.contact && (
+                  <a href={`tel:${req.client.contact}`} className="hover:text-accent transition-colors">{req.client.contact}</a>
+                )}
+                <a href={`mailto:${req.client.email}`} className="hover:text-accent transition-colors">{req.client.email}</a>
+              </div>
               {(interestCounts[req.id] || 0) > 0 && (
                 <span className="mt-1 inline-flex items-center gap-1 rounded bg-accent/10 px-2 py-0.5 text-xs font-medium text-accent">
                   관심 {interestCounts[req.id]}명

@@ -14,6 +14,8 @@ interface ServiceOrderItem {
   created_at: string
   client_id: string | null
   partner_id: string | null
+  client: { company: string | null; ceo_name: string | null; email: string; contact: string | null } | null
+  partner: { name: string | null; email: string; contact: string | null } | null
 }
 
 const STATUS_LABELS: Record<string, { label: string; color: string }> = {
@@ -110,7 +112,11 @@ export function ServiceTab({ orders }: { orders: ServiceOrderItem[] }) {
                         {CATEGORY_LABELS[order.category] || order.category}
                       </span>
                       <span className="rounded bg-surface px-2 py-0.5">
-                        {order.client_id ? '기업' : '시니어'}
+                        {order.client
+                          ? (order.client.company || order.client.ceo_name || '기업')
+                          : order.partner
+                            ? (order.partner.name || '시니어')
+                            : (order.client_id ? '기업' : '시니어')}
                       </span>
                       <span>
                         {order.price === 0 ? '무료' : `${order.price.toLocaleString('ko-KR')}원`}
@@ -120,6 +126,26 @@ export function ServiceTab({ orders }: { orders: ServiceOrderItem[] }) {
                     </div>
                     {order.detail && (
                       <p className="mt-2 text-xs text-text-muted">{order.detail}</p>
+                    )}
+                    {(order.client || order.partner) && (
+                      <div className="mt-1.5 flex flex-wrap items-center gap-x-2 text-xs text-text-subtle">
+                        {order.client && (
+                          <>
+                            {order.client.contact && (
+                              <a href={`tel:${order.client.contact}`} className="hover:text-accent transition-colors">{order.client.contact}</a>
+                            )}
+                            <a href={`mailto:${order.client.email}`} className="hover:text-accent transition-colors">{order.client.email}</a>
+                          </>
+                        )}
+                        {order.partner && (
+                          <>
+                            {order.partner.contact && (
+                              <a href={`tel:${order.partner.contact}`} className="hover:text-accent transition-colors">{order.partner.contact}</a>
+                            )}
+                            <a href={`mailto:${order.partner.email}`} className="hover:text-accent transition-colors">{order.partner.email}</a>
+                          </>
+                        )}
+                      </div>
                     )}
                   </div>
                   <div className="flex shrink-0 flex-col items-end gap-2">

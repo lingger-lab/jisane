@@ -4,6 +4,7 @@ import { createClient } from '@jisane/shared/supabase/server'
 import { adminClient } from '@jisane/shared/supabase/admin'
 import type { DealWorkflowRow } from '@jisane/shared/types'
 import type {
+  RequestWithClient,
   DealWithRelations,
   SettlementWithDeal,
   LedgerEntry,
@@ -52,9 +53,10 @@ export default async function AdminDashboardPage() {
   const [{ data: openRequests }, { data: interestsData }] = await Promise.all([
     adminClient
       .from('request')
-      .select('id, title, detail, req_type, budget_hope, created_at')
+      .select('id, title, detail, req_type, budget_hope, created_at, client:client!inner(company, ceo_name, email, contact)')
       .eq('status', 'open')
-      .order('created_at', { ascending: false }),
+      .order('created_at', { ascending: false })
+      .returns<RequestWithClient[]>(),
     adminClient
       .from('partner_interest')
       .select('request_id, partner_id, note, created_at, partner:partner!inner(id, name, field)')
@@ -76,8 +78,8 @@ export default async function AdminDashboardPage() {
     .from('deal')
     .select(`
       id, work_fee, match_fee, total_pay, status, due_date, created_at,
-      request:request!inner(id, title, req_type),
-      partner:partner!inner(id, name, field)
+      request:request!inner(id, title, req_type, client:client!inner(company, ceo_name, email, contact)),
+      partner:partner!inner(id, name, field, email, contact)
     `)
     .eq('status', 'working')
     .order('created_at', { ascending: false })
@@ -112,7 +114,7 @@ export default async function AdminDashboardPage() {
       id, deal_id, escrow_status, guarantee_fee, deposited_at, created_at,
       deal:deal!inner(
         id, work_fee, match_fee, total_pay, status,
-        request:request!inner(id, title),
+        request:request!inner(id, title, client:client!inner(company, ceo_name, email, contact)),
         partner:partner!inner(id, name)
       )
     `)
@@ -131,18 +133,33 @@ export default async function AdminDashboardPage() {
   // 서비스 주문
   const { data: serviceOrders } = await adminClient
     .from('service_order')
-    .select('*')
+    .select('*, client:client(company, ceo_name, email, contact), partner:partner(name, email, contact)')
     .order('created_at', { ascending: false })
     .limit(50)
     .returns<ServiceOrderItem[]>()
 
   // 문의 목록
-  const { data: inquiries } = await adminClient
+  const { data: rawInquiries } = await adminClient
     .from('inquiry')
-    .select('id, author_type, category, content, status, created_at')
+    .select('id, author_id, author_type, category, content, status, created_at')
     .order('created_at', { ascending: false })
     .limit(50)
-    .returns<InquiryItem[]>()
+
+  // 문의 작성자 이메일 lookup
+  const authorIds = (rawInquiries || []).map((i) => i.author_id).filter(Boolean) as string[]
+  let authorEmailMap: Record<string, string> = {}
+  if (authorIds.length > 0) {
+    const [{ data: clients }, { data: partners }] = await Promise.all([
+      adminClient.from('client').select('auth_user_id, email').in('auth_user_id', authorIds),
+      adminClient.from('partner').select('auth_user_id, email').in('auth_user_id', authorIds),
+    ])
+    for (const c of clients || []) authorEmailMap[c.auth_user_id] = c.email
+    for (const p of partners || []) authorEmailMap[p.auth_user_id] = p.email
+  }
+  const inquiries: InquiryItem[] = (rawInquiries || []).map((i) => ({
+    ...i,
+    author_email: i.author_id ? authorEmailMap[i.author_id] || null : null,
+  }))
 
   return (
     <div className="px-4 py-5 sm:px-6 sm:py-8 animate-fade-in">

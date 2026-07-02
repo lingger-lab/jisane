@@ -6,6 +6,31 @@
  * 정의하여 `as unknown as` 캐스트를 제거합니다.
  */
 
+// ── 공통 연락처 타입 ──
+export interface ClientContact {
+  company: string | null
+  ceo_name: string | null
+  email: string
+  contact: string | null
+}
+
+export interface PartnerContact {
+  name: string | null
+  email: string
+  contact: string | null
+}
+
+// ── Request + nested client (admin dashboard, matching-tab) ──
+export interface RequestWithClient {
+  id: string
+  title: string
+  detail: string
+  req_type: string | null
+  budget_hope: number | null
+  created_at: string
+  client: ClientContact
+}
+
 // ── Deal + nested request/partner (admin dashboard, progress-tab) ──
 export interface DealWithRelations {
   id: string
@@ -15,8 +40,8 @@ export interface DealWithRelations {
   status: string
   due_date: string | null
   created_at: string
-  request: { id: string; title: string; req_type: string | null }
-  partner: { id: string; name: string | null; field: string | null }
+  request: { id: string; title: string; req_type: string | null; client: ClientContact }
+  partner: { id: string; name: string | null; field: string | null; email: string; contact: string | null }
 }
 
 // ── Deal ownership verification (owner app) ──
@@ -54,7 +79,7 @@ export interface SettlementWithDeal {
     match_fee: number
     total_pay: number
     status: string
-    request: { id: string; title: string }
+    request: { id: string; title: string; client: ClientContact }
     partner: { id: string; name: string | null }
   }
 }
@@ -124,12 +149,16 @@ export interface ServiceOrderItem {
   created_at: string
   client_id: string | null
   partner_id: string | null
+  client: ClientContact | null
+  partner: PartnerContact | null
 }
 
 // ── Inquiry item ──
 export interface InquiryItem {
   id: string
+  author_id: string | null
   author_type: string | null
+  author_email: string | null
   category: string | null
   content: string
   status: string

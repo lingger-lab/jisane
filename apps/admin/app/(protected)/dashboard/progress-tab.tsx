@@ -14,8 +14,11 @@ interface DealItem {
   total_pay: number
   status: string
   created_at: string
-  request: { id: string; title: string; req_type: string | null }
-  partner: { id: string; name: string | null; field: string | null }
+  request: {
+    id: string; title: string; req_type: string | null
+    client: { company: string | null; ceo_name: string | null; email: string; contact: string | null }
+  }
+  partner: { id: string; name: string | null; field: string | null; email: string; contact: string | null }
 }
 
 interface Message {
@@ -106,10 +109,25 @@ export function ProgressTab({
             <div className="flex items-start justify-between">
               <div>
                 <h3 className="font-medium text-text">{deal.request.title}</h3>
-                <div className="mt-1 flex gap-2 text-xs text-text-muted">
-                  <span>파트너: {deal.partner.name || '이름 미등록'}</span>
-                  <span>·</span>
-                  <span>{deal.partner.field}</span>
+                <div className="mt-1.5 flex flex-col gap-0.5 text-xs text-text-subtle">
+                  <div className="flex flex-wrap items-center gap-x-2">
+                    <span className="text-text-muted">기업:</span>
+                    {deal.request.client.company && <span>{deal.request.client.company}</span>}
+                    {deal.request.client.ceo_name && <span>{deal.request.client.ceo_name}</span>}
+                    {deal.request.client.contact && (
+                      <a href={`tel:${deal.request.client.contact}`} className="hover:text-accent transition-colors">{deal.request.client.contact}</a>
+                    )}
+                    <a href={`mailto:${deal.request.client.email}`} className="hover:text-accent transition-colors">{deal.request.client.email}</a>
+                  </div>
+                  <div className="flex flex-wrap items-center gap-x-2">
+                    <span className="text-text-muted">파트너:</span>
+                    <span>{deal.partner.name || '이름 미등록'}</span>
+                    <span>{deal.partner.field}</span>
+                    {deal.partner.contact && (
+                      <a href={`tel:${deal.partner.contact}`} className="hover:text-accent transition-colors">{deal.partner.contact}</a>
+                    )}
+                    <a href={`mailto:${deal.partner.email}`} className="hover:text-accent transition-colors">{deal.partner.email}</a>
+                  </div>
                 </div>
               </div>
               <div className="text-right">

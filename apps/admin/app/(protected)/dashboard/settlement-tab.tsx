@@ -14,7 +14,10 @@ interface SettlementItem {
     work_fee: number
     match_fee: number
     total_pay: number
-    request: { id: string; title: string }
+    request: {
+      id: string; title: string
+      client: { company: string | null; ceo_name: string | null; email: string; contact: string | null }
+    }
     partner: { id: string; name: string | null }
   }
 }
@@ -94,9 +97,18 @@ export function SettlementTab({
               <div className="flex items-start justify-between">
                 <div>
                   <h3 className="font-medium text-text">{s.deal.request.title}</h3>
-                  <p className="mt-1 text-xs text-text-muted">
-                    파트너: {s.deal.partner.name || '미등록'}
-                  </p>
+                  <div className="mt-1 flex flex-col gap-0.5 text-xs text-text-subtle">
+                    <div className="flex flex-wrap items-center gap-x-2">
+                      <span className="text-text-muted">기업:</span>
+                      {s.deal.request.client.company && <span>{s.deal.request.client.company}</span>}
+                      {s.deal.request.client.ceo_name && <span>{s.deal.request.client.ceo_name}</span>}
+                      {s.deal.request.client.contact && (
+                        <a href={`tel:${s.deal.request.client.contact}`} className="hover:text-accent transition-colors">{s.deal.request.client.contact}</a>
+                      )}
+                      <a href={`mailto:${s.deal.request.client.email}`} className="hover:text-accent transition-colors">{s.deal.request.client.email}</a>
+                    </div>
+                    <p className="text-text-muted">파트너: {s.deal.partner.name || '미등록'}</p>
+                  </div>
                 </div>
                 <span className={`rounded-full px-2 py-0.5 text-xs font-medium ${
                   s.escrow_status === 'deposited'

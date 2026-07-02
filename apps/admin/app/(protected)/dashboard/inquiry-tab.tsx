@@ -5,7 +5,9 @@ import { closeInquiry } from '@/lib/admin/actions'
 
 interface InquiryItem {
   id: string
+  author_id: string | null
   author_type: string | null
+  author_email: string | null
   category: string | null
   content: string
   status: string
@@ -62,6 +64,9 @@ export function InquiryTab({ inquiries }: { inquiries: InquiryItem[] }) {
                     <span className="rounded bg-surface px-2 py-0.5">
                       {inq.author_type === 'client' ? '기업' : '시니어'}
                     </span>
+                  )}
+                  {inq.author_email && (
+                    <a href={`mailto:${inq.author_email}`} className="hover:text-accent transition-colors">{inq.author_email}</a>
                   )}
                   <span className={`rounded px-2 py-0.5 ${categoryInfo.color}`}>
                     {categoryInfo.label}
