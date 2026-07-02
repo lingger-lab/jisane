@@ -22,6 +22,7 @@ export default async function OwnerHome() {
   const stats = await fetchOwnerLandingStats()
   const services = getPackagesByAudience('owner')
   const adminUrl = process.env.NEXT_PUBLIC_ADMIN_URL || 'https://jisane.cloud'
+  const partnerUrl = process.env.NEXT_PUBLIC_PARTNER_URL || 'https://partner.jisane.cloud'
 
   // 핵심 수치 (만족도 없으면 3칸)
   const metrics: { value: string | number; label: string }[] = [
@@ -190,11 +191,26 @@ export default async function OwnerHome() {
         </div>
       </section>
 
-      {/* [7] 푸터 */}
+      {/* [7] 크로스링크 배너 */}
+      <section className="w-full max-w-md px-4 py-4">
+        <a
+          href={partnerUrl}
+          className="flex items-center justify-between rounded-xl border border-accent/20 bg-accent/5 p-4 transition-colors hover:bg-accent/10"
+        >
+          <div>
+            <p className="text-sm font-semibold text-text">시니어 전문가이신가요?</p>
+            <p className="mt-0.5 text-xs text-text-muted">경험으로 일하고, 정당한 대가를 받으세요</p>
+          </div>
+          <span className="text-sm font-medium text-accent shrink-0">&rarr;</span>
+        </a>
+      </section>
+
+      {/* [8] 푸터 */}
       <footer className="w-full max-w-md px-4 py-6">
         <div className="flex justify-center gap-4 text-xs text-text-subtle">
           <a href={`${adminUrl}/service`} className="hover:text-text-muted transition-colors">서비스 안내</a>
           <a href={`${adminUrl}/ax`} className="hover:text-text-muted transition-colors">AX 전환</a>
+          <a href={partnerUrl} className="hover:text-text-muted transition-colors">시니어공간</a>
           <a href={`${adminUrl}/privacy`} className="hover:text-text-muted transition-colors">개인정보처리방침</a>
         </div>
       </footer>
