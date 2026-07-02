@@ -56,6 +56,7 @@ export async function expressInterest(
   }
 
   revalidatePath('/matching')
+  revalidatePath('/requests')
   return {}
 }
 
@@ -73,5 +74,6 @@ export async function withdrawInterest(
   if (error) return { error: error.message }
 
   revalidatePath('/matching')
+  revalidatePath('/requests')
   return {}
 }

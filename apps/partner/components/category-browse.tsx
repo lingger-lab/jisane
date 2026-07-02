@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import Link from 'next/link'
 import type { CategoryCount } from '@jisane/shared/landing-stats'
 
 interface CategoryBrowseProps {
@@ -45,9 +46,10 @@ export function CategoryBrowse({ categoryCounts, newRequestsThisMonth }: Categor
       {/* 중분류 카드 */}
       <div className="mt-3 grid grid-cols-2 gap-2">
         {sortedMid.map((mid) => (
-          <div
+          <Link
             key={mid.id}
-            className="rounded-xl border border-border-light bg-white p-3 shadow-xs"
+            href={`/requests?category=${mid.id}`}
+            className="rounded-xl border border-border-light bg-white p-3 shadow-xs card-hover block"
           >
             <p className="text-sm font-medium text-text">{mid.label}</p>
             {mid.count > 0 ? (
@@ -57,7 +59,7 @@ export function CategoryBrowse({ categoryCounts, newRequestsThisMonth }: Categor
                 모집 중
               </span>
             )}
-          </div>
+          </Link>
         ))}
       </div>
     </section>
