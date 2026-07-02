@@ -20,7 +20,7 @@ export async function GET(request: Request) {
   // 의뢰 정보 조회
   const { data: req, error: reqError } = await adminClient
     .from('request')
-    .select('id, title, detail, req_type')
+    .select('id, title, detail, req_type, category_id')
     .eq('id', requestId)
     .single()
 
@@ -36,7 +36,7 @@ export async function GET(request: Request) {
     .returns<PartnerRow[]>()
 
   const candidates = findCandidates(
-    { title: req.title, detail: req.detail, req_type: req.req_type },
+    { title: req.title, detail: req.detail, req_type: req.req_type, category_id: req.category_id ?? null },
     partners || []
   )
 

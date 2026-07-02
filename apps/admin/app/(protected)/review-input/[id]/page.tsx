@@ -36,13 +36,22 @@ export default async function ReviewInputPage(props: PageProps) {
   const req = deal.request
   const partner = deal.partner
 
-  // 기존 리뷰 확인
-  const { data: existingReview } = await adminClient
-    .from('review')
-    .select('id, rating, comment, internal_note')
-    .eq('deal_id', dealId)
-    .eq('author_type', 'gyeotae')
-    .single()
+  // 기존 리뷰 확인 + AI 제안 조회
+  const [{ data: existingReview }, { data: aiSuggestion }] = await Promise.all([
+    adminClient
+      .from('review')
+      .select('id, rating, comment, internal_note, process_rating, result_rating, response_rating')
+      .eq('deal_id', dealId)
+      .eq('author_type', 'gyeotae')
+      .single(),
+    adminClient
+      .from('review_ai_suggestion')
+      .select('process_rating, result_rating, response_rating, overall_rating, reasoning, status')
+      .eq('deal_id', dealId)
+      .order('created_at', { ascending: false })
+      .limit(1)
+      .single(),
+  ])
 
   return (
     <div className="px-6 py-8">
@@ -82,12 +91,17 @@ export default async function ReviewInputPage(props: PageProps) {
           <p className="mt-1 text-sm text-success/80">
             별점: {'★'.repeat(existingReview.rating)}{'☆'.repeat(5 - existingReview.rating)}
           </p>
+          {existingReview.process_rating && (
+            <p className="mt-1 text-xs text-success/70">
+              진행과정 {existingReview.process_rating}점 · 결과물 {existingReview.result_rating}점 · 대응도 {existingReview.response_rating}점
+            </p>
+          )}
           {existingReview.comment && (
             <p className="mt-1 text-sm text-success/80">의견: {existingReview.comment}</p>
           )}
         </div>
       ) : (
-        <ReviewForm dealId={dealId} />
+        <ReviewForm dealId={dealId} aiSuggestion={aiSuggestion} />
       )}
     </div>
   )

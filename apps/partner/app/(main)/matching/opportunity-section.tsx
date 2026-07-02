@@ -77,7 +77,7 @@ export function OpportunitySection({
                 <p className="mt-1 line-clamp-2 text-xs text-text-muted">{req.detail}</p>
                 <div className="mt-2 flex flex-wrap gap-2 text-xs text-text-muted">
                   {req.req_type && (
-                    <span className="rounded bg-surface px-2 py-0.5">{req.req_type}</span>
+                    <span className="rounded bg-accent/10 px-2 py-0.5 font-medium text-accent">{req.req_type}</span>
                   )}
                   {req.budget_hope && (
                     <span className="font-medium text-accent">

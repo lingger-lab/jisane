@@ -4,20 +4,15 @@ import { useActionState, useState } from 'react'
 import { updatePartnerProfile } from '@/lib/partner/actions'
 import { SubmitButton } from '@jisane/ui/submit-button'
 
-const FIELD_CHIPS = [
-  '창업코칭',
-  '정부자금·보조금',
-  '사업계획서',
-  'AEO최적화',
-  'AI진단',
-  '디자인',
-  '웹개발',
-  '영상제작',
-  '마케팅',
-  '세무·회계',
-  '법무',
-  '노무',
-  '기타',
+/** 대분류별 중분류 그룹 (category 테이블과 동기) */
+const FIELD_GROUPS = [
+  { label: '경영·창업', fields: ['창업코칭', '사업계획서', '정부자금·보조금', '경영진단'] },
+  { label: 'AI·디지털전환', fields: ['AI진단', 'AEO최적화', '업무자동화', '데이터분석'] },
+  { label: '문서·행정', fields: ['제안서·기획서', '보고서', '매뉴얼·가이드', '번역·통역'] },
+  { label: '생산·품질', fields: ['품질관리', '생산관리', 'ISO·인증', '안전관리'] },
+  { label: '연구개발', fields: ['R&D 기획', '기술개발', '특허·지식재산', '기술이전·사업화'] },
+  { label: '전문서비스', fields: ['세무·회계', '법무', '노무', '마케팅'] },
+  { label: '크리에이티브', fields: ['디자인', '웹개발', '영상제작', '콘텐츠제작'] },
 ] as const
 
 const CAREER_OPTIONS = [
@@ -66,23 +61,33 @@ export default function RegisterPage() {
             전문 분야 <span className="text-error">*</span>
             <span className="ml-1 text-xs font-normal text-text-muted">(최대 5개)</span>
           </label>
-          <div className="flex flex-wrap gap-2">
-            {FIELD_CHIPS.map((chip) => (
-              <button
-                key={chip}
-                type="button"
-                onClick={() => toggleField(chip)}
-                aria-pressed={selectedFields.includes(chip)}
-                className={`rounded-full border px-3 py-1.5 text-sm transition-colors ${
-                  selectedFields.includes(chip)
-                    ? 'border-accent bg-accent/10 font-semibold text-accent'
-                    : 'border-border-light text-text-muted hover:border-accent/30'
-                }`}
-              >
-                {chip}
-              </button>
+          <div className="space-y-3">
+            {FIELD_GROUPS.map((group) => (
+              <div key={group.label}>
+                <p className="mb-1.5 text-xs font-semibold text-text-muted">{group.label}</p>
+                <div className="flex flex-wrap gap-2">
+                  {group.fields.map((chip) => (
+                    <button
+                      key={chip}
+                      type="button"
+                      onClick={() => toggleField(chip)}
+                      aria-pressed={selectedFields.includes(chip)}
+                      className={`rounded-full border px-3 py-1.5 text-sm transition-colors ${
+                        selectedFields.includes(chip)
+                          ? 'border-accent bg-accent/10 font-semibold text-accent'
+                          : 'border-border-light text-text-muted hover:border-accent/30'
+                      }`}
+                    >
+                      {chip}
+                    </button>
+                  ))}
+                </div>
+              </div>
             ))}
           </div>
+          <p className="mt-2 text-xs text-text-subtle">
+            선택: {selectedFields.length}/5개
+          </p>
           <input type="hidden" name="field" value={selectedFields.join(',')} />
         </div>
 

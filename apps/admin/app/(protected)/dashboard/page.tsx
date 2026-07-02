@@ -11,6 +11,7 @@ import type {
   ServiceOrderItem,
   InquiryItem,
 } from '@jisane/shared/query-types'
+import { autoAssignOverdue } from '@/lib/admin/actions'
 import { MatchingTab } from './matching-tab'
 import { ProgressTab } from './progress-tab'
 import { SettlementTab } from './settlement-tab'
@@ -25,6 +26,9 @@ export default async function AdminDashboardPage() {
   const { data: { user } } = await supabase.auth.getUser()
 
   if (!user) redirect('/')
+
+  // 24시간 초과 자동배정 체크
+  await autoAssignOverdue()
 
   // 요약 카운트
   const [requestsRes, dealsRes, settlementsRes, accrueRes, payoutRes, inquiryRes, serviceOrdersRes] = await Promise.all([

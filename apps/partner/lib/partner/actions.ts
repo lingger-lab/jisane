@@ -55,6 +55,28 @@ export async function updatePartnerProfile(
     return { error: '프로필 등록에 실패했습니다. 다시 시도해주세요.' }
   }
 
+  // partner_category 동기화 (중분류 label → category_id)
+  const fieldLabels = field.trim().split(',').map((f) => f.trim()).filter(Boolean)
+  if (fieldLabels.length > 0) {
+    const { data: cats } = await adminClient
+      .from('category')
+      .select('id, label')
+      .eq('depth', 1)
+      .in('label', fieldLabels)
+
+    if (cats && cats.length > 0) {
+      // 기존 매핑 삭제 후 재삽입
+      await adminClient
+        .from('partner_category')
+        .delete()
+        .eq('partner_id', partner.id)
+
+      await adminClient
+        .from('partner_category')
+        .insert(cats.map((c) => ({ partner_id: partner.id, category_id: c.id })))
+    }
+  }
+
   const redirectTo = (formData.get('redirect_to') as string) || '/matching'
   const successKey = redirectTo === '/mypage' ? 'profile_updated' : 'partner_registered'
   redirect(`${redirectTo}?success=${successKey}`)

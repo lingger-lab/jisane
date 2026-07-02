@@ -56,6 +56,18 @@ export async function createRequest(
     return { error: '계정 생성에 실패했습니다. 다시 시도해주세요.' }
   }
 
+  // category_id 조회 (중분류 label → UUID)
+  let categoryId: string | null = null
+  if (reqType) {
+    const { data: cat } = await adminClient
+      .from('category')
+      .select('id')
+      .eq('label', reqType)
+      .eq('depth', 1)
+      .single()
+    categoryId = cat?.id || null
+  }
+
   const { error } = await adminClient.from('request').insert({
     client_id: client.id,
     title: title.trim(),
@@ -63,6 +75,7 @@ export async function createRequest(
     req_type: reqType || null,
     scope: scope || null,
     budget_hope: budgetHope,
+    category_id: categoryId,
   })
 
   if (error) {

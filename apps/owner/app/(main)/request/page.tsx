@@ -4,25 +4,44 @@ import { useActionState, useState } from 'react'
 import { createRequest } from '@/lib/request/actions'
 import { SubmitButton } from '@jisane/ui/submit-button'
 
-const QUICK_CHIPS = [
-  '창업코칭',
-  '정부자금·보조금',
-  '사업계획서',
-  'AEO최적화',
-  'AI진단',
-  '디자인',
-  '웹개발',
-  '영상제작',
-  '마케팅',
-  '세무·회계',
-  '법무',
-  '노무',
-  '기타',
+/** 대분류 → 중분류 구조 (category 테이블과 동기) */
+const CATEGORY_TREE = [
+  {
+    label: '경영·창업',
+    children: ['창업코칭', '사업계획서', '정부자금·보조금', '경영진단'],
+  },
+  {
+    label: 'AI·디지털전환',
+    children: ['AI진단', 'AEO최적화', '업무자동화', '데이터분석'],
+  },
+  {
+    label: '문서·행정',
+    children: ['제안서·기획서', '보고서', '매뉴얼·가이드', '번역·통역'],
+  },
+  {
+    label: '생산·품질',
+    children: ['품질관리', '생산관리', 'ISO·인증', '안전관리'],
+  },
+  {
+    label: '연구개발',
+    children: ['R&D 기획', '기술개발', '특허·지식재산', '기술이전·사업화'],
+  },
+  {
+    label: '전문서비스',
+    children: ['세무·회계', '법무', '노무', '마케팅'],
+  },
+  {
+    label: '크리에이티브',
+    children: ['디자인', '웹개발', '영상제작', '콘텐츠제작'],
+  },
 ] as const
 
 export default function RequestPage() {
   const [state, formAction] = useActionState(createRequest, {})
+  const [selectedMajor, setSelectedMajor] = useState(0)
   const [selectedChip, setSelectedChip] = useState<string | null>(null)
+
+  const currentMajor = CATEGORY_TREE[selectedMajor]
 
   return (
     <div className="flex flex-1 flex-col px-4 py-5 sm:px-6 sm:py-8 animate-fade-in">
@@ -32,13 +51,34 @@ export default function RequestPage() {
         action={formAction}
         className="flex flex-col gap-5"
       >
-        {/* 퀵칩 — req_type 선택 */}
+        {/* 대분류 탭 */}
         <div>
           <label className="mb-2 block text-sm font-medium text-text">
             어떤 일을 맡기시나요?
           </label>
+          <div className="mb-3 flex flex-wrap gap-1.5">
+            {CATEGORY_TREE.map((major, idx) => (
+              <button
+                key={major.label}
+                type="button"
+                onClick={() => {
+                  setSelectedMajor(idx)
+                  setSelectedChip(null)
+                }}
+                className={`rounded-lg px-3 py-1.5 text-xs font-medium transition-colors ${
+                  selectedMajor === idx
+                    ? 'bg-primary text-white'
+                    : 'bg-surface text-text-muted hover:bg-surface-hover'
+                }`}
+              >
+                {major.label}
+              </button>
+            ))}
+          </div>
+
+          {/* 중분류 칩 */}
           <div className="flex flex-wrap gap-2">
-            {QUICK_CHIPS.map((chip) => (
+            {currentMajor.children.map((chip) => (
               <button
                 key={chip}
                 type="button"

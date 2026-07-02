@@ -12,6 +12,8 @@
     "./auth/actions": "./lib/auth/actions.ts",
     "./service-catalog": "./lib/service-catalog.ts",
     "./matching-algo": "./lib/matching-algo.ts",
+    "./review-algo": "./lib/review-algo.ts",
+    "./categories": "./lib/categories.ts",
     "./payment": "./lib/payment.ts",
     "./query-types": "./lib/query-types.ts",
     "./labels": "./lib/labels.ts"

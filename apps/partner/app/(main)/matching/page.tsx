@@ -62,7 +62,7 @@ export default async function MatchingListPage() {
       .select('id, title, req_type, budget_hope, detail, created_at')
       .eq('status', 'open')
       .order('created_at', { ascending: false })
-      .limit(10),
+      .limit(20),
     adminClient
       .from('partner_interest')
       .select('request_id')

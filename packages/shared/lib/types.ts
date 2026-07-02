@@ -35,3 +35,43 @@ export type OrderStatus = Database['public']['Enums']['order_status']
 // ── Custom types (DB에 없는 앱 전용 타입) ───────────────────────
 export type UserRole = 'client' | 'partner'
 export type LedgerEntryType = 'accrue' | 'payout'
+
+// ── 수동 타입 (새 테이블, database.types.ts 갱신 전 사용) ────────
+export interface CategoryRow {
+  id: string
+  parent_id: string | null
+  depth: number
+  label: string
+  slug: string
+  sort_order: number
+  created_at: string
+}
+
+export interface PartnerCategoryRow {
+  partner_id: string
+  category_id: string
+}
+
+export interface MatchingCandidateRow {
+  id: string
+  request_id: string
+  partner_id: string
+  rank: number
+  score: number
+  score_detail: Record<string, number> | null
+  status: string
+  auto_assign_at: string | null
+  created_at: string
+}
+
+export interface ReviewAiSuggestionRow {
+  id: string
+  deal_id: string
+  process_rating: number
+  result_rating: number
+  response_rating: number
+  overall_rating: number
+  reasoning: string | null
+  status: string
+  created_at: string
+}
