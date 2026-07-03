@@ -31,7 +31,7 @@ export default async function QuotePage(props: { params: Promise<{ dealId: strin
     .eq('auth_user_id', user.id)
     .single()
 
-  const isAdmin = (process.env.ADMIN_EMAILS || '').split(',').includes(user.email || '')
+  const isAdmin = (process.env.ADMIN_EMAILS || '').split(',').map(e => e.trim().toLowerCase()).includes((user.email || '').toLowerCase())
 
   if (!isAdmin) {
     if (!client) redirect('/')

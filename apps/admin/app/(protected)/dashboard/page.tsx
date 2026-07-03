@@ -97,7 +97,7 @@ export default async function AdminDashboardPage() {
     const [{ data: wf }, { data: msgData }] = await Promise.all([
       adminClient
         .from('deal_workflow')
-        .select('*')
+        .select('id, deal_id, step, status, note, created_at, updated_at')
         .in('deal_id', dealIds)
         .order('created_at', { ascending: true }),
       adminClient

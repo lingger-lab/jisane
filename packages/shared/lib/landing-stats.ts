@@ -46,7 +46,6 @@ export async function fetchOwnerLandingStats(): Promise<OwnerLandingStats> {
   // 병렬 쿼리
   const [
     partnersRes,
-    depthCounts,
     dealsRes,
     satisfactionRes,
     newReqRes,
@@ -54,7 +53,6 @@ export async function fetchOwnerLandingStats(): Promise<OwnerLandingStats> {
     partnerCatsRes,
   ] = await Promise.all([
     adminClient.from('partner').select('id', { count: 'exact', head: true }).eq('status', 'active'),
-    adminClient.from('category').select('depth'),
     adminClient.from('deal').select('id', { count: 'exact', head: true }).eq('status', 'done'),
     adminClient.from('review').select('rating').eq('author_type', 'client'),
     adminClient.from('request').select('id', { count: 'exact', head: true }).gte('created_at', firstDayOfMonth()),
@@ -66,11 +64,11 @@ export async function fetchOwnerLandingStats(): Promise<OwnerLandingStats> {
   const totalCompletedDeals = dealsRes.count ?? 0
   const newRequestsThisMonth = newReqRes.count ?? 0
 
-  // depth별 카운트
-  const depths = depthCounts.data ?? []
-  const totalMajorFields = depths.filter((d) => d.depth === 0).length
-  const totalCategories = depths.filter((d) => d.depth === 1).length
-  const totalServices = depths.filter((d) => d.depth === 2).length
+  // depth별 카운트 (categoriesRes 데이터 재활용 — 별도 쿼리 제거)
+  const allCats = categoriesRes.data ?? []
+  const totalMajorFields = allCats.filter((d) => d.depth === 0).length
+  const totalCategories = allCats.filter((d) => d.depth === 1).length
+  const totalServices = allCats.filter((d) => d.depth === 2).length
 
   // 만족도 평균
   const ratings = satisfactionRes.data ?? []

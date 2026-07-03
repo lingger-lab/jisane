@@ -115,6 +115,10 @@ export async function acceptMatching(matchingId: string): Promise<{ error?: stri
 
   if (settlementErr) {
     console.error('[acceptMatching] settlement insert failed:', settlementErr.message)
+    // 롤백: deal 삭제 + matching을 proposed로 되돌림
+    await adminClient.from('deal').delete().eq('id', deal.id)
+    await adminClient.from('matching').update({ status: 'proposed' }).eq('id', matchingId)
+    return { error: '정산 정보 생성에 실패했습니다. 다시 시도해주세요.' }
   }
 
   // 4. deal_workflow 5행 생성

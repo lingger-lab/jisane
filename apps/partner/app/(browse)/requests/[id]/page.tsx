@@ -85,7 +85,7 @@ export default async function RequestDetailPage(props: PageProps) {
 
   return (
     <div className="flex flex-1 flex-col items-center animate-slide-up">
-      <div className="w-full max-w-md px-4 py-6">
+      <div className="responsive-container px-4 md:px-6 py-6 md:py-8">
         {/* 뒤로 가기 */}
         <Link
           href={request.category_id ? `/requests?category=${request.category_id}` : '/requests'}
@@ -100,7 +100,7 @@ export default async function RequestDetailPage(props: PageProps) {
         )}
 
         {/* 제목 */}
-        <h1 className="mt-2 text-xl font-bold text-text">{request.title}</h1>
+        <h1 className="mt-2 text-xl md:text-2xl font-bold text-text">{request.title}</h1>
 
         {/* 메타 정보 */}
         <div className="mt-2 flex flex-wrap gap-2 text-xs text-text-muted">
@@ -113,7 +113,7 @@ export default async function RequestDetailPage(props: PageProps) {
         </div>
 
         {/* 의뢰 상세 내용 */}
-        <div className="mt-4 rounded-xl border border-border-light p-4 shadow-xs">
+        <div className="mt-4 rounded-xl border border-border-light p-4 md:p-5 lg:p-6 shadow-xs">
           <h2 className="mb-2 text-sm font-semibold text-text">의뢰 내용</h2>
           <p className="whitespace-pre-wrap text-sm text-text-muted leading-relaxed">
             {request.detail}
@@ -140,7 +140,7 @@ export default async function RequestDetailPage(props: PageProps) {
 
         {/* 기업 정보 */}
         {(client.company || client.region || client.industry) && (
-          <div className="mt-4 rounded-xl border border-border-light p-4 shadow-xs">
+          <div className="mt-4 rounded-xl border border-border-light p-4 md:p-5 lg:p-6 shadow-xs">
             <h2 className="mb-2 text-sm font-semibold text-text">기업 정보</h2>
             <div className="flex flex-col gap-1 text-sm text-text-muted">
               {client.company && <p>{client.company}</p>}

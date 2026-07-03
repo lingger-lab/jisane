@@ -14,6 +14,7 @@
     "./icons/google": "./components/icons/google.tsx",
     "./icons/kakao": "./components/icons/kakao.tsx",
     "./app-header": "./components/app-header.tsx",
+    "./category-browse": "./components/category-browse.tsx",
     "./login-dropdown": "./components/login-dropdown.tsx"
   },
   "devDependencies": {

@@ -195,7 +195,7 @@ export function ReviewForm({
             return (
               <div key={axis.key}>
                 <label className="mb-1 block text-sm font-medium text-text">{axis.label}</label>
-                <p className="mb-1 text-[11px] text-text-subtle">{axis.desc}</p>
+                <p className="mb-1 text-xs text-text-subtle">{axis.desc}</p>
                 <StarRating value={value} onChange={setter} label={axis.label} />
               </div>
             )

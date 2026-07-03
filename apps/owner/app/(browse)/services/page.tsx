@@ -67,7 +67,7 @@ export default function ServicesPage() {
                 <div className="flex items-center gap-2">
                   <h3 className="font-medium text-text">{pkg.name}</h3>
                   {pkg.featured && (
-                    <span className="rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-medium text-primary">
+                    <span className="rounded-full bg-primary/10 px-2.5 py-1 text-xs font-medium text-primary">
                       추천
                     </span>
                   )}

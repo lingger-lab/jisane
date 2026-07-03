@@ -8,7 +8,7 @@ import { GoogleIcon } from '@jisane/ui/icons/google'
 import { KakaoIcon } from '@jisane/ui/icons/kakao'
 import { fetchPartnerLandingStats } from '@jisane/shared/landing-stats'
 import { getPackagesByAudience } from '@jisane/shared/service-catalog'
-import { CategoryBrowse } from '@/components/category-browse'
+import { CategoryBrowse } from '@jisane/ui/category-browse'
 
 export default async function PartnerHome() {
   const cookieStore = await cookies()
@@ -46,13 +46,12 @@ export default async function PartnerHome() {
   return (
     <div className="flex flex-1 flex-col items-center animate-slide-up">
       {/* [1] Hero */}
-      <section className="flex w-full max-w-md flex-col items-center gap-4 px-4 pt-10 pb-6 text-center">
-        <h1 className="text-2xl font-bold text-accent">지사네 시니어공간</h1>
-        <p className="text-base font-medium text-text leading-relaxed">
+      <section className="responsive-container flex flex-col items-center gap-4 px-4 md:px-6 pt-10 pb-6 text-center">
+        <h1 className="text-xl md:text-2xl lg:text-3xl font-bold text-text leading-relaxed">
           경험으로 일하고,
           <br />
           정당한 대가를 받으세요
-        </p>
+        </h1>
         <p className="text-sm text-text-muted">부울경 시니어 전문가 네트워크</p>
 
         <div className="flex w-full flex-col gap-3">
@@ -78,10 +77,10 @@ export default async function PartnerHome() {
       </section>
 
       {/* [2] 핵심 수치 */}
-      <section className="w-full max-w-md px-4 py-6">
-        <div className={`grid gap-3 ${metrics.length === 4 ? 'grid-cols-4' : 'grid-cols-3'}`}>
+      <section className="responsive-container px-4 md:px-6 py-6 md:py-8">
+        <div className={`grid gap-3 md:gap-4 ${metrics.length === 4 ? 'grid-cols-2 md:grid-cols-4' : 'grid-cols-3'}`}>
           {metrics.map((m) => (
-            <div key={m.label} className="flex flex-col items-center rounded-xl bg-surface-warm p-3">
+            <div key={m.label} className="flex flex-col items-center rounded-xl bg-surface-warm p-4 md:p-5">
               <span className="text-2xl font-bold text-accent">{m.value}</span>
               <span className="mt-0.5 text-xs text-text-muted">{m.label}</span>
             </div>
@@ -90,22 +89,27 @@ export default async function PartnerHome() {
       </section>
 
       {/* [3] 카테고리별 의뢰 현황 */}
-      <section className="w-full max-w-md px-4 py-6">
+      <section className="responsive-container px-4 md:px-6 py-6 md:py-8">
         <CategoryBrowse
           categoryCounts={stats.categoryCounts}
           newRequestsThisMonth={stats.newRequestsThisMonth}
+          title="어떤 분야의 의뢰가 있나요?"
+          countLabel="의뢰"
+          countUnit="건"
+          colorToken="accent"
+          baseHref="/requests"
         />
       </section>
 
       {/* [4] 전문가 역량 강화 프로그램 */}
-      <section className="w-full max-w-md px-4 py-6">
-        <h2 className="text-lg font-bold text-text">경험에 AI를 더합니다</h2>
+      <section className="responsive-container px-4 md:px-6 py-6 md:py-8">
+        <h2 className="text-lg md:text-xl font-bold text-text">경험에 AI를 더합니다</h2>
         <p className="mt-1 text-sm text-text-muted">전문가 역량 강화 프로그램</p>
         <div className="mt-3 flex flex-col gap-3">
           {education.map((pkg) => (
             <div
               key={pkg.slug}
-              className="rounded-xl border border-border-light p-4 shadow-xs"
+              className="rounded-xl border border-border-light p-4 md:p-5 lg:p-6 shadow-xs"
             >
               <div className="flex items-start justify-between gap-2">
                 <div className="min-w-0 flex-1">
@@ -121,7 +125,7 @@ export default async function PartnerHome() {
               <div className="mt-3 flex justify-end">
                 <Link
                   href={`/education/${pkg.slug}`}
-                  className="rounded-lg border border-border-light px-4 py-2 text-xs font-medium text-text-muted transition-colors hover:border-accent/30 hover:text-accent"
+                  className="rounded-lg border border-border-light px-4 py-2 text-sm font-medium text-text-muted transition-colors hover:border-accent/30 hover:text-accent"
                 >
                   자세히 보기
                 </Link>
@@ -132,8 +136,8 @@ export default async function PartnerHome() {
       </section>
 
       {/* [5] 신뢰 배지 */}
-      <section className="w-full max-w-md px-4 py-6">
-        <div className="grid grid-cols-3 gap-2">
+      <section className="responsive-container px-4 md:px-6 py-6 md:py-8">
+        <div className="grid grid-cols-3 gap-3 md:gap-4">
           {[
             { title: '수수료 0%', desc: '작업료 전액 지급' },
             { title: '에스크로', desc: '보장결제' },
@@ -141,17 +145,17 @@ export default async function PartnerHome() {
           ].map((badge) => (
             <div
               key={badge.title}
-              className="flex flex-col items-center rounded-xl border border-border-light bg-white p-3 text-center shadow-xs"
+              className="flex flex-col items-center rounded-xl border border-border-light bg-white p-4 md:p-5 text-center shadow-xs"
             >
               <span className="text-sm font-bold text-accent">{badge.title}</span>
-              <span className="mt-0.5 text-[10px] text-text-muted">{badge.desc}</span>
+              <span className="mt-0.5 text-xs text-text-muted">{badge.desc}</span>
             </div>
           ))}
         </div>
       </section>
 
       {/* [6] CTA 반복 */}
-      <section className="w-full max-w-md px-4 py-6">
+      <section className="responsive-container px-4 md:px-6 py-6 md:py-8">
         <p className="mb-4 text-center text-base font-semibold text-text">
           지금 전문가로 등록하세요
         </p>
@@ -178,10 +182,10 @@ export default async function PartnerHome() {
       </section>
 
       {/* [7] 크로스링크 배너 */}
-      <section className="w-full max-w-md px-4 py-4">
+      <section className="responsive-container px-4 md:px-6 py-4">
         <a
           href={ownerUrl}
-          className="flex items-center justify-between rounded-xl border border-primary/20 bg-primary/5 p-4 transition-colors hover:bg-primary/10"
+          className="flex items-center justify-between rounded-xl border border-primary/20 bg-primary/5 p-4 md:p-5 transition-colors hover:bg-primary/10"
         >
           <div>
             <p className="text-sm font-semibold text-text">기업을 운영하고 계신가요?</p>
@@ -192,7 +196,7 @@ export default async function PartnerHome() {
       </section>
 
       {/* [8] 푸터 */}
-      <footer className="w-full max-w-md px-4 py-6">
+      <footer className="responsive-container px-4 md:px-6 py-6">
         <div className="flex justify-center gap-4 text-xs text-text-subtle">
           <a href={`${adminUrl}/service`} className="hover:text-text-muted transition-colors">서비스 안내</a>
           <a href={ownerUrl} className="hover:text-text-muted transition-colors">기업공간</a>

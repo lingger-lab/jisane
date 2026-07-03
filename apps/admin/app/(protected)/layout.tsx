@@ -12,8 +12,8 @@ export default async function AdminLayout({ children }: { children: React.ReactN
     redirect('/')
   }
 
-  const adminEmails = (process.env.ADMIN_EMAILS || '').split(',').map(e => e.trim())
-  if (!adminEmails.includes(user.email)) {
+  const adminEmails = (process.env.ADMIN_EMAILS || '').split(',').map(e => e.trim().toLowerCase())
+  if (!adminEmails.includes(user.email.toLowerCase())) {
     redirect('/')
   }
 

@@ -142,3 +142,37 @@ summary {
     padding-bottom: env(safe-area-inset-bottom);
   }
 }
+
+/* 반응형 컨테이너 — max-w-md 대체 */
+.responsive-container {
+  width: 100%;
+  max-width: 28rem;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+@media (min-width: 768px) {
+  .responsive-container {
+    max-width: 32rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .responsive-container {
+    max-width: 42rem;
+  }
+}
+
+@media (min-width: 1280px) {
+  .responsive-container {
+    max-width: 48rem;
+  }
+}
+
+/* 터치 타겟 최소 크기 */
+.touch-target {
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}

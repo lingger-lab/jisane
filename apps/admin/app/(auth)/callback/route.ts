@@ -23,8 +23,8 @@ export async function GET(request: Request) {
     return NextResponse.redirect(`${origin}/?error=no_user`)
   }
 
-  const adminEmails = (process.env.ADMIN_EMAILS || '').split(',').map(e => e.trim())
-  if (adminEmails.includes(user.email || '')) {
+  const adminEmails = (process.env.ADMIN_EMAILS || '').split(',').map(e => e.trim().toLowerCase())
+  if (adminEmails.includes((user.email || '').toLowerCase())) {
     return NextResponse.redirect(`${origin}/dashboard`)
   }
 

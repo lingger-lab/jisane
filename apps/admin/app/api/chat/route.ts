@@ -11,9 +11,15 @@ const ALLOWED_ORIGINS = [
   'https://jisane.cloud',
 ]
 
+const DEV_ORIGINS = [
+  'http://localhost:3000',
+  'http://localhost:3001',
+  'http://localhost:3002',
+]
+
 function getCorsHeaders(request: Request) {
   const origin = request.headers.get('origin') || ''
-  const allowed = ALLOWED_ORIGINS.includes(origin) || process.env.NODE_ENV !== 'production'
+  const allowed = ALLOWED_ORIGINS.includes(origin) || (process.env.NODE_ENV !== 'production' && DEV_ORIGINS.includes(origin))
   return {
     'Access-Control-Allow-Origin': allowed ? origin : '',
     'Access-Control-Allow-Methods': 'POST, OPTIONS',

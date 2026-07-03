@@ -7,7 +7,7 @@ import { GoogleIcon } from '@jisane/ui/icons/google'
 import { KakaoIcon } from '@jisane/ui/icons/kakao'
 import { fetchOwnerLandingStats } from '@jisane/shared/landing-stats'
 import { getPackagesByAudience } from '@jisane/shared/service-catalog'
-import { CategoryBrowse } from '@/components/category-browse'
+import { CategoryBrowse } from '@jisane/ui/category-browse'
 
 export default async function OwnerHome() {
   const cookieStore = await cookies()
@@ -36,13 +36,12 @@ export default async function OwnerHome() {
   return (
     <div className="flex flex-1 flex-col items-center animate-slide-up">
       {/* [1] Hero */}
-      <section className="flex w-full max-w-md flex-col items-center gap-4 px-4 pt-10 pb-6 text-center">
-        <h1 className="text-2xl font-bold text-primary">지사네 기업공간</h1>
-        <p className="text-base font-medium text-text leading-relaxed">
+      <section className="responsive-container flex flex-col items-center gap-4 px-4 md:px-6 pt-10 pb-6 text-center">
+        <h1 className="text-xl md:text-2xl lg:text-3xl font-bold text-text leading-relaxed">
           검증된 시니어 전문가에게
           <br />
           일을 맡기세요
-        </p>
+        </h1>
         <p className="text-sm text-text-muted">부울경 시니어 전문가 네트워크</p>
 
         <div className="flex w-full flex-col gap-3">
@@ -68,10 +67,10 @@ export default async function OwnerHome() {
       </section>
 
       {/* [2] 핵심 수치 — 전문성의 폭 */}
-      <section className="w-full max-w-md px-4 py-6">
-        <div className={`grid gap-3 ${metrics.length === 4 ? 'grid-cols-4' : 'grid-cols-3'}`}>
+      <section className="responsive-container px-4 md:px-6 py-6 md:py-8">
+        <div className={`grid gap-3 md:gap-4 ${metrics.length === 4 ? 'grid-cols-2 md:grid-cols-4' : 'grid-cols-3'}`}>
           {metrics.map((m) => (
-            <div key={m.label} className="flex flex-col items-center rounded-xl bg-surface-warm p-3">
+            <div key={m.label} className="flex flex-col items-center rounded-xl bg-surface-warm p-4 md:p-5">
               <span className="text-2xl font-bold text-primary">{m.value}</span>
               <span className="mt-0.5 text-xs text-text-muted">{m.label}</span>
             </div>
@@ -80,28 +79,33 @@ export default async function OwnerHome() {
       </section>
 
       {/* [3] 카테고리 탐색 */}
-      <section className="w-full max-w-md px-4 py-6">
+      <section className="responsive-container px-4 md:px-6 py-6 md:py-8">
         <CategoryBrowse
           categoryCounts={stats.categoryCounts}
           newRequestsThisMonth={stats.newRequestsThisMonth}
+          title="어떤 분야의 전문가가 필요하세요?"
+          countLabel="전문가"
+          countUnit="명"
+          colorToken="primary"
+          baseHref="/experts"
         />
       </section>
 
       {/* [4] 검증된 전문 서비스 */}
-      <section className="w-full max-w-md px-4 py-6">
-        <h2 className="text-lg font-bold text-text">검증된 전문 서비스</h2>
+      <section className="responsive-container px-4 md:px-6 py-6 md:py-8">
+        <h2 className="text-lg md:text-xl font-bold text-text">검증된 전문 서비스</h2>
         <div className="mt-3 flex flex-col gap-3">
           {services.map((pkg) => (
             <div
               key={pkg.slug}
-              className="rounded-xl border border-border-light p-4 shadow-xs"
+              className="rounded-xl border border-border-light p-4 md:p-5 lg:p-6 shadow-xs"
             >
               <div className="flex items-start justify-between gap-2">
                 <div className="min-w-0 flex-1">
                   <div className="flex items-center gap-2">
                     <h3 className="font-medium text-text">{pkg.name}</h3>
                     {pkg.isFree && (
-                      <span className="rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-semibold text-primary">
+                      <span className="rounded-full bg-primary/10 px-2.5 py-1 text-xs font-semibold text-primary">
                         무료
                       </span>
                     )}
@@ -118,14 +122,14 @@ export default async function OwnerHome() {
                 {pkg.isFree ? (
                   <Link
                     href={`/services/${pkg.slug}`}
-                    className="rounded-lg bg-primary px-4 py-2 text-xs font-medium text-white transition-colors hover:bg-primary-light"
+                    className="rounded-lg bg-primary px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-primary-light"
                   >
                     무료로 시작하기
                   </Link>
                 ) : (
                   <Link
                     href={`/services/${pkg.slug}`}
-                    className="rounded-lg border border-border-light px-4 py-2 text-xs font-medium text-text-muted transition-colors hover:border-primary/30 hover:text-primary"
+                    className="rounded-lg border border-border-light px-4 py-2 text-sm font-medium text-text-muted transition-colors hover:border-primary/30 hover:text-primary"
                   >
                     자세히 보기
                   </Link>
@@ -137,8 +141,8 @@ export default async function OwnerHome() {
       </section>
 
       {/* [5] 신뢰 배지 */}
-      <section className="w-full max-w-md px-4 py-6">
-        <div className="grid grid-cols-3 gap-2">
+      <section className="responsive-container px-4 md:px-6 py-6 md:py-8">
+        <div className="grid grid-cols-3 gap-3 md:gap-4">
           {[
             { title: '수수료 0%', desc: '기업 부담 없음' },
             { title: '에스크로', desc: '안전결제' },
@@ -146,17 +150,17 @@ export default async function OwnerHome() {
           ].map((badge) => (
             <div
               key={badge.title}
-              className="flex flex-col items-center rounded-xl border border-border-light bg-white p-3 text-center shadow-xs"
+              className="flex flex-col items-center rounded-xl border border-border-light bg-white p-4 md:p-5 text-center shadow-xs"
             >
               <span className="text-sm font-bold text-primary">{badge.title}</span>
-              <span className="mt-0.5 text-[10px] text-text-muted">{badge.desc}</span>
+              <span className="mt-0.5 text-xs text-text-muted">{badge.desc}</span>
             </div>
           ))}
         </div>
       </section>
 
       {/* [6] CTA 반복 */}
-      <section className="w-full max-w-md px-4 py-6">
+      <section className="responsive-container px-4 md:px-6 py-6 md:py-8">
         <p className="mb-4 text-center text-base font-semibold text-text">
           지금 바로 시작하세요
         </p>
@@ -183,10 +187,10 @@ export default async function OwnerHome() {
       </section>
 
       {/* [7] 크로스링크 배너 */}
-      <section className="w-full max-w-md px-4 py-4">
+      <section className="responsive-container px-4 md:px-6 py-4">
         <a
           href={partnerUrl}
-          className="flex items-center justify-between rounded-xl border border-accent/20 bg-accent/5 p-4 transition-colors hover:bg-accent/10"
+          className="flex items-center justify-between rounded-xl border border-accent/20 bg-accent/5 p-4 md:p-5 transition-colors hover:bg-accent/10"
         >
           <div>
             <p className="text-sm font-semibold text-text">시니어 전문가이신가요?</p>
@@ -197,7 +201,7 @@ export default async function OwnerHome() {
       </section>
 
       {/* [8] 푸터 */}
-      <footer className="w-full max-w-md px-4 py-6">
+      <footer className="responsive-container px-4 md:px-6 py-6">
         <div className="flex justify-center gap-4 text-xs text-text-subtle">
           <a href={`${adminUrl}/service`} className="hover:text-text-muted transition-colors">서비스 안내</a>
           <a href={`${adminUrl}/ax`} className="hover:text-text-muted transition-colors">AX 전환</a>

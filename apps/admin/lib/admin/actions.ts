@@ -1,31 +1,13 @@
 'use server'
 
-import { cookies } from 'next/headers'
 import { revalidatePath } from 'next/cache'
-import { createClient } from '@jisane/shared/supabase/server'
 import { adminClient } from '@jisane/shared/supabase/admin'
 import { findCandidates } from '@jisane/shared/matching-algo'
 import { calculateAiRating } from '@jisane/shared/review-algo'
+import { verifyAdmin } from '@jisane/shared/auth/server-helpers'
 import type { PartnerRow } from '@jisane/shared/types'
 import type { InterestWithPartner } from '@jisane/shared/query-types'
 import type { CategoryRow } from '@jisane/shared/categories'
-
-async function verifyAdmin(): Promise<{ email: string }> {
-  const cookieStore = await cookies()
-  const supabase = createClient(cookieStore)
-  const { data: { user } } = await supabase.auth.getUser()
-
-  if (!user?.email) {
-    throw new Error('Unauthorized')
-  }
-
-  const adminEmails = (process.env.ADMIN_EMAILS || '').split(',').map((e) => e.trim())
-  if (!adminEmails.includes(user.email)) {
-    throw new Error('Forbidden')
-  }
-
-  return { email: user.email }
-}
 
 export async function getCandidatesForRequest(requestId: string) {
   await verifyAdmin()
@@ -551,7 +533,7 @@ export async function getAiSuggestion(dealId: string) {
 
   const { data } = await adminClient
     .from('review_ai_suggestion')
-    .select('*')
+    .select('id, deal_id, process_rating, result_rating, response_rating, overall_rating, reasoning, status, created_at')
     .eq('deal_id', dealId)
     .order('created_at', { ascending: false })
     .limit(1)

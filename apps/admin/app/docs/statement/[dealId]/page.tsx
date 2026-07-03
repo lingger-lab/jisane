@@ -30,7 +30,7 @@ export default async function StatementPage(props: { params: Promise<{ dealId: s
     adminClient.from('partner').select('id').eq('auth_user_id', user.id).single(),
   ])
 
-  const isAdmin = (process.env.ADMIN_EMAILS || '').split(',').includes(user.email || '')
+  const isAdmin = (process.env.ADMIN_EMAILS || '').split(',').map(e => e.trim().toLowerCase()).includes((user.email || '').toLowerCase())
   const isClient = !!clientRes.data
   const isPartner = partnerRes.data?.id === deal.partner_id
 

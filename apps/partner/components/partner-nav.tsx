@@ -66,7 +66,7 @@ export function PartnerNav() {
 
   return (
     <nav className="fixed bottom-0 left-0 right-0 border-t border-border-light bg-background/80 backdrop-blur-lg pb-safe">
-      <div className="mx-auto flex max-w-md items-center justify-around px-4">
+      <div className="responsive-container flex items-center justify-around px-4 md:px-6">
         {TABS.map((tab) => {
           const isActive = pathname === tab.href || pathname.startsWith(tab.href + '/')
           return (
@@ -74,7 +74,7 @@ export function PartnerNav() {
               key={tab.href}
               href={tab.href}
               aria-current={isActive ? 'page' : undefined}
-              className={`relative flex flex-1 flex-col items-center gap-0.5 py-2 text-xs transition-colors ${
+              className={`relative flex flex-1 flex-col items-center gap-1 py-3 text-xs md:text-sm transition-colors ${
                 isActive ? 'font-semibold text-primary' : 'text-text-muted hover:text-text'
               }`}
             >

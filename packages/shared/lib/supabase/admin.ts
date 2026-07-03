@@ -4,10 +4,14 @@ let _client: SupabaseClient;
 
 function getClient(): SupabaseClient {
   if (!_client) {
-    _client = createClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.SUPABASE_SECRET_KEY!,
-    );
+    const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    const key = process.env.SUPABASE_SECRET_KEY;
+    if (!url || !key) {
+      throw new Error(
+        "Missing required env vars: NEXT_PUBLIC_SUPABASE_URL and/or SUPABASE_SECRET_KEY",
+      );
+    }
+    _client = createClient(url, key);
   }
   return _client;
 }

@@ -96,7 +96,7 @@ export function RequestList({
           &larr; 홈
         </Link>
       </div>
-      <h1 className="text-lg font-bold text-text">열린 의뢰 탐색</h1>
+      <h1 className="text-lg md:text-xl lg:text-2xl font-bold text-text">열린 의뢰 탐색</h1>
       <p className="mt-1 text-sm text-text-muted">
         {requests.length > 0
           ? `${requests.length}건의 열린 의뢰`
@@ -104,11 +104,11 @@ export function RequestList({
       </p>
 
       {/* 대분류 탭 */}
-      <div className="mt-4 flex flex-wrap gap-1.5">
+      <div className="mt-4 flex flex-wrap gap-2">
         <button
           type="button"
           onClick={() => handleCategoryChange(null)}
-          className={`rounded-lg px-3 py-1.5 text-xs font-medium transition-colors ${
+          className={`rounded-lg px-3.5 py-2 text-sm font-medium transition-colors ${
             !selectedCategory
               ? 'bg-accent text-white'
               : 'bg-surface text-text-muted hover:bg-surface-warm'
@@ -125,7 +125,7 @@ export function RequestList({
               key={major.id}
               type="button"
               onClick={() => handleCategoryChange(major.id)}
-              className={`rounded-lg px-3 py-1.5 text-xs font-medium transition-colors ${
+              className={`rounded-lg px-3.5 py-2 text-sm font-medium transition-colors ${
                 isActive
                   ? 'bg-accent text-white'
                   : 'bg-surface text-text-muted hover:bg-surface-warm'
@@ -145,7 +145,7 @@ export function RequestList({
               key={mid.id}
               type="button"
               onClick={() => handleCategoryChange(mid.id)}
-              className={`rounded-full px-2.5 py-1 text-[11px] font-medium transition-colors ${
+              className={`rounded-full px-3 py-1.5 text-xs font-medium transition-colors ${
                 selectedCategory === mid.id
                   ? 'bg-accent/15 text-accent border border-accent/30'
                   : 'bg-surface text-text-subtle hover:bg-surface-warm'
@@ -187,7 +187,7 @@ export function RequestList({
             return (
               <div
                 key={req.id}
-                className={`rounded-xl border border-border-light p-4 shadow-xs animate-fade-in stagger-${Math.min(i + 1, 5)}`}
+                className={`rounded-xl border border-border-light p-4 md:p-5 shadow-xs animate-fade-in stagger-${Math.min(i + 1, 5)}`}
               >
                 <Link href={`/requests/${req.id}`} className="block">
                   <h3 className="truncate font-medium text-text">{req.title}</h3>

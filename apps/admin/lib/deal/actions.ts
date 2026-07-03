@@ -1,125 +1,22 @@
 'use server'
 
-import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
-import { createClient } from '@jisane/shared/supabase/server'
-import { adminClient } from '@jisane/shared/supabase/admin'
-import type { DealWithOwnership } from '@jisane/shared/query-types'
-
-async function getAuthUserId(): Promise<string> {
-  const cookieStore = await cookies()
-  const supabase = createClient(cookieStore)
-  const { data: { user } } = await supabase.auth.getUser()
-  if (!user) {
-    redirect('/')
-  }
-  return user.id
-}
-
-async function verifyDealOwnership(dealId: string, authUserId: string) {
-  const { data: deal } = await adminClient
-    .from('deal')
-    .select('id, status, request_id, request:request!inner(id, client_id, client:client!inner(auth_user_id))')
-    .eq('id', dealId)
-    .returns<DealWithOwnership[]>()
-    .single()
-
-  if (!deal) {
-    return { error: '거래 정보를 찾을 수 없습니다.' }
-  }
-
-  const request = deal.request
-  if (request.client.auth_user_id !== authUserId) {
-    return { error: '접근 권한이 없습니다.' }
-  }
-
-  return { deal, requestId: request.id }
-}
+import { approveDealOp, confirmDealOp, requestRevisionOp } from '@jisane/shared/deal/deal-operations'
 
 export async function approveDeal(dealId: string): Promise<{ error?: string }> {
-  const authUserId = await getAuthUserId()
-  const result = await verifyDealOwnership(dealId, authUserId)
-
-  if ('error' in result && result.error) {
-    return { error: result.error }
-  }
-
-  const { deal, requestId } = result as { deal: { id: string; status: string }; requestId: string }
-
-  if (deal.status !== 'quoted') {
-    return { error: '승인할 수 없는 상태입니다.' }
-  }
-
-  // deal.status → 'working'
-  const { error } = await adminClient
-    .from('deal')
-    .update({ status: 'working' })
-    .eq('id', dealId)
-
-  if (error) {
-    return { error: '견적 승인에 실패했습니다.' }
-  }
-
-  redirect(`/status/${requestId}?success=deal_approved`)
+  const result = await approveDealOp(dealId)
+  if (result.error) return { error: result.error }
+  redirect(`/status/${result.requestId}?success=deal_approved`)
 }
 
 export async function confirmDeal(dealId: string): Promise<{ error?: string }> {
-  const authUserId = await getAuthUserId()
-  const result = await verifyDealOwnership(dealId, authUserId)
-
-  if ('error' in result && result.error) {
-    return { error: result.error }
-  }
-
-  const { deal, requestId } = result as { deal: { id: string; status: string }; requestId: string }
-
-  if (deal.status !== 'working') {
-    return { error: '검수할 수 없는 상태입니다.' }
-  }
-
-  // deal.status → 'done'
-  const { error: dealError } = await adminClient
-    .from('deal')
-    .update({ status: 'done' })
-    .eq('id', dealId)
-
-  if (dealError) {
-    return { error: '검수 확인에 실패했습니다.' }
-  }
-
-  // settlement.escrow_status → 'reviewing'
-  const { error: settlementErr } = await adminClient
-    .from('settlement')
-    .update({ escrow_status: 'reviewing' })
-    .eq('deal_id', dealId)
-
-  if (settlementErr) {
-    console.error('[confirmDeal] settlement update failed:', settlementErr.message)
-  }
-
-  redirect(`/status/${requestId}?success=deal_confirmed`)
+  const result = await confirmDealOp(dealId)
+  if (result.error) return { error: result.error }
+  redirect(`/status/${result.requestId}?success=deal_confirmed`)
 }
 
 export async function requestRevision(dealId: string, reason: string): Promise<{ error?: string }> {
-  const authUserId = await getAuthUserId()
-  const result = await verifyDealOwnership(dealId, authUserId)
-
-  if ('error' in result && result.error) {
-    return { error: result.error }
-  }
-
-  const { deal } = result as { deal: { id: string; status: string }; requestId: string }
-
-  if (deal.status !== 'working') {
-    return { error: '수정 요청할 수 없는 상태입니다.' }
-  }
-
-  // deliver 단계에 수정 요청 note 추가
-  await adminClient
-    .from('deal_workflow')
-    .update({ note: `수정 요청: ${reason}`, status: 'in_progress' })
-    .eq('deal_id', dealId)
-    .eq('step', 'deliver')
-
+  const result = await requestRevisionOp(dealId, reason)
+  if (result.error) return { error: result.error }
   return {}
 }

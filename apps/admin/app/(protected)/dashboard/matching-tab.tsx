@@ -252,7 +252,7 @@ export function MatchingTab({
 
                       {/* 점수 상세 */}
                       {c.score_detail && hasAiCandidates && (
-                        <div className="mt-1 flex flex-wrap gap-1.5 text-[11px] text-text-subtle">
+                        <div className="mt-1 flex flex-wrap gap-1.5 text-xs text-text-subtle">
                           {c.score_detail.category > 0 && <span>카테고리 +{c.score_detail.category}</span>}
                           {c.score_detail.keyword > 0 && <span>키워드 +{c.score_detail.keyword}</span>}
                           {c.score_detail.career > 0 && <span>경력 +{c.score_detail.career}</span>}

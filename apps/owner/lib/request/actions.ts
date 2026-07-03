@@ -35,13 +35,15 @@ export async function createRequest(
     return { error: '의뢰 내용을 입력해주세요.' }
   }
 
-  // client_id 조회 (없으면 자동 생성 — 시니어가 기업 역할도 사용하는 경우)
-  let { data: client } = await adminClient
-    .from('client')
-    .select('id')
-    .eq('auth_user_id', user.id)
-    .single()
+  // client + category 병렬 조회
+  const [clientResult, catResult] = await Promise.all([
+    adminClient.from('client').select('id').eq('auth_user_id', user.id).single(),
+    reqType
+      ? adminClient.from('category').select('id').eq('label', reqType).eq('depth', 1).single()
+      : Promise.resolve({ data: null }),
+  ])
 
+  let client = clientResult.data
   if (!client) {
     const provider = (user.app_metadata?.provider as string) || 'google'
     const { data: newClient } = await adminClient
@@ -56,17 +58,7 @@ export async function createRequest(
     return { error: '계정 생성에 실패했습니다. 다시 시도해주세요.' }
   }
 
-  // category_id 조회 (중분류 label → UUID)
-  let categoryId: string | null = null
-  if (reqType) {
-    const { data: cat } = await adminClient
-      .from('category')
-      .select('id')
-      .eq('label', reqType)
-      .eq('depth', 1)
-      .single()
-    categoryId = cat?.id || null
-  }
+  const categoryId = catResult.data?.id || null
 
   const { error } = await adminClient.from('request').insert({
     client_id: client.id,

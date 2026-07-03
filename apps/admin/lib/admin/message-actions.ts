@@ -1,22 +1,8 @@
 'use server'
 
-import { cookies } from 'next/headers'
 import { revalidatePath } from 'next/cache'
-import { createClient } from '@jisane/shared/supabase/server'
 import { adminClient } from '@jisane/shared/supabase/admin'
-
-async function verifyAdmin(): Promise<{ email: string }> {
-  const cookieStore = await cookies()
-  const supabase = createClient(cookieStore)
-  const { data: { user } } = await supabase.auth.getUser()
-
-  if (!user?.email) throw new Error('Unauthorized')
-
-  const adminEmails = (process.env.ADMIN_EMAILS || '').split(',').map((e) => e.trim())
-  if (!adminEmails.includes(user.email)) throw new Error('Forbidden')
-
-  return { email: user.email }
-}
+import { verifyAdmin } from '@jisane/shared/auth/server-helpers'
 
 export async function sendAdminMessage(
   dealId: string,
