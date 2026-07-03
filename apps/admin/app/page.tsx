@@ -1,4 +1,3 @@
-import Image from 'next/image'
 import Link from 'next/link'
 import { cookies } from 'next/headers'
 import { createClient } from '@jisane/shared/supabase/server'
@@ -7,6 +6,7 @@ import { GoogleIcon } from '@jisane/ui/icons/google'
 import { KakaoIcon } from '@jisane/ui/icons/kakao'
 import { fetchHubLandingStats } from '@jisane/shared/landing-stats'
 import { getPackagesByAudience } from '@jisane/shared/service-catalog'
+import { SplashOverlay } from '@/components/splash-overlay'
 
 export default async function AdminHome() {
   const cookieStore = await cookies()
@@ -60,19 +60,13 @@ export default async function AdminHome() {
         )}
       </nav>
 
+      <SplashOverlay />
+
       <div className="flex flex-1 flex-col items-center px-4 py-8">
         <main className="flex w-full max-w-md flex-col items-center gap-8">
           {/* Hero */}
           <section className="flex flex-col items-center gap-3 text-center animate-fade-in">
-            <Image
-              src="/jisaneadmin-hero-image.png"
-              alt="지사네"
-              width={280}
-              height={100}
-              priority
-              className="h-auto w-[280px]"
-            />
-            <h1 className="sr-only">지사네</h1>
+            <h1 className="text-3xl font-bold text-primary">지사네</h1>
             <p className="text-base text-text-muted leading-relaxed">
               부울경 검증된 시니어 전문가를
               <br />

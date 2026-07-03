@@ -1,4 +1,3 @@
-import Image from 'next/image'
 import Link from 'next/link'
 import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
@@ -48,15 +47,7 @@ export default async function PartnerHome() {
     <div className="flex flex-1 flex-col items-center animate-slide-up">
       {/* [1] Hero */}
       <section className="flex w-full max-w-md flex-col items-center gap-4 px-4 pt-10 pb-6 text-center">
-        <Image
-          src="/jisanepartner-hero-image.png"
-          alt="지사네 시니어공간"
-          width={280}
-          height={100}
-          priority
-          className="h-auto w-[280px]"
-        />
-        <h1 className="sr-only">지사네 시니어공간</h1>
+        <h1 className="text-2xl font-bold text-accent">지사네 시니어공간</h1>
         <p className="text-base font-medium text-text leading-relaxed">
           경험으로 일하고,
           <br />
