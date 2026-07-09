@@ -25,6 +25,12 @@
   --info: #2563eb;
   --info-light: #eff6ff;
 
+  /* 브랜드 그라디언트 */
+  --brand-gradient: linear-gradient(135deg, #1a1a2e 0%, #2d4a7a 50%, #4a6fa5 100%);
+  --brand-gradient-text: linear-gradient(135deg, #1a1a2e 0%, #4a6fa5 100%);
+  --brand-gradient-light: linear-gradient(135deg, #4a6fa5 0%, #7a9cc6 100%);
+  --brand-glow: rgba(74, 111, 165, 0.15);
+
   /* 그림자 */
   --shadow-xs: 0 1px 2px rgba(26, 26, 46, 0.04);
   --shadow-sm: 0 1px 3px rgba(26, 26, 46, 0.06), 0 1px 2px rgba(26, 26, 46, 0.04);
@@ -90,6 +96,26 @@ body {
   to { background-position: 200% 0; }
 }
 
+@keyframes text-rotate-in {
+  from { opacity: 0; transform: translateY(100%); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes text-rotate-out {
+  from { opacity: 1; transform: translateY(0); }
+  to { opacity: 0; transform: translateY(-100%); }
+}
+
+@keyframes pulse-glow {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(74, 111, 165, 0.4); }
+  50% { box-shadow: 0 0 0 8px rgba(74, 111, 165, 0); }
+}
+
+@keyframes draw-line {
+  from { width: 0; }
+  to { width: 100%; }
+}
+
 /* 유틸리티 클래스 */
 .animate-fade-in {
   animation: fade-in 0.4s ease-out both;
@@ -101,6 +127,39 @@ body {
 
 .animate-slide-up {
   animation: slide-up 0.5s ease-out both;
+}
+
+/* 브랜드 유틸리티 */
+.text-brand-gradient {
+  background: var(--brand-gradient-text);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.bg-brand-gradient {
+  background: var(--brand-gradient);
+}
+
+.brand-glow {
+  box-shadow: 0 0 20px var(--brand-glow), 0 0 60px rgba(74, 111, 165, 0.08);
+}
+
+.cta-pulse {
+  animation: pulse-glow 2s ease-in-out infinite;
+}
+
+/* reduced motion 대응 */
+@media (prefers-reduced-motion: reduce) {
+  .animate-fade-in,
+  .animate-scale-in,
+  .animate-slide-up,
+  .cta-pulse {
+    animation: none;
+  }
+  .card-hover {
+    transition: none;
+  }
 }
 
 /* 인터랙티브 요소 커서 */
@@ -118,6 +177,30 @@ summary {
 .card-hover:hover {
   box-shadow: var(--shadow-md);
   transform: translateY(-1px);
+}
+
+.card-glow:hover {
+  box-shadow: 0 0 20px var(--brand-glow), 0 0 60px rgba(74, 111, 165, 0.08), var(--shadow-md);
+  transform: translateY(-2px);
+}
+
+/* 프로세스 스텝 연결선 (데스크탑) */
+.process-step {
+  position: relative;
+}
+
+@media (min-width: 768px) {
+  .process-step:not(:last-child)::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    right: -0.5rem;
+    width: calc(0.5rem * 2);
+    height: 2px;
+    background: var(--brand-gradient-light);
+    transform: translateX(50%) translateY(-50%);
+    animation: draw-line 0.6s ease-out 0.5s both;
+  }
 }
 
 .btn-press:active {

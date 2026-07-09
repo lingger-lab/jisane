@@ -46,7 +46,7 @@ export function SplashOverlay() {
           priority
           className="h-auto w-[280px]"
         />
-        <h2 className="text-3xl font-bold text-primary">지사네</h2>
+        <h2 className="text-3xl font-bold text-brand-gradient">지사네</h2>
         <p className="text-base text-text-muted leading-relaxed">
           부울경 검증된 시니어 전문가를
           <br />

@@ -8,6 +8,8 @@ import { KakaoIcon } from '@jisane/ui/icons/kakao'
 import { fetchOwnerLandingStats } from '@jisane/shared/landing-stats'
 import { getPackagesByAudience } from '@jisane/shared/service-catalog'
 import { CategoryBrowse } from '@jisane/ui/category-browse'
+import { TextRotator } from '@jisane/ui/text-rotator'
+import { AnimatedCounter } from '@jisane/ui/animated-counter'
 
 export default async function OwnerHome() {
   const cookieStore = await cookies()
@@ -24,13 +26,13 @@ export default async function OwnerHome() {
   const partnerUrl = process.env.NEXT_PUBLIC_PARTNER_URL || 'https://partner.jisane.cloud'
 
   // 핵심 수치 (만족도 없으면 3칸)
-  const metrics: { value: string | number; label: string }[] = [
-    { value: stats.totalMajorFields, label: '전문 분야' },
-    { value: stats.totalCategories, label: '전문영역' },
-    { value: `${stats.totalServices}+`, label: '서비스 항목' },
+  const metrics: { end: number; suffix: string; label: string }[] = [
+    { end: stats.totalMajorFields, suffix: '', label: '전문 분야' },
+    { end: stats.totalCategories, suffix: '', label: '전문영역' },
+    { end: stats.totalServices, suffix: '+', label: '서비스 항목' },
   ]
   if (stats.avgSatisfaction !== null) {
-    metrics.push({ value: stats.avgSatisfaction, label: '만족도' })
+    metrics.push({ end: stats.avgSatisfaction, suffix: '', label: '만족도' })
   }
 
   return (
@@ -40,7 +42,11 @@ export default async function OwnerHome() {
         <h1 className="text-xl md:text-2xl lg:text-3xl font-bold text-text leading-relaxed">
           검증된 시니어 전문가에게
           <br />
-          일을 맡기세요
+          <TextRotator
+            words={['사업계획서', 'AI 진단', '경영컨설팅', '품질관리', '세무·회계']}
+            className="text-brand-gradient"
+          />
+          를 맡기세요
         </h1>
         <p className="text-sm text-text-muted">부울경 시니어 전문가 네트워크</p>
 
@@ -71,7 +77,7 @@ export default async function OwnerHome() {
         <div className={`grid gap-3 md:gap-4 ${metrics.length === 4 ? 'grid-cols-2 md:grid-cols-4' : 'grid-cols-3'}`}>
           {metrics.map((m) => (
             <div key={m.label} className="flex flex-col items-center rounded-xl bg-surface-warm p-4 md:p-5">
-              <span className="text-2xl font-bold text-primary">{m.value}</span>
+              <AnimatedCounter end={m.end} suffix={m.suffix} className="text-2xl font-bold text-primary" />
               <span className="mt-0.5 text-xs text-text-muted">{m.label}</span>
             </div>
           ))}

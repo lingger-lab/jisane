@@ -9,6 +9,8 @@ import { KakaoIcon } from '@jisane/ui/icons/kakao'
 import { fetchPartnerLandingStats } from '@jisane/shared/landing-stats'
 import { getPackagesByAudience } from '@jisane/shared/service-catalog'
 import { CategoryBrowse } from '@jisane/ui/category-browse'
+import { TextRotator } from '@jisane/ui/text-rotator'
+import { AnimatedCounter } from '@jisane/ui/animated-counter'
 
 export default async function PartnerHome() {
   const cookieStore = await cookies()
@@ -34,13 +36,13 @@ export default async function PartnerHome() {
   const ownerUrl = process.env.NEXT_PUBLIC_OWNER_URL || 'https://owner.jisane.cloud'
 
   // 핵심 수치 (완료거래 0이면 3칸)
-  const metrics: { value: string | number; label: string }[] = [
-    { value: `${stats.totalClients}+`, label: '참여 기업' },
-    { value: `${stats.totalOpenRequests}건`, label: '열린 의뢰' },
-    { value: '0%', label: '수수료' },
+  const metrics: { end: number; suffix: string; label: string }[] = [
+    { end: stats.totalClients, suffix: '+', label: '참여 기업' },
+    { end: stats.totalOpenRequests, suffix: '건', label: '열린 의뢰' },
+    { end: 0, suffix: '%', label: '수수료' },
   ]
   if (stats.totalCompletedDeals > 0) {
-    metrics.push({ value: `${stats.totalCompletedDeals}건`, label: '완료 거래' })
+    metrics.push({ end: stats.totalCompletedDeals, suffix: '건', label: '완료 거래' })
   }
 
   return (
@@ -48,7 +50,11 @@ export default async function PartnerHome() {
       {/* [1] Hero */}
       <section className="responsive-container flex flex-col items-center gap-4 px-4 md:px-6 pt-10 pb-6 text-center">
         <h1 className="text-xl md:text-2xl lg:text-3xl font-bold text-text leading-relaxed">
-          경험으로 일하고,
+          <TextRotator
+            words={['경영컨설팅', '사업계획서', 'AI 전환', '품질관리', '데이터분석']}
+            className="text-brand-gradient"
+          />
+          {' '}경험으로
           <br />
           정당한 대가를 받으세요
         </h1>
@@ -81,7 +87,7 @@ export default async function PartnerHome() {
         <div className={`grid gap-3 md:gap-4 ${metrics.length === 4 ? 'grid-cols-2 md:grid-cols-4' : 'grid-cols-3'}`}>
           {metrics.map((m) => (
             <div key={m.label} className="flex flex-col items-center rounded-xl bg-surface-warm p-4 md:p-5">
-              <span className="text-2xl font-bold text-accent">{m.value}</span>
+              <AnimatedCounter end={m.end} suffix={m.suffix} className="text-2xl font-bold text-accent" />
               <span className="mt-0.5 text-xs text-text-muted">{m.label}</span>
             </div>
           ))}

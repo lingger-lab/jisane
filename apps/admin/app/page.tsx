@@ -7,6 +7,8 @@ import { KakaoIcon } from '@jisane/ui/icons/kakao'
 import { fetchHubLandingStats } from '@jisane/shared/landing-stats'
 import { getPackagesByAudience } from '@jisane/shared/service-catalog'
 import { SplashOverlay } from '@/components/splash-overlay'
+import { TextRotator } from '@jisane/ui/text-rotator'
+import { AnimatedCounter } from '@jisane/ui/animated-counter'
 
 export default async function AdminHome() {
   const cookieStore = await cookies()
@@ -23,10 +25,10 @@ export default async function AdminHome() {
 
   // 핵심 수치
   const metrics = [
-    { value: stats.owner.totalMajorFields, label: '전문 분야' },
-    { value: stats.owner.totalCategories, label: '전문영역' },
-    { value: `${stats.owner.totalServices}+`, label: '서비스 항목' },
-    { value: `${stats.partner.totalOpenRequests}건`, label: '열린 의뢰' },
+    { end: stats.owner.totalMajorFields, suffix: '', label: '전문 분야' },
+    { end: stats.owner.totalCategories, suffix: '', label: '전문영역' },
+    { end: stats.owner.totalServices, suffix: '+', label: '서비스 항목' },
+    { end: stats.partner.totalOpenRequests, suffix: '건', label: '열린 의뢰' },
   ]
 
   // 인기 분야 (시니어 수 기준 상위 4개 대분류)
@@ -67,9 +69,13 @@ export default async function AdminHome() {
           {/* Hero */}
           <section className="flex flex-col items-center gap-3 text-center animate-fade-in">
             <h1 className="text-xl md:text-2xl lg:text-3xl font-bold text-text leading-relaxed">
-              부울경 검증된 시니어 전문가를
+              검증된 시니어 전문가에게
               <br />
-              지역 기업과 직접 연결합니다
+              <TextRotator
+                words={['사업계획서', 'AI 진단', '경영컨설팅', '품질관리', '세무·회계']}
+                className="text-brand-gradient"
+              />
+              를 맡기세요
             </h1>
             <p className="text-sm text-text-subtle">
               {stats.owner.totalMajorFields}개 분야 · {stats.owner.totalCategories}개 전문영역 · {stats.owner.totalServices}+ 서비스
@@ -81,7 +87,7 @@ export default async function AdminHome() {
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
               {metrics.map((m) => (
                 <div key={m.label} className="flex flex-col items-center rounded-xl bg-surface-warm p-4 md:p-5">
-                  <span className="text-xl font-bold text-primary">{m.value}</span>
+                  <AnimatedCounter end={m.end} suffix={m.suffix} className="text-xl font-bold text-primary" />
                   <span className="mt-0.5 text-xs text-text-muted">{m.label}</span>
                 </div>
               ))}
@@ -92,7 +98,7 @@ export default async function AdminHome() {
           <section className="flex w-full flex-col gap-4 animate-fade-in stagger-2">
             <a
               href={ownerUrl}
-              className="rounded-2xl border-2 border-primary bg-white p-5 md:p-6 text-left shadow-sm card-hover"
+              className="rounded-2xl border-2 border-primary bg-white p-5 md:p-6 text-left shadow-sm card-hover card-glow transition-all"
             >
               <h2 className="text-xl md:text-2xl font-bold text-primary">기업공간</h2>
               <p className="mt-1 text-sm text-text-muted">검증된 시니어 전문가에게 일을 맡기세요</p>
@@ -111,7 +117,7 @@ export default async function AdminHome() {
 
             <a
               href={partnerUrl}
-              className="rounded-2xl border-2 border-accent bg-white p-5 md:p-6 text-left shadow-sm card-hover"
+              className="rounded-2xl border-2 border-accent bg-white p-5 md:p-6 text-left shadow-sm card-hover card-glow transition-all"
             >
               <h2 className="text-xl md:text-2xl font-bold text-accent">시니어공간</h2>
               <p className="mt-1 text-sm text-text-muted">경험으로 일하고, 정당한 대가를 받으세요</p>
@@ -169,10 +175,11 @@ export default async function AdminHome() {
                 { step: '01', title: '의뢰 등록', desc: '필요한 작업을 등록' },
                 { step: '02', title: '전문가 매칭', desc: 'AI 기반 최적 매칭' },
                 { step: '03', title: '에스크로 정산', desc: '검수 후 안전 정산' },
-              ].map((s) => (
+              ].map((s, i) => (
                 <div
                   key={s.step}
-                  className="flex flex-1 flex-col items-center rounded-xl border border-border-light bg-white p-4 md:p-5 text-center shadow-xs"
+                  className={`flex flex-1 flex-col items-center rounded-xl border border-border-light bg-white p-4 md:p-5 text-center shadow-xs process-step animate-fade-in`}
+                  style={{ animationDelay: `${0.2 + i * 0.1}s` }}
                 >
                   <span className="text-lg font-bold text-primary">{s.step}</span>
                   <span className="mt-1 text-xs font-medium text-text">{s.title}</span>
@@ -183,16 +190,17 @@ export default async function AdminHome() {
           </section>
 
           {/* [6] 신뢰 배지 */}
-          <section className="w-full animate-fade-in stagger-5">
+          <section className="w-full">
             <div className="grid grid-cols-3 gap-3 md:gap-4">
               {[
                 { title: '전문가 검증', desc: '네트워크 직접 검증' },
                 { title: '에스크로', desc: '안전결제' },
                 { title: '수수료 0%', desc: '기업·시니어 모두' },
-              ].map((badge) => (
+              ].map((badge, i) => (
                 <div
                   key={badge.title}
-                  className="flex flex-col items-center rounded-xl border border-border-light bg-white p-4 md:p-5 text-center shadow-xs"
+                  className="flex flex-col items-center rounded-xl border border-border-light bg-white p-4 md:p-5 text-center shadow-xs animate-scale-in"
+                  style={{ animationDelay: `${0.25 + i * 0.1}s` }}
                 >
                   <span className="text-sm font-bold text-primary">{badge.title}</span>
                   <span className="mt-0.5 text-xs text-text-muted">{badge.desc}</span>
@@ -234,7 +242,7 @@ export default async function AdminHome() {
         <div className="responsive-container flex flex-col gap-4 px-4 md:px-6">
           <div className="flex items-start justify-between">
             <div>
-              <p className="text-sm font-semibold text-text">지사네 <span className="font-normal text-text-muted">(jisane)</span></p>
+              <p className="text-sm font-semibold"><span className="text-brand-gradient">지사네</span> <span className="font-normal text-text-muted">(jisane)</span></p>
               <p className="mt-1 text-xs text-text-subtle">부울경 로컬 인력매칭 플랫폼</p>
             </div>
             <p className="text-xs text-text-subtle">운영: (주)지사네</p>

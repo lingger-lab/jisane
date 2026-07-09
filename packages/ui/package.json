@@ -15,7 +15,9 @@
     "./icons/kakao": "./components/icons/kakao.tsx",
     "./app-header": "./components/app-header.tsx",
     "./category-browse": "./components/category-browse.tsx",
-    "./login-dropdown": "./components/login-dropdown.tsx"
+    "./login-dropdown": "./components/login-dropdown.tsx",
+    "./text-rotator": "./components/text-rotator.tsx",
+    "./animated-counter": "./components/animated-counter.tsx"
   },
   "devDependencies": {
     "typescript": "^5"
