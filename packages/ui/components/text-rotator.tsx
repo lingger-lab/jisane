@@ -30,12 +30,12 @@ export function TextRotator({ words, interval = 2500, className = '' }: TextRota
 
   return (
     <span
-      className={`inline-flex overflow-hidden align-bottom ${className}`}
+      className="inline-flex overflow-hidden align-bottom"
       aria-live="polite"
       aria-atomic="true"
     >
       <span
-        className="inline-block transition-all duration-300 ease-out"
+        className={`inline-block transition-all duration-300 ease-out ${className}`}
         style={{
           transform: phase === 'in' ? 'translateY(0)' : 'translateY(-100%)',
           opacity: phase === 'in' ? 1 : 0,
