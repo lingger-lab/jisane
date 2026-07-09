@@ -19,7 +19,7 @@ export async function createServiceOrder(
   const { data: { user } } = await supabase.auth.getUser()
 
   if (!user) {
-    redirect('/')
+    return { error: '로그인이 필요합니다. 상단의 로그인 버튼을 이용해주세요.' }
   }
 
   const slug = formData.get('slug') as string | null

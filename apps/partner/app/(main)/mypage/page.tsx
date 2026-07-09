@@ -1,208 +1,230 @@
-'use client'
-
-import { useActionState, useState, useEffect } from 'react'
-import { updatePartnerProfile } from '@/lib/partner/actions'
+import { Suspense } from 'react'
+import { cookies } from 'next/headers'
+import { redirect } from 'next/navigation'
+import Link from 'next/link'
+import { createClient } from '@jisane/shared/supabase/server'
+import { adminClient } from '@jisane/shared/supabase/admin'
 import { signOut } from '@jisane/shared/auth/actions'
-import { SubmitButton } from '@jisane/ui/submit-button'
+import { DEAL_STATUS_LABELS, ORDER_STATUS_LABELS, MATCHING_STATUS_LABELS } from '@jisane/shared/labels'
 import { SuccessToast, ErrorToast } from '@jisane/ui/toast'
+import { ProfileEditor } from '@/components/profile-editor'
 
-const FIELD_CHIPS = [
-  '창업코칭',
-  '정부자금·보조금',
-  '사업계획서',
-  'AEO최적화',
-  'AI진단',
-  '디자인',
-  '웹개발',
-  '영상제작',
-  '마케팅',
-  '세무·회계',
-  '법무',
-  '노무',
-  '기타',
-] as const
-
-const CAREER_OPTIONS = [
-  { value: '', label: '선택 안함' },
-  { value: '3', label: '1~5년' },
-  { value: '7', label: '5~10년' },
-  { value: '15', label: '10년 이상' },
-] as const
-
-interface PartnerProfile {
-  name: string | null
-  field: string | null
-  career_yrs: number | null
-  contact: string | null
-  email: string
-  grade: string
-  created_at: string
+const DEAL_STATUS_COLORS: Record<string, string> = {
+  quoted: 'bg-info-light text-info',
+  working: 'bg-warning-light text-warning',
+  done: 'bg-success-light text-success',
+  cancelled: 'bg-error-light text-error',
 }
 
-export default function MyPage() {
-  const [state, formAction] = useActionState(updatePartnerProfile, {})
-  const [profile, setProfile] = useState<PartnerProfile | null>(null)
-  const [loading, setLoading] = useState(true)
-  const [selectedFields, setSelectedFields] = useState<string[]>([])
+const ORDER_STATUS_COLORS: Record<string, string> = {
+  pending: 'bg-info-light text-info',
+  paid: 'bg-warning-light text-warning',
+  processing: 'bg-success-light text-success',
+  completed: 'bg-surface text-text-subtle',
+  cancelled: 'bg-error-light text-error',
+}
 
-  function toggleField(chip: string) {
-    setSelectedFields((prev) =>
-      prev.includes(chip)
-        ? prev.filter((f) => f !== chip)
-        : prev.length < 5
-          ? [...prev, chip]
-          : prev
-    )
-  }
+const MATCHING_STATUS_COLORS: Record<string, string> = {
+  proposed: 'bg-info-light text-info',
+  accepted: 'bg-success-light text-success',
+  rejected: 'bg-error-light text-error',
+}
 
-  useEffect(() => {
-    fetch('/api/partner/profile')
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.partner) {
-          setProfile(data.partner)
-          setSelectedFields(data.partner.field ? data.partner.field.split(',') : [])
-        }
-        setLoading(false)
-      })
-      .catch(() => setLoading(false))
-  }, [])
+export default async function MyPage() {
+  const cookieStore = await cookies()
+  const supabase = createClient(cookieStore)
+  const { data: { user } } = await supabase.auth.getUser()
 
-  if (loading) {
-    return (
-      <div className="flex flex-1 items-center justify-center">
-        <p className="text-sm text-text-muted">로딩 중...</p>
-      </div>
-    )
-  }
+  if (!user) redirect('/')
 
-  if (!profile) {
-    return (
-      <div className="flex flex-1 items-center justify-center">
-        <p className="text-sm text-text-muted">프로필 정보를 불러올 수 없습니다.</p>
-      </div>
-    )
+  const { data: partner } = await adminClient
+    .from('partner')
+    .select('id, name, field, career_yrs, contact, email, grade, created_at')
+    .eq('auth_user_id', user.id)
+    .single()
+
+  if (!partner) redirect('/register')
+
+  // 작업 / 교육서비스 / 매칭 현황 병렬 조회
+  const [dealsRes, ordersRes, matchingsRes] = await Promise.all([
+    adminClient
+      .from('deal')
+      .select('id, status, work_fee, created_at, request:request!inner(title)')
+      .eq('partner_id', partner.id)
+      .order('created_at', { ascending: false })
+      .limit(5),
+    adminClient
+      .from('service_order')
+      .select('id, package_name, status, created_at, price')
+      .eq('partner_id', partner.id)
+      .order('created_at', { ascending: false })
+      .limit(5),
+    adminClient
+      .from('matching_candidate')
+      .select('id, status, created_at, request:request!inner(title, req_type)')
+      .eq('partner_id', partner.id)
+      .order('created_at', { ascending: false })
+      .limit(5),
+  ])
+
+  const deals = dealsRes.data || []
+  const orders = ordersRes.data || []
+  const matchings = matchingsRes.data || []
+
+  const profile = {
+    name: partner.name,
+    field: partner.field,
+    career_yrs: partner.career_yrs,
+    contact: partner.contact,
+    email: partner.email,
+    grade: partner.grade,
+    created_at: partner.created_at,
   }
 
   return (
     <div className="flex flex-1 flex-col px-4 py-5 sm:px-6 sm:py-8 animate-fade-in">
-      <SuccessToast />
-      <ErrorToast />
+      <Suspense><SuccessToast /><ErrorToast /></Suspense>
       <h1 className="mb-2 text-2xl font-bold text-accent">마이페이지</h1>
       <p className="mb-6 text-sm text-text-muted">
-        내 프로필을 확인하고 수정할 수 있습니다.
+        내 현황을 확인하고 프로필을 수정할 수 있습니다.
       </p>
 
       {/* 프로필 요약 카드 */}
       <div className="mb-6 rounded-xl border border-border-light bg-surface-warm p-4 shadow-sm">
         <div className="flex items-center gap-3">
           <div className="flex h-12 w-12 items-center justify-center rounded-full bg-accent/10 text-lg font-bold text-accent">
-            {(profile.name || profile.email)[0].toUpperCase()}
+            {(partner.name || partner.email)[0].toUpperCase()}
           </div>
           <div>
-            <p className="font-medium text-text">{profile.name || '이름 미등록'}</p>
-            <p className="text-xs text-text-muted">{profile.email}</p>
+            <p className="font-medium text-text">{partner.name || '이름 미등록'}</p>
+            <p className="text-xs text-text-muted">{partner.email}</p>
           </div>
         </div>
         <div className="mt-3 flex gap-3 text-xs text-text-muted">
-          <span className="rounded-full bg-accent/15 px-2.5 py-0.5 font-medium text-accent">{profile.grade === 'veteran' ? '베테랑' : profile.grade === 'new' ? '신규' : '스탠다드'}</span>
-          <span>가입: {new Date(profile.created_at).toLocaleDateString('ko-KR')}</span>
+          <span className="rounded-full bg-accent/15 px-2.5 py-0.5 font-medium text-accent">
+            {partner.grade === 'veteran' ? '베테랑' : partner.grade === 'new' ? '신규' : '스탠다드'}
+          </span>
+          <span>가입: {new Date(partner.created_at).toLocaleDateString('ko-KR')}</span>
         </div>
       </div>
 
-      <form
-        action={formAction}
-        className="flex flex-col gap-5"
-      >
-        <input type="hidden" name="redirect_to" value="/mypage" />
-        {/* 전문 분야 */}
-        <div>
-          <label className="mb-2 block text-sm font-medium text-text">
-            전문 분야 <span className="text-error">*</span>
-            <span className="ml-1 text-xs font-normal text-text-muted">(최대 5개)</span>
-          </label>
-          <div className="flex flex-wrap gap-2">
-            {FIELD_CHIPS.map((chip) => (
-              <button
-                key={chip}
-                type="button"
-                onClick={() => toggleField(chip)}
-                aria-pressed={selectedFields.includes(chip)}
-                className={`rounded-full border px-3 py-1.5 text-sm transition-colors ${
-                  selectedFields.includes(chip)
-                    ? 'border-accent bg-accent/10 font-semibold text-accent'
-                    : 'border-border-light text-text-muted hover:border-accent/30'
-                }`}
-              >
-                {chip}
-              </button>
-            ))}
+      {/* 섹션 A — 작업 현황 */}
+      <section className="mb-6">
+        <div className="mb-3 flex items-center justify-between">
+          <h2 className="text-base font-bold text-text">작업 현황</h2>
+          <Link href="/work" className="text-xs font-medium text-accent hover:underline">전체 보기</Link>
+        </div>
+        {deals.length === 0 ? (
+          <div className="flex flex-col items-center gap-3 rounded-xl border border-dashed border-border-light py-8 text-center">
+            <p className="text-sm text-text-muted">진행 중인 작업이 없습니다</p>
           </div>
-          <input type="hidden" name="field" value={selectedFields.join(',')} />
-        </div>
-
-        {/* 경력 */}
-        <div>
-          <label htmlFor="career_yrs" className="mb-1 block text-sm font-medium text-text">
-            경력 <span className="text-xs text-text-subtle">(선택)</span>
-          </label>
-          <select
-            id="career_yrs"
-            name="career_yrs"
-            defaultValue={profile.career_yrs?.toString() || ''}
-            className="w-full rounded-xl border border-border-light bg-background px-4 py-3 text-sm text-text focus:border-accent focus:ring-1 focus:ring-accent/20 focus:outline-none transition-colors"
-          >
-            {CAREER_OPTIONS.map((opt) => (
-              <option key={opt.value} value={opt.value}>
-                {opt.label}
-              </option>
+        ) : (
+          <ul className="flex flex-col gap-2">
+            {deals.map((deal: any) => (
+              <li key={deal.id}>
+                <Link
+                  href={`/work/${deal.id}`}
+                  className="flex items-center justify-between rounded-lg border border-border-light p-3 shadow-xs card-hover"
+                >
+                  <div className="min-w-0 flex-1">
+                    <p className="truncate text-sm font-medium text-text">{deal.request?.title}</p>
+                    <p className="mt-0.5 text-xs text-text-muted">
+                      {new Date(deal.created_at).toLocaleDateString('ko-KR')}
+                      {deal.work_fee != null && ` · ${deal.work_fee.toLocaleString('ko-KR')}원`}
+                    </p>
+                  </div>
+                  <span className={`shrink-0 rounded-full px-2 py-0.5 text-xs font-medium ${DEAL_STATUS_COLORS[deal.status] || 'bg-surface text-text-subtle'}`}>
+                    {DEAL_STATUS_LABELS[deal.status] || deal.status}
+                  </span>
+                </Link>
+              </li>
             ))}
-          </select>
-        </div>
-
-        {/* 이름 */}
-        <div>
-          <label htmlFor="name" className="mb-1 block text-sm font-medium text-text">
-            이름 <span className="text-xs text-text-subtle">(선택)</span>
-          </label>
-          <input
-            id="name"
-            name="name"
-            type="text"
-            defaultValue={profile.name || ''}
-            placeholder="본명 또는 활동명"
-            className="w-full rounded-xl border border-border-light bg-background px-4 py-3 text-sm text-text placeholder:text-text-subtle focus:border-accent focus:ring-1 focus:ring-accent/20 focus:outline-none transition-colors"
-          />
-        </div>
-
-        {/* 연락처 */}
-        <div>
-          <label htmlFor="contact" className="mb-1 block text-sm font-medium text-text">
-            연락처 <span className="text-xs text-text-subtle">(선택, 비공개)</span>
-          </label>
-          <input
-            id="contact"
-            name="contact"
-            type="tel"
-            defaultValue={profile.contact || ''}
-            placeholder="전화번호 또는 이메일"
-            className="w-full rounded-xl border border-border-light bg-background px-4 py-3 text-sm text-text placeholder:text-text-subtle focus:border-accent focus:ring-1 focus:ring-accent/20 focus:outline-none transition-colors"
-          />
-        </div>
-
-        {/* 에러 */}
-        {state.error && (
-          <p className="text-sm text-error">{state.error}</p>
+          </ul>
         )}
+      </section>
 
-        {/* 제출 */}
-        <SubmitButton className="rounded-xl bg-accent px-6 py-3 font-semibold text-white shadow-sm transition-all hover:bg-accent/90 hover:shadow-md disabled:opacity-50">
-          프로필 수정
-        </SubmitButton>
-      </form>
+      {/* 섹션 B — 교육·서비스 신청 현황 */}
+      <section className="mb-6">
+        <div className="mb-3 flex items-center justify-between">
+          <h2 className="text-base font-bold text-text">교육·서비스 현황</h2>
+          <Link href="/matching" className="text-xs font-medium text-accent hover:underline">전체 보기</Link>
+        </div>
+        {orders.length === 0 ? (
+          <div className="flex flex-col items-center gap-3 rounded-xl border border-dashed border-border-light py-8 text-center">
+            <p className="text-sm text-text-muted">신청한 교육·서비스가 없습니다</p>
+            <Link href="/education" className="text-sm font-medium text-accent hover:underline">교육 둘러보기</Link>
+          </div>
+        ) : (
+          <ul className="flex flex-col gap-2">
+            {orders.map((order: any) => (
+              <li key={order.id}>
+                <div className="rounded-lg border border-border-light p-3 shadow-xs">
+                  <div className="flex items-center justify-between gap-2">
+                    <div className="min-w-0 flex-1">
+                      <p className="truncate text-sm font-medium text-text">{order.package_name}</p>
+                      <p className="mt-0.5 text-xs text-text-muted">
+                        {new Date(order.created_at).toLocaleDateString('ko-KR')}
+                        {' · '}
+                        {order.price === 0 ? '무료' : `${order.price.toLocaleString('ko-KR')}원`}
+                      </p>
+                    </div>
+                    <span className={`shrink-0 rounded-full px-2 py-0.5 text-xs font-medium ${ORDER_STATUS_COLORS[order.status] || 'bg-surface text-text-subtle'}`}>
+                      {ORDER_STATUS_LABELS[order.status] || order.status}
+                    </span>
+                  </div>
+                  {order.status === 'pending' && (
+                    <p className="mt-2 text-xs text-info">접수 완료 — 매니저 연락 예정</p>
+                  )}
+                </div>
+              </li>
+            ))}
+          </ul>
+        )}
+      </section>
+
+      {/* 섹션 C — 매칭 현황 */}
+      <section className="mb-8">
+        <div className="mb-3 flex items-center justify-between">
+          <h2 className="text-base font-bold text-text">매칭 현황</h2>
+          <Link href="/matching" className="text-xs font-medium text-accent hover:underline">전체 보기</Link>
+        </div>
+        {matchings.length === 0 ? (
+          <div className="flex flex-col items-center gap-3 rounded-xl border border-dashed border-border-light py-8 text-center">
+            <p className="text-sm text-text-muted">매칭 제안이 없습니다</p>
+          </div>
+        ) : (
+          <ul className="flex flex-col gap-2">
+            {matchings.map((m: any) => (
+              <li key={m.id}>
+                <Link
+                  href={`/matching/${m.id}`}
+                  className="flex items-center justify-between rounded-lg border border-border-light p-3 shadow-xs card-hover"
+                >
+                  <div className="min-w-0 flex-1">
+                    <p className="truncate text-sm font-medium text-text">{m.request?.title}</p>
+                    <p className="mt-0.5 text-xs text-text-muted">
+                      {new Date(m.created_at).toLocaleDateString('ko-KR')}
+                      {m.request?.req_type && ` · ${m.request.req_type}`}
+                    </p>
+                  </div>
+                  <span className={`shrink-0 rounded-full px-2 py-0.5 text-xs font-medium ${MATCHING_STATUS_COLORS[m.status] || 'bg-surface text-text-subtle'}`}>
+                    {MATCHING_STATUS_LABELS[m.status] || m.status}
+                  </span>
+                </Link>
+              </li>
+            ))}
+          </ul>
+        )}
+      </section>
+
+      {/* 프로필 편집 */}
+      <section className="mb-8">
+        <h2 className="mb-4 text-base font-bold text-text">프로필 편집</h2>
+        <ProfileEditor profile={profile} />
+      </section>
 
       {/* 로그아웃 */}
-      <form action={signOut} className="mt-8">
+      <form action={signOut}>
         <button
           type="submit"
           className="w-full rounded-xl border border-border-light px-6 py-3 text-sm font-medium text-text-muted transition-colors hover:bg-surface hover:text-text"

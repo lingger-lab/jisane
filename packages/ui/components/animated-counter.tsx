@@ -62,7 +62,7 @@ export function AnimatedCounter({
   }, [end, started, animate])
 
   return (
-    <span ref={ref} className={className}>
+    <span ref={ref} className={className} suppressHydrationWarning>
       {value}{suffix}
     </span>
   )

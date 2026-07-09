@@ -182,6 +182,9 @@ export default async function StatusPage() {
                     {ORDER_STATUS_LABELS[order.status] || order.status}
                   </span>
                 </div>
+                {order.status === 'pending' && (
+                  <p className="mt-2 text-xs text-info">접수 완료 — 담당 매니저가 확인 후 연락드리겠습니다.</p>
+                )}
               </div>
             </li>
           ))}

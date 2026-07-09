@@ -9,8 +9,8 @@ const SUCCESS_MESSAGES: Record<string, string> = {
   profile_updated: '프로필이 수정되었습니다',
   deal_approved: '견적이 승인되었습니다',
   deal_confirmed: '검수가 완료되었습니다',
-  service_ordered: '서비스 신청이 접수되었습니다',
-  education_ordered: '교육 신청이 접수되었습니다',
+  service_ordered: '서비스가 접수되었습니다. 담당 매니저가 곧 연락드리겠습니다.',
+  education_ordered: '교육 신청이 접수되었습니다. 담당 매니저가 곧 연락드리겠습니다.',
 }
 
 export function SuccessToast() {

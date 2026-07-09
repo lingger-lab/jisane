@@ -63,6 +63,7 @@ export default async function RootLayout({
       <body className="min-h-full flex flex-col bg-background text-foreground font-sans">
         <AppHeader
           appName="지사네 기업공간"
+          hubUrl={process.env.NEXT_PUBLIC_ADMIN_URL || 'https://jisane.cloud'}
           userEmail={user?.email}
           signOutAction={signOut}
           signInWithKakao={signInWithKakao}

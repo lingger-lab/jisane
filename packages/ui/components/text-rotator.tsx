@@ -36,6 +36,7 @@ export function TextRotator({ words, interval = 2500, className = '' }: TextRota
     >
       <span
         className={`inline-block transition-all duration-300 ease-out ${className}`}
+        suppressHydrationWarning
         style={{
           transform: phase === 'in' ? 'translateY(0)' : 'translateY(-100%)',
           opacity: phase === 'in' ? 1 : 0,

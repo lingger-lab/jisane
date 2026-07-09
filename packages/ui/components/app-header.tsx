@@ -2,6 +2,7 @@ import { LoginDropdown } from './login-dropdown'
 
 export function AppHeader({
   appName,
+  hubUrl,
   userEmail,
   signOutAction,
   signInWithKakao,
@@ -9,6 +10,7 @@ export function AppHeader({
   children,
 }: {
   appName: string
+  hubUrl?: string
   userEmail?: string | null
   signOutAction?: () => Promise<void>
   signInWithKakao?: () => Promise<void>
@@ -18,9 +20,15 @@ export function AppHeader({
   return (
     <header className="sticky top-0 z-40 border-b border-border-light bg-background/80 backdrop-blur-lg">
       <div className="responsive-container flex h-14 items-center justify-between px-4 md:px-6">
-        <span className="text-xl md:text-2xl font-bold tracking-tight text-brand-gradient">
-          {appName}
-        </span>
+        {hubUrl ? (
+          <a href={hubUrl} className="text-xl md:text-2xl font-bold tracking-tight text-brand-gradient hover:opacity-80 transition-opacity">
+            {appName}
+          </a>
+        ) : (
+          <span className="text-xl md:text-2xl font-bold tracking-tight text-brand-gradient">
+            {appName}
+          </span>
+        )}
 
         <div className="flex items-center gap-3">
           {children}
