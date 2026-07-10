@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import Image from 'next/image'
+import { OwlIcon } from '@jisane/ui/icons/owl'
 
 const STORAGE_KEY = 'jisane_splash_seen'
 
@@ -38,19 +38,13 @@ export function SplashOverlay() {
       }`}
     >
       <div className="flex flex-col items-center gap-4 px-6 text-center animate-fade-in">
-        <Image
-          src="/jisaneadmin-hero-image.png"
-          alt="지사네"
-          width={280}
-          height={100}
-          priority
-          className="h-auto w-[280px]"
-        />
+        <OwlIcon className="h-[120px] w-[120px] text-primary" />
         <h2 className="text-3xl font-bold text-brand-gradient">지사네</h2>
-        <p className="text-base text-text-muted leading-relaxed">
-          부울경 검증된 시니어 전문가를
+        <p className="text-lg font-semibold text-text mt-1">만든 사람이 갖는다</p>
+        <p className="text-base text-text-muted leading-relaxed mt-2">
+          값도, 범위도, 먼저 공개합니다
           <br />
-          지역 기업과 직접 연결합니다
+          부울경 시니어 전문가 직거래 플랫폼
         </p>
         <button
           type="button"

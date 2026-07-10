@@ -3,7 +3,7 @@ import { ExpertList } from './expert-list'
 
 export const metadata = {
   title: '분야별 전문가 탐색 - 지사네 기업공간',
-  description: '부울경 검증된 시니어 전문가를 분야별로 탐색하세요.',
+  description: '부울경 시니어 전문가를 분야별로 탐색하세요.',
 }
 
 interface PageProps {

@@ -8,7 +8,6 @@ import { KakaoIcon } from '@jisane/ui/icons/kakao'
 import { fetchOwnerLandingStats } from '@jisane/shared/landing-stats'
 import { getPackagesByAudience } from '@jisane/shared/service-catalog'
 import { CategoryBrowse } from '@jisane/ui/category-browse'
-import { TextRotator } from '@jisane/ui/text-rotator'
 import { AnimatedCounter } from '@jisane/ui/animated-counter'
 
 export default async function OwnerHome() {
@@ -39,16 +38,12 @@ export default async function OwnerHome() {
     <div className="flex flex-1 flex-col items-center animate-slide-up">
       {/* [1] Hero */}
       <section className="responsive-container flex flex-col items-center gap-4 px-4 md:px-6 pt-10 pb-6 text-center">
-        <h1 className="text-xl md:text-2xl lg:text-3xl font-bold text-text leading-relaxed">
-          검증된 시니어 전문가에게
+        <h1 className="text-xl md:text-2xl lg:text-3xl font-bold font-serif text-text leading-relaxed">
+          일을 맡겼는데,
           <br />
-          <TextRotator
-            words={['사업계획서', 'AI 진단', '경영컨설팅', '품질관리', '세무·회계']}
-            className="text-brand-gradient"
-          />
-          를 맡기세요
+          끝나고 보니 생각한 것과 달랐던 적 있으셨나요?
         </h1>
-        <p className="text-sm text-text-muted">부울경 시니어 전문가 네트워크</p>
+        <p className="text-sm text-text-muted">조건을 먼저 볼 수 있는 곳에 맡깁니다 — 에스크로 직거래</p>
 
         <div className="flex w-full flex-col gap-3">
           <form action={signInWithKakao}>
@@ -84,6 +79,30 @@ export default async function OwnerHome() {
         </div>
       </section>
 
+      {/* [2.5] 이런 경험, 있으셨나요? — 고통 언어화 */}
+      <section className="responsive-container px-4 md:px-6 py-6 md:py-8">
+        <div className="rounded-xl bg-surface-warm p-5">
+          <p className="text-sm font-semibold text-text">이런 경험, 있으셨나요?</p>
+          <ul className="mt-3 flex flex-col gap-2 text-sm text-text-muted">
+            <li className="flex items-start gap-2">
+              <span className="mt-0.5 text-text-subtle">&mdash;</span>
+              일을 맡겼는데 끝나고 보니 생각한 것과 달랐다 — &ldquo;이것도 해주는 줄 알았는데&rdquo;
+            </li>
+            <li className="flex items-start gap-2">
+              <span className="mt-0.5 text-text-subtle">&mdash;</span>
+              수수료가 얼마인지, 누가 얼마를 떼는지 끝까지 알 수 없었다
+            </li>
+            <li className="flex items-start gap-2">
+              <span className="mt-0.5 text-text-subtle">&mdash;</span>
+              대금을 먼저 보냈는데 일이 흐지부지됐고, 하소연할 곳도 없었다
+            </li>
+          </ul>
+          <p className="mt-3 text-xs text-text-subtle">
+            이건 사람을 잘못 본 게 아니라, 조건을 미리 볼 수 없는 구조 때문에 생긴 오해입니다.
+          </p>
+        </div>
+      </section>
+
       {/* [3] 카테고리 탐색 */}
       <section className="responsive-container px-4 md:px-6 py-6 md:py-8">
         <CategoryBrowse
@@ -97,9 +116,32 @@ export default async function OwnerHome() {
         />
       </section>
 
-      {/* [4] 검증된 전문 서비스 */}
+      {/* [3.5] 비교해보세요 */}
       <section className="responsive-container px-4 md:px-6 py-6 md:py-8">
-        <h2 className="text-lg md:text-xl font-bold text-text">검증된 전문 서비스</h2>
+        <h2 className="text-lg md:text-xl font-bold text-text">비교해보세요</h2>
+        <div className="mt-3 flex flex-col gap-3">
+          {[
+            { old: '수수료를 나중에 알려준다', jisane: '매칭비 7구간 단가를 사전 공개' },
+            { old: '보낸 돈이 바로 전달된다', jisane: '에스크로에 보관 → 검수 완료 후 정산' },
+            { old: '문제가 생기면 연락이 안 된다', jisane: '책임적립금으로 복구 재원을 미리 확보' },
+          ].map((row) => (
+            <div key={row.old} className="grid grid-cols-2 gap-3">
+              <div className="rounded-xl bg-error-light border border-error/10 p-3">
+                <p className="text-xs font-medium text-error">감추는 관행</p>
+                <p className="mt-1 text-xs text-text-muted">{row.old}</p>
+              </div>
+              <div className="rounded-xl bg-success-light border border-success/10 p-3">
+                <p className="text-xs font-medium text-success">지사네</p>
+                <p className="mt-1 text-xs text-text-muted">{row.jisane}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* [4] 전문 서비스 */}
+      <section className="responsive-container px-4 md:px-6 py-6 md:py-8">
+        <h2 className="text-lg md:text-xl font-bold text-text">{stats.totalServices}+ 서비스, 범위와 기간을 먼저 공개합니다</h2>
         <div className="mt-3 flex flex-col gap-3">
           {services.map((pkg) => (
             <div
@@ -149,26 +191,34 @@ export default async function OwnerHome() {
       {/* [5] 신뢰 배지 */}
       <section className="responsive-container px-4 md:px-6 py-6 md:py-8">
         <div className="grid grid-cols-3 gap-3 md:gap-4">
-          {[
-            { title: '수수료 0%', desc: '기업 부담 없음' },
-            { title: '에스크로', desc: '안전결제' },
-            { title: '검증된', desc: '전문가 매칭' },
-          ].map((badge) => (
-            <div
-              key={badge.title}
-              className="flex flex-col items-center rounded-xl border border-border-light bg-white p-4 md:p-5 text-center shadow-xs"
-            >
-              <span className="text-sm font-bold text-primary">{badge.title}</span>
-              <span className="mt-0.5 text-xs text-text-muted">{badge.desc}</span>
-            </div>
-          ))}
+          {([
+            { title: '가격 사전 공개', desc: '매칭비 7구간 · 숨은 수수료 없음', href: `${adminUrl}/standard/scope` },
+            { title: '에스크로 보관', desc: '입금 → 검수 → 정산 · 선정산 없음', href: '' },
+            { title: '책임적립금', desc: '매칭비 10% 적립 · 복구 재원 선확보', href: `${adminUrl}/standard/guarantee` },
+          ]).map((badge) => {
+            const card = (
+              <div
+                className={`flex flex-col items-center rounded-xl border border-border-light bg-white p-4 md:p-5 text-center shadow-xs${badge.href ? ' transition-colors hover:border-primary/30' : ''}`}
+              >
+                <span className="text-sm font-bold text-primary">{badge.title}</span>
+                <span className="mt-0.5 text-xs text-text-muted">{badge.desc}</span>
+              </div>
+            )
+            return badge.href ? (
+              <a key={badge.title} href={badge.href}>{card}</a>
+            ) : (
+              <div key={badge.title}>{card}</div>
+            )
+          })}
         </div>
       </section>
 
       {/* [6] CTA 반복 */}
       <section className="responsive-container px-4 md:px-6 py-6 md:py-8">
-        <p className="mb-4 text-center text-base font-semibold text-text">
-          지금 바로 시작하세요
+        <p className="mb-4 text-center text-sm font-semibold text-text leading-relaxed">
+          무료 용역 명세서 초안과 예상 수수료부터 보내드립니다
+          <br />
+          <span className="text-text-muted font-normal">마음에 안 들면 덮으셔도 됩니다</span>
         </p>
         <div className="flex w-full flex-col gap-3">
           <form action={signInWithKakao}>
@@ -200,7 +250,7 @@ export default async function OwnerHome() {
         >
           <div>
             <p className="text-sm font-semibold text-text">시니어 전문가이신가요?</p>
-            <p className="mt-0.5 text-xs text-text-muted">경험으로 일하고, 정당한 대가를 받으세요</p>
+            <p className="mt-0.5 text-xs text-text-muted">당신의 30년, AI로 증폭하다 — 작업료 전액 수령</p>
           </div>
           <span className="text-sm font-medium text-accent shrink-0">&rarr;</span>
         </a>

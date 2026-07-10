@@ -11,6 +11,7 @@
     "./toast": "./components/toast.tsx",
     "./icons/google": "./components/icons/google.tsx",
     "./icons/kakao": "./components/icons/kakao.tsx",
+    "./icons/owl": "./components/icons/owl.tsx",
     "./app-header": "./components/app-header.tsx",
     "./category-browse": "./components/category-browse.tsx",
     "./login-dropdown": "./components/login-dropdown.tsx",

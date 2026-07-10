@@ -9,7 +9,6 @@ import { KakaoIcon } from '@jisane/ui/icons/kakao'
 import { fetchPartnerLandingStats } from '@jisane/shared/landing-stats'
 import { getPackagesByAudience } from '@jisane/shared/service-catalog'
 import { CategoryBrowse } from '@jisane/ui/category-browse'
-import { TextRotator } from '@jisane/ui/text-rotator'
 import { AnimatedCounter } from '@jisane/ui/animated-counter'
 
 export default async function PartnerHome() {
@@ -49,16 +48,12 @@ export default async function PartnerHome() {
     <div className="flex flex-1 flex-col items-center animate-slide-up">
       {/* [1] Hero */}
       <section className="responsive-container flex flex-col items-center gap-4 px-4 md:px-6 pt-10 pb-6 text-center">
-        <h1 className="text-xl md:text-2xl lg:text-3xl font-bold text-text leading-relaxed">
-          <TextRotator
-            words={['경영컨설팅', '사업계획서', 'AI 전환', '품질관리', '데이터분석']}
-            className="text-brand-gradient"
-          />
-          {' '}경험으로
+        <h1 className="text-xl md:text-2xl lg:text-3xl font-bold font-serif text-text leading-relaxed">
+          재주를 부리고,
           <br />
-          정당한 대가를 받으세요
+          몫은 다른 사람이 가져갔습니다.
         </h1>
-        <p className="text-sm text-text-muted">부울경 시니어 전문가 네트워크</p>
+        <p className="text-sm text-text-muted">만든 사람이 갖는다 — 작업료 전액, 당신 통장으로</p>
 
         <div className="flex w-full flex-col gap-3">
           <form action={signInWithKakao}>
@@ -94,6 +89,27 @@ export default async function PartnerHome() {
         </div>
       </section>
 
+      {/* [2.5] 이런 경험, 있으셨나요? — 고통 언어화 */}
+      <section className="responsive-container px-4 md:px-6 py-6 md:py-8">
+        <div className="rounded-xl bg-surface-warm p-5">
+          <p className="text-sm font-semibold text-text">이런 경험, 있으셨나요?</p>
+          <ul className="mt-3 flex flex-col gap-2 text-sm text-text-muted">
+            <li className="flex items-start gap-2">
+              <span className="mt-0.5 text-text-subtle">&mdash;</span>
+              수수료 30%가 빠지고 나서야 정산 내역을 받았다
+            </li>
+            <li className="flex items-start gap-2">
+              <span className="mt-0.5 text-text-subtle">&mdash;</span>
+              작업을 끝냈는데 대금이 한 달째 입금되지 않았다
+            </li>
+            <li className="flex items-start gap-2">
+              <span className="mt-0.5 text-text-subtle">&mdash;</span>
+              프로필 한 장으로 30년 경험을 증명해야 했다
+            </li>
+          </ul>
+        </div>
+      </section>
+
       {/* [3] 카테고리별 의뢰 현황 */}
       <section className="responsive-container px-4 md:px-6 py-6 md:py-8">
         <CategoryBrowse
@@ -107,10 +123,33 @@ export default async function PartnerHome() {
         />
       </section>
 
+      {/* [3.5] 비교해보세요 */}
+      <section className="responsive-container px-4 md:px-6 py-6 md:py-8">
+        <h2 className="text-lg md:text-xl font-bold text-text">비교해보세요</h2>
+        <div className="mt-3 flex flex-col gap-3">
+          {[
+            { old: '수수료 20~30%를 떼고 정산한다', jisane: '수수료 0% — 작업료 전액을 당신 통장으로' },
+            { old: '작업 완료 후에도 입금이 불확실하다', jisane: '에스크로 선입금 — 기업이 먼저 입금해야 작업 시작' },
+            { old: '매칭 기준이 불명확하다', jisane: '매칭 점수 6항목을 투명하게 공개' },
+          ].map((row) => (
+            <div key={row.old} className="grid grid-cols-2 gap-3">
+              <div className="rounded-xl bg-error-light border border-error/10 p-3">
+                <p className="text-xs font-medium text-error">감추는 관행</p>
+                <p className="mt-1 text-xs text-text-muted">{row.old}</p>
+              </div>
+              <div className="rounded-xl bg-success-light border border-success/10 p-3">
+                <p className="text-xs font-medium text-success">지사네</p>
+                <p className="mt-1 text-xs text-text-muted">{row.jisane}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+
       {/* [4] 전문가 역량 강화 프로그램 */}
       <section className="responsive-container px-4 md:px-6 py-6 md:py-8">
-        <h2 className="text-lg md:text-xl font-bold text-text">경험에 AI를 더합니다</h2>
-        <p className="mt-1 text-sm text-text-muted">전문가 역량 강화 프로그램</p>
+        <h2 className="text-lg md:text-xl font-bold text-text">당신의 30년, AI로 증폭하다</h2>
+        <p className="mt-1 text-sm text-text-muted">경험 × AI = 증폭 — 역량 강화 프로그램</p>
         <div className="mt-3 flex flex-col gap-3">
           {education.map((pkg) => (
             <div
@@ -144,26 +183,34 @@ export default async function PartnerHome() {
       {/* [5] 신뢰 배지 */}
       <section className="responsive-container px-4 md:px-6 py-6 md:py-8">
         <div className="grid grid-cols-3 gap-3 md:gap-4">
-          {[
-            { title: '수수료 0%', desc: '작업료 전액 지급' },
-            { title: '에스크로', desc: '보장결제' },
-            { title: '전문가 직접', desc: '매칭' },
-          ].map((badge) => (
-            <div
-              key={badge.title}
-              className="flex flex-col items-center rounded-xl border border-border-light bg-white p-4 md:p-5 text-center shadow-xs"
-            >
-              <span className="text-sm font-bold text-accent">{badge.title}</span>
-              <span className="mt-0.5 text-xs text-text-muted">{badge.desc}</span>
-            </div>
-          ))}
+          {([
+            { title: '수수료 0%', desc: '작업료 전액 · 당신 통장으로 직접 정산', href: '' },
+            { title: '에스크로 선입금', desc: '기업이 먼저 입금 · 작업 전 대금 확보', href: `${adminUrl}/standard/guarantee` },
+            { title: '매칭 점수 공개', desc: '카테고리·경력·실적 6항목 점수 투명 공개', href: '' },
+          ]).map((badge) => {
+            const card = (
+              <div
+                className={`flex flex-col items-center rounded-xl border border-border-light bg-white p-4 md:p-5 text-center shadow-xs${badge.href ? ' transition-colors hover:border-accent/30' : ''}`}
+              >
+                <span className="text-sm font-bold text-accent">{badge.title}</span>
+                <span className="mt-0.5 text-xs text-text-muted">{badge.desc}</span>
+              </div>
+            )
+            return badge.href ? (
+              <a key={badge.title} href={badge.href}>{card}</a>
+            ) : (
+              <div key={badge.title}>{card}</div>
+            )
+          })}
         </div>
       </section>
 
       {/* [6] CTA 반복 */}
       <section className="responsive-container px-4 md:px-6 py-6 md:py-8">
-        <p className="mb-4 text-center text-base font-semibold text-text">
-          지금 전문가로 등록하세요
+        <p className="mb-4 text-center text-sm font-semibold text-text leading-relaxed">
+          만든 사람이 갖는다
+          <br />
+          등록 후 열린 의뢰 {stats.totalOpenRequests}건을 확인하세요
         </p>
         <div className="flex w-full flex-col gap-3">
           <form action={signInWithKakao}>
@@ -195,7 +242,7 @@ export default async function PartnerHome() {
         >
           <div>
             <p className="text-sm font-semibold text-text">기업을 운영하고 계신가요?</p>
-            <p className="mt-0.5 text-xs text-text-muted">검증된 시니어 전문가에게 일을 맡기세요</p>
+            <p className="mt-0.5 text-xs text-text-muted">매칭비 사전 공개 · 에스크로 직거래 · 수수료 구조 투명</p>
           </div>
           <span className="text-sm font-medium text-primary shrink-0">&rarr;</span>
         </a>

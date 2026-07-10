@@ -9,29 +9,19 @@ import Script from "next/script";
 export const metadata: Metadata = {
   metadataBase: new URL("https://owner.jisane.cloud"),
   title: "지사네 기업공간",
-  description: "검증된 시니어 전문가에게 일을 맡기세요. 지사네 기업 전문 서비스.",
+  description: "당신 이름으로, 당신 통장으로 — 에스크로 직거래. 지사네 기업 전문 서비스.",
   openGraph: {
     title: "지사네 기업공간",
-    description: "검증된 시니어 전문가에게 일을 맡기세요.",
+    description: "조건을 먼저 볼 수 있는 곳에 맡깁니다 — 에스크로 직거래.",
     url: "https://owner.jisane.cloud",
     siteName: "지사네",
-    images: [
-      {
-        url: "/jisane-og-image.png",
-        width: 1200,
-        height: 630,
-        type: "image/png",
-        alt: "지사네 기업공간",
-      },
-    ],
     locale: "ko_KR",
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
     title: "지사네 기업공간",
-    description: "검증된 시니어 전문가에게 일을 맡기세요.",
-    images: ["/jisane-og-image.png"],
+    description: "조건을 먼저 볼 수 있는 곳에 맡깁니다 — 에스크로 직거래.",
   },
 };
 
@@ -58,6 +48,10 @@ export default async function RootLayout({
           as="style"
           crossOrigin="anonymous"
           href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css"
+        />
+        <link
+          rel="stylesheet"
+          href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&display=swap"
         />
       </head>
       <body className="min-h-full flex flex-col bg-background text-foreground font-sans">

@@ -9,29 +9,19 @@ import Script from "next/script";
 export const metadata: Metadata = {
   metadataBase: new URL("https://jisane.cloud"),
   title: "지사네 - 부울경 로컬 인력매칭",
-  description: "검증된 시니어 전문가와 지역 기업을 지사네가 직접 연결합니다.",
+  description: "만든 사람이 갖는다 — 값도, 범위도, 먼저 공개합니다. 부울경 시니어 전문가 직거래 플랫폼.",
   openGraph: {
-    title: "지사네 — 검증된 전문가, 부울경 인력매칭",
-    description: "검증된 전문가를 사람이 직접 연결. 부울경 로컬 인력매칭 플랫폼.",
+    title: "지사네 — 먼저 공개하는 중개",
+    description: "값도, 범위도, 먼저 공개합니다. 부울경 시니어 전문가 직거래 플랫폼.",
     url: "https://jisane.cloud",
     siteName: "지사네",
-    images: [
-      {
-        url: "/jisane-og-image.png",
-        width: 1200,
-        height: 630,
-        type: "image/png",
-        alt: "지사네 — 부울경 로컬 인력매칭",
-      },
-    ],
     locale: "ko_KR",
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
-    title: "지사네 — 검증된 전문가, 부울경 인력매칭",
-    description: "검증된 전문가를 사람이 직접 연결. 부울경 로컬 인력매칭 플랫폼.",
-    images: ["/jisane-og-image.png"],
+    title: "지사네 — 먼저 공개하는 중개",
+    description: "값도, 범위도, 먼저 공개합니다. 부울경 시니어 전문가 직거래 플랫폼.",
   },
 };
 
@@ -58,6 +48,10 @@ export default async function RootLayout({
           as="style"
           crossOrigin="anonymous"
           href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css"
+        />
+        <link
+          rel="stylesheet"
+          href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&display=swap"
         />
       </head>
       <body className="min-h-full flex flex-col bg-background text-foreground font-sans">
