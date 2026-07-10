@@ -6,7 +6,6 @@ import { GoogleIcon } from '@jisane/ui/icons/google'
 import { KakaoIcon } from '@jisane/ui/icons/kakao'
 import { fetchHubLandingStats } from '@jisane/shared/landing-stats'
 import { getPackagesByAudience } from '@jisane/shared/service-catalog'
-import { SplashOverlay } from '@/components/splash-overlay'
 import { AnimatedCounter } from '@jisane/ui/animated-counter'
 
 export default async function AdminHome() {
@@ -60,8 +59,6 @@ export default async function AdminHome() {
           <Link href="/dashboard" className="text-xs text-accent font-medium hover:text-accent/80 transition-colors">관리자</Link>
         )}
       </nav>
-
-      <SplashOverlay />
 
       <div className="flex flex-1 flex-col items-center px-4 md:px-6 py-8 md:py-10">
         <main className="responsive-container flex flex-col items-center gap-8 md:gap-10 lg:gap-12">
