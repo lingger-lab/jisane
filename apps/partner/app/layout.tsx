@@ -4,7 +4,7 @@ import { cookies } from "next/headers";
 import { createClient } from "@jisane/shared/supabase/server";
 import { signInWithGoogle, signInWithKakao, signOut } from "@jisane/shared/auth/actions";
 import { AppHeader } from "@jisane/ui/app-header";
-import { ChatWidgetLazy } from "@jisane/ui/chat-widget-lazy";
+import Script from "next/script";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://partner.jisane.cloud"),
@@ -70,17 +70,11 @@ export default async function RootLayout({
           signInWithGoogle={signInWithGoogle}
         />
         {children}
-        <ChatWidgetLazy
-          chatApiUrl={`${process.env.NEXT_PUBLIC_ADMIN_URL || 'https://jisane.cloud'}/api/chat`}
-          role="partner"
-          kakaoChannelUrl={process.env.NEXT_PUBLIC_KAKAO_CHANNEL_URL}
-          quickQuestions={[
-            '시니어 등록은 어떻게 하나요?',
-            '시니어는 수수료가 없나요?',
-            '작업료는 언제 받나요?',
-            '어떤 분야를 맡을 수 있나요?',
-            '지사네는 어떤 서비스인가요?',
-          ]}
+        {/* Docent RAG 챗봇 위젯 (기존 자체 ChatWidget 교체). 공개봇 임베드 — botId만으로 동작. */}
+        <Script
+          src="https://ragbot-web-n6qj3b5f3q-du.a.run.app/embed.js"
+          data-bot="bc714dfa-4cc5-474a-aa14-e0c0493b4a0c"
+          strategy="afterInteractive"
         />
       </body>
     </html>

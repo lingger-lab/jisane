@@ -4,7 +4,7 @@ import { cookies } from "next/headers";
 import { createClient } from "@jisane/shared/supabase/server";
 import { signInWithGoogle, signInWithKakao, signOut } from "@jisane/shared/auth/actions";
 import { AppHeader } from "@jisane/ui/app-header";
-import { ChatWidgetLazy } from "@jisane/ui/chat-widget-lazy";
+import Script from "next/script";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://jisane.cloud"),
@@ -69,7 +69,12 @@ export default async function RootLayout({
           signInWithGoogle={signInWithGoogle}
         />
         {children}
-        <ChatWidgetLazy role="admin" kakaoChannelUrl={process.env.NEXT_PUBLIC_KAKAO_CHANNEL_URL} />
+        {/* Docent RAG 챗봇 위젯 (기존 자체 ChatWidget 교체). 공개봇 임베드 — botId만으로 동작. */}
+        <Script
+          src="https://ragbot-web-n6qj3b5f3q-du.a.run.app/embed.js"
+          data-bot="bc714dfa-4cc5-474a-aa14-e0c0493b4a0c"
+          strategy="afterInteractive"
+        />
       </body>
     </html>
   );
