@@ -6,6 +6,7 @@ import { GoogleIcon } from '@jisane/ui/icons/google'
 import { KakaoIcon } from '@jisane/ui/icons/kakao'
 import { fetchHubLandingStats } from '@jisane/shared/landing-stats'
 import { getPackagesByAudience } from '@jisane/shared/service-catalog'
+import { SplashOverlay } from '@/components/splash-overlay'
 import { AnimatedCounter } from '@jisane/ui/animated-counter'
 
 export default async function AdminHome() {
@@ -60,19 +61,23 @@ export default async function AdminHome() {
         )}
       </nav>
 
+      <SplashOverlay />
+
       <div className="flex flex-1 flex-col items-center px-4 md:px-6 py-8 md:py-10">
         <main className="responsive-container flex flex-col items-center gap-8 md:gap-10 lg:gap-12">
           {/* Hero */}
           <section className="flex flex-col items-center gap-3 text-center animate-fade-in">
             <h1 className="text-xl md:text-2xl lg:text-3xl font-bold font-serif text-text leading-relaxed">
-              숨기지 않습니다.
+              맡기기 전에,
               <br />
-              먼저 펼쳐 보여드립니다.
+              이것만 확인해 보세요.
             </h1>
             <p className="text-sm text-text-muted leading-relaxed">
-              값, 범위, 약속, 수수료, 그리고 문제가 생겼을 때의 처리까지
+              수수료는 얼마인지, 업무 범위는 어디까지인지,
               <br />
-              계약 전에 다섯 가지를 모두 공개합니다.
+              문제가 생기면 어떻게 되는지
+              <br />
+              — 다섯 가지를 먼저 볼 수 있습니다.
             </p>
             <p className="text-xs text-text-subtle">
               {stats.owner.totalMajorFields}개 분야 · {stats.owner.totalCategories}개 전문영역 · {stats.owner.totalServices}+ 서비스
