@@ -13,7 +13,7 @@ export const metadata: Metadata = {
   description: "경험으로 일하고, 정당한 대가를 받으세요. 지사네 시니어 전문가 플랫폼.",
   openGraph: {
     title: "지사네 시니어공간",
-    description: "만든 사람이 갖는다 — 작업료 전액, 당신 통장으로.",
+    description: "경험으로 일하고, 정당한 대가를 받으세요. 지사네 시니어 전문가 플랫폼.",
     url: "https://partner.jisane.cloud",
     siteName: "지사네",
     locale: "ko_KR",
@@ -22,7 +22,7 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "지사네 시니어공간",
-    description: "만든 사람이 갖는다 — 작업료 전액, 당신 통장으로.",
+    description: "경험으로 일하고, 정당한 대가를 받으세요. 지사네 시니어 전문가 플랫폼.",
   },
 };
 

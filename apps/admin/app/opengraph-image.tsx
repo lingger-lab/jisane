@@ -1,7 +1,7 @@
 import { ImageResponse } from 'next/og'
 
 export const runtime = 'edge'
-export const alt = '지사네 — 먼저 공개하는 중개'
+export const alt = '지사네 — 부울경 시니어 전문가 직거래'
 export const size = { width: 1200, height: 630 }
 export const contentType = 'image/png'
 
@@ -34,7 +34,7 @@ export default function Image() {
           지사네
         </div>
         <div style={{ fontSize: 28, marginTop: 12, opacity: 0.85 }}>
-          먼저 공개하는 중개
+          일은 사람이 합니다
         </div>
       </div>
     ),

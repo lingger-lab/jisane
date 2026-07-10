@@ -34,7 +34,7 @@ export default function Image() {
           지사네
         </div>
         <div style={{ fontSize: 28, marginTop: 12, opacity: 0.85 }}>
-          시니어공간 — 만든 사람이 갖는다
+          시니어공간 — 일은 사람이 합니다
         </div>
       </div>
     ),

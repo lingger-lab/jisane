@@ -53,7 +53,7 @@ export default async function PartnerHome() {
           <br />
           몫은 다른 사람이 가져갔습니다.
         </h1>
-        <p className="text-sm text-text-muted">만든 사람이 갖는다 — 작업료 전액, 당신 통장으로</p>
+        <p className="text-sm text-text-muted">작업료 전액, 당신 통장으로</p>
 
         <div className="flex w-full flex-col gap-3">
           <form action={signInWithKakao}>
@@ -208,8 +208,6 @@ export default async function PartnerHome() {
       {/* [6] CTA 반복 */}
       <section className="responsive-container px-4 md:px-6 py-6 md:py-8">
         <p className="mb-4 text-center text-sm font-semibold text-text leading-relaxed">
-          만든 사람이 갖는다
-          <br />
           등록 후 열린 의뢰 {stats.totalOpenRequests}건을 확인하세요
         </p>
         <div className="flex w-full flex-col gap-3">

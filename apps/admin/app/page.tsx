@@ -139,7 +139,7 @@ export default async function AdminHome() {
 
           {/* [4] 전문 서비스 */}
           <section className="w-full animate-fade-in stagger-3">
-            <h2 className="text-lg md:text-xl font-bold text-text">{stats.owner.totalServices}+ 서비스, 값과 범위를 먼저 공개합니다</h2>
+            <h2 className="text-lg md:text-xl font-bold text-text">{stats.owner.totalServices}+ 전문 서비스를 둘러보세요</h2>
             <div className="mt-3 grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4">
               {ownerServices.slice(0, 4).map((pkg) => (
                 <a
@@ -180,7 +180,7 @@ export default async function AdminHome() {
               ].map((s, i) => (
                 <div
                   key={s.step}
-                  className={`flex flex-1 flex-col items-center rounded-xl border border-border-light bg-white p-4 md:p-5 text-center shadow-xs process-step animate-fade-in`}
+                  className={`flex flex-1 flex-col items-center rounded-xl border border-border-light bg-white p-4 md:p-5 text-center shadow-xs animate-fade-in`}
                   style={{ animationDelay: `${0.2 + i * 0.1}s` }}
                 >
                   <span className="text-lg font-bold text-primary">{s.step}</span>
@@ -196,7 +196,7 @@ export default async function AdminHome() {
             <h2 className="text-lg md:text-xl font-bold font-serif text-text mb-3">먼저 꺼내놓는 다섯 가지</h2>
             <div className="flex flex-col gap-2">
               {([
-                { num: '1', item: '값', desc: '수수료율, 먼저 공개합니다', href: '' },
+                { num: '1', item: '값', desc: '수수료율을 계약 전에 확인합니다', href: '' },
                 { num: '2', item: '범위', desc: '업무 범위, 착수 전에 못 박습니다', href: '/standard/scope' },
                 { num: '3', item: '약속', desc: '대금, 에스크로에 먼저 보관합니다', href: '' },
                 { num: '4', item: '몫', desc: '분배 구조, 숨기지 않습니다', href: '' },
@@ -262,8 +262,7 @@ export default async function AdminHome() {
           <div className="flex items-start justify-between">
             <div>
               <p className="text-sm font-semibold"><span className="text-brand-gradient">지사네</span> <span className="font-normal text-text-muted">(jisane)</span></p>
-              <p className="mt-1 text-xs text-text-subtle">만든 사람이 갖는다</p>
-              <p className="text-xs text-text-subtle">값도, 범위도, 먼저 공개합니다</p>
+              <p className="mt-1 text-xs text-text-subtle">일은 사람이 합니다</p>
             </div>
             <p className="text-xs text-text-subtle">운영: (주)지사네</p>
           </div>

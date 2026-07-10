@@ -141,7 +141,7 @@ export default async function OwnerHome() {
 
       {/* [4] 전문 서비스 */}
       <section className="responsive-container px-4 md:px-6 py-6 md:py-8">
-        <h2 className="text-lg md:text-xl font-bold text-text">{stats.totalServices}+ 서비스, 범위와 기간을 먼저 공개합니다</h2>
+        <h2 className="text-lg md:text-xl font-bold text-text">{stats.totalServices}+ 전문 서비스를 둘러보세요</h2>
         <div className="mt-3 flex flex-col gap-3">
           {services.map((pkg) => (
             <div

@@ -10,10 +10,10 @@ import { ChatBotHint } from "@jisane/ui/chatbot-hint";
 export const metadata: Metadata = {
   metadataBase: new URL("https://jisane.cloud"),
   title: "지사네 - 부울경 로컬 인력매칭",
-  description: "만든 사람이 갖는다 — 값도, 범위도, 먼저 공개합니다. 부울경 시니어 전문가 직거래 플랫폼.",
+  description: "일은 사람이 합니다 — 부울경 시니어 전문가 직거래 플랫폼.",
   openGraph: {
-    title: "지사네 — 먼저 공개하는 중개",
-    description: "값도, 범위도, 먼저 공개합니다. 부울경 시니어 전문가 직거래 플랫폼.",
+    title: "지사네 — 부울경 시니어 전문가 직거래",
+    description: "일은 사람이 합니다 — 부울경 시니어 전문가 직거래 플랫폼.",
     url: "https://jisane.cloud",
     siteName: "지사네",
     locale: "ko_KR",
@@ -21,8 +21,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "지사네 — 먼저 공개하는 중개",
-    description: "값도, 범위도, 먼저 공개합니다. 부울경 시니어 전문가 직거래 플랫폼.",
+    title: "지사네 — 부울경 시니어 전문가 직거래",
+    description: "일은 사람이 합니다 — 부울경 시니어 전문가 직거래 플랫폼.",
   },
 };
 

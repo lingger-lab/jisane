@@ -27,7 +27,7 @@ export default function PublicLayout({ children }: { children: React.ReactNode }
               <p className="text-sm font-semibold text-text">
                 지사네 <span className="font-normal text-text-muted">(jisane)</span>
               </p>
-              <p className="mt-1 text-xs text-text-subtle">만든 사람이 갖는다</p>
+              <p className="mt-1 text-xs text-text-subtle">일은 사람이 합니다</p>
             </div>
             <p className="text-xs text-text-subtle">운영: (주)지사네</p>
           </div>
