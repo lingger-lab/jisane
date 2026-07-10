@@ -137,31 +137,6 @@ export default async function AdminHome() {
             </a>
           </section>
 
-          {/* [3.5] 비교 — 감추는 관행 vs 지사네 */}
-          <section className="w-full animate-fade-in stagger-3">
-            <h2 className="text-lg md:text-xl font-bold font-serif text-text">이렇게까지 미리 밝히는 곳이 또 있는지.</h2>
-            <p className="mt-1 text-sm text-text-muted">감추는 관행 vs 먼저 공개하는 구조</p>
-            <div className="mt-4 flex flex-col gap-3">
-              {[
-                { old: '수수료를 작업 후에 알려준다', jisane: '매칭비 7구간 단가표를 사전 공개한다' },
-                { old: '전문가 선정 기준이 불명확하다', jisane: '매칭 점수 6항목을 공개한다' },
-                { old: '결제하면 돈이 어디 가는지 모른다', jisane: '에스크로에 입금 → 검수 완료 → 시니어에게 전액 정산' },
-                { old: '문제 생기면 복구 조건이 없다', jisane: '책임적립금(매칭비 10%)으로 복구 재원을 미리 쌓는다' },
-              ].map((row) => (
-                <div key={row.old} className="grid grid-cols-2 gap-3">
-                  <div className="rounded-xl bg-error-light border border-error/10 p-3">
-                    <p className="text-xs font-medium text-error">감추는 관행</p>
-                    <p className="mt-1 text-xs text-text-muted">{row.old}</p>
-                  </div>
-                  <div className="rounded-xl bg-success-light border border-success/10 p-3">
-                    <p className="text-xs font-medium text-success">지사네</p>
-                    <p className="mt-1 text-xs text-text-muted">{row.jisane}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </section>
-
           {/* [4] 전문 서비스 */}
           <section className="w-full animate-fade-in stagger-3">
             <h2 className="text-lg md:text-xl font-bold text-text">{stats.owner.totalServices}+ 서비스, 값과 범위를 먼저 공개합니다</h2>
