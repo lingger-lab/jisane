@@ -16,7 +16,8 @@
     "./category-browse": "./components/category-browse.tsx",
     "./login-dropdown": "./components/login-dropdown.tsx",
     "./text-rotator": "./components/text-rotator.tsx",
-    "./animated-counter": "./components/animated-counter.tsx"
+    "./animated-counter": "./components/animated-counter.tsx",
+    "./chatbot-hint": "./components/chatbot-hint.tsx"
   },
   "devDependencies": {
     "typescript": "^5"

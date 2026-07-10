@@ -24,10 +24,8 @@ export function SplashOverlay() {
       <div className="flex flex-col items-center gap-4 px-6 text-center animate-fade-in">
         <OwlIcon className="h-[120px] w-[120px] text-primary" />
         <h2 className="text-3xl font-bold text-brand-gradient">지사네</h2>
-        <p className="text-lg font-semibold text-text mt-1">만든 사람이 갖는다</p>
+        <p className="text-lg font-semibold text-text mt-1">일은 사람이 합니다</p>
         <p className="text-base text-text-muted leading-relaxed mt-2">
-          값도, 범위도, 먼저 공개합니다
-          <br />
           부울경 시니어 전문가 직거래 플랫폼
         </p>
         <button
