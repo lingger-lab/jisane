@@ -1,33 +1,16 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { OwlIcon } from '@jisane/ui/icons/owl'
-
-const STORAGE_KEY = 'jisane_splash_seen'
 
 export function SplashOverlay() {
   const [visible, setVisible] = useState(true)
   const [fading, setFading] = useState(false)
 
-  useEffect(() => {
-    try {
-      if (sessionStorage.getItem(STORAGE_KEY)) {
-        setVisible(false)
-      }
-    } catch {
-      // sessionStorage 사용 불가 시 스플래시 표시
-    }
-  }, [])
-
   if (!visible) return null
 
   function handleEnter() {
     setFading(true)
-    try {
-      sessionStorage.setItem(STORAGE_KEY, '1')
-    } catch {
-      // ignore
-    }
     setTimeout(() => setVisible(false), 400)
   }
 
