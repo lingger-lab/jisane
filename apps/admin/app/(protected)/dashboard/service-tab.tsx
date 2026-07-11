@@ -44,6 +44,7 @@ const STATUS_OPTIONS = ['pending', 'paid', 'processing', 'completed', 'cancelled
 export function ServiceTab({ orders }: { orders: ServiceOrderItem[] }) {
   const [items, setItems] = useState(orders)
   const [updating, setUpdating] = useState<string | null>(null)
+  const [updateError, setUpdateError] = useState<string | null>(null)
   const [categoryFilter, setCategoryFilter] = useState('all')
   const [expandedId, setExpandedId] = useState<string | null>(null)
 
@@ -53,6 +54,7 @@ export function ServiceTab({ orders }: { orders: ServiceOrderItem[] }) {
 
   async function handleStatusChange(orderId: string, newStatus: string) {
     setUpdating(orderId)
+    setUpdateError(null)
     try {
       const res = await fetch('/api/admin/service-orders', {
         method: 'PATCH',
@@ -63,18 +65,29 @@ export function ServiceTab({ orders }: { orders: ServiceOrderItem[] }) {
         setItems((prev) =>
           prev.map((o) => (o.id === orderId ? { ...o, status: newStatus } : o))
         )
+      } else {
+        setUpdateError('상태 변경에 실패했습니다. 다시 시도해 주세요.')
       }
+    } catch {
+      setUpdateError('네트워크 오류가 발생했습니다. 연결을 확인해 주세요.')
     } finally {
       setUpdating(null)
     }
   }
 
   if (items.length === 0) {
-    return <p className="py-8 text-center text-sm text-text-muted">서비스 주문이 없습니다.</p>
+    return (
+      <div className="flex flex-col items-center gap-1 py-12 text-center">
+        <span className="text-2xl">&#128230;</span>
+        <p className="text-sm text-text-muted">서비스 주문이 없습니다.</p>
+      </div>
+    )
   }
 
   return (
     <div className="flex flex-col gap-4">
+      {updateError && <p className="text-xs text-error">{updateError}</p>}
+
       {/* 카테고리 필터 */}
       <div className="flex gap-1 overflow-x-auto">
         {CATEGORY_FILTERS.map((f) => (
@@ -94,7 +107,10 @@ export function ServiceTab({ orders }: { orders: ServiceOrderItem[] }) {
       </div>
 
       {filtered.length === 0 ? (
-        <p className="py-8 text-center text-sm text-text-muted">해당 카테고리의 주문이 없습니다.</p>
+        <div className="flex flex-col items-center gap-1 py-12 text-center">
+          <span className="text-2xl">&#128230;</span>
+          <p className="text-sm text-text-muted">해당 카테고리의 주문이 없습니다.</p>
+        </div>
       ) : (
         <div className="flex flex-col gap-3">
           {filtered.map((order) => {
@@ -132,17 +148,17 @@ export function ServiceTab({ orders }: { orders: ServiceOrderItem[] }) {
                         {order.client && (
                           <>
                             {order.client.contact && (
-                              <a href={`tel:${order.client.contact}`} className="hover:text-accent transition-colors">{order.client.contact}</a>
+                              <a href={`tel:${order.client.contact}`} className="rounded px-1 py-0.5 hover:text-accent hover:bg-accent/5 transition-colors">{order.client.contact}</a>
                             )}
-                            <a href={`mailto:${order.client.email}`} className="hover:text-accent transition-colors">{order.client.email}</a>
+                            <a href={`mailto:${order.client.email}`} className="rounded px-1 py-0.5 hover:text-accent hover:bg-accent/5 transition-colors">{order.client.email}</a>
                           </>
                         )}
                         {order.partner && (
                           <>
                             {order.partner.contact && (
-                              <a href={`tel:${order.partner.contact}`} className="hover:text-accent transition-colors">{order.partner.contact}</a>
+                              <a href={`tel:${order.partner.contact}`} className="rounded px-1 py-0.5 hover:text-accent hover:bg-accent/5 transition-colors">{order.partner.contact}</a>
                             )}
-                            <a href={`mailto:${order.partner.email}`} className="hover:text-accent transition-colors">{order.partner.email}</a>
+                            <a href={`mailto:${order.partner.email}`} className="rounded px-1 py-0.5 hover:text-accent hover:bg-accent/5 transition-colors">{order.partner.email}</a>
                           </>
                         )}
                       </div>
@@ -156,7 +172,8 @@ export function ServiceTab({ orders }: { orders: ServiceOrderItem[] }) {
                       value={order.status}
                       disabled={updating === order.id}
                       onChange={(e) => handleStatusChange(order.id, e.target.value)}
-                      className="rounded border border-border bg-background px-2 py-1 text-xs text-text disabled:opacity-50"
+                      aria-label="주문 상태 변경"
+                      className="rounded border border-border bg-surface px-2 py-1 text-xs text-text disabled:opacity-50"
                     >
                       {STATUS_OPTIONS.map((s) => (
                         <option key={s} value={s}>

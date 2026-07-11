@@ -115,14 +115,30 @@ export function MatchingTab({
   }
 
   if (requests.length === 0) {
-    return <p className="py-8 text-center text-sm text-text-muted">매칭 대기 중인 의뢰가 없습니다.</p>
+    return (
+      <div className="flex flex-col items-center gap-1 py-12 text-center">
+        <span className="text-2xl">&#128101;</span>
+        <p className="text-sm text-text-muted">매칭 대기 중인 의뢰가 없습니다.</p>
+      </div>
+    )
   }
 
   const visibleRequests = requests.filter((r) => r.id !== assignedId)
 
   return (
     <div className="flex flex-col gap-3">
-      {actionError && <p className="text-xs text-error">{actionError}</p>}
+      {actionError && (
+        <div className="flex items-center gap-2 rounded-lg border border-error/20 bg-error-light p-3">
+          <p className="flex-1 text-xs text-error">{actionError}</p>
+          <button
+            type="button"
+            onClick={() => setActionError(null)}
+            className="shrink-0 rounded-lg border border-error/30 px-2.5 py-1 text-xs font-medium text-error hover:bg-error/10 transition-colors"
+          >
+            닫기
+          </button>
+        </div>
+      )}
       {assignedId && (
         <div className="rounded-lg bg-success-light border border-success/20 p-3 text-sm text-success font-medium animate-fade-in">
           매칭이 생성되었습니다. &ldquo;매칭 진행&rdquo; 탭에서 확인하세요.
@@ -144,9 +160,9 @@ export function MatchingTab({
                 {req.client.company && <span className="font-medium text-text-muted">{req.client.company}</span>}
                 {req.client.ceo_name && <span>{req.client.ceo_name}</span>}
                 {req.client.contact && (
-                  <a href={`tel:${req.client.contact}`} className="hover:text-accent transition-colors">{req.client.contact}</a>
+                  <a href={`tel:${req.client.contact}`} className="rounded px-1 py-0.5 hover:text-accent hover:bg-accent/5 transition-colors">{req.client.contact}</a>
                 )}
-                <a href={`mailto:${req.client.email}`} className="hover:text-accent transition-colors">{req.client.email}</a>
+                <a href={`mailto:${req.client.email}`} className="rounded px-1 py-0.5 hover:text-accent hover:bg-accent/5 transition-colors">{req.client.email}</a>
               </div>
               {(interestCounts[req.id] || 0) > 0 && (
                 <span className="mt-1 inline-flex items-center gap-1 rounded bg-accent/10 px-2 py-0.5 text-xs font-medium text-accent">

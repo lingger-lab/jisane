@@ -89,7 +89,10 @@ export function SettlementTab({
       {error && <p className="text-xs text-error">{error}</p>}
 
       {settlements.length === 0 ? (
-        <p className="py-8 text-center text-sm text-text-muted">정산 대기 중인 건이 없습니다.</p>
+        <div className="flex flex-col items-center gap-1 py-12 text-center">
+          <span className="text-2xl">&#128176;</span>
+          <p className="text-sm text-text-muted">정산 대기 중인 건이 없습니다.</p>
+        </div>
       ) : (
         <div className="flex flex-col gap-3">
           {settlements.map((s) => (
@@ -103,9 +106,9 @@ export function SettlementTab({
                       {s.deal.request.client.company && <span>{s.deal.request.client.company}</span>}
                       {s.deal.request.client.ceo_name && <span>{s.deal.request.client.ceo_name}</span>}
                       {s.deal.request.client.contact && (
-                        <a href={`tel:${s.deal.request.client.contact}`} className="hover:text-accent transition-colors">{s.deal.request.client.contact}</a>
+                        <a href={`tel:${s.deal.request.client.contact}`} className="rounded px-1 py-0.5 hover:text-accent hover:bg-accent/5 transition-colors">{s.deal.request.client.contact}</a>
                       )}
-                      <a href={`mailto:${s.deal.request.client.email}`} className="hover:text-accent transition-colors">{s.deal.request.client.email}</a>
+                      <a href={`mailto:${s.deal.request.client.email}`} className="rounded px-1 py-0.5 hover:text-accent hover:bg-accent/5 transition-colors">{s.deal.request.client.email}</a>
                     </div>
                     <p className="text-text-muted">파트너: {s.deal.partner.name || '미등록'}</p>
                   </div>

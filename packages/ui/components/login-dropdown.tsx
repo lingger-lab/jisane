@@ -30,6 +30,8 @@ export function LoginDropdown({
       <button
         type="button"
         onClick={() => setOpen(!open)}
+        aria-label="로그인 메뉴"
+        aria-expanded={open}
         className="text-sm text-text-muted hover:text-text transition-colors"
       >
         로그인 ▾

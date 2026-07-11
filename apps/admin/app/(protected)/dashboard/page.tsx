@@ -186,7 +186,7 @@ export default async function AdminDashboardPage() {
       <h1 className="mb-6 text-xl font-bold text-text">대시보드</h1>
 
       {/* 요약 카드 */}
-      <div className="mb-6 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-7">
+      <div className="mb-6 grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-7">
         <SummaryCard label="매칭 대기" value={summary.matchingWaiting} unit="건" color="text-info" />
         <SummaryCard label="매칭 진행" value={summary.proposed} unit="건" color="text-warning" />
         <SummaryCard label="진행 중" value={summary.inProgress} unit="건" color="text-primary" />

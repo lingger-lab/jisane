@@ -36,7 +36,12 @@ function timeAgo(dateStr: string) {
 
 export function ProposedTab({ matchings }: { matchings: ProposedItem[] }) {
   if (matchings.length === 0) {
-    return <p className="py-8 text-center text-sm text-text-muted">파트너 응답 대기 중인 매칭이 없습니다.</p>
+    return (
+      <div className="flex flex-col items-center gap-1 py-12 text-center">
+        <span className="text-2xl">&#9203;</span>
+        <p className="text-sm text-text-muted">파트너 응답 대기 중인 매칭이 없습니다.</p>
+      </div>
+    )
   }
 
   return (
@@ -61,7 +66,7 @@ export function ProposedTab({ matchings }: { matchings: ProposedItem[] }) {
                   {m.request.client.company && <span>{m.request.client.company}</span>}
                   {m.request.client.ceo_name && <span>{m.request.client.ceo_name}</span>}
                   {m.request.client.contact && (
-                    <a href={`tel:${m.request.client.contact}`} className="hover:text-accent transition-colors">
+                    <a href={`tel:${m.request.client.contact}`} className="rounded px-1 py-0.5 hover:text-accent hover:bg-accent/5 transition-colors">
                       {m.request.client.contact}
                     </a>
                   )}
@@ -71,11 +76,11 @@ export function ProposedTab({ matchings }: { matchings: ProposedItem[] }) {
                   <span className="font-medium text-text">{m.partner.name || '이름 미등록'}</span>
                   {m.partner.field && <span>{m.partner.field}</span>}
                   {m.partner.contact && (
-                    <a href={`tel:${m.partner.contact}`} className="hover:text-accent transition-colors">
+                    <a href={`tel:${m.partner.contact}`} className="rounded px-1 py-0.5 hover:text-accent hover:bg-accent/5 transition-colors">
                       {m.partner.contact}
                     </a>
                   )}
-                  <a href={`mailto:${m.partner.email}`} className="hover:text-accent transition-colors">
+                  <a href={`mailto:${m.partner.email}`} className="rounded px-1 py-0.5 hover:text-accent hover:bg-accent/5 transition-colors">
                     {m.partner.email}
                   </a>
                 </div>

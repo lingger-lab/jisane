@@ -58,6 +58,7 @@ export default async function RootLayout({
       <body className="min-h-full flex flex-col bg-background text-foreground font-sans">
         <AppHeader
           appName="지사네"
+          hubUrl="/"
           userEmail={user?.email}
           signOutAction={signOut}
           signInWithKakao={signInWithKakao}

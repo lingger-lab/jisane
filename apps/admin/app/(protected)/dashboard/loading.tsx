@@ -4,9 +4,9 @@ export default function DashboardLoading() {
       {/* 제목 */}
       <div className="mb-6 h-7 w-24 animate-pulse rounded-lg bg-border-light" />
 
-      {/* 요약 카드 6개 */}
-      <div className="mb-6 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
-        {Array.from({ length: 6 }).map((_, i) => (
+      {/* 요약 카드 7개 */}
+      <div className="mb-6 grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-7">
+        {Array.from({ length: 7 }).map((_, i) => (
           <div
             key={i}
             className="rounded-xl border border-border-light bg-surface p-4 text-center"
@@ -17,12 +17,12 @@ export default function DashboardLoading() {
         ))}
       </div>
 
-      {/* 탭 바 */}
-      <div className="mb-4 flex gap-2">
-        {Array.from({ length: 5 }).map((_, i) => (
+      {/* 탭 바 6개 */}
+      <div className="mb-4 flex gap-1 rounded-lg bg-surface p-1">
+        {Array.from({ length: 6 }).map((_, i) => (
           <div
             key={i}
-            className="h-9 w-20 animate-pulse rounded-lg bg-border-light"
+            className="h-9 flex-1 animate-pulse rounded-md bg-border-light"
           />
         ))}
       </div>
@@ -32,7 +32,7 @@ export default function DashboardLoading() {
         {Array.from({ length: 4 }).map((_, i) => (
           <div
             key={i}
-            className="h-20 animate-pulse rounded-xl border border-border-light bg-surface"
+            className="h-24 animate-pulse rounded-lg border border-border-light bg-surface"
           />
         ))}
       </div>

@@ -43,7 +43,12 @@ export function InquiryTab({ inquiries }: { inquiries: InquiryItem[] }) {
   }
 
   if (inquiries.length === 0) {
-    return <p className="py-8 text-center text-sm text-text-muted">문의가 없습니다.</p>
+    return (
+      <div className="flex flex-col items-center gap-1 py-12 text-center">
+        <span className="text-2xl">&#128172;</span>
+        <p className="text-sm text-text-muted">문의가 없습니다.</p>
+      </div>
+    )
   }
 
   return (
@@ -66,7 +71,7 @@ export function InquiryTab({ inquiries }: { inquiries: InquiryItem[] }) {
                     </span>
                   )}
                   {inq.author_email && (
-                    <a href={`mailto:${inq.author_email}`} className="hover:text-accent transition-colors">{inq.author_email}</a>
+                    <a href={`mailto:${inq.author_email}`} className="rounded px-1 py-0.5 hover:text-accent hover:bg-accent/5 transition-colors">{inq.author_email}</a>
                   )}
                   <span className={`rounded px-2 py-0.5 ${categoryInfo.color}`}>
                     {categoryInfo.label}

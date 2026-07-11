@@ -28,7 +28,11 @@ export function ChatBotHint() {
 
   return (
     <div
+      role="button"
+      tabIndex={0}
       onClick={dismiss}
+      onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') dismiss() }}
+      aria-label="챗봇 힌트 닫기"
       className="chatbot-hint"
       style={{
         opacity: fading ? 0 : 1,

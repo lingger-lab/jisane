@@ -94,7 +94,12 @@ export function ProgressTab({
   }
 
   if (deals.length === 0) {
-    return <p className="py-8 text-center text-sm text-text-muted">진행 중인 거래가 없습니다.</p>
+    return (
+      <div className="flex flex-col items-center gap-1 py-12 text-center">
+        <span className="text-2xl">&#128736;</span>
+        <p className="text-sm text-text-muted">진행 중인 거래가 없습니다.</p>
+      </div>
+    )
   }
 
   return (
@@ -115,18 +120,18 @@ export function ProgressTab({
                     {deal.request.client.company && <span>{deal.request.client.company}</span>}
                     {deal.request.client.ceo_name && <span>{deal.request.client.ceo_name}</span>}
                     {deal.request.client.contact && (
-                      <a href={`tel:${deal.request.client.contact}`} className="hover:text-accent transition-colors">{deal.request.client.contact}</a>
+                      <a href={`tel:${deal.request.client.contact}`} className="rounded px-1 py-0.5 hover:text-accent hover:bg-accent/5 transition-colors">{deal.request.client.contact}</a>
                     )}
-                    <a href={`mailto:${deal.request.client.email}`} className="hover:text-accent transition-colors">{deal.request.client.email}</a>
+                    <a href={`mailto:${deal.request.client.email}`} className="rounded px-1 py-0.5 hover:text-accent hover:bg-accent/5 transition-colors">{deal.request.client.email}</a>
                   </div>
                   <div className="flex flex-wrap items-center gap-x-2">
                     <span className="text-text-muted">파트너:</span>
                     <span>{deal.partner.name || '이름 미등록'}</span>
                     <span>{deal.partner.field}</span>
                     {deal.partner.contact && (
-                      <a href={`tel:${deal.partner.contact}`} className="hover:text-accent transition-colors">{deal.partner.contact}</a>
+                      <a href={`tel:${deal.partner.contact}`} className="rounded px-1 py-0.5 hover:text-accent hover:bg-accent/5 transition-colors">{deal.partner.contact}</a>
                     )}
-                    <a href={`mailto:${deal.partner.email}`} className="hover:text-accent transition-colors">{deal.partner.email}</a>
+                    <a href={`mailto:${deal.partner.email}`} className="rounded px-1 py-0.5 hover:text-accent hover:bg-accent/5 transition-colors">{deal.partner.email}</a>
                   </div>
                 </div>
               </div>
@@ -211,8 +216,9 @@ export function ProgressTab({
                     value={replyText}
                     onChange={(e) => setReplyText(e.target.value)}
                     placeholder="관리자 답변 입력..."
+                    aria-label="관리자 답변 메시지 입력"
                     maxLength={1000}
-                    className="flex-1 rounded-lg border border-border-light bg-background px-3 py-2 text-sm text-text placeholder:text-text-subtle focus:border-accent focus:outline-none"
+                    className="flex-1 rounded-lg border border-border-light bg-surface px-3 py-2 text-sm text-text placeholder:text-text-subtle focus:border-accent focus:outline-none"
                     onKeyDown={(e) => {
                       if (e.key === 'Enter' && !e.shiftKey) {
                         e.preventDefault()
