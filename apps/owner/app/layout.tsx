@@ -10,7 +10,7 @@ import { ChatBotHint } from "@jisane/ui/chatbot-hint";
 export const metadata: Metadata = {
   metadataBase: new URL("https://owner.jisane.cloud"),
   title: "지사네 기업공간",
-  description: "당신 이름으로, 당신 통장으로 — 에스크로 직거래. 지사네 기업 전문 서비스.",
+  description: "일은 사람이 합니다 — 부울경 시니어 전문가 직거래 플랫폼.",
   openGraph: {
     title: "지사네 기업공간",
     description: "조건을 먼저 볼 수 있는 곳에 맡깁니다 — 에스크로 직거래.",
