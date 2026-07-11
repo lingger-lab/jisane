@@ -76,7 +76,7 @@ export default function ServicePage() {
         <div className="rounded-2xl border border-primary/20 bg-white p-6 shadow-sm">
           <h2 className="text-lg font-bold text-primary">기업공간</h2>
           <p className="mt-2 text-sm text-text-muted">
-            당신 이름으로, 당신 통장으로 — 시니어에게 직접 의뢰하세요.
+            일은 사람이 합니다 — 시니어에게 직접 의뢰하세요.
             의뢰를 등록하면 지사네 매니저가 24시간 내에 적합한 시니어를 연결해드립니다.
           </p>
           <ul className="mt-3 flex flex-col gap-1.5 text-sm text-text-muted">

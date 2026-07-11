@@ -65,7 +65,11 @@ export default async function RootLayout({
           signInWithGoogle={signInWithGoogle}
         />
         {children}
-        <ChatBotHint />
+        <ChatBotHint suggestions={[
+          '프로필은 어떻게 등록하나요?',
+          '매칭 제안은 어떻게 받나요?',
+          '수수료가 정말 0%인가요?',
+        ]} />
         {/* Docent RAG 챗봇 위젯 */}
         <Script
           src="https://ragbot-web-n6qj3b5f3q-du.a.run.app/embed.js"

@@ -259,16 +259,61 @@ summary {
   bottom: 90px;
   right: 20px;
   z-index: 9998;
-  max-width: 220px;
-  padding: 10px 16px;
-  border-radius: 12px;
+  max-width: 240px;
+  padding: 12px 14px;
+  border-radius: 14px;
   background: #1f5c46;
   color: #fff;
   font-size: 14px;
   font-weight: 500;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
-  cursor: pointer;
   transition: opacity 0.4s ease;
+}
+
+.chatbot-hint-title {
+  cursor: pointer;
+  margin: 0;
+}
+
+.chatbot-hint-close {
+  position: absolute;
+  top: 6px;
+  right: 8px;
+  background: none;
+  border: none;
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 16px;
+  line-height: 1;
+  cursor: pointer;
+  padding: 2px 4px;
+}
+.chatbot-hint-close:hover {
+  color: #fff;
+}
+
+.chatbot-hint-chips {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 10px;
+}
+
+.chatbot-hint-chip {
+  display: block;
+  width: 100%;
+  text-align: left;
+  padding: 7px 10px;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+  font-size: 12px;
+  line-height: 1.4;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+.chatbot-hint-chip:hover {
+  background: rgba(255, 255, 255, 0.2);
 }
 
 .chatbot-hint-arrow {

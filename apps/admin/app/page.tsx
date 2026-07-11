@@ -103,7 +103,7 @@ export default async function AdminHome() {
               className="rounded-2xl border-2 border-primary bg-white p-5 md:p-6 text-left shadow-sm card-hover card-glow transition-all"
             >
               <h2 className="text-xl md:text-2xl font-bold text-primary">기업공간</h2>
-              <p className="mt-1 text-sm text-text-muted">당신 이름으로, 당신 통장으로 — 시니어에게 직접 의뢰</p>
+              <p className="mt-1 text-sm text-text-muted">일은 사람이 합니다 — 시니어에게 직접 의뢰</p>
               <div className="mt-3 flex flex-wrap gap-1.5">
                 <span className="rounded-full bg-primary/10 px-2.5 py-1 text-xs font-medium text-primary">에스크로 선입금</span>
                 <span className="rounded-full bg-primary/10 px-2.5 py-1 text-xs font-medium text-primary">매칭비 사전 공개</span>
