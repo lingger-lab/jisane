@@ -153,6 +153,15 @@ export interface ServiceOrderItem {
   partner: PartnerContact | null
 }
 
+// ── Proposed matching (admin dashboard, proposed-tab) ──
+export interface ProposedMatchingItem {
+  id: string
+  status: string
+  created_at: string
+  request: { id: string; title: string; req_type: string | null; budget_hope: number | null; client: ClientContact }
+  partner: { id: string; name: string | null; field: string | null; email: string; contact: string | null }
+}
+
 // ── Inquiry item ──
 export interface InquiryItem {
   id: string

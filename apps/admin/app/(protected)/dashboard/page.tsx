@@ -10,9 +10,11 @@ import type {
   LedgerEntry,
   ServiceOrderItem,
   InquiryItem,
+  ProposedMatchingItem,
 } from '@jisane/shared/query-types'
 import { autoAssignOverdue } from '@/lib/admin/actions'
 import { MatchingTab } from './matching-tab'
+import { ProposedTab } from './proposed-tab'
 import { ProgressTab } from './progress-tab'
 import { SettlementTab } from './settlement-tab'
 import { ServiceTab } from './service-tab'
@@ -31,8 +33,9 @@ export default async function AdminDashboardPage() {
   await autoAssignOverdue()
 
   // 요약 카운트
-  const [requestsRes, dealsRes, settlementsRes, accrueRes, payoutRes, inquiryRes, serviceOrdersRes] = await Promise.all([
+  const [requestsRes, proposedRes, dealsRes, settlementsRes, accrueRes, payoutRes, inquiryRes, serviceOrdersRes] = await Promise.all([
     adminClient.from('request').select('id', { count: 'exact', head: true }).eq('status', 'open'),
+    adminClient.from('matching').select('id', { count: 'exact', head: true }).eq('status', 'proposed'),
     adminClient.from('deal').select('id', { count: 'exact', head: true }).eq('status', 'working'),
     adminClient.from('settlement').select('id', { count: 'exact', head: true }).in('escrow_status', ['deposited', 'reviewing']),
     adminClient.from('guarantee_fund_ledger').select('amount').eq('entry_type', 'accrue'),
@@ -46,12 +49,25 @@ export default async function AdminDashboardPage() {
 
   const summary = {
     matchingWaiting: requestsRes.count || 0,
+    proposed: proposedRes.count || 0,
     inProgress: dealsRes.count || 0,
     settlementReady: settlementsRes.count || 0,
     guaranteeFundBalance: accrueTotal - payoutTotal,
     inquiryOpen: inquiryRes.count || 0,
     serviceOrders: serviceOrdersRes.count || 0,
   }
+
+  // 매칭 진행 (proposed)
+  const { data: proposedMatchings } = await adminClient
+    .from('matching')
+    .select(`
+      id, status, created_at,
+      request:request!inner(id, title, req_type, budget_hope, client:client!inner(company, ceo_name, email, contact)),
+      partner:partner!inner(id, name, field, email, contact)
+    `)
+    .eq('status', 'proposed')
+    .order('created_at', { ascending: false })
+    .returns<ProposedMatchingItem[]>()
 
   // 매칭 대기 의뢰
   const [{ data: openRequests }, { data: interestsData }] = await Promise.all([
@@ -170,11 +186,12 @@ export default async function AdminDashboardPage() {
       <h1 className="mb-6 text-xl font-bold text-text">대시보드</h1>
 
       {/* 요약 카드 */}
-      <div className="mb-6 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
+      <div className="mb-6 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-7">
         <SummaryCard label="매칭 대기" value={summary.matchingWaiting} unit="건" color="text-info" />
-        <SummaryCard label="진행 중" value={summary.inProgress} unit="건" color="text-warning" />
+        <SummaryCard label="매칭 진행" value={summary.proposed} unit="건" color="text-warning" />
+        <SummaryCard label="진행 중" value={summary.inProgress} unit="건" color="text-primary" />
         <SummaryCard label="정산 대기" value={summary.settlementReady} unit="건" color="text-success" />
-        <SummaryCard label="서비스 주문" value={summary.serviceOrders} unit="건" color="text-primary" />
+        <SummaryCard label="서비스 주문" value={summary.serviceOrders} unit="건" color="text-accent" />
         <SummaryCard label="문의" value={summary.inquiryOpen} unit="건" color="text-error" />
         <SummaryCard
           label="적립금 잔액"
@@ -188,6 +205,9 @@ export default async function AdminDashboardPage() {
       <DashboardTabs
         matchingTab={
           <MatchingTab requests={openRequests || []} interestCounts={interestCounts} />
+        }
+        proposedTab={
+          <ProposedTab matchings={proposedMatchings || []} />
         }
         progressTab={
           <ProgressTab

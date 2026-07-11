@@ -70,6 +70,7 @@ export function MatchingTab({
   const [loading, setLoading] = useState(false)
   const [generating, setGenerating] = useState(false)
   const [actionError, setActionError] = useState<string | null>(null)
+  const [assignedId, setAssignedId] = useState<string | null>(null)
 
   async function handleShowCandidates(requestId: string) {
     if (expandedId === requestId) {
@@ -107,6 +108,9 @@ export function MatchingTab({
     const result = await action(requestId, partnerId)
     if (result.error) {
       setActionError(result.error)
+    } else {
+      setAssignedId(requestId)
+      setTimeout(() => setAssignedId(null), 3000)
     }
   }
 
@@ -114,10 +118,17 @@ export function MatchingTab({
     return <p className="py-8 text-center text-sm text-text-muted">매칭 대기 중인 의뢰가 없습니다.</p>
   }
 
+  const visibleRequests = requests.filter((r) => r.id !== assignedId)
+
   return (
     <div className="flex flex-col gap-3">
       {actionError && <p className="text-xs text-error">{actionError}</p>}
-      {requests.map((req) => (
+      {assignedId && (
+        <div className="rounded-lg bg-success-light border border-success/20 p-3 text-sm text-success font-medium animate-fade-in">
+          매칭이 생성되었습니다. &ldquo;매칭 진행&rdquo; 탭에서 확인하세요.
+        </div>
+      )}
+      {visibleRequests.map((req) => (
         <div key={req.id} className="rounded-lg border border-border p-4">
           <div className="flex items-start justify-between">
             <div className="flex-1">
