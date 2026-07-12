@@ -49,11 +49,11 @@ export default async function PartnerHome() {
       {/* [1] Hero */}
       <section className="responsive-container flex flex-col items-center gap-4 px-4 md:px-6 pt-10 pb-6 text-center">
         <h1 className="text-xl md:text-2xl lg:text-3xl font-bold font-serif text-text leading-relaxed">
-          재주를 부리고,
+          경험의 값어치,
           <br />
-          몫은 다른 사람이 가져갔습니다.
+          온전히 받으세요.
         </h1>
-        <p className="text-sm text-text-muted">작업료 전액, 당신 통장으로</p>
+        <p className="text-sm text-text-muted">수수료 0% — 작업료 전액 직접 정산</p>
 
         <div className="flex w-full flex-col gap-3">
           <form action={signInWithKakao}>
