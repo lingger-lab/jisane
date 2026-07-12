@@ -55,7 +55,7 @@ export default async function RootLayout({
           href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&display=swap"
         />
       </head>
-      <body className="min-h-full flex flex-col bg-background text-foreground font-sans">
+      <body className="min-h-full flex flex-col bg-background text-foreground font-sans" suppressHydrationWarning>
         <AppHeader
           appName="지사네"
           hubUrl="/"
@@ -69,7 +69,7 @@ export default async function RootLayout({
         <Script
           src="https://ragbot-web-n6qj3b5f3q-du.a.run.app/embed.js"
           data-bot="bc714dfa-4cc5-474a-aa14-e0c0493b4a0c"
-          strategy="afterInteractive"
+          strategy="lazyOnload"
         />
       </body>
     </html>
