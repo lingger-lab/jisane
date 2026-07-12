@@ -9,6 +9,7 @@ import { fetchOwnerLandingStats } from '@jisane/shared/landing-stats'
 import { getPackagesByAudience } from '@jisane/shared/service-catalog'
 import { CategoryBrowse } from '@jisane/ui/category-browse'
 import { AnimatedCounter } from '@jisane/ui/animated-counter'
+import { OwlIcon } from '@jisane/ui/icons/owl'
 
 export default async function OwnerHome() {
   const cookieStore = await cookies()
@@ -257,12 +258,22 @@ export default async function OwnerHome() {
       </section>
 
       {/* [8] 푸터 */}
-      <footer className="responsive-container px-4 md:px-6 py-6">
-        <div className="flex justify-center gap-4 text-xs text-text-subtle">
-          <a href={`${adminUrl}/service`} className="hover:text-text-muted transition-colors">서비스 안내</a>
-          <a href={`${adminUrl}/ax`} className="hover:text-text-muted transition-colors">AX 전환</a>
-          <a href={partnerUrl} className="hover:text-text-muted transition-colors">시니어공간</a>
-          <a href={`${adminUrl}/privacy`} className="hover:text-text-muted transition-colors">개인정보처리방침</a>
+      <footer className="border-t border-border-light py-6">
+        <div className="responsive-container flex flex-col gap-4 px-4 md:px-6">
+          <div className="flex items-center gap-2">
+            <OwlIcon className="h-6 w-6 text-primary" />
+            <div>
+              <p className="text-sm font-semibold text-brand-gradient">지사네</p>
+              <p className="text-xs text-text-subtle">일은 사람이 합니다</p>
+            </div>
+          </div>
+          <div className="flex flex-wrap gap-3 text-xs text-text-subtle">
+            <a href={`${adminUrl}/service`} className="hover:text-text-muted transition-colors">서비스 안내</a>
+            <a href={`${adminUrl}/ax`} className="hover:text-text-muted transition-colors">AX 전환</a>
+            <a href={partnerUrl} className="hover:text-text-muted transition-colors">시니어공간</a>
+            <a href={`${adminUrl}/privacy`} className="hover:text-text-muted transition-colors">개인정보처리방침</a>
+          </div>
+          <p className="text-xs text-text-subtle">&copy; 2026 (주)지사네. All rights reserved.</p>
         </div>
       </footer>
     </div>

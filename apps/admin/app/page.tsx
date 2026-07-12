@@ -7,6 +7,7 @@ import { KakaoIcon } from '@jisane/ui/icons/kakao'
 import { fetchHubLandingStats } from '@jisane/shared/landing-stats'
 import { getPackagesByAudience } from '@jisane/shared/service-catalog'
 import { SplashOverlay } from '@/components/splash-overlay'
+import { OwlIcon } from '@jisane/ui/icons/owl'
 import { AnimatedCounter } from '@jisane/ui/animated-counter'
 
 export default async function AdminHome() {
@@ -260,9 +261,12 @@ export default async function AdminHome() {
       <footer className="border-t border-border-light bg-surface py-6">
         <div className="responsive-container flex flex-col gap-4 px-4 md:px-6">
           <div className="flex items-start justify-between">
-            <div>
-              <p className="text-sm font-semibold"><span className="text-brand-gradient">지사네</span> <span className="font-normal text-text-muted">(jisane)</span></p>
-              <p className="mt-1 text-xs text-text-subtle">일은 사람이 합니다</p>
+            <div className="flex items-center gap-2">
+              <OwlIcon className="h-6 w-6 text-primary" />
+              <div>
+                <p className="text-sm font-semibold text-brand-gradient">지사네</p>
+                <p className="text-xs text-text-subtle">일은 사람이 합니다</p>
+              </div>
             </div>
             <p className="text-xs text-text-subtle">운영: (주)지사네</p>
           </div>
