@@ -5,7 +5,7 @@ import { createClient } from "@jisane/shared/supabase/server";
 import { signInWithGoogle, signInWithKakao, signOut } from "@jisane/shared/auth/actions";
 import { AppHeader } from "@jisane/ui/app-header";
 import Script from "next/script";
-import { ChatBotHint } from "@jisane/ui/chatbot-hint";
+
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://jisane.cloud"),
@@ -65,11 +65,6 @@ export default async function RootLayout({
           signInWithGoogle={signInWithGoogle}
         />
         {children}
-        <ChatBotHint suggestions={[
-          '지사네는 어떤 서비스인가요?',
-          '매칭은 어떻게 진행되나요?',
-          '에스크로 정산 절차가 궁금해요',
-        ]} />
         {/* Docent RAG 챗봇 위젯 */}
         <Script
           src="https://ragbot-web-n6qj3b5f3q-du.a.run.app/embed.js"
