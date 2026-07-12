@@ -75,11 +75,11 @@ export function PartnerNav() {
               href={tab.href}
               aria-current={isActive ? 'page' : undefined}
               className={`relative flex flex-1 flex-col items-center gap-1 py-3 text-xs md:text-sm transition-colors ${
-                isActive ? 'font-semibold text-primary' : 'text-text-muted hover:text-text'
+                isActive ? 'font-semibold text-accent' : 'text-text-muted hover:text-text'
               }`}
             >
               {isActive && (
-                <span className="absolute top-0 left-1/4 right-1/4 h-0.5 rounded-full bg-primary" />
+                <span className="absolute top-0 left-1/4 right-1/4 h-0.5 rounded-full bg-accent" />
               )}
               <tab.Icon active={isActive} />
               {tab.label}

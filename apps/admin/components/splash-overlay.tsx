@@ -16,7 +16,7 @@ export function SplashOverlay() {
 
   return (
     <div
-      style={{ position: 'fixed', inset: 0, zIndex: 50, background: '#f3efe6' }}
+      style={{ position: 'fixed', inset: 0, zIndex: 50, background: 'var(--background)' }}
       className={`flex flex-col items-center justify-center transition-opacity duration-400 ${
         fading ? 'opacity-0' : 'opacity-100'
       }`}

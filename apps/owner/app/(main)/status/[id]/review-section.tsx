@@ -87,7 +87,7 @@ export function ReviewSection({ dealId, existingReview }: ReviewSectionProps) {
         onChange={(e) => setComment(e.target.value)}
         rows={2}
         placeholder="작업에 대한 소감을 남겨주세요 (선택)"
-        className="mb-3 w-full resize-none rounded-xl border border-border-light bg-background px-3 py-2 text-sm text-text placeholder:text-text-subtle focus:border-accent focus:ring-1 focus:ring-accent/20 focus:outline-none transition-colors"
+        className="mb-3 w-full resize-none rounded-xl border border-border-light bg-background px-3 py-2 text-sm text-text placeholder:text-text-subtle focus:border-primary focus:ring-1 focus:ring-primary/20 focus:outline-none transition-colors"
       />
 
       {error && <p className="mb-2 text-xs text-error" role="alert" aria-live="polite">{error}</p>}

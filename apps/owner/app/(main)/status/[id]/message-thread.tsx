@@ -100,7 +100,7 @@ export function MessageThread({
           onChange={(e) => setContent(e.target.value)}
           placeholder="메시지 입력..."
           maxLength={1000}
-          className="flex-1 rounded-lg border border-border-light bg-background px-3 py-2 text-sm text-text placeholder:text-text-subtle focus:border-accent focus:outline-none"
+          className="flex-1 rounded-lg border border-border-light bg-background px-3 py-2 text-sm text-text placeholder:text-text-subtle focus:border-primary focus:outline-none"
         />
         <SubmitButton
           className="shrink-0 rounded-lg bg-accent px-4 py-2 text-sm font-medium text-white hover:bg-accent/90 disabled:opacity-50"

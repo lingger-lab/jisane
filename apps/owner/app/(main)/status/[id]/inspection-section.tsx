@@ -75,7 +75,7 @@ export function InspectionSection({ dealId }: InspectionSectionProps) {
               rows={3}
               required
               placeholder="수정이 필요한 부분을 적어주세요."
-              className="w-full resize-none rounded-xl border border-border-light bg-background px-3 py-2 text-sm text-text placeholder:text-text-subtle focus:border-accent focus:ring-1 focus:ring-accent/20 focus:outline-none transition-colors"
+              className="w-full resize-none rounded-xl border border-border-light bg-background px-3 py-2 text-sm text-text placeholder:text-text-subtle focus:border-primary focus:ring-1 focus:ring-primary/20 focus:outline-none transition-colors"
             />
             {revisionError && (
               <p className="text-xs text-error">{revisionError}</p>

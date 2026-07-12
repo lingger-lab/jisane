@@ -112,7 +112,7 @@ export function QuoteSection({ deal, partner }: QuoteSectionProps) {
             onChange={(e) => setInquiryText(e.target.value)}
             rows={3}
             placeholder="견적에 대해 궁금한 점이나 조정이 필요한 부분을 적어주세요."
-            className="w-full resize-none rounded-xl border border-border-light bg-background px-3 py-2 text-sm text-text placeholder:text-text-subtle focus:border-accent focus:ring-1 focus:ring-accent/20 focus:outline-none transition-colors"
+            className="w-full resize-none rounded-xl border border-border-light bg-background px-3 py-2 text-sm text-text placeholder:text-text-subtle focus:border-primary focus:ring-1 focus:ring-primary/20 focus:outline-none transition-colors"
           />
           <div className="flex gap-2">
             <SubmitButton className="flex-1 rounded-xl bg-accent px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-accent/90 disabled:opacity-50">
