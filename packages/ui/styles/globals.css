@@ -328,25 +328,10 @@ summary {
   border-radius: 2px;
 }
 
-/* 챗봇 위젯 버튼 브랜드 컬러 */
-button[aria-label="채팅 열기"],
-button[aria-label="채팅 닫기"] {
-  background-color: var(--primary) !important;
-}
-
-/* 챗봇 위젯 + 힌트 데스크톱 위치 — 콘텐츠 영역 우측 끝으로 정렬 */
-@media (min-width: 1024px) {
-  button[aria-label="채팅 열기"],
-  button[aria-label="채팅 닫기"] {
-    right: calc(50vw - 350px) !important;
-  }
-  iframe[title="채팅 상담"] {
-    right: calc(50vw - 350px) !important;
-  }
-  .chatbot-hint {
-    right: calc(50vw - 350px);
-  }
-}
+/* 챗봇 위젯(Docent embed)은 Docent 대시보드에서 색·위치·추천질문을 제어한다.
+   여기서 aria-label로 색/위치를 !important로 덮으면 대시보드 설정이 무시되고, 위치는
+   콘텐츠 폭 기준(calc(50vw-350px))이라 뷰포트 코너가 아닌 화면 중앙-우측에 어정쩡하게 떠서
+   덮어쓰기를 제거했다. 브랜드색·좌우 위치는 Docent 외형 탭에서 설정할 것. */
 
 /* 터치 타겟 최소 크기 */
 .touch-target {
