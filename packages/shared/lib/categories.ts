@@ -1,4 +1,23 @@
-/** 카테고리 계층 구조 유틸리티 */
+/** 카테고리 계층 구조 유틸리티 + 캐싱 */
+
+/** 모듈 레벨 TTL 캐시 (5분) — 카테고리 데이터는 자주 변하지 않음 */
+let categoryCache: { data: CategoryRow[]; ts: number } | null = null
+const CATEGORY_TTL = 5 * 60 * 1000
+
+export async function getCachedCategories(
+  adminClient: { from: (table: string) => any }
+): Promise<CategoryRow[]> {
+  if (categoryCache && Date.now() - categoryCache.ts < CATEGORY_TTL) {
+    return categoryCache.data
+  }
+  const { data } = await adminClient
+    .from('category')
+    .select('id, parent_id, depth, label, slug, sort_order')
+    .order('sort_order')
+  const rows = (data ?? []) as CategoryRow[]
+  categoryCache = { data: rows, ts: Date.now() }
+  return rows
+}
 
 export interface CategoryRow {
   id: string
@@ -7,73 +26,6 @@ export interface CategoryRow {
   label: string
   slug: string
   sort_order: number
-}
-
-export interface CategoryNode {
-  id: string
-  label: string
-  slug: string
-  depth: number
-  sort_order: number
-  children: CategoryNode[]
-}
-
-/** DB에서 조회한 flat 카테고리 배열 → 트리 구조로 변환 */
-export function buildCategoryTree(rows: CategoryRow[]): CategoryNode[] {
-  const map = new Map<string, CategoryNode>()
-
-  for (const row of rows) {
-    map.set(row.id, {
-      id: row.id,
-      label: row.label,
-      slug: row.slug,
-      depth: row.depth,
-      sort_order: row.sort_order,
-      children: [],
-    })
-  }
-
-  const roots: CategoryNode[] = []
-  for (const row of rows) {
-    const node = map.get(row.id)!
-    if (row.parent_id && map.has(row.parent_id)) {
-      map.get(row.parent_id)!.children.push(node)
-    } else if (!row.parent_id) {
-      roots.push(node)
-    }
-  }
-
-  const sortNodes = (nodes: CategoryNode[]) => {
-    nodes.sort((a, b) => a.sort_order - b.sort_order)
-    for (const n of nodes) sortNodes(n.children)
-  }
-  sortNodes(roots)
-
-  return roots
-}
-
-/** 대분류(depth=0) 목록 반환 */
-export function getMajorCategories(rows: CategoryRow[]): CategoryRow[] {
-  return rows
-    .filter((r) => r.depth === 0)
-    .sort((a, b) => a.sort_order - b.sort_order)
-}
-
-/** 중분류(depth=1) 목록 반환 */
-export function getMidCategories(rows: CategoryRow[]): CategoryRow[] {
-  return rows
-    .filter((r) => r.depth === 1)
-    .sort((a, b) => a.sort_order - b.sort_order)
-}
-
-/** 특정 대분류 하위의 중분류 반환 */
-export function getMidCategoriesByParent(
-  rows: CategoryRow[],
-  parentId: string
-): CategoryRow[] {
-  return rows
-    .filter((r) => r.depth === 1 && r.parent_id === parentId)
-    .sort((a, b) => a.sort_order - b.sort_order)
 }
 
 /** category_id로부터 "대분류 > 중분류" 라벨 생성 */

@@ -34,34 +34,36 @@ export async function createServiceOrder(
     return { error: '유효하지 않은 서비스입니다.' }
   }
 
-  // client_id 조회 (없으면 자동 생성)
-  let { data: client } = await adminClient
-    .from('client')
+  // owner_id 조회 (없으면 자동 생성)
+  let { data: owner } = await adminClient
+    .from('owner')
     .select('id')
     .eq('auth_user_id', user.id)
     .single()
 
-  if (!client) {
+  if (!owner) {
     const provider = (user.app_metadata?.provider as string) || 'google'
-    const { data: newClient } = await adminClient
-      .from('client')
+    const { data: newOwner } = await adminClient
+      .from('owner')
       .insert({ auth_user_id: user.id, provider, email: user.email! })
       .select('id')
       .single()
-    client = newClient
+    owner = newOwner
   }
 
-  if (!client) {
+  if (!owner) {
     return { error: '계정 생성에 실패했습니다. 다시 시도해주세요.' }
   }
 
   const { error } = await adminClient.from('service_order').insert({
-    client_id: client.id,
+    owner_id: owner.id,
     category: pkg.category,
     package_slug: pkg.slug,
     package_name: pkg.name,
     price: pkg.price,
     detail: detail?.trim() || null,
+    provider_id: pkg.providerId,
+    is_free: pkg.isFree,
   })
 
   if (error) {

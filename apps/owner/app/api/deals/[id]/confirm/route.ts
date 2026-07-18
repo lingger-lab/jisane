@@ -31,18 +31,18 @@ export async function PATCH(
   if (deal.request_id) {
     const { data: request } = await adminClient
       .from('request')
-      .select('client_id')
+      .select('owner_id')
       .eq('id', deal.request_id)
       .single()
 
     if (request) {
-      const { data: client } = await adminClient
-        .from('client')
+      const { data: ownerRow } = await adminClient
+        .from('owner')
         .select('auth_user_id')
-        .eq('id', request.client_id)
+        .eq('id', request.owner_id)
         .single()
 
-      if (!client || client.auth_user_id !== user.id) {
+      if (!ownerRow || ownerRow.auth_user_id !== user.id) {
         return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
       }
     }

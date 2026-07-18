@@ -16,7 +16,7 @@ export default async function QuotePage(props: { params: Promise<{ dealId: strin
   // deal + request + client 정보 조회
   const { data: deal } = await adminClient
     .from('deal')
-    .select('id, work_fee, match_fee, total_pay, scope, due_date, status, created_at, request_id, partner_id')
+    .select('id, work_fee, match_fee, total_pay, scope, due_date, status, created_at, request_id, expert_id, invitation_id')
     .eq('id', dealId)
     .single()
 
@@ -24,9 +24,9 @@ export default async function QuotePage(props: { params: Promise<{ dealId: strin
     return <div className="p-10 text-center text-text-muted">견적서를 찾을 수 없습니다.</div>
   }
 
-  // 소유권 확인 (client 또는 admin)
-  const { data: client } = await adminClient
-    .from('client')
+  // 소유권 확인 (owner 또는 admin)
+  const { data: owner } = await adminClient
+    .from('owner')
     .select('id')
     .eq('auth_user_id', user.id)
     .single()
@@ -34,15 +34,15 @@ export default async function QuotePage(props: { params: Promise<{ dealId: strin
   const isAdmin = (process.env.ADMIN_EMAILS || '').split(',').map(e => e.trim().toLowerCase()).includes((user.email || '').toLowerCase())
 
   if (!isAdmin) {
-    if (!client) redirect('/')
-    // client인 경우 request 소유 확인
+    if (!owner) redirect('/')
+    // owner인 경우 request 소유 확인
     if (deal.request_id) {
       const { data: request } = await adminClient
         .from('request')
-        .select('client_id')
+        .select('owner_id')
         .eq('id', deal.request_id)
         .single()
-      if (!request || request.client_id !== client.id) redirect('/')
+      if (!request || request.owner_id !== owner.id) redirect('/')
     }
   }
 
@@ -61,16 +61,36 @@ export default async function QuotePage(props: { params: Promise<{ dealId: strin
     }
   }
 
-  // partner 정보
-  let partnerName = '미지정'
-  if (deal.partner_id) {
-    const { data: partner } = await adminClient
-      .from('partner')
+  // expert 정보
+  let expertName = '미지정'
+  if (deal.expert_id) {
+    const { data: expert } = await adminClient
+      .from('expert')
       .select('name, field')
-      .eq('id', deal.partner_id)
+      .eq('id', deal.expert_id)
       .single()
-    if (partner) {
-      partnerName = partner.name || '파트너'
+    if (expert) {
+      expertName = expert.name || '전문가'
+    }
+  }
+
+  // 초빙 기반 거래 → 캡 가격 정보 조회
+  let capInfo: { est_hours: number; est_amount: number; cap_amount: number; hourly_rate: number } | null = null
+  if (deal.invitation_id) {
+    const { data: invitation } = await adminClient
+      .from('invitation')
+      .select('est_hours, est_amount, cap_amount, expert_id')
+      .eq('id', deal.invitation_id)
+      .single()
+    if (invitation && invitation.est_hours && invitation.est_amount && invitation.cap_amount) {
+      // 시간당 단가 역산
+      const hourlyRate = Math.round(invitation.est_amount / invitation.est_hours)
+      capInfo = {
+        est_hours: invitation.est_hours,
+        est_amount: invitation.est_amount,
+        cap_amount: invitation.cap_amount,
+        hourly_rate: hourlyRate,
+      }
     }
   }
 
@@ -117,8 +137,8 @@ export default async function QuotePage(props: { params: Promise<{ dealId: strin
                 <td className="py-2 whitespace-pre-wrap">{requestDetail || '-'}</td>
               </tr>
               <tr className="border-b border-border-light">
-                <td className="py-2 font-medium text-text-muted">담당 파트너</td>
-                <td className="py-2">{partnerName}</td>
+                <td className="py-2 font-medium text-text-muted">담당 전문가</td>
+                <td className="py-2">{expertName}</td>
               </tr>
               {deal.scope && (
                 <tr className="border-b border-border-light">
@@ -136,6 +156,30 @@ export default async function QuotePage(props: { params: Promise<{ dealId: strin
           </table>
         </div>
 
+        {/* 캡 가격 정보 (초빙 기반 거래) */}
+        {capInfo && (
+          <div className="mb-6">
+            <h2 className="mb-2 text-sm font-bold text-text">캡 가격 산정</h2>
+            <table className="w-full text-sm">
+              <tbody>
+                <tr className="border-b border-border-light">
+                  <td className="w-28 py-2 font-medium text-text-muted">시간당 단가</td>
+                  <td className="py-2">{capInfo.hourly_rate.toLocaleString('ko-KR')}원/h</td>
+                </tr>
+                <tr className="border-b border-border-light">
+                  <td className="py-2 font-medium text-text-muted">예상 시간</td>
+                  <td className="py-2">{capInfo.est_hours}시간</td>
+                </tr>
+                <tr className="border-b border-border-light">
+                  <td className="py-2 font-medium text-text-muted">캡 금액</td>
+                  <td className="py-2 font-medium">{capInfo.cap_amount.toLocaleString('ko-KR')}원</td>
+                </tr>
+              </tbody>
+            </table>
+            <p className="mt-1.5 text-xs text-text-muted">* 캡 가격 = 시간당 단가 × 예상 시간 (고정 정산)</p>
+          </div>
+        )}
+
         {/* 금액 */}
         <div className="mb-6">
           <h2 className="mb-2 text-sm font-bold text-text">견적 금액</h2>
@@ -148,7 +192,7 @@ export default async function QuotePage(props: { params: Promise<{ dealId: strin
             </thead>
             <tbody>
               <tr className="border-b border-border-light">
-                <td className="py-2">작업료</td>
+                <td className="py-2">작업료{capInfo ? ' (캡 금액)' : ''}</td>
                 <td className="py-2 text-right">{deal.work_fee.toLocaleString('ko-KR')}원</td>
               </tr>
               <tr className="border-b border-border-light">
@@ -175,7 +219,7 @@ export default async function QuotePage(props: { params: Promise<{ dealId: strin
         <div className="rounded-lg bg-surface p-4 text-xs text-text-muted">
           <p className="mb-1">본 견적서는 지사네 플랫폼을 통해 자동 생성되었습니다.</p>
           <p className="mb-1">작업료는 에스크로 방식으로 안전하게 보관됩니다.</p>
-          <p className="mb-1">시니어 작업료 수수료 0% — 작업료 전액이 시니어에게 지급됩니다.</p>
+          <p className="mb-1">전문가 작업료 수수료 0% — 작업료 전액이 전문가에게 지급됩니다.</p>
           <p>매칭비는 지사네 플랫폼 중개 수수료입니다.</p>
         </div>
       </div>

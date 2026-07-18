@@ -156,7 +156,14 @@ body {
   .animate-fade-in,
   .animate-scale-in,
   .animate-slide-up,
-  .cta-pulse {
+  .cta-pulse,
+  .splash-breathe,
+  .splash-stagger-1,
+  .splash-stagger-2,
+  .splash-stagger-3,
+  .splash-stagger-4,
+  .splash-stagger-5,
+  .splash-line {
     animation: none;
   }
   .card-hover {
@@ -220,6 +227,36 @@ summary {
 .stagger-3 { animation-delay: 0.15s; }
 .stagger-4 { animation-delay: 0.2s; }
 .stagger-5 { animation-delay: 0.25s; }
+
+/* 스플래시 오버레이 애니메이션 */
+@keyframes breathe {
+  0%, 100% { transform: scale(1); opacity: 0.9; }
+  50% { transform: scale(1.04); opacity: 1; }
+}
+
+@keyframes splash-enter {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes line-expand {
+  from { width: 0; opacity: 0; }
+  to { width: 3rem; opacity: 1; }
+}
+
+.splash-breathe {
+  animation: breathe 3s ease-in-out infinite;
+}
+
+.splash-stagger-1 { animation: splash-enter 0.6s ease-out 0.2s both; }
+.splash-stagger-2 { animation: splash-enter 0.6s ease-out 0.4s both; }
+.splash-stagger-3 { animation: splash-enter 0.6s ease-out 0.6s both; }
+.splash-stagger-4 { animation: splash-enter 0.6s ease-out 0.8s both; }
+.splash-stagger-5 { animation: splash-enter 0.6s ease-out 1.0s both; }
+
+.splash-line {
+  animation: line-expand 0.8s ease-out 0.6s both;
+}
 
 /* iOS safe area 지원 */
 @supports (padding-bottom: env(safe-area-inset-bottom)) {

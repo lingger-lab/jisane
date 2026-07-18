@@ -35,33 +35,33 @@ export async function createRequest(
     return { error: '의뢰 내용을 입력해주세요.' }
   }
 
-  // client + category 병렬 조회
-  const [clientResult, catResult] = await Promise.all([
-    adminClient.from('client').select('id').eq('auth_user_id', user.id).single(),
+  // owner + category 병렬 조회
+  const [ownerResult, catResult] = await Promise.all([
+    adminClient.from('owner').select('id').eq('auth_user_id', user.id).single(),
     reqType
       ? adminClient.from('category').select('id').eq('label', reqType).eq('depth', 1).single()
       : Promise.resolve({ data: null }),
   ])
 
-  let client = clientResult.data
-  if (!client) {
+  let owner = ownerResult.data
+  if (!owner) {
     const provider = (user.app_metadata?.provider as string) || 'google'
-    const { data: newClient } = await adminClient
-      .from('client')
+    const { data: newOwner } = await adminClient
+      .from('owner')
       .insert({ auth_user_id: user.id, provider, email: user.email! })
       .select('id')
       .single()
-    client = newClient
+    owner = newOwner
   }
 
-  if (!client) {
+  if (!owner) {
     return { error: '계정 생성에 실패했습니다. 다시 시도해주세요.' }
   }
 
   const categoryId = catResult.data?.id || null
 
   const { error } = await adminClient.from('request').insert({
-    client_id: client.id,
+    owner_id: owner.id,
     title: title.trim(),
     detail: detail.trim(),
     req_type: reqType || null,

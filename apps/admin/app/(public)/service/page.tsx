@@ -6,16 +6,16 @@ export const metadata = {
 
 const STEPS = [
   { num: '01', title: '의뢰 등록', desc: '기업이 필요한 작업을 자유롭게 등록합니다.' },
-  { num: '02', title: '지사네 매니저 검토', desc: '매니저가 의뢰를 확인하고 적합한 시니어를 선정합니다.' },
-  { num: '03', title: '시니어 전문가 매칭', desc: '6항목 점수 기반으로 후보 3명을 제안합니다.' },
+  { num: '02', title: '지사네 매니저 검토', desc: '매니저가 의뢰를 확인하고 적합한 전문가를 선정합니다.' },
+  { num: '03', title: '전문가 매칭', desc: '6항목 점수 기반으로 후보 3명을 제안합니다.' },
   { num: '04', title: '에스크로 결제', desc: '기업이 견적을 승인하면 에스크로로 안전하게 결제합니다.' },
   { num: '05', title: '작업 진행·검수', desc: '5단계 워크플로우를 통해 체계적으로 작업을 진행합니다.' },
-  { num: '06', title: '정산', desc: '검수 완료 후 시니어에게 작업료 전액이 지급됩니다.' },
+  { num: '06', title: '정산', desc: '검수 완료 후 전문가에게 작업료 전액이 지급됩니다.' },
 ] as const
 
 export default function ServicePage() {
   const ownerUrl = process.env.NEXT_PUBLIC_OWNER_URL || 'https://owner.jisane.cloud'
-  const partnerUrl = process.env.NEXT_PUBLIC_PARTNER_URL || 'https://partner.jisane.cloud'
+  const expertUrl = process.env.NEXT_PUBLIC_EXPERT_URL || 'https://expert.jisane.cloud'
 
   return (
     <div className="mx-auto max-w-2xl px-6 py-12">
@@ -25,9 +25,9 @@ export default function ServicePage() {
           지사네 서비스 안내
         </h1>
         <p className="mt-3 text-base text-text-muted leading-relaxed">
-          시니어 인력 매칭 시스템과 기업용 전문 서비스를 제공합니다.
+          전문가 인력 매칭 시스템과 기업용 전문 서비스를 제공합니다.
           <br />
-          부울경 시니어 전문가와 기업을 에스크로 직거래로 연결합니다.
+          부울경 전문가와 기업을 에스크로 직거래로 연결합니다.
         </p>
       </section>
 
@@ -36,9 +36,9 @@ export default function ServicePage() {
         <h2 className="mb-4 text-lg font-bold text-text">지사네가 하는 일</h2>
         <div className="grid gap-4 sm:grid-cols-2">
           <div className="rounded-2xl border border-border-light bg-surface-warm p-5 shadow-sm">
-            <p className="text-sm font-semibold text-primary">시니어 인력 매칭 시스템</p>
+            <p className="text-sm font-semibold text-primary">전문가 인력 매칭 시스템</p>
             <p className="mt-2 text-sm text-text-muted">
-              경력 있는 시니어 전문가를 기업에 연결합니다. 매칭 점수 6항목을 공개하고, 후보 3명을 제안합니다.
+              경력 있는 전문가를 기업에 연결합니다. 매칭 점수 6항목을 공개하고, 후보 3명을 제안합니다.
             </p>
           </div>
           <div className="rounded-2xl border border-border-light bg-surface-warm p-5 shadow-sm">
@@ -76,13 +76,13 @@ export default function ServicePage() {
         <div className="rounded-2xl border border-primary/20 bg-white p-6 shadow-sm">
           <h2 className="text-lg font-bold text-primary">기업공간</h2>
           <p className="mt-2 text-sm text-text-muted">
-            일은 사람이 합니다 — 시니어에게 직접 의뢰하세요.
-            의뢰를 등록하면 지사네 매니저가 24시간 내에 적합한 시니어를 연결해드립니다.
+            일은 사람이 합니다 — 전문가에게 직접 의뢰하세요.
+            의뢰를 등록하면 지사네 매니저가 24시간 내에 적합한 전문가를 연결해드립니다.
           </p>
           <ul className="mt-3 flex flex-col gap-1.5 text-sm text-text-muted">
             <li className="flex items-start gap-2">
               <span className="mt-0.5 h-1.5 w-1.5 shrink-0 rounded-full bg-primary" />
-              시니어 인력 신청 — 필요한 작업을 자유롭게 등록
+              전문가 인력 신청 — 필요한 작업을 자유롭게 등록
             </li>
             <li className="flex items-start gap-2">
               <span className="mt-0.5 h-1.5 w-1.5 shrink-0 rounded-full bg-primary" />
@@ -97,18 +97,18 @@ export default function ServicePage() {
             href={ownerUrl}
             className="mt-5 flex h-12 items-center justify-center rounded-xl bg-primary text-base font-semibold text-white shadow-sm transition-all hover:bg-primary-light hover:shadow-md btn-press"
           >
-            시니어 인력 신청하기
+            전문가 인력 신청하기
           </a>
         </div>
       </section>
 
-      {/* 시니어공간 */}
+      {/* 전문가공간 */}
       <section className="mb-12 animate-fade-in stagger-4">
         <div className="rounded-2xl border border-accent/20 bg-white p-6 shadow-sm">
-          <h2 className="text-lg font-bold text-accent">시니어공간</h2>
+          <h2 className="text-lg font-bold text-accent">전문가공간</h2>
           <p className="mt-2 text-sm text-text-muted">
             경험을 살려 일하고, 정당한 대가를 받으세요.
-            시니어로 등록하면 지사네 매니저가 적합한 의뢰를 매칭해드립니다.
+            전문가로 등록하면 지사네 매니저가 적합한 의뢰를 매칭해드립니다.
           </p>
           <ul className="mt-3 flex flex-col gap-1.5 text-sm text-text-muted">
             <li className="flex items-start gap-2">
@@ -117,7 +117,7 @@ export default function ServicePage() {
             </li>
             <li className="flex items-start gap-2">
               <span className="mt-0.5 h-1.5 w-1.5 shrink-0 rounded-full bg-accent" />
-              시니어 수수료 0% — 작업료 전액 지급
+              전문가 수수료 0% — 작업료 전액 지급
             </li>
             <li className="flex items-start gap-2">
               <span className="mt-0.5 h-1.5 w-1.5 shrink-0 rounded-full bg-accent" />
@@ -125,7 +125,7 @@ export default function ServicePage() {
             </li>
           </ul>
           <a
-            href={partnerUrl}
+            href={expertUrl}
             className="mt-5 flex h-12 items-center justify-center rounded-xl border-2 border-accent text-base font-semibold text-accent transition-colors hover:bg-accent/5 btn-press"
           >
             기업 매칭 신청하기

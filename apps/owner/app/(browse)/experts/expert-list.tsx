@@ -7,8 +7,12 @@ interface ExpertItem {
   id: string
   name: string | null
   field: string | null
-  careerYrs: number | null
+  careerYears: number | null
   grade: string
+  totalScore: number | null
+  reviewScore: number | null
+  completionScore: number | null
+  activityPoints: number
   categories: string[]
 }
 
@@ -164,14 +168,24 @@ export function ExpertList({ experts, categoryTree, selectedCategory }: ExpertLi
                 </span>
               </div>
 
-              <div className="mt-2 flex flex-wrap gap-2 text-xs text-text-muted">
-                {expert.careerYrs && (
-                  <span className="font-medium text-primary">경력 {expert.careerYrs}년</span>
+              <div className="mt-2 flex items-center gap-2 text-xs text-text-muted">
+                {expert.totalScore != null && (
+                  <span className="rounded-full bg-accent/10 px-2 py-0.5 font-bold text-accent">
+                    {expert.totalScore.toFixed(1)}점
+                  </span>
                 )}
-                {expert.categories.length > 0 && (
-                  <span className="truncate">{expert.categories.slice(0, 3).join(' · ')}</span>
+                {expert.careerYears != null && expert.careerYears > 0 && (
+                  <span className="font-medium text-primary">경력 {expert.careerYears}년</span>
+                )}
+                {expert.activityPoints > 0 && (
+                  <span className="text-warning">+{expert.activityPoints}</span>
                 )}
               </div>
+              {expert.categories.length > 0 && (
+                <p className="mt-1 text-xs text-text-subtle truncate">
+                  {expert.categories.slice(0, 3).join(' · ')}
+                </p>
+              )}
             </Link>
           ))
         )}

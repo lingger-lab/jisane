@@ -1,8 +1,8 @@
-import type { PartnerRow } from './types'
+import type { ExpertRow } from './types'
 import type { CategoryRow } from './categories'
 
-export interface ScoredPartner {
-  partner: PartnerRow
+export interface ScoredExpert {
+  expert: ExpertRow
   score: number
   scoreDetail: {
     category: number
@@ -23,9 +23,9 @@ interface RequestInput {
 
 interface MatchingContext {
   categories: CategoryRow[]
-  partnerCategories: Array<{ partner_id: string; category_id: string }>
-  interests: Array<{ partner_id: string }>
-  partnerStats: Array<{ partner_id: string; avg_rating: number; deal_count: number }>
+  expertCategories: Array<{ expert_id: string; category_id: string }>
+  interests: Array<{ expert_id: string }>
+  expertStats: Array<{ expert_id: string; avg_rating: number; deal_count: number }>
 }
 
 /**
@@ -35,7 +35,7 @@ interface MatchingContext {
  * - 카테고리 일치 (중분류): +15
  * - 카테고리 일치 (대분류): +8
  * - 키워드 매칭: +3/개
- * - 경력 보너스: min(career_yrs, 10)
+ * - 경력 보너스: min(career_years, 10)
  * - 관심 표현 보너스: +10
  * - 과거 평점 보너스: +1~5
  * - 완료 거래 실적: +2/건 (max 10)
@@ -44,10 +44,10 @@ interface MatchingContext {
  */
 export function findCandidates(
   request: RequestInput,
-  partners: PartnerRow[],
+  experts: ExpertRow[],
   context?: MatchingContext,
   maxResults = 3
-): ScoredPartner[] {
+): ScoredExpert[] {
   const categoryMap = new Map<string, CategoryRow>()
   if (context?.categories) {
     for (const c of context.categories) categoryMap.set(c.id, c)
@@ -72,29 +72,29 @@ export function findCandidates(
     }
   }
 
-  // 파트너별 카테고리 Set
-  const partnerCatMap = new Map<string, Set<string>>()
-  if (context?.partnerCategories) {
-    for (const pc of context.partnerCategories) {
-      if (!partnerCatMap.has(pc.partner_id)) {
-        partnerCatMap.set(pc.partner_id, new Set())
+  // 전문가별 카테고리 Set
+  const expertCatMap = new Map<string, Set<string>>()
+  if (context?.expertCategories) {
+    for (const ec of context.expertCategories) {
+      if (!expertCatMap.has(ec.expert_id)) {
+        expertCatMap.set(ec.expert_id, new Set())
       }
-      partnerCatMap.get(pc.partner_id)!.add(pc.category_id)
+      expertCatMap.get(ec.expert_id)!.add(ec.category_id)
     }
   }
 
   // 관심 표현 Set
-  const interestSet = new Set(context?.interests?.map((i) => i.partner_id) || [])
+  const interestSet = new Set(context?.interests?.map((i) => i.expert_id) || [])
 
-  // 파트너별 실적 Map
+  // 전문가별 실적 Map
   const statsMap = new Map<string, { avg_rating: number; deal_count: number }>()
-  if (context?.partnerStats) {
-    for (const s of context.partnerStats) statsMap.set(s.partner_id, s)
+  if (context?.expertStats) {
+    for (const s of context.expertStats) statsMap.set(s.expert_id, s)
   }
 
-  const scored: ScoredPartner[] = partners
-    .filter((p) => p.status === 'active')
-    .map((partner) => {
+  const scored: ScoredExpert[] = experts
+    .filter((e) => e.status === 'active')
+    .map((expert) => {
       let categoryScore = 0
       let keywordScore = 0
       let careerScore = 0
@@ -102,27 +102,27 @@ export function findCandidates(
       let ratingScore = 0
       let trackScore = 0
 
-      // 1. 카테고리 매칭 (새 partner_category 테이블 기반)
-      const pCats = partnerCatMap.get(partner.id)
-      if (pCats && reqMidId) {
-        if (pCats.has(reqMidId)) {
+      // 1. 카테고리 매칭 (expert_category 테이블 기반)
+      const eCats = expertCatMap.get(expert.id)
+      if (eCats && reqMidId) {
+        if (eCats.has(reqMidId)) {
           categoryScore = 15 // 중분류 일치
-        } else if (reqMajorId && pCats.has(reqMajorId)) {
+        } else if (reqMajorId && eCats.has(reqMajorId)) {
           categoryScore = 8 // 대분류 일치
         } else {
-          // 파트너 카테고리의 parent를 확인 (중분류 → 대분류)
-          for (const pcId of pCats) {
-            const pc = categoryMap.get(pcId)
-            if (pc?.parent_id === reqMajorId) {
+          // 전문가 카테고리의 parent를 확인 (중분류 → 대분류)
+          for (const ecId of eCats) {
+            const ec = categoryMap.get(ecId)
+            if (ec?.parent_id === reqMajorId) {
               categoryScore = Math.max(categoryScore, 5)
             }
           }
         }
       }
 
-      // 레거시: field TEXT 기반 매칭 (partner_category가 없을 때)
-      if (categoryScore === 0 && partner.field && request.req_type) {
-        const field = partner.field.toLowerCase()
+      // 레거시: field TEXT 기반 매칭 (expert_category가 없을 때)
+      if (categoryScore === 0 && expert.field && request.req_type) {
+        const field = expert.field.toLowerCase()
         const reqType = request.req_type.toLowerCase()
         for (const f of field.split(',')) {
           const ft = f.trim()
@@ -138,23 +138,23 @@ export function findCandidates(
       // 2. 키워드 매칭
       const text = `${request.title} ${request.detail}`.toLowerCase()
       const keywords = text.split(/[\s,./·()]+/).filter((k) => k.length >= 2)
-      const field = (partner.field || '').toLowerCase()
+      const field = (expert.field || '').toLowerCase()
       for (const kw of keywords) {
         if (field.includes(kw)) keywordScore += 3
       }
 
       // 3. 경력 보너스
-      if (partner.career_yrs && partner.career_yrs > 0) {
-        careerScore = Math.min(partner.career_yrs, 10)
+      if (expert.career_years && expert.career_years > 0) {
+        careerScore = Math.min(expert.career_years, 10)
       }
 
       // 4. 관심 표현 보너스
-      if (interestSet.has(partner.id)) {
+      if (interestSet.has(expert.id)) {
         interestScore = 10
       }
 
       // 5. 과거 평점 보너스
-      const stats = statsMap.get(partner.id)
+      const stats = statsMap.get(expert.id)
       if (stats && stats.avg_rating > 0) {
         ratingScore = Math.round(stats.avg_rating)
       }
@@ -168,7 +168,7 @@ export function findCandidates(
         categoryScore + keywordScore + careerScore + interestScore + ratingScore + trackScore
 
       return {
-        partner,
+        expert,
         score,
         scoreDetail: {
           category: categoryScore,

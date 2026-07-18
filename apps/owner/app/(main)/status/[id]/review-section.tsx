@@ -57,7 +57,7 @@ export function ReviewSection({ dealId, existingReview }: ReviewSectionProps) {
   return (
     <div className="rounded-xl border border-accent/20 bg-surface-warm p-4 shadow-sm">
       <h3 className="mb-2 text-sm font-semibold text-text">작업은 어떠셨나요?</h3>
-      <p className="mb-3 text-xs text-text-muted">시니어 전문가의 작업에 대해 평가해주세요.</p>
+      <p className="mb-3 text-xs text-text-muted">전문가의 작업에 대해 평가해주세요.</p>
 
       {/* 별점 */}
       <div className="mb-3 flex items-center gap-1" role="radiogroup" aria-label="작업 평점">

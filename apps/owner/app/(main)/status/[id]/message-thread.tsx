@@ -12,8 +12,8 @@ interface Message {
 }
 
 const SENDER_LABELS: Record<string, string> = {
-  client: '나',
-  partner: '시니어',
+  owner: '나',
+  expert: '전문가',
   admin: '매니저',
 }
 
@@ -35,7 +35,7 @@ export function MessageThread({
     // 낙관적 업데이트
     const tempMsg: Message = {
       id: `temp-${Date.now()}`,
-      sender_type: 'client',
+      sender_type: 'owner',
       content: content.trim(),
       created_at: new Date().toISOString(),
     }
@@ -59,18 +59,18 @@ export function MessageThread({
 
       {messages.length === 0 ? (
         <p className="mb-3 text-xs text-text-subtle">
-          시니어 전문가나 매니저에게 질문이나 요청사항을 전달할 수 있습니다.
+          전문가나 매니저에게 질문이나 요청사항을 전달할 수 있습니다.
         </p>
       ) : (
         <div className="mb-3 flex max-h-64 flex-col gap-2 overflow-y-auto">
           {messages.map((msg) => (
             <div
               key={msg.id}
-              className={`flex ${msg.sender_type === 'client' ? 'justify-end' : 'justify-start'}`}
+              className={`flex ${msg.sender_type === 'owner' ? 'justify-end' : 'justify-start'}`}
             >
               <div
                 className={`max-w-[80%] rounded-xl px-3 py-2 text-sm ${
-                  msg.sender_type === 'client'
+                  msg.sender_type === 'owner'
                     ? 'bg-accent text-white'
                     : msg.sender_type === 'admin'
                     ? 'bg-info-light text-text'
@@ -79,7 +79,7 @@ export function MessageThread({
               >
                 <p className="whitespace-pre-wrap">{msg.content}</p>
                 <p className={`mt-1 text-xs ${
-                  msg.sender_type === 'client' ? 'text-white/60' : 'text-text-subtle'
+                  msg.sender_type === 'owner' ? 'text-white/60' : 'text-text-subtle'
                 }`}>
                   {SENDER_LABELS[msg.sender_type] || msg.sender_type}
                   {' · '}

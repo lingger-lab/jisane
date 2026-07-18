@@ -67,7 +67,7 @@ export function InquiryTab({ inquiries }: { inquiries: InquiryItem[] }) {
                 <div className="mt-2 flex flex-wrap gap-2 text-xs text-text-muted">
                   {inq.author_type && (
                     <span className="rounded bg-surface px-2 py-0.5">
-                      {inq.author_type === 'client' ? '기업' : '시니어'}
+                      {inq.author_type === 'owner' ? '기업' : '전문가'}
                     </span>
                   )}
                   {inq.author_email && (

@@ -21,7 +21,7 @@ export async function GET(
   // settlement + deal 조회
   const { data: settlement } = await adminClient
     .from('settlement')
-    .select('*, deal:deal!inner(id, request_id, partner_id, work_fee, match_fee, total_pay, status)')
+    .select('*, deal:deal!inner(id, request_id, expert_id, work_fee, match_fee, total_pay, status)')
     .eq('id', settlementId)
     .returns<SettlementWithDealFlat[]>()
     .single()
@@ -30,35 +30,35 @@ export async function GET(
     return NextResponse.json({ error: 'Settlement not found' }, { status: 404 })
   }
 
-  // 소유권 확인: 기업(client) 또는 시니어
+  // 소유권 확인: 기업(owner) 또는 전문가(expert)
   const deal = settlement.deal
 
-  // 파트너 확인
-  const { data: partner } = await adminClient
-    .from('partner')
+  // 전문가 확인
+  const { data: expert } = await adminClient
+    .from('expert')
     .select('id')
     .eq('auth_user_id', user.id)
     .single()
 
-  if (partner && deal.partner_id === partner.id) {
+  if (expert && deal.expert_id === expert.id) {
     return NextResponse.json({ settlement })
   }
 
   // 기업 확인
   const { data: req } = await adminClient
     .from('request')
-    .select('client_id')
+    .select('owner_id')
     .eq('id', deal.request_id)
     .single()
 
   if (req) {
-    const { data: client } = await adminClient
-      .from('client')
+    const { data: ownerRow } = await adminClient
+      .from('owner')
       .select('id')
       .eq('auth_user_id', user.id)
       .single()
 
-    if (client && req.client_id === client.id) {
+    if (ownerRow && req.owner_id === ownerRow.id) {
       return NextResponse.json({ settlement })
     }
   }

@@ -19,7 +19,12 @@
     "./query-types": "./lib/query-types.ts",
     "./deal/deal-operations": "./lib/deal/deal-operations.ts",
     "./labels": "./lib/labels.ts",
-    "./landing-stats": "./lib/landing-stats.ts"
+    "./landing-stats": "./lib/landing-stats.ts",
+    "./expert-scoring": "./lib/expert-scoring.ts",
+    "./cap-pricing": "./lib/cap-pricing.ts",
+    "./expert-activity": "./lib/expert-activity.ts",
+    "./automation/auto-settlement": "./lib/automation/auto-settlement.ts",
+    "./automation/audit-sampling": "./lib/automation/audit-sampling.ts"
   },
   "dependencies": {
     "@supabase/ssr": "^0.12.0",

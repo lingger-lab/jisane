@@ -9,6 +9,9 @@ interface SettlementItem {
   escrow_status: string
   guarantee_fee: number
   deposited_at: string | null
+  auto_processed: boolean | null
+  queue_status: string | null
+  audit_sampled: boolean | null
   deal: {
     id: string
     work_fee: number
@@ -16,9 +19,9 @@ interface SettlementItem {
     total_pay: number
     request: {
       id: string; title: string
-      client: { company: string | null; ceo_name: string | null; email: string; contact: string | null }
+      owner: { company: string | null; ceo_name: string | null; email: string; contact: string | null }
     }
-    partner: { id: string; name: string | null }
+    expert: { id: string; name: string | null }
   }
 }
 
@@ -43,7 +46,7 @@ export function SettlementTab({
   const [error, setError] = useState<string | null>(null)
 
   async function handleRelease(settlementId: string) {
-    if (!confirm('정산을 실행하시겠습니까? 에스크로가 해제되고 파트너에게 지급됩니다.')) return
+    if (!confirm('정산을 실행하시겠습니까? 에스크로가 해제되고 전문가에게 지급됩니다.')) return
 
     setReleasing(settlementId)
     setError(null)
@@ -103,23 +106,35 @@ export function SettlementTab({
                   <div className="mt-1 flex flex-col gap-0.5 text-xs text-text-subtle">
                     <div className="flex flex-wrap items-center gap-x-2">
                       <span className="text-text-muted">기업:</span>
-                      {s.deal.request.client.company && <span>{s.deal.request.client.company}</span>}
-                      {s.deal.request.client.ceo_name && <span>{s.deal.request.client.ceo_name}</span>}
-                      {s.deal.request.client.contact && (
-                        <a href={`tel:${s.deal.request.client.contact}`} className="rounded px-1 py-0.5 hover:text-accent hover:bg-accent/5 transition-colors">{s.deal.request.client.contact}</a>
+                      {s.deal.request.owner.company && <span>{s.deal.request.owner.company}</span>}
+                      {s.deal.request.owner.ceo_name && <span>{s.deal.request.owner.ceo_name}</span>}
+                      {s.deal.request.owner.contact && (
+                        <a href={`tel:${s.deal.request.owner.contact}`} className="rounded px-1 py-0.5 hover:text-accent hover:bg-accent/5 transition-colors">{s.deal.request.owner.contact}</a>
                       )}
-                      <a href={`mailto:${s.deal.request.client.email}`} className="rounded px-1 py-0.5 hover:text-accent hover:bg-accent/5 transition-colors">{s.deal.request.client.email}</a>
+                      <a href={`mailto:${s.deal.request.owner.email}`} className="rounded px-1 py-0.5 hover:text-accent hover:bg-accent/5 transition-colors">{s.deal.request.owner.email}</a>
                     </div>
-                    <p className="text-text-muted">파트너: {s.deal.partner.name || '미등록'}</p>
+                    <p className="text-text-muted">전문가: {s.deal.expert.name || '미등록'}</p>
                   </div>
                 </div>
-                <span className={`rounded-full px-2 py-0.5 text-xs font-medium ${
-                  s.escrow_status === 'deposited'
-                    ? 'bg-info-light text-info'
-                    : 'bg-warning-light text-warning'
-                }`}>
-                  {s.escrow_status === 'deposited' ? '입금 완료' : '검수 중'}
-                </span>
+                <div className="flex items-center gap-1">
+                  {s.auto_processed && (
+                    <span className="rounded-full bg-success/10 px-2 py-0.5 text-xs font-medium text-success">
+                      자동 처리
+                    </span>
+                  )}
+                  {s.audit_sampled && (
+                    <span className="rounded-full bg-error/10 px-2 py-0.5 text-xs font-medium text-error">
+                      감사 대상
+                    </span>
+                  )}
+                  <span className={`rounded-full px-2 py-0.5 text-xs font-medium ${
+                    s.escrow_status === 'deposited'
+                      ? 'bg-info-light text-info'
+                      : 'bg-warning-light text-warning'
+                  }`}>
+                    {s.escrow_status === 'deposited' ? '입금 완료' : '검수 중'}
+                  </span>
+                </div>
               </div>
 
               <div className="mt-3 grid grid-cols-3 gap-2 text-center text-xs">

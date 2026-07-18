@@ -18,7 +18,7 @@ export default function PrivacyPage() {
           <ul className="mt-2 list-disc pl-5 flex flex-col gap-1">
             <li>회원 가입 및 본인 확인</li>
             <li>의뢰 등록, 매칭, 계약 체결 등 서비스 제공</li>
-            <li>파트너 검증 및 신뢰도 평가</li>
+            <li>전문가 검증 및 신뢰도 평가</li>
             <li>결제 및 정산 처리</li>
             <li>고객 문의 응대 및 공지사항 전달</li>
             <li>서비스 개선 및 통계 분석</li>
@@ -48,7 +48,7 @@ export default function PrivacyPage() {
                   <td className="py-2">서비스 이용 중 입력</td>
                 </tr>
                 <tr className="border-b border-border-light">
-                  <td className="py-2 pr-4">시니어</td>
+                  <td className="py-2 pr-4">전문가</td>
                   <td className="py-2 pr-4">이름, 분야, 경력, 자기소개, 포트폴리오</td>
                   <td className="py-2">서비스 이용 중 입력</td>
                 </tr>
@@ -89,7 +89,7 @@ export default function PrivacyPage() {
           </p>
           <ul className="mt-2 list-disc pl-5 flex flex-col gap-1">
             <li>이용자가 사전에 동의한 경우</li>
-            <li>의뢰-파트너 매칭 시 계약 이행을 위해 필요한 최소한의 정보 (이름, 연락처)</li>
+            <li>의뢰-전문가 매칭 시 계약 이행을 위해 필요한 최소한의 정보 (이름, 연락처)</li>
             <li>법령에 의하여 요구되는 경우</li>
           </ul>
         </section>

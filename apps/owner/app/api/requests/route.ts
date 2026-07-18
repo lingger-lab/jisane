@@ -12,20 +12,20 @@ export async function GET() {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 
-  const { data: client } = await adminClient
-    .from('client')
+  const { data: ownerRow } = await adminClient
+    .from('owner')
     .select('id')
     .eq('auth_user_id', user.id)
     .single()
 
-  if (!client) {
-    return NextResponse.json({ error: 'Client not found' }, { status: 404 })
+  if (!ownerRow) {
+    return NextResponse.json({ error: 'Owner not found' }, { status: 404 })
   }
 
   const { data: requests, error } = await adminClient
     .from('request')
-    .select('id, client_id, title, detail, req_type, scope, budget_hope, status, created_at, updated_at')
-    .eq('client_id', client.id)
+    .select('id, owner_id, title, detail, req_type, scope, budget_hope, status, created_at, updated_at')
+    .eq('owner_id', ownerRow.id)
     .order('created_at', { ascending: false })
 
   if (error) {
@@ -44,14 +44,14 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 
-  const { data: client } = await adminClient
-    .from('client')
+  const { data: ownerRow } = await adminClient
+    .from('owner')
     .select('id')
     .eq('auth_user_id', user.id)
     .single()
 
-  if (!client) {
-    return NextResponse.json({ error: 'Client not found' }, { status: 404 })
+  if (!ownerRow) {
+    return NextResponse.json({ error: 'Owner not found' }, { status: 404 })
   }
 
   const body = await request.json()
@@ -69,7 +69,7 @@ export async function POST(request: Request) {
   }
 
   const { data, error } = await adminClient.from('request').insert({
-    client_id: client.id,
+    owner_id: ownerRow.id,
     title: title.trim(),
     detail: detail.trim(),
     req_type: req_type || null,

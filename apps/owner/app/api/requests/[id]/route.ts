@@ -17,14 +17,14 @@ export async function GET(
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 
-  const { data: client } = await adminClient
-    .from('client')
+  const { data: ownerRow } = await adminClient
+    .from('owner')
     .select('id')
     .eq('auth_user_id', user.id)
     .single()
 
-  if (!client) {
-    return NextResponse.json({ error: 'Client not found' }, { status: 404 })
+  if (!ownerRow) {
+    return NextResponse.json({ error: 'Owner not found' }, { status: 404 })
   }
 
   // request + deal 조인
@@ -32,7 +32,7 @@ export async function GET(
     .from('request')
     .select('*')
     .eq('id', id)
-    .eq('client_id', client.id)
+    .eq('owner_id', ownerRow.id)
     .single()
 
   if (error || !request) {

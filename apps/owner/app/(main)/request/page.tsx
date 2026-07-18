@@ -122,7 +122,7 @@ export default function RequestPage() {
             name="detail"
             required
             rows={6}
-            placeholder="원하시는 작업 내용을 자유롭게 적어주세요. 지사네 매니저가 확인 후 적합한 시니어 전문가를 연결해드립니다."
+            placeholder="원하시는 작업 내용을 자유롭게 적어주세요. 지사네 매니저가 확인 후 적합한 전문가를 연결해드립니다."
             className="w-full resize-none rounded-xl border border-border-light bg-background px-4 py-3 text-sm text-text placeholder:text-text-subtle focus:border-primary focus:ring-1 focus:ring-primary/20 focus:outline-none transition-colors"
           />
         </div>

@@ -8,10 +8,10 @@ export async function POST(request: Request) {
   }
 
   const body = await request.json()
-  const { request_id, partner_id } = body
+  const { request_id, expert_id } = body
 
-  if (!request_id || !partner_id) {
-    return NextResponse.json({ error: 'request_id and partner_id are required' }, { status: 400 })
+  if (!request_id || !expert_id) {
+    return NextResponse.json({ error: 'request_id and expert_id are required' }, { status: 400 })
   }
 
   // 의뢰 상태 확인
@@ -34,7 +34,7 @@ export async function POST(request: Request) {
     .from('matching')
     .insert({
       request_id,
-      partner_id,
+      expert_id,
       status: 'proposed',
     })
 

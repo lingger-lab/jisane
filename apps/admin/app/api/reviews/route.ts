@@ -23,7 +23,7 @@ export async function POST(request: Request) {
     .from('review')
     .select('id')
     .eq('deal_id', deal_id)
-    .eq('author_type', 'gyeotae')
+    .eq('author_type', 'admin')
     .single()
 
   if (existing) {
@@ -34,7 +34,7 @@ export async function POST(request: Request) {
     .from('review')
     .insert({
       deal_id,
-      author_type: 'gyeotae',
+      author_type: 'admin',
       rating,
       comment: comment || null,
       internal_note: internal_note || null,

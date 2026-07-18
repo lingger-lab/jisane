@@ -32,16 +32,3 @@ export function calcMatchFee(workFee: number): number {
 export function calcGuaranteeFee(matchFee: number, rate = 0.1): number {
   return Math.round(matchFee * rate)
 }
-
-export function calcTotalPay(workFee: number): {
-  workFee: number
-  matchFee: number
-  totalPay: number
-} {
-  const matchFee = calcMatchFee(workFee)
-  return {
-    workFee,
-    matchFee,
-    totalPay: workFee + matchFee,
-  }
-}

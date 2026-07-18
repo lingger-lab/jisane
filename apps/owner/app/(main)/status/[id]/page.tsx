@@ -6,12 +6,13 @@ import { createClient } from '@jisane/shared/supabase/server'
 import { adminClient } from '@jisane/shared/supabase/admin'
 import { ProgressBar } from '@jisane/ui/progress-bar'
 import { SuccessToast, ErrorToast } from '@jisane/ui/toast'
-import type { RequestRow, DealRow, DealWorkflowRow, PartnerRow } from '@jisane/shared/types'
+import type { RequestRow, DealRow, DealWorkflowRow, ExpertRow } from '@jisane/shared/types'
 import { WORKFLOW_STEP_LABELS, STEP_STATUS_LABELS } from '@jisane/shared/labels'
 import { QuoteSection } from './quote-section'
 import { InspectionSection } from './inspection-section'
 import { MessageThread } from './message-thread'
 import { ReviewSection } from './review-section'
+import { DisputeButton } from './dispute-button'
 
 interface PageProps {
   params: Promise<{ id: string }>
@@ -28,14 +29,14 @@ export default async function StatusDetailPage(props: PageProps) {
     redirect('/')
   }
 
-  // client_id 조회
-  const { data: client } = await adminClient
-    .from('client')
+  // owner_id 조회
+  const { data: owner } = await adminClient
+    .from('owner')
     .select('id')
     .eq('auth_user_id', user.id)
     .single()
 
-  if (!client) {
+  if (!owner) {
     redirect('/')
   }
 
@@ -44,7 +45,7 @@ export default async function StatusDetailPage(props: PageProps) {
     .from('request')
     .select('*')
     .eq('id', id)
-    .eq('client_id', client.id)
+    .eq('owner_id', owner.id)
     .single()
 
   if (!request) {
@@ -61,11 +62,13 @@ export default async function StatusDetailPage(props: PageProps) {
 
   const deal = (deals && deals.length > 0 ? deals[0] : null) as DealRow | null
 
-  // deal이 있으면 workflow + partner + messages + review 조회
+  // deal이 있으면 workflow + expert + messages + review 조회
   let workflows: DealWorkflowRow[] = []
-  let partner: PartnerRow | null = null
+  let expert: ExpertRow | null = null
   let messages: Array<{ id: string; sender_type: string; content: string; created_at: string }> = []
   let existingReview: { id: string; rating: number | null; comment: string | null } | null = null
+  let settlementId: string | null = null
+  let hasOpenDispute = false
 
   if (deal) {
     const [{ data: wf }, { data: msgs }, { data: review }] = await Promise.all([
@@ -83,20 +86,40 @@ export default async function StatusDetailPage(props: PageProps) {
         .from('review')
         .select('id, rating, comment')
         .eq('deal_id', deal.id)
-        .eq('author_type', 'client')
+        .eq('author_type', 'owner')
         .single(),
     ])
     workflows = (wf || []) as DealWorkflowRow[]
     messages = (msgs || []) as typeof messages
     existingReview = review as typeof existingReview
 
-    if (deal.partner_id) {
+    if (deal.expert_id) {
       const { data: p } = await adminClient
-        .from('partner')
-        .select('id, auth_user_id, name, field, career_yrs, grade')
-        .eq('id', deal.partner_id)
+        .from('expert')
+        .select('id, auth_user_id, name, field, career_years, grade')
+        .eq('id', deal.expert_id)
         .single()
-      partner = p as PartnerRow | null
+      expert = p as ExpertRow | null
+    }
+
+    // 정산 + 이의제기 조회 (done 상태에서만 필요하지만 미리 조회)
+    if (deal.status === 'done') {
+      const { data: settle } = await adminClient
+        .from('settlement')
+        .select('id')
+        .eq('deal_id', deal.id)
+        .single()
+      if (settle) {
+        settlementId = settle.id
+        const { data: disputes } = await adminClient
+          .from('dispute')
+          .select('id')
+          .eq('target_type', 'settlement')
+          .eq('target_id', settle.id)
+          .eq('status', 'open')
+          .limit(1)
+        hasOpenDispute = (disputes && disputes.length > 0) || false
+      }
     }
   }
 
@@ -132,7 +155,7 @@ export default async function StatusDetailPage(props: PageProps) {
         <div className="rounded-xl border border-border-light p-4 shadow-xs">
           <h2 className="mb-2 font-semibold text-text">접수 완료</h2>
           <p className="text-sm text-text-muted">
-            지사네 매니저가 의뢰를 확인하고 적합한 시니어 전문가를 연결해드립니다.
+            지사네 매니저가 의뢰를 확인하고 적합한 전문가를 연결해드립니다.
           </p>
           {remainingHours > 0 && (
             <p className="mt-3 text-sm font-semibold text-accent">
@@ -144,16 +167,16 @@ export default async function StatusDetailPage(props: PageProps) {
 
       {req.status === 'matching' && (
         <div className="rounded-xl border border-border-light p-4 shadow-xs">
-          <h2 className="mb-2 font-semibold text-text">시니어 연결 중</h2>
+          <h2 className="mb-2 font-semibold text-text">전문가 연결 중</h2>
           <p className="text-sm text-text-muted">
-            적합한 시니어 전문가를 찾고 있습니다. 곧 견적을 보내드리겠습니다.
+            적합한 전문가를 찾고 있습니다. 곧 견적을 보내드리겠습니다.
           </p>
         </div>
       )}
 
       {/* 견적 카드 (deal 존재 + quoted 상태) */}
       {deal && deal.status === 'quoted' && (
-        <QuoteSection deal={deal} partner={partner} />
+        <QuoteSection deal={deal} expert={expert} />
       )}
 
       {/* 작업 진행 중 */}
@@ -216,6 +239,11 @@ export default async function StatusDetailPage(props: PageProps) {
 
           {/* 리뷰 섹션 */}
           <ReviewSection dealId={deal.id} existingReview={existingReview} />
+
+          {/* 정산 이의제기 */}
+          {settlementId && (
+            <DisputeButton settlementId={settlementId} hasOpenDispute={hasOpenDispute} />
+          )}
 
           {/* 완료 후에도 메시지 확인 가능 */}
           {messages.length > 0 && (

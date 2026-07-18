@@ -15,7 +15,7 @@ export async function GET(request: Request) {
     .select(`
       id, work_fee, match_fee, total_pay, status, due_date, created_at,
       request:request!inner(id, title, req_type),
-      partner:partner!inner(id, name, field)
+      expert:expert!inner(id, name, field)
     `)
     .eq('status', status)
     .order('created_at', { ascending: false })

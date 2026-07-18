@@ -47,14 +47,14 @@ export default async function StatusPage() {
     redirect('/')
   }
 
-  // client_id 조회
-  const { data: client } = await adminClient
-    .from('client')
+  // owner_id 조회
+  const { data: owner } = await adminClient
+    .from('owner')
     .select('id, email')
     .eq('auth_user_id', user.id)
     .single()
 
-  if (!client) {
+  if (!owner) {
     redirect('/')
   }
 
@@ -63,12 +63,12 @@ export default async function StatusPage() {
     adminClient
       .from('request')
       .select('*')
-      .eq('client_id', client.id)
+      .eq('owner_id', owner.id)
       .order('created_at', { ascending: false }),
     adminClient
       .from('service_order')
       .select('*')
-      .eq('client_id', client.id)
+      .eq('owner_id', owner.id)
       .order('created_at', { ascending: false }),
   ])
 
@@ -114,7 +114,7 @@ export default async function StatusPage() {
         <div className="flex flex-1 flex-col items-center justify-center gap-4 text-center py-12">
           <p className="text-text-muted">아직 등록한 의뢰가 없습니다.</p>
           <p className="text-xs text-text-subtle max-w-xs">
-            시니어 전문가에게 맡길 작업을 등록하세요.
+            전문가에게 맡길 작업을 등록하세요.
           </p>
         </div>
       ) : (

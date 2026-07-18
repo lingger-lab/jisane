@@ -22,14 +22,14 @@ export async function requestRevision(dealId: string, reason: string): Promise<{
   const result = await requestRevisionOp(dealId, reason)
   if (result.error) return { error: result.error }
 
-  // owner-specific: 파트너에게 수정 요청 알림 (deal_message)
-  if (result.clientId) {
+  // owner-specific: 전문가에게 수정 요청 알림 (deal_message)
+  if (result.ownerId) {
     await adminClient
       .from('deal_message')
       .insert({
         deal_id: dealId,
-        sender_type: 'client',
-        sender_id: result.clientId,
+        sender_type: 'owner',
+        sender_id: result.ownerId,
         content: `[수정 요청] ${reason}`,
       })
   }
@@ -49,7 +49,7 @@ export async function submitReview(
     return { error: result.error }
   }
 
-  const { deal, requestId } = result as { deal: { id: string; status: string }; requestId: string; clientId: string }
+  const { deal, requestId } = result as { deal: { id: string; status: string }; requestId: string; ownerId: string }
 
   if (deal.status !== 'done') {
     return { error: '리뷰를 작성할 수 없는 상태입니다.' }
@@ -63,7 +63,7 @@ export async function submitReview(
     .from('review')
     .select('id')
     .eq('deal_id', dealId)
-    .eq('author_type', 'client')
+    .eq('author_type', 'owner')
     .single()
 
   if (existing) {
@@ -74,7 +74,7 @@ export async function submitReview(
     .from('review')
     .insert({
       deal_id: dealId,
-      author_type: 'client',
+      author_type: 'owner',
       rating,
       comment: comment.trim() || null,
     })

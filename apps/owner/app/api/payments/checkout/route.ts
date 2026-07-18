@@ -20,7 +20,7 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: 'deal_id is required' }, { status: 400 })
   }
 
-  // deal 조회 + 소유권 확인 (기업 = request.client_id)
+  // deal 조회 + 소유권 확인 (기업 = request.owner_id)
   const { data: deal } = await adminClient
     .from('deal')
     .select('id, request_id, total_pay, status, work_fee, match_fee')
@@ -35,10 +35,10 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: 'Deal is not in quoted status' }, { status: 400 })
   }
 
-  // 기업 소유권: request.client_id → client.auth_user_id
+  // 기업 소유권: request.owner_id → owner.auth_user_id
   const { data: req } = await adminClient
     .from('request')
-    .select('id, client_id, title')
+    .select('id, owner_id, title')
     .eq('id', deal.request_id)
     .single()
 
@@ -46,13 +46,13 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: 'Request not found' }, { status: 404 })
   }
 
-  const { data: client } = await adminClient
-    .from('client')
+  const { data: ownerRow } = await adminClient
+    .from('owner')
     .select('id, auth_user_id')
-    .eq('id', req.client_id)
+    .eq('id', req.owner_id)
     .single()
 
-  if (!client || client.auth_user_id !== user.id) {
+  if (!ownerRow || ownerRow.auth_user_id !== user.id) {
     return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
   }
 

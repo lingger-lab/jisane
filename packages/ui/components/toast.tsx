@@ -5,12 +5,15 @@ import { useSearchParams, useRouter } from 'next/navigation'
 
 const SUCCESS_MESSAGES: Record<string, string> = {
   request_created: '의뢰가 등록되었습니다',
-  partner_registered: '파트너 등록이 완료되었습니다',
+  expert_registered: '전문가 등록이 완료되었습니다',
   profile_updated: '프로필이 수정되었습니다',
   deal_approved: '견적이 승인되었습니다',
   deal_confirmed: '검수가 완료되었습니다',
   service_ordered: '서비스가 접수되었습니다. 담당 매니저가 곧 연락드리겠습니다.',
   education_ordered: '교육 신청이 접수되었습니다. 담당 매니저가 곧 연락드리겠습니다.',
+  invitation_sent: '초빙 요청이 전달되었습니다. 전문가 수락을 기다려주세요.',
+  invitation_accepted: '초빙을 수락했습니다. 작업이 시작됩니다.',
+  invitation_declined: '초빙을 거절했습니다.',
 }
 
 export function SuccessToast() {

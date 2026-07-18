@@ -1,8 +1,8 @@
 import type { Database } from './database.types'
 
 // ── DB Row types (auto-generated 기반) ──────────────────────────
-export type ClientRow = Database['public']['Tables']['client']['Row']
-export type PartnerRow = Database['public']['Tables']['partner']['Row']
+export type OwnerRow = Database['public']['Tables']['owner']['Row']
+export type ExpertRow = Database['public']['Tables']['expert']['Row']
 export type RequestRow = Database['public']['Tables']['request']['Row']
 export type MatchingRow = Database['public']['Tables']['matching']['Row']
 export type DealRow = Database['public']['Tables']['deal']['Row']
@@ -12,8 +12,17 @@ export type ReviewRow = Database['public']['Tables']['review']['Row']
 export type InquiryRow = Database['public']['Tables']['inquiry']['Row']
 export type GuaranteeFundLedgerRow = Database['public']['Tables']['guarantee_fund_ledger']['Row']
 export type ServiceOrderRow = Database['public']['Tables']['service_order']['Row']
-export type PartnerInterestRow = Database['public']['Tables']['partner_interest']['Row']
+export type ExpertInterestRow = Database['public']['Tables']['expert_interest']['Row']
 export type DealMessageRow = Database['public']['Tables']['deal_message']['Row']
+export type CategoryRow = Database['public']['Tables']['category']['Row']
+export type ExpertCategoryRow = Database['public']['Tables']['expert_category']['Row']
+export type MatchingCandidateRow = Database['public']['Tables']['matching_candidate']['Row']
+export type ReviewAiSuggestionRow = Database['public']['Tables']['review_ai_suggestion']['Row']
+export type InvitationRow = Database['public']['Tables']['invitation']['Row']
+export type ExpertActivityRow = Database['public']['Tables']['expert_activity']['Row']
+export type ProviderRow = Database['public']['Tables']['provider']['Row']
+export type DisputeRow = Database['public']['Tables']['dispute']['Row']
+export type PlatformConfigRow = Database['public']['Tables']['platform_config']['Row']
 
 // ── DB Enum types (auto-generated 기반) ─────────────────────────
 export type RequestStatus = Database['public']['Enums']['request_status']
@@ -24,54 +33,18 @@ export type StepStatus = Database['public']['Enums']['step_status']
 export type MatchingStatus = Database['public']['Enums']['matching_status']
 export type ReviewAuthorType = Database['public']['Enums']['review_author']
 export type InquiryStatus = Database['public']['Enums']['inquiry_status']
-export type ManagerName = Database['public']['Enums']['manager_name']
+export type AdminName = Database['public']['Enums']['admin_name']
 export type AuthProvider = Database['public']['Enums']['auth_provider']
-export type ClientStatus = Database['public']['Enums']['client_status']
-export type PartnerGrade = Database['public']['Enums']['partner_grade']
-export type PartnerStatus = Database['public']['Enums']['partner_status']
+export type OwnerStatus = Database['public']['Enums']['owner_status']
+export type ExpertGrade = Database['public']['Enums']['expert_grade']
+export type ExpertStatus = Database['public']['Enums']['expert_status']
 export type ServiceCategory = Database['public']['Enums']['service_category']
 export type OrderStatus = Database['public']['Enums']['order_status']
+export type InvitationStatus = Database['public']['Enums']['invitation_status']
+export type DisputeStatus = Database['public']['Enums']['dispute_status']
+export type DisputeTargetType = Database['public']['Enums']['dispute_target_type']
+export type ProviderType = Database['public']['Enums']['provider_type']
+export type ExpertActivityType = Database['public']['Enums']['expert_activity_type']
+export type QueueStatus = Database['public']['Enums']['queue_status']
+export type GuaranteeEntryType = Database['public']['Enums']['guarantee_entry_type']
 
-// ── Custom types (DB에 없는 앱 전용 타입) ───────────────────────
-export type UserRole = 'client' | 'partner'
-export type LedgerEntryType = 'accrue' | 'payout'
-
-// ── 수동 타입 (새 테이블, database.types.ts 갱신 전 사용) ────────
-export interface CategoryRow {
-  id: string
-  parent_id: string | null
-  depth: number
-  label: string
-  slug: string
-  sort_order: number
-  created_at: string
-}
-
-export interface PartnerCategoryRow {
-  partner_id: string
-  category_id: string
-}
-
-export interface MatchingCandidateRow {
-  id: string
-  request_id: string
-  partner_id: string
-  rank: number
-  score: number
-  score_detail: Record<string, number> | null
-  status: string
-  auto_assign_at: string | null
-  created_at: string
-}
-
-export interface ReviewAiSuggestionRow {
-  id: string
-  deal_id: string
-  process_rating: number
-  result_rating: number
-  response_rating: number
-  overall_rating: number
-  reasoning: string | null
-  status: string
-  created_at: string
-}

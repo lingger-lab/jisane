@@ -1,4 +1,11 @@
 import { adminClient } from './supabase/admin'
+import { getCachedCategories } from './categories'
+
+// ── TTL 캐시 (10분) ──────────────────────────────
+const STATS_TTL = 10 * 60 * 1000
+
+let ownerStatsCache: { data: OwnerLandingStats; ts: number } | null = null
+let expertStatsCache: { data: ExpertLandingStats; ts: number } | null = null
 
 // ── 타입 ──────────────────────────────────────────
 
@@ -9,7 +16,7 @@ export interface CategoryCount {
 }
 
 export interface OwnerLandingStats {
-  totalPartners: number
+  totalExperts: number
   totalMajorFields: number
   totalCategories: number
   totalServices: number
@@ -19,8 +26,8 @@ export interface OwnerLandingStats {
   categoryCounts: CategoryCount[]
 }
 
-export interface PartnerLandingStats {
-  totalClients: number
+export interface ExpertLandingStats {
+  totalOwners: number
   totalOpenRequests: number
   totalCompletedDeals: number
   avgBudget: number | null
@@ -30,7 +37,7 @@ export interface PartnerLandingStats {
 
 export interface HubLandingStats {
   owner: OwnerLandingStats
-  partner: PartnerLandingStats
+  expert: ExpertLandingStats
 }
 
 // ── 공통 유틸 ─────────────────────────────────────
@@ -43,29 +50,33 @@ function firstDayOfMonth(): string {
 // ── Owner 통계 ────────────────────────────────────
 
 export async function fetchOwnerLandingStats(): Promise<OwnerLandingStats> {
+  // TTL 캐시 히트
+  if (ownerStatsCache && Date.now() - ownerStatsCache.ts < STATS_TTL) {
+    return ownerStatsCache.data
+  }
+
   // 병렬 쿼리
   const [
-    partnersRes,
+    expertsRes,
     dealsRes,
     satisfactionRes,
     newReqRes,
-    categoriesRes,
-    partnerCatsRes,
+    allCats,
+    expertCatsRes,
   ] = await Promise.all([
-    adminClient.from('partner').select('id', { count: 'exact', head: true }).eq('status', 'active'),
+    adminClient.from('expert').select('id', { count: 'exact', head: true }).eq('status', 'active'),
     adminClient.from('deal').select('id', { count: 'exact', head: true }).eq('status', 'done'),
-    adminClient.from('review').select('rating').eq('author_type', 'client'),
+    adminClient.from('review').select('rating').eq('author_type', 'owner'),
     adminClient.from('request').select('id', { count: 'exact', head: true }).gte('created_at', firstDayOfMonth()),
-    adminClient.from('category').select('id, parent_id, depth, label, sort_order').order('sort_order'),
-    adminClient.from('partner_category').select('category_id'),
+    getCachedCategories(adminClient),
+    adminClient.from('expert_category').select('category_id'),
   ])
 
-  const totalPartners = partnersRes.count ?? 0
+  const totalExperts = expertsRes.count ?? 0
   const totalCompletedDeals = dealsRes.count ?? 0
   const newRequestsThisMonth = newReqRes.count ?? 0
 
-  // depth별 카운트 (categoriesRes 데이터 재활용 — 별도 쿼리 제거)
-  const allCats = categoriesRes.data ?? []
+  // depth별 카운트 (캐싱된 카테고리 데이터 재활용)
   const totalMajorFields = allCats.filter((d) => d.depth === 0).length
   const totalCategories = allCats.filter((d) => d.depth === 1).length
   const totalServices = allCats.filter((d) => d.depth === 2).length
@@ -77,12 +88,12 @@ export async function fetchOwnerLandingStats(): Promise<OwnerLandingStats> {
       ? Math.round((ratings.reduce((sum, r) => sum + (r.rating ?? 0), 0) / ratings.length) * 10) / 10
       : null
 
-  // 카테고리별 시니어 수
-  const categories = categoriesRes.data ?? []
-  const partnerCats = partnerCatsRes.data ?? []
+  // 카테고리별 전문가 수
+  const categories = allCats
+  const expertCats = expertCatsRes.data ?? []
 
   const midCountMap = new Map<string, number>()
-  for (const pc of partnerCats) {
+  for (const pc of expertCats) {
     midCountMap.set(pc.category_id, (midCountMap.get(pc.category_id) ?? 0) + 1)
   }
 
@@ -102,8 +113,8 @@ export async function fetchOwnerLandingStats(): Promise<OwnerLandingStats> {
       })),
   }))
 
-  return {
-    totalPartners,
+  const result: OwnerLandingStats = {
+    totalExperts,
     totalMajorFields,
     totalCategories,
     totalServices,
@@ -112,30 +123,38 @@ export async function fetchOwnerLandingStats(): Promise<OwnerLandingStats> {
     newRequestsThisMonth,
     categoryCounts,
   }
+
+  ownerStatsCache = { data: result, ts: Date.now() }
+  return result
 }
 
-// ── Partner 통계 ──────────────────────────────────
+// ── Expert 통계 ──────────────────────────────────
 
-export async function fetchPartnerLandingStats(): Promise<PartnerLandingStats> {
+export async function fetchExpertLandingStats(): Promise<ExpertLandingStats> {
+  // TTL 캐시 히트
+  if (expertStatsCache && Date.now() - expertStatsCache.ts < STATS_TTL) {
+    return expertStatsCache.data
+  }
+
   const [
-    clientsRes,
+    ownersRes,
     openReqRes,
     dealsRes,
     budgetRes,
     newReqRes,
-    categoriesRes,
+    allCats,
     requestCatsRes,
   ] = await Promise.all([
-    adminClient.from('client').select('id', { count: 'exact', head: true }),
+    adminClient.from('owner').select('id', { count: 'exact', head: true }),
     adminClient.from('request').select('id', { count: 'exact', head: true }).eq('status', 'open'),
     adminClient.from('deal').select('id', { count: 'exact', head: true }).eq('status', 'done'),
     adminClient.from('request').select('budget_hope').gt('budget_hope', 0),
     adminClient.from('request').select('id', { count: 'exact', head: true }).gte('created_at', firstDayOfMonth()),
-    adminClient.from('category').select('id, parent_id, depth, label, sort_order').order('sort_order'),
+    getCachedCategories(adminClient),
     adminClient.from('request').select('category_id').eq('status', 'open').not('category_id', 'is', null),
   ])
 
-  const totalClients = clientsRes.count ?? 0
+  const totalOwners = ownersRes.count ?? 0
   const totalOpenRequests = openReqRes.count ?? 0
   const totalCompletedDeals = dealsRes.count ?? 0
   const newRequestsThisMonth = newReqRes.count ?? 0
@@ -148,7 +167,7 @@ export async function fetchPartnerLandingStats(): Promise<PartnerLandingStats> {
       : null
 
   // 카테고리별 의뢰 수
-  const categories = categoriesRes.data ?? []
+  const categories = allCats
   const requestCats = requestCatsRes.data ?? []
 
   // category_id는 depth=2(세부)일 수 있으므로 mid(depth=1)로 집계
@@ -182,22 +201,25 @@ export async function fetchPartnerLandingStats(): Promise<PartnerLandingStats> {
       })),
   }))
 
-  return {
-    totalClients,
+  const result: ExpertLandingStats = {
+    totalOwners,
     totalOpenRequests,
     totalCompletedDeals,
     avgBudget,
     newRequestsThisMonth,
     categoryCounts,
   }
+
+  expertStatsCache = { data: result, ts: Date.now() }
+  return result
 }
 
 // ── Hub 통계 (Admin) ──────────────────────────────
 
 export async function fetchHubLandingStats(): Promise<HubLandingStats> {
-  const [owner, partner] = await Promise.all([
+  const [owner, expert] = await Promise.all([
     fetchOwnerLandingStats(),
-    fetchPartnerLandingStats(),
+    fetchExpertLandingStats(),
   ])
-  return { owner, partner }
+  return { owner, expert }
 }

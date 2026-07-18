@@ -12,10 +12,11 @@ interface ServiceOrderItem {
   status: string
   detail: string | null
   created_at: string
-  client_id: string | null
-  partner_id: string | null
-  client: { company: string | null; ceo_name: string | null; email: string; contact: string | null } | null
-  partner: { name: string | null; email: string; contact: string | null } | null
+  owner_id: string | null
+  expert_id: string | null
+  owner: { company: string | null; ceo_name: string | null; email: string; contact: string | null } | null
+  expert: { name: string | null; email: string; contact: string | null } | null
+  provider: { name: string; type: string } | null
 }
 
 const STATUS_LABELS: Record<string, { label: string; color: string }> = {
@@ -127,12 +128,17 @@ export function ServiceTab({ orders }: { orders: ServiceOrderItem[] }) {
                       <span className="rounded bg-surface px-2 py-0.5">
                         {CATEGORY_LABELS[order.category] || order.category}
                       </span>
+                      {order.provider && (
+                        <span className="rounded bg-accent/10 px-2 py-0.5 text-accent font-medium">
+                          {order.provider.name}
+                        </span>
+                      )}
                       <span className="rounded bg-surface px-2 py-0.5">
-                        {order.client
-                          ? (order.client.company || order.client.ceo_name || '기업')
-                          : order.partner
-                            ? (order.partner.name || '시니어')
-                            : (order.client_id ? '기업' : '시니어')}
+                        {order.owner
+                          ? (order.owner.company || order.owner.ceo_name || '기업')
+                          : order.expert
+                            ? (order.expert.name || '전문가')
+                            : (order.owner_id ? '기업' : '전문가')}
                       </span>
                       <span>
                         {order.price === 0 ? '무료' : `${order.price.toLocaleString('ko-KR')}원`}
@@ -143,22 +149,22 @@ export function ServiceTab({ orders }: { orders: ServiceOrderItem[] }) {
                     {order.detail && (
                       <p className="mt-2 text-xs text-text-muted">{order.detail}</p>
                     )}
-                    {(order.client || order.partner) && (
+                    {(order.owner || order.expert) && (
                       <div className="mt-1.5 flex flex-wrap items-center gap-x-2 text-xs text-text-subtle">
-                        {order.client && (
+                        {order.owner && (
                           <>
-                            {order.client.contact && (
-                              <a href={`tel:${order.client.contact}`} className="rounded px-1 py-0.5 hover:text-accent hover:bg-accent/5 transition-colors">{order.client.contact}</a>
+                            {order.owner.contact && (
+                              <a href={`tel:${order.owner.contact}`} className="rounded px-1 py-0.5 hover:text-accent hover:bg-accent/5 transition-colors">{order.owner.contact}</a>
                             )}
-                            <a href={`mailto:${order.client.email}`} className="rounded px-1 py-0.5 hover:text-accent hover:bg-accent/5 transition-colors">{order.client.email}</a>
+                            <a href={`mailto:${order.owner.email}`} className="rounded px-1 py-0.5 hover:text-accent hover:bg-accent/5 transition-colors">{order.owner.email}</a>
                           </>
                         )}
-                        {order.partner && (
+                        {order.expert && (
                           <>
-                            {order.partner.contact && (
-                              <a href={`tel:${order.partner.contact}`} className="rounded px-1 py-0.5 hover:text-accent hover:bg-accent/5 transition-colors">{order.partner.contact}</a>
+                            {order.expert.contact && (
+                              <a href={`tel:${order.expert.contact}`} className="rounded px-1 py-0.5 hover:text-accent hover:bg-accent/5 transition-colors">{order.expert.contact}</a>
                             )}
-                            <a href={`mailto:${order.partner.email}`} className="rounded px-1 py-0.5 hover:text-accent hover:bg-accent/5 transition-colors">{order.partner.email}</a>
+                            <a href={`mailto:${order.expert.email}`} className="rounded px-1 py-0.5 hover:text-accent hover:bg-accent/5 transition-colors">{order.expert.email}</a>
                           </>
                         )}
                       </div>

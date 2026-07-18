@@ -26,21 +26,21 @@ export async function GET(request: Request) {
 
   const provider = (user.app_metadata.provider as string) || 'google'
 
-  // client 레코드 확인/생성
-  const { data: existingClient } = await adminClient
-    .from('client')
+  // owner 레코드 확인/생성
+  const { data: existingOwner } = await adminClient
+    .from('owner')
     .select('id')
     .eq('auth_user_id', user.id)
     .single()
 
-  if (!existingClient) {
-    const { error: insertErr } = await adminClient.from('client').insert({
+  if (!existingOwner) {
+    const { error: insertErr } = await adminClient.from('owner').insert({
       auth_user_id: user.id,
       provider,
       email: user.email!,
     })
     if (insertErr) {
-      console.error('[auth/callback] client insert failed:', insertErr.message)
+      console.error('[auth/callback] owner insert failed:', insertErr.message)
       return NextResponse.redirect(`${origin}/?error=profile_create`)
     }
   }

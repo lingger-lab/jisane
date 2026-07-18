@@ -16,9 +16,9 @@ interface DealItem {
   created_at: string
   request: {
     id: string; title: string; req_type: string | null
-    client: { company: string | null; ceo_name: string | null; email: string; contact: string | null }
+    owner: { company: string | null; ceo_name: string | null; email: string; contact: string | null }
   }
-  partner: { id: string; name: string | null; field: string | null; email: string; contact: string | null }
+  expert: { id: string; name: string | null; field: string | null; email: string; contact: string | null }
 }
 
 interface Message {
@@ -30,14 +30,14 @@ interface Message {
 }
 
 const SENDER_LABELS: Record<string, string> = {
-  client: '기업',
-  partner: '시니어',
+  owner: '기업',
+  expert: '전문가',
   admin: '매니저',
 }
 
 const SENDER_COLORS: Record<string, string> = {
-  client: 'bg-accent text-white',
-  partner: 'bg-surface text-text',
+  owner: 'bg-accent text-white',
+  expert: 'bg-surface text-text',
   admin: 'bg-info-light text-text',
 }
 
@@ -117,21 +117,21 @@ export function ProgressTab({
                 <div className="mt-1.5 flex flex-col gap-0.5 text-xs text-text-subtle">
                   <div className="flex flex-wrap items-center gap-x-2">
                     <span className="text-text-muted">기업:</span>
-                    {deal.request.client.company && <span>{deal.request.client.company}</span>}
-                    {deal.request.client.ceo_name && <span>{deal.request.client.ceo_name}</span>}
-                    {deal.request.client.contact && (
-                      <a href={`tel:${deal.request.client.contact}`} className="rounded px-1 py-0.5 hover:text-accent hover:bg-accent/5 transition-colors">{deal.request.client.contact}</a>
+                    {deal.request.owner.company && <span>{deal.request.owner.company}</span>}
+                    {deal.request.owner.ceo_name && <span>{deal.request.owner.ceo_name}</span>}
+                    {deal.request.owner.contact && (
+                      <a href={`tel:${deal.request.owner.contact}`} className="rounded px-1 py-0.5 hover:text-accent hover:bg-accent/5 transition-colors">{deal.request.owner.contact}</a>
                     )}
-                    <a href={`mailto:${deal.request.client.email}`} className="rounded px-1 py-0.5 hover:text-accent hover:bg-accent/5 transition-colors">{deal.request.client.email}</a>
+                    <a href={`mailto:${deal.request.owner.email}`} className="rounded px-1 py-0.5 hover:text-accent hover:bg-accent/5 transition-colors">{deal.request.owner.email}</a>
                   </div>
                   <div className="flex flex-wrap items-center gap-x-2">
-                    <span className="text-text-muted">파트너:</span>
-                    <span>{deal.partner.name || '이름 미등록'}</span>
-                    <span>{deal.partner.field}</span>
-                    {deal.partner.contact && (
-                      <a href={`tel:${deal.partner.contact}`} className="rounded px-1 py-0.5 hover:text-accent hover:bg-accent/5 transition-colors">{deal.partner.contact}</a>
+                    <span className="text-text-muted">전문가:</span>
+                    <span>{deal.expert.name || '이름 미등록'}</span>
+                    <span>{deal.expert.field}</span>
+                    {deal.expert.contact && (
+                      <a href={`tel:${deal.expert.contact}`} className="rounded px-1 py-0.5 hover:text-accent hover:bg-accent/5 transition-colors">{deal.expert.contact}</a>
                     )}
-                    <a href={`mailto:${deal.partner.email}`} className="rounded px-1 py-0.5 hover:text-accent hover:bg-accent/5 transition-colors">{deal.partner.email}</a>
+                    <a href={`mailto:${deal.expert.email}`} className="rounded px-1 py-0.5 hover:text-accent hover:bg-accent/5 transition-colors">{deal.expert.email}</a>
                   </div>
                 </div>
               </div>

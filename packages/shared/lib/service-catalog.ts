@@ -1,3 +1,6 @@
+/** 엔터랩스 provider UUID (seed 기준) */
+export const ENTERLABS_PROVIDER_ID = 'd0000001-0000-0000-0000-000000000001'
+
 export interface ServicePackage {
   slug: string
   category: 'ax_consulting' | 'biz_consulting' | 'education'
@@ -7,10 +10,12 @@ export interface ServicePackage {
   deliverables: string[]
   duration?: string
   axDashboardUrl?: string
-  targetAudience: 'owner' | 'partner'
+  targetAudience: 'owner' | 'expert'
   featured?: boolean
   /** 내부 데이터용 — 랜딩에서는 표시하지 않음 */
   provider: string
+  /** provider 테이블 FK (seed 후 매핑) */
+  providerId: string
   /** 랜딩용 가치 설명 (가격 대신 표시) */
   valueDesc: string
   /** 무료 여부 */
@@ -32,6 +37,7 @@ export const SERVICE_PACKAGES: ServicePackage[] = [
     targetAudience: 'owner',
     featured: true,
     provider: '엔터랩스',
+    providerId: ENTERLABS_PROVIDER_ID,
     valueDesc: 'AX 5대 적용축 진단으로 비용 절감 포인트 발견',
     isFree: true,
   },
@@ -47,6 +53,7 @@ export const SERVICE_PACKAGES: ServicePackage[] = [
     axDashboardUrl: '/ax-process',
     targetAudience: 'owner',
     provider: '엔터랩스',
+    providerId: ENTERLABS_PROVIDER_ID,
     valueDesc: '구현의 사다리를 따라 AI 도입부터 확장까지',
     isFree: false,
   },
@@ -62,6 +69,7 @@ export const SERVICE_PACKAGES: ServicePackage[] = [
     axDashboardUrl: '/ax',
     targetAudience: 'owner',
     provider: '엔터랩스',
+    providerId: ENTERLABS_PROVIDER_ID,
     valueDesc: '데이터 기반 의사결정 진단',
     isFree: false,
   },
@@ -78,6 +86,7 @@ export const SERVICE_PACKAGES: ServicePackage[] = [
     duration: '1주',
     targetAudience: 'owner',
     provider: '엔터랩스',
+    providerId: ENTERLABS_PROVIDER_ID,
     valueDesc: 'AI 기반 자동생성 + 전문가 검수',
     isFree: false,
   },
@@ -92,6 +101,7 @@ export const SERVICE_PACKAGES: ServicePackage[] = [
     duration: '2주',
     targetAudience: 'owner',
     provider: '엔터랩스',
+    providerId: ENTERLABS_PROVIDER_ID,
     valueDesc: '50건+ 경험 기반 지원사업 선별·신청 대행',
     isFree: false,
   },
@@ -106,11 +116,12 @@ export const SERVICE_PACKAGES: ServicePackage[] = [
     duration: '2주',
     targetAudience: 'owner',
     provider: '엔터랩스',
+    providerId: ENTERLABS_PROVIDER_ID,
     valueDesc: '제1원칙 프레임워크 기반 사업 분석',
     isFree: false,
   },
 
-  // ── 교육 (Partner용) ──────────────────────────────
+  // ── 교육 (Expert용) ──────────────────────────────
   {
     slug: 'ai-tools-workshop',
     category: 'education',
@@ -120,8 +131,9 @@ export const SERVICE_PACKAGES: ServicePackage[] = [
     price: 100000,
     deliverables: ['실습 환경 셋업', '핸즈온 가이드 (15~20p)', '수료증'],
     duration: '3시간',
-    targetAudience: 'partner',
+    targetAudience: 'expert',
     provider: '엔터랩스',
+    providerId: ENTERLABS_PROVIDER_ID,
     valueDesc: 'Claude, Cursor로 AI 코딩 환경 실습',
     isFree: false,
   },
@@ -134,8 +146,9 @@ export const SERVICE_PACKAGES: ServicePackage[] = [
     price: 300000,
     deliverables: ['5스킬 실습', '개인 파이프라인 셋업', '수료증'],
     duration: '2일',
-    targetAudience: 'partner',
+    targetAudience: 'expert',
     provider: '엔터랩스',
+    providerId: ENTERLABS_PROVIDER_ID,
     valueDesc: 'AX 5스킬 콘텐츠 파이프라인 구축',
     isFree: false,
   },
@@ -148,8 +161,9 @@ export const SERVICE_PACKAGES: ServicePackage[] = [
     price: 150000,
     deliverables: ['실습 워크북', '프롬프트 템플릿 10종', '수료증'],
     duration: '3시간',
-    targetAudience: 'partner',
+    targetAudience: 'expert',
     provider: '엔터랩스',
+    providerId: ENTERLABS_PROVIDER_ID,
     valueDesc: 'CoT, ToT, ReAct 검증 기법 실습',
     isFree: false,
   },
@@ -159,14 +173,39 @@ export function getPackageBySlug(slug: string): ServicePackage | undefined {
   return SERVICE_PACKAGES.find((p) => p.slug === slug)
 }
 
-export function getPackagesByCategory(
-  category: ServicePackage['category']
-): ServicePackage[] {
-  return SERVICE_PACKAGES.filter((p) => p.category === category)
-}
-
 export function getPackagesByAudience(
   audience: ServicePackage['targetAudience']
 ): ServicePackage[] {
   return SERVICE_PACKAGES.filter((p) => p.targetAudience === audience)
+}
+
+/** 제공기관 정보 */
+export interface ProviderInfo {
+  id: string
+  name: string
+  packageCount: number
+  freeCount: number
+}
+
+/** 대상 audience별 제공기관 목록 (패키지 수 포함) */
+export function getProvidersByAudience(
+  audience: ServicePackage['targetAudience']
+): ProviderInfo[] {
+  const packages = getPackagesByAudience(audience)
+  const map = new Map<string, ProviderInfo>()
+  for (const pkg of packages) {
+    const existing = map.get(pkg.providerId)
+    if (existing) {
+      existing.packageCount++
+      if (pkg.isFree) existing.freeCount++
+    } else {
+      map.set(pkg.providerId, {
+        id: pkg.providerId,
+        name: pkg.provider,
+        packageCount: 1,
+        freeCount: pkg.isFree ? 1 : 0,
+      })
+    }
+  }
+  return Array.from(map.values())
 }

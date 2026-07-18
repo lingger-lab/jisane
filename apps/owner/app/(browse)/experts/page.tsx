@@ -1,9 +1,10 @@
 import { adminClient } from '@jisane/shared/supabase/admin'
+import { getCachedCategories } from '@jisane/shared/categories'
 import { ExpertList } from './expert-list'
 
 export const metadata = {
   title: '분야별 전문가 탐색 - 지사네 기업공간',
-  description: '부울경 시니어 전문가를 분야별로 탐색하세요.',
+  description: '부울경 전문가를 분야별로 탐색하세요.',
 }
 
 interface PageProps {
@@ -14,21 +15,16 @@ export default async function ExpertsPage(props: PageProps) {
   const { category } = await props.searchParams
 
   // 카테고리 목록 + 전문가 목록 병렬 조회
-  const [{ data: categories }, { data: allPartnerCats }] = await Promise.all([
+  const [allCategories, { data: allExpertCats }] = await Promise.all([
+    getCachedCategories(adminClient),
     adminClient
-      .from('category')
-      .select('id, parent_id, depth, label, sort_order')
-      .order('sort_order'),
-    adminClient
-      .from('partner_category')
-      .select('partner_id, category_id'),
+      .from('expert_category')
+      .select('expert_id, category_id'),
   ])
+  const expertCats = allExpertCats ?? []
 
-  const allCategories = categories ?? []
-  const partnerCats = allPartnerCats ?? []
-
-  // 카테고리 필터로 대상 partner_id 추출
-  let targetPartnerIds: string[] | null = null
+  // 카테고리 필터로 대상 expert_id 추출
+  let targetExpertIds: string[] | null = null
 
   if (category) {
     const selectedCat = allCategories.find((c) => c.id === category)
@@ -44,43 +40,44 @@ export default async function ExpertsPage(props: PageProps) {
 
     if (filterCatIds.length > 0) {
       const ids = new Set(
-        partnerCats
+        expertCats
           .filter((pc) => filterCatIds.includes(pc.category_id))
-          .map((pc) => pc.partner_id)
+          .map((pc) => pc.expert_id)
       )
-      targetPartnerIds = [...ids]
+      targetExpertIds = [...ids]
     }
   }
 
   // 전문가 조회
-  let partnersQuery = adminClient
-    .from('partner')
-    .select('id, name, field, career_yrs, grade')
+  let expertsQuery = adminClient
+    .from('expert')
+    .select('id, name, field, career_years, grade, total_score, review_score, completion_score, activity_points')
     .eq('status', 'active')
-    .order('career_yrs', { ascending: false })
+    .order('total_score', { ascending: false })
+    .order('activity_points', { ascending: false })
     .limit(50)
 
-  if (targetPartnerIds !== null) {
-    if (targetPartnerIds.length === 0) {
+  if (targetExpertIds !== null) {
+    if (targetExpertIds.length === 0) {
       // 해당 카테고리에 전문가 없음
-      partnersQuery = partnersQuery.in('id', ['__none__'])
+      expertsQuery = expertsQuery.in('id', ['__none__'])
     } else {
-      partnersQuery = partnersQuery.in('id', targetPartnerIds)
+      expertsQuery = expertsQuery.in('id', targetExpertIds)
     }
   }
 
-  const { data: partners } = await partnersQuery
+  const { data: experts } = await expertsQuery
 
   // 전문가별 카테고리 매핑 (표시용)
-  const partnerIdSet = new Set((partners ?? []).map((p) => p.id))
-  const partnerCatMap = new Map<string, string[]>()
-  for (const pc of partnerCats) {
-    if (!partnerIdSet.has(pc.partner_id)) continue
+  const expertIdSet = new Set((experts ?? []).map((p) => p.id))
+  const expertCatMap = new Map<string, string[]>()
+  for (const pc of expertCats) {
+    if (!expertIdSet.has(pc.expert_id)) continue
     const cat = allCategories.find((c) => c.id === pc.category_id)
     if (!cat || cat.depth !== 1) continue
-    const existing = partnerCatMap.get(pc.partner_id) ?? []
+    const existing = expertCatMap.get(pc.expert_id) ?? []
     existing.push(cat.label)
-    partnerCatMap.set(pc.partner_id, existing)
+    expertCatMap.set(pc.expert_id, existing)
   }
 
   // 카테고리 계층 구조
@@ -102,13 +99,17 @@ export default async function ExpertsPage(props: PageProps) {
     <div className="flex flex-1 flex-col items-center">
       <div className="responsive-container px-4 md:px-6 py-6 md:py-8">
         <ExpertList
-          experts={(partners ?? []).map((p) => ({
+          experts={(experts ?? []).map((p) => ({
             id: p.id,
             name: p.name,
             field: p.field,
-            careerYrs: p.career_yrs,
+            careerYears: p.career_years,
             grade: p.grade,
-            categories: partnerCatMap.get(p.id) ?? [],
+            totalScore: p.total_score,
+            reviewScore: p.review_score,
+            completionScore: p.completion_score,
+            activityPoints: p.activity_points,
+            categories: expertCatMap.get(p.id) ?? [],
           }))}
           categoryTree={categoryTree}
           selectedCategory={category ?? null}

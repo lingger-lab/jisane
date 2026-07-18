@@ -4,10 +4,12 @@ import { revalidatePath } from 'next/cache'
 import { adminClient } from '@jisane/shared/supabase/admin'
 import { findCandidates } from '@jisane/shared/matching-algo'
 import { calculateAiRating } from '@jisane/shared/review-algo'
+import { recalcExpertScores, batchRecalcExpertScores } from '@jisane/shared/expert-scoring'
+import { autoReleaseSettlements } from '@jisane/shared/automation/auto-settlement'
 import { verifyAdmin } from '@jisane/shared/auth/server-helpers'
-import type { PartnerRow } from '@jisane/shared/types'
-import type { InterestWithPartner } from '@jisane/shared/query-types'
-import type { CategoryRow } from '@jisane/shared/categories'
+import type { ExpertRow } from '@jisane/shared/types'
+import type { InterestWithExpert } from '@jisane/shared/query-types'
+import { getCachedCategories, type CategoryRow } from '@jisane/shared/categories'
 
 export async function getCandidatesForRequest(requestId: string) {
   await verifyAdmin()
@@ -15,27 +17,27 @@ export async function getCandidatesForRequest(requestId: string) {
   // 기존 AI 후보가 있는지 확인
   const { data: existingCandidates } = await adminClient
     .from('matching_candidate')
-    .select('id, partner_id, rank, score, score_detail, status, auto_assign_at, created_at')
+    .select('id, expert_id, rank, score, score_detail, status, auto_assign_at, created_at')
     .eq('request_id', requestId)
     .order('rank', { ascending: true })
 
   // AI 후보가 이미 있으면 그 데이터를 반환
   if (existingCandidates && existingCandidates.length > 0) {
-    const partnerIds = existingCandidates.map((c) => c.partner_id)
-    const { data: partnerData } = await adminClient
-      .from('partner')
-      .select('id, name, field, career_yrs')
-      .in('id', partnerIds)
+    const expertIds = existingCandidates.map((c) => c.expert_id)
+    const { data: expertData } = await adminClient
+      .from('expert')
+      .select('id, name, field, career_years')
+      .in('id', expertIds)
 
-    const partnerMap = new Map((partnerData || []).map((p) => [p.id, p]))
+    const expertMap = new Map((expertData || []).map((p) => [p.id, p]))
 
     const candidates = existingCandidates.map((c) => {
-      const p = partnerMap.get(c.partner_id)
+      const p = expertMap.get(c.expert_id)
       return {
-        partner_id: c.partner_id,
+        expert_id: c.expert_id,
         name: p?.name || null,
         field: p?.field || null,
-        career_yrs: p?.career_yrs || null,
+        career_years: p?.career_years || null,
         score: Number(c.score),
         score_detail: c.score_detail as Record<string, number> | null,
         rank: c.rank,
@@ -57,63 +59,63 @@ export async function getCandidatesForRequest(requestId: string) {
       .eq('id', requestId)
       .single(),
     adminClient
-      .from('partner_interest')
-      .select('partner_id, note, partner:partner!inner(id, name, field, career_yrs)')
+      .from('expert_interest')
+      .select('expert_id, note, expert:expert!inner(id, name, field, career_years)')
       .eq('request_id', requestId)
-      .returns<InterestWithPartner[]>(),
+      .returns<InterestWithExpert[]>(),
   ])
 
   if (!req) return { candidates: [], hasAiCandidates: false }
 
-  const [{ data: partners }, { data: categories }, { data: partnerCategories }] = await Promise.all([
-    adminClient.from('partner').select('*').eq('status', 'active'),
-    adminClient.from('category').select('id, parent_id, depth, label, slug, sort_order'),
-    adminClient.from('partner_category').select('partner_id, category_id'),
+  const [{ data: experts }, categories, { data: expertCategories }] = await Promise.all([
+    adminClient.from('expert').select('*').eq('status', 'active'),
+    getCachedCategories(adminClient),
+    adminClient.from('expert_category').select('expert_id, category_id'),
   ])
 
   // 관심 표현 목록
-  const interestList = (interests || []).map((i) => ({ partner_id: i.partner_id }))
+  const interestList = (interests || []).map((i) => ({ expert_id: i.expert_id }))
 
   const candidates = findCandidates(
     { title: req.title, detail: req.detail, req_type: req.req_type, category_id: req.category_id },
-    (partners || []) as PartnerRow[],
+    (experts || []) as ExpertRow[],
     {
-      categories: (categories || []) as CategoryRow[],
-      partnerCategories: partnerCategories || [],
+      categories,
+      expertCategories: expertCategories || [],
       interests: interestList,
-      partnerStats: [],
+      expertStats: [],
     }
   )
 
-  // 관심 표현 파트너 매핑
+  // 관심 표현 전문가 매핑
   const interestMap = new Map<string, string | null>()
   for (const i of (interests || [])) {
-    interestMap.set(i.partner_id, i.note)
+    interestMap.set(i.expert_id, i.note)
   }
 
-  const candidateIds = new Set(candidates.map((c) => c.partner.id))
+  const candidateIds = new Set(candidates.map((c) => c.expert.id))
   const merged = candidates.map((c, idx) => ({
-    partner_id: c.partner.id,
-    name: c.partner.name,
-    field: c.partner.field,
-    career_yrs: c.partner.career_yrs,
+    expert_id: c.expert.id,
+    name: c.expert.name,
+    field: c.expert.field,
+    career_years: c.expert.career_years,
     score: c.score,
     score_detail: c.scoreDetail as Record<string, number> | null,
     rank: idx + 1,
     status: 'pending',
     auto_assign_at: null as string | null,
-    interested: interestMap.has(c.partner.id),
-    interest_note: interestMap.get(c.partner.id) || null,
+    interested: interestMap.has(c.expert.id),
+    interest_note: interestMap.get(c.expert.id) || null,
   }))
 
-  // 관심 표현했지만 알고리즘 후보가 아닌 파트너 추가
+  // 관심 표현했지만 알고리즘 후보가 아닌 전문가 추가
   for (const i of (interests || [])) {
-    if (!candidateIds.has(i.partner_id)) {
+    if (!candidateIds.has(i.expert_id)) {
       merged.push({
-        partner_id: i.partner_id,
-        name: i.partner.name,
-        field: i.partner.field,
-        career_yrs: i.partner.career_yrs,
+        expert_id: i.expert_id,
+        name: i.expert.name,
+        field: i.expert.field,
+        career_years: i.expert.career_years,
         score: 0,
         score_detail: null,
         rank: merged.length + 1,
@@ -125,7 +127,7 @@ export async function getCandidatesForRequest(requestId: string) {
     }
   }
 
-  // 관심 표현 파트너를 상단으로 정렬
+  // 관심 표현 전문가를 상단으로 정렬
   merged.sort((a, b) => {
     if (a.interested && !b.interested) return -1
     if (!a.interested && b.interested) return 1
@@ -157,21 +159,21 @@ export async function generateAiCandidates(requestId: string): Promise<{ error?:
   if (!req) return { error: '의뢰를 찾을 수 없습니다.' }
   if (req.status !== 'open') return { error: '매칭 대기 상태가 아닙니다.' }
 
-  const [{ data: partners }, { data: categories }, { data: partnerCategories }, { data: interests }] = await Promise.all([
-    adminClient.from('partner').select('*').eq('status', 'active'),
-    adminClient.from('category').select('id, parent_id, depth, label, slug, sort_order'),
-    adminClient.from('partner_category').select('partner_id, category_id'),
-    adminClient.from('partner_interest').select('partner_id').eq('request_id', requestId),
+  const [{ data: experts }, categories, { data: expertCategories }, { data: interests }] = await Promise.all([
+    adminClient.from('expert').select('*').eq('status', 'active'),
+    getCachedCategories(adminClient),
+    adminClient.from('expert_category').select('expert_id, category_id'),
+    adminClient.from('expert_interest').select('expert_id').eq('request_id', requestId),
   ])
 
   const candidates = findCandidates(
     { title: req.title, detail: req.detail, req_type: req.req_type, category_id: req.category_id },
-    (partners || []) as PartnerRow[],
+    (experts || []) as ExpertRow[],
     {
-      categories: (categories || []) as CategoryRow[],
-      partnerCategories: partnerCategories || [],
+      categories,
+      expertCategories: expertCategories || [],
       interests: interests || [],
-      partnerStats: [],
+      expertStats: [],
     },
     3
   )
@@ -182,7 +184,7 @@ export async function generateAiCandidates(requestId: string): Promise<{ error?:
 
   const rows = candidates.map((c, idx) => ({
     request_id: requestId,
-    partner_id: c.partner.id,
+    expert_id: c.expert.id,
     rank: idx + 1,
     score: c.score,
     score_detail: c.scoreDetail,
@@ -203,7 +205,7 @@ export async function generateAiCandidates(requestId: string): Promise<{ error?:
 /** AI 후보 중 1명을 선택하여 매칭 생성 */
 export async function selectCandidate(
   requestId: string,
-  partnerId: string
+  expertId: string
 ): Promise<{ error?: string }> {
   await verifyAdmin()
 
@@ -221,20 +223,20 @@ export async function selectCandidate(
     .from('matching_candidate')
     .update({ status: 'skipped' })
     .eq('request_id', requestId)
-    .neq('partner_id', partnerId)
+    .neq('expert_id', expertId)
 
   await adminClient
     .from('matching_candidate')
     .update({ status: 'selected' })
     .eq('request_id', requestId)
-    .eq('partner_id', partnerId)
+    .eq('expert_id', expertId)
 
   // matching 생성
   const { error: matchError } = await adminClient
     .from('matching')
     .insert({
       request_id: requestId,
-      partner_id: partnerId,
+      expert_id: expertId,
       status: 'proposed',
     })
 
@@ -249,59 +251,98 @@ export async function selectCandidate(
   return {}
 }
 
-/** 24시간 초과 시 1순위 자동 배정 체크 */
+/** 24시간 초과 시 1순위 자동 배정 체크 (배치 최적화) */
 export async function autoAssignOverdue(): Promise<number> {
   const { data: overdue } = await adminClient
     .from('matching_candidate')
-    .select('id, request_id, partner_id, rank')
+    .select('id, request_id, expert_id, rank')
     .eq('status', 'pending')
     .eq('rank', 1)
     .lt('auto_assign_at', new Date().toISOString())
 
-  let assigned = 0
-  for (const c of overdue || []) {
-    const { data: req } = await adminClient
-      .from('request')
-      .select('id, status')
-      .eq('id', c.request_id)
-      .single()
+  if (!overdue || overdue.length === 0) return 0
 
-    if (req?.status !== 'open') continue
+  // 1. 관련 request 상태 일괄 조회
+  const requestIds = [...new Set(overdue.map((c) => c.request_id))]
+  const { data: requests } = await adminClient
+    .from('request')
+    .select('id, status')
+    .in('id', requestIds)
 
-    await adminClient
-      .from('matching_candidate')
-      .update({ status: 'selected' })
-      .eq('id', c.id)
+  const openRequestIds = new Set(
+    (requests || []).filter((r) => r.status === 'open').map((r) => r.id)
+  )
 
-    await adminClient
-      .from('matching_candidate')
-      .update({ status: 'skipped' })
-      .eq('request_id', c.request_id)
-      .neq('id', c.id)
+  // open 상태인 의뢰의 후보만 필터
+  const eligible = overdue.filter((c) => openRequestIds.has(c.request_id))
+  if (eligible.length === 0) return 0
 
-    await adminClient
-      .from('matching')
-      .insert({
-        request_id: c.request_id,
-        partner_id: c.partner_id,
-        status: 'proposed',
-      })
+  const eligibleIds = eligible.map((c) => c.id)
+  const eligibleRequestIds = [...new Set(eligible.map((c) => c.request_id))]
 
-    await adminClient
-      .from('request')
-      .update({ status: 'matching' })
-      .eq('id', c.request_id)
+  // 2. 선택된 후보 일괄 selected (낙관적 잠금: pending 가드로 중복 방지)
+  const { data: actuallySelected, error: selectError } = await adminClient
+    .from('matching_candidate')
+    .update({ status: 'selected' })
+    .in('id', eligibleIds)
+    .eq('status', 'pending')
+    .select('id, request_id, expert_id')
 
-    assigned++
+  if (selectError) {
+    console.error('[autoAssignOverdue] candidate select failed:', selectError.message)
+    return 0
   }
 
-  if (assigned > 0) revalidatePath('/dashboard')
-  return assigned
+  if (!actuallySelected || actuallySelected.length === 0) {
+    console.info('[autoAssignOverdue] all candidates were already processed by another invocation')
+    return 0
+  }
+
+  const selectedRequestIds = [...new Set(actuallySelected.map((c: { request_id: string }) => c.request_id))]
+
+  // 3. 같은 request의 나머지 후보 일괄 skipped
+  const { error: skipError } = await adminClient
+    .from('matching_candidate')
+    .update({ status: 'skipped' })
+    .in('request_id', selectedRequestIds)
+    .eq('status', 'pending')
+
+  if (skipError) {
+    console.warn('[autoAssignOverdue] candidate skip failed:', skipError.message)
+  }
+
+  // 4. matching 일괄 insert (실제 선택된 후보만)
+  const matchingRows = actuallySelected.map((c: { request_id: string; expert_id: string }) => ({
+    request_id: c.request_id,
+    expert_id: c.expert_id,
+    status: 'proposed',
+  }))
+  const { error: matchInsertError } = await adminClient.from('matching').insert(matchingRows)
+
+  if (matchInsertError) {
+    console.error('[autoAssignOverdue] matching insert failed:', matchInsertError.message)
+    return 0
+  }
+
+  // 5. request 상태 일괄 변경 (open 가드: 다른 경로로 이미 매칭된 건 제외)
+  const { error: reqUpdateError } = await adminClient
+    .from('request')
+    .update({ status: 'matching' })
+    .in('id', selectedRequestIds)
+    .eq('status', 'open')
+
+  if (reqUpdateError) {
+    console.warn('[autoAssignOverdue] request status update failed:', reqUpdateError.message)
+  }
+
+  console.info(`[autoAssignOverdue] assigned ${actuallySelected.length} overdue candidates`)
+  revalidatePath('/dashboard')
+  return actuallySelected.length
 }
 
 export async function createMatching(
   requestId: string,
-  partnerId: string
+  expertId: string
 ): Promise<{ error?: string }> {
   await verifyAdmin()
 
@@ -315,22 +356,22 @@ export async function createMatching(
   if (!req) return { error: '의뢰를 찾을 수 없습니다.' }
   if (req.status !== 'open') return { error: '이미 매칭 진행 중인 의뢰입니다.' }
 
-  // 파트너 확인
-  const { data: partner } = await adminClient
-    .from('partner')
+  // 전문가 확인
+  const { data: expert } = await adminClient
+    .from('expert')
     .select('id, status')
-    .eq('id', partnerId)
+    .eq('id', expertId)
     .single()
 
-  if (!partner) return { error: '파트너를 찾을 수 없습니다.' }
-  if (partner.status !== 'active') return { error: '비활성 파트너입니다.' }
+  if (!expert) return { error: '전문가를 찾을 수 없습니다.' }
+  if (expert.status !== 'active') return { error: '비활성 전문가입니다.' }
 
   // matching 생성
   const { error: matchError } = await adminClient
     .from('matching')
     .insert({
       request_id: requestId,
-      partner_id: partnerId,
+      expert_id: expertId,
       status: 'proposed',
     })
 
@@ -353,7 +394,7 @@ export async function releaseSettlement(
 
   const { data: settlement } = await adminClient
     .from('settlement')
-    .select('id, deal_id, escrow_status, guarantee_fee')
+    .select('id, deal_id, escrow_status, guarantee_fee, deal:deal!inner(expert_id, request:request!inner(owner_id))')
     .eq('id', settlementId)
     .single()
 
@@ -361,6 +402,19 @@ export async function releaseSettlement(
 
   if (settlement.escrow_status !== 'deposited' && settlement.escrow_status !== 'reviewing') {
     return { error: `현재 상태(${settlement.escrow_status})에서는 정산 실행이 불가합니다.` }
+  }
+
+  // open dispute 가드
+  const { data: openDisputes } = await adminClient
+    .from('dispute')
+    .select('id')
+    .eq('target_type', 'settlement')
+    .eq('target_id', settlementId)
+    .eq('status', 'open')
+    .limit(1)
+
+  if (openDisputes && openDisputes.length > 0) {
+    return { error: '미해결 이의제기가 있어 정산을 실행할 수 없습니다. 이의제기를 먼저 처리해주세요.' }
   }
 
   // 에스크로 해제
@@ -390,6 +444,23 @@ export async function releaseSettlement(
       })
   }
 
+  // 전문가 스코어 재계산 (completion_score 반영)
+  const deal = settlement.deal as any
+  const expertId = deal?.expert_id
+  if (expertId) {
+    await recalcExpertScores(adminClient, expertId)
+  }
+
+  // owner.completed_deals 원자적 증가 (RPC — TOCTOU 방지)
+  const ownerId = deal?.request?.owner_id
+  if (ownerId) {
+    const { error: incrError } = await adminClient
+      .rpc('increment_completed_deals', { p_owner_id: ownerId, p_increment: 1 })
+    if (incrError) {
+      console.warn(`[releaseSettlement] owner ${ownerId} completed_deals increment failed:`, incrError.message)
+    }
+  }
+
   revalidatePath('/dashboard')
   return {}
 }
@@ -407,10 +478,10 @@ export async function submitReview(
 
   if (rating < 1 || rating > 5) return { error: '별점은 1~5 사이여야 합니다.' }
 
-  // deal 존재 확인
+  // deal 존재 확인 + expert_id 조회 (스코어 재계산용)
   const { data: deal } = await adminClient
     .from('deal')
-    .select('id')
+    .select('id, expert_id')
     .eq('id', dealId)
     .single()
 
@@ -421,14 +492,14 @@ export async function submitReview(
     .from('review')
     .select('id')
     .eq('deal_id', dealId)
-    .eq('author_type', 'gyeotae')
+    .eq('author_type', 'admin')
     .single()
 
   if (existing) return { error: '이미 리뷰가 작성되었습니다.' }
 
   const insertData: Record<string, unknown> = {
     deal_id: dealId,
-    author_type: 'gyeotae',
+    author_type: 'admin',
     rating,
     comment: comment || null,
     internal_note: internalNote || null,
@@ -451,6 +522,11 @@ export async function submitReview(
     .update({ status: isModified ? 'modified' : 'confirmed' })
     .eq('deal_id', dealId)
     .eq('status', 'pending')
+
+  // 전문가 스코어 재계산 (review_score + completion_score)
+  if (deal.expert_id) {
+    await recalcExpertScores(adminClient, deal.expert_id)
+  }
 
   revalidatePath('/dashboard')
   return {}
@@ -477,7 +553,7 @@ export async function generateAiReview(dealId: string): Promise<{ error?: string
 
   if (!deal) return { error: '거래를 찾을 수 없습니다.' }
 
-  const [{ data: workflows }, { data: messages }, { data: clientReview }] = await Promise.all([
+  const [{ data: workflows }, { data: messages }, { data: ownerReview }] = await Promise.all([
     adminClient
       .from('deal_workflow')
       .select('step, status, created_at, updated_at')
@@ -490,7 +566,7 @@ export async function generateAiReview(dealId: string): Promise<{ error?: string
       .from('review')
       .select('rating, comment')
       .eq('deal_id', dealId)
-      .eq('author_type', 'client')
+      .eq('author_type', 'owner')
       .single(),
   ])
 
@@ -506,7 +582,7 @@ export async function generateAiReview(dealId: string): Promise<{ error?: string
       sender_type: m.sender_type,
       created_at: m.created_at,
     })),
-    clientReview: clientReview ? { rating: clientReview.rating, comment: clientReview.comment } : null,
+    ownerReview: ownerReview ? { rating: ownerReview.rating, comment: ownerReview.comment } : null,
   })
 
   const { error: insertError } = await adminClient
@@ -542,6 +618,32 @@ export async function getAiSuggestion(dealId: string) {
   return { suggestion: data }
 }
 
+/** 이의제기 해결 처리 */
+export async function resolveDispute(
+  disputeId: string
+): Promise<{ error?: string }> {
+  await verifyAdmin()
+
+  const { data: dispute } = await adminClient
+    .from('dispute')
+    .select('id, status')
+    .eq('id', disputeId)
+    .single()
+
+  if (!dispute) return { error: '이의제기를 찾을 수 없습니다.' }
+  if (dispute.status === 'resolved') return { error: '이미 해결된 이의제기입니다.' }
+
+  const { error } = await adminClient
+    .from('dispute')
+    .update({ status: 'resolved', updated_at: new Date().toISOString() })
+    .eq('id', disputeId)
+
+  if (error) return { error: error.message }
+
+  revalidatePath('/dashboard')
+  return {}
+}
+
 export async function getMessagesForDeal(dealId: string) {
   await verifyAdmin()
 
@@ -552,6 +654,13 @@ export async function getMessagesForDeal(dealId: string) {
     .order('created_at', { ascending: true })
 
   return { messages: data || [] }
+}
+
+/** 정산 자동 release (대시보드 로드 시 실행) */
+export async function runAutoRelease() {
+  const result = await autoReleaseSettlements(adminClient, recalcExpertScores, batchRecalcExpertScores)
+  if (result.released > 0) revalidatePath('/dashboard')
+  return result
 }
 
 export async function closeInquiry(inquiryId: string): Promise<{ error?: string }> {

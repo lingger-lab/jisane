@@ -41,12 +41,12 @@ export async function verifyAdmin(): Promise<{ email: string }> {
 
 /**
  * Deal 소유권을 검증합니다.
- * deal → request → client → auth_user_id 체인으로 확인합니다.
+ * deal → request → owner → auth_user_id 체인으로 확인합니다.
  */
 export async function verifyDealOwnership(dealId: string, authUserId: string) {
   const { data: deal } = await adminClient
     .from('deal')
-    .select('id, status, request_id, request:request!inner(id, client_id, client:client!inner(auth_user_id))')
+    .select('id, status, request_id, expert_id, request:request!inner(id, owner_id, owner:owner!inner(auth_user_id))')
     .eq('id', dealId)
     .returns<DealWithOwnership[]>()
     .single()
@@ -56,9 +56,9 @@ export async function verifyDealOwnership(dealId: string, authUserId: string) {
   }
 
   const request = deal.request
-  if (request.client.auth_user_id !== authUserId) {
+  if (request.owner.auth_user_id !== authUserId) {
     return { error: '접근 권한이 없습니다.' as const }
   }
 
-  return { deal, requestId: request.id, clientId: request.client_id }
+  return { deal, requestId: request.id, ownerId: request.owner_id }
 }

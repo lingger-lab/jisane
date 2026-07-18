@@ -14,7 +14,7 @@ export async function GET(request: Request) {
       deal:deal!inner(
         id, work_fee, match_fee, total_pay, status,
         request:request!inner(id, title),
-        partner:partner!inner(id, name)
+        expert:expert!inner(id, name)
       )
     `)
     .in('escrow_status', ['deposited', 'reviewing'])

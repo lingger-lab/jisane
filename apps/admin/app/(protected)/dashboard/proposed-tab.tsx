@@ -9,14 +9,14 @@ interface ProposedItem {
     title: string
     req_type: string | null
     budget_hope: number | null
-    client: {
+    owner: {
       company: string | null
       ceo_name: string | null
       email: string
       contact: string | null
     }
   }
-  partner: {
+  expert: {
     id: string
     name: string | null
     field: string | null
@@ -39,7 +39,7 @@ export function ProposedTab({ matchings }: { matchings: ProposedItem[] }) {
     return (
       <div className="flex flex-col items-center gap-1 py-12 text-center">
         <span className="text-2xl">&#9203;</span>
-        <p className="text-sm text-text-muted">파트너 응답 대기 중인 매칭이 없습니다.</p>
+        <p className="text-sm text-text-muted">전문가 응답 대기 중인 매칭이 없습니다.</p>
       </div>
     )
   }
@@ -63,25 +63,25 @@ export function ProposedTab({ matchings }: { matchings: ProposedItem[] }) {
               <div className="mt-2 flex flex-col gap-0.5 text-xs text-text-subtle">
                 <div className="flex flex-wrap items-center gap-x-2">
                   <span className="text-text-muted">기업:</span>
-                  {m.request.client.company && <span>{m.request.client.company}</span>}
-                  {m.request.client.ceo_name && <span>{m.request.client.ceo_name}</span>}
-                  {m.request.client.contact && (
-                    <a href={`tel:${m.request.client.contact}`} className="rounded px-1 py-0.5 hover:text-accent hover:bg-accent/5 transition-colors">
-                      {m.request.client.contact}
+                  {m.request.owner.company && <span>{m.request.owner.company}</span>}
+                  {m.request.owner.ceo_name && <span>{m.request.owner.ceo_name}</span>}
+                  {m.request.owner.contact && (
+                    <a href={`tel:${m.request.owner.contact}`} className="rounded px-1 py-0.5 hover:text-accent hover:bg-accent/5 transition-colors">
+                      {m.request.owner.contact}
                     </a>
                   )}
                 </div>
                 <div className="flex flex-wrap items-center gap-x-2">
-                  <span className="text-text-muted">파트너:</span>
-                  <span className="font-medium text-text">{m.partner.name || '이름 미등록'}</span>
-                  {m.partner.field && <span>{m.partner.field}</span>}
-                  {m.partner.contact && (
-                    <a href={`tel:${m.partner.contact}`} className="rounded px-1 py-0.5 hover:text-accent hover:bg-accent/5 transition-colors">
-                      {m.partner.contact}
+                  <span className="text-text-muted">전문가:</span>
+                  <span className="font-medium text-text">{m.expert.name || '이름 미등록'}</span>
+                  {m.expert.field && <span>{m.expert.field}</span>}
+                  {m.expert.contact && (
+                    <a href={`tel:${m.expert.contact}`} className="rounded px-1 py-0.5 hover:text-accent hover:bg-accent/5 transition-colors">
+                      {m.expert.contact}
                     </a>
                   )}
-                  <a href={`mailto:${m.partner.email}`} className="rounded px-1 py-0.5 hover:text-accent hover:bg-accent/5 transition-colors">
-                    {m.partner.email}
+                  <a href={`mailto:${m.expert.email}`} className="rounded px-1 py-0.5 hover:text-accent hover:bg-accent/5 transition-colors">
+                    {m.expert.email}
                   </a>
                 </div>
               </div>

@@ -82,15 +82,26 @@ export async function POST(
     return NextResponse.json({ error: updateError.message }, { status: 500 })
   }
 
-  // guarantee_fund_ledger에 적립금 사용 기록 (payout)
+  // 신규자 보증 여부 확인
+  const { data: dealInfo } = await adminClient
+    .from('deal')
+    .select('expert_id, expert:expert!inner(is_newbie)')
+    .eq('id', settlement.deal_id)
+    .single()
+
+  const isNewbieGuarantee = (dealInfo?.expert as any)?.is_newbie === true
+
+  // guarantee_fund_ledger에 적립금 사용 기록
   if (settlement.guarantee_fee > 0) {
     await adminClient
       .from('guarantee_fund_ledger')
       .insert({
         settlement_id: settlementId,
-        entry_type: 'payout',
+        entry_type: isNewbieGuarantee ? 'newbie_guarantee' : 'payout',
         amount: Math.min(settlement.guarantee_fee, amount),
-        note: `환불 처리 — ${reason}`,
+        note: isNewbieGuarantee
+          ? `신규자 보증 환불 — ${reason}`
+          : `환불 처리 — ${reason}`,
       })
   }
 

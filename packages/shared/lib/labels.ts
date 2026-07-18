@@ -42,6 +42,33 @@ export const STEP_STATUS_LABELS: Record<string, string> = {
   done: '완료',
 }
 
+export const INVITATION_STATUS_LABELS: Record<string, string> = {
+  invited: '초빙 대기',
+  accepted: '수락',
+  declined: '거절',
+}
+
+export const DISPUTE_STATUS_LABELS: Record<string, string> = {
+  open: '처리 중',
+  resolved: '해결',
+}
+
+export const DISPUTE_TARGET_LABELS: Record<string, string> = {
+  review: '리뷰',
+  settlement: '정산',
+}
+
+export const DISPUTE_RAISED_BY_LABELS: Record<string, string> = {
+  owner: '기업',
+  expert: '전문가',
+  admin: '관리자',
+}
+
+export const ACTIVITY_TYPE_LABELS: Record<string, string> = {
+  band_join: '밴드 가입',
+  post: '게시글 작성',
+}
+
 export const ESCROW_STATUS_LABELS: Record<string, string> = {
   pending: '대기',
   deposited: '입금 완료',

@@ -25,7 +25,7 @@ export interface AiRatingInput {
     sender_type: string
     created_at: string
   }>
-  clientReview: {
+  ownerReview: {
     rating: number
     comment: string | null
   } | null
@@ -83,9 +83,9 @@ export function calculateAiRating(input: AiRatingInput): AiRatingResult {
   // 2. 결과물 (result_rating)
   let resultRating = 3
 
-  if (input.clientReview) {
-    resultRating = input.clientReview.rating
-    reasons.push(`사장님 평점 ${input.clientReview.rating}점`)
+  if (input.ownerReview) {
+    resultRating = input.ownerReview.rating
+    reasons.push(`사장님 평점 ${input.ownerReview.rating}점`)
   } else if (input.deal.status === 'done') {
     resultRating = 4
     reasons.push('검수 완료 (사장님 리뷰 미등록)')
@@ -94,10 +94,10 @@ export function calculateAiRating(input: AiRatingInput): AiRatingResult {
 
   // 3. 대응도 (response_rating)
   let responseRating = 3
-  const partnerMessages = input.messages.filter((m) => m.sender_type === 'partner')
-  const clientMessages = input.messages.filter((m) => m.sender_type === 'client')
+  const expertMessages = input.messages.filter((m) => m.sender_type === 'expert')
+  const ownerMessages = input.messages.filter((m) => m.sender_type === 'owner')
 
-  if (clientMessages.length > 0 && partnerMessages.length > 0) {
+  if (ownerMessages.length > 0 && expertMessages.length > 0) {
     // 평균 응답 시간 계산 (간이 추정)
     const totalMessages = input.messages.length
     if (totalMessages >= 10) {
@@ -110,9 +110,9 @@ export function calculateAiRating(input: AiRatingInput): AiRatingResult {
       responseRating = 3
       reasons.push(`총 ${totalMessages}건 소통`)
     }
-  } else if (partnerMessages.length === 0 && clientMessages.length > 0) {
+  } else if (expertMessages.length === 0 && ownerMessages.length > 0) {
     responseRating = 1
-    reasons.push('파트너 응답 없음')
+    reasons.push('전문가 응답 없음')
   } else {
     responseRating = 3
     reasons.push('메시지 데이터 부족')

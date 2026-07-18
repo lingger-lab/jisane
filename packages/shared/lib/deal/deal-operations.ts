@@ -72,12 +72,12 @@ export async function confirmDealOp(dealId: string): Promise<{ error?: string; r
 
 /**
  * 수정 요청 — deal_workflow deliver 단계에 수정 note 추가
- * owner 앱에서는 추가로 deal_message를 삽입합니다 (clientId 필요).
+ * owner 앱에서는 추가로 deal_message를 삽입합니다 (ownerId 필요).
  */
 export async function requestRevisionOp(
   dealId: string,
   reason: string
-): Promise<{ error?: string; clientId?: string }> {
+): Promise<{ error?: string; ownerId?: string }> {
   const authUserId = await getAuthUserId()
   const result = await verifyDealOwnership(dealId, authUserId)
 
@@ -85,7 +85,7 @@ export async function requestRevisionOp(
     return { error: result.error }
   }
 
-  const { deal, clientId } = result as { deal: { id: string; status: string }; clientId: string }
+  const { deal, ownerId } = result as { deal: { id: string; status: string }; ownerId: string }
 
   if (deal.status !== 'working') {
     return { error: '수정 요청할 수 없는 상태입니다.' }
@@ -97,5 +97,5 @@ export async function requestRevisionOp(
     .eq('deal_id', dealId)
     .eq('step', 'deliver')
 
-  return { clientId }
+  return { ownerId }
 }

@@ -16,7 +16,7 @@ export default async function StatementPage(props: { params: Promise<{ dealId: s
   // deal + settlement 조회
   const { data: deal } = await adminClient
     .from('deal')
-    .select('id, work_fee, match_fee, total_pay, scope, due_date, status, created_at, request_id, partner_id')
+    .select('id, work_fee, match_fee, total_pay, scope, due_date, status, created_at, request_id, expert_id')
     .eq('id', dealId)
     .single()
 
@@ -24,25 +24,25 @@ export default async function StatementPage(props: { params: Promise<{ dealId: s
     return <div className="p-10 text-center text-text-muted">거래명세서를 찾을 수 없습니다.</div>
   }
 
-  // 소유권 확인 (client, partner 또는 admin)
-  const [clientRes, partnerRes] = await Promise.all([
-    adminClient.from('client').select('id').eq('auth_user_id', user.id).single(),
-    adminClient.from('partner').select('id').eq('auth_user_id', user.id).single(),
+  // 소유권 확인 (owner, expert 또는 admin)
+  const [ownerRes, expertRes] = await Promise.all([
+    adminClient.from('owner').select('id').eq('auth_user_id', user.id).single(),
+    adminClient.from('expert').select('id').eq('auth_user_id', user.id).single(),
   ])
 
   const isAdmin = (process.env.ADMIN_EMAILS || '').split(',').map(e => e.trim().toLowerCase()).includes((user.email || '').toLowerCase())
-  const isClient = !!clientRes.data
-  const isPartner = partnerRes.data?.id === deal.partner_id
+  const isOwner = !!ownerRes.data
+  const isExpert = expertRes.data?.id === deal.expert_id
 
-  if (!isAdmin && !isPartner) {
-    // client 소유 확인
-    if (!isClient || !deal.request_id) redirect('/')
+  if (!isAdmin && !isExpert) {
+    // owner 소유 확인
+    if (!isOwner || !deal.request_id) redirect('/')
     const { data: request } = await adminClient
       .from('request')
-      .select('client_id')
+      .select('owner_id')
       .eq('id', deal.request_id)
       .single()
-    if (!request || request.client_id !== clientRes.data!.id) redirect('/')
+    if (!request || request.owner_id !== ownerRes.data!.id) redirect('/')
   }
 
   // settlement 정보
@@ -63,18 +63,18 @@ export default async function StatementPage(props: { params: Promise<{ dealId: s
     if (request) requestTitle = request.title
   }
 
-  // partner 정보
-  let partnerName = '미지정'
-  let partnerField = ''
-  if (deal.partner_id) {
-    const { data: partner } = await adminClient
-      .from('partner')
+  // expert 정보
+  let expertName = '미지정'
+  let expertField = ''
+  if (deal.expert_id) {
+    const { data: expert } = await adminClient
+      .from('expert')
       .select('name, field')
-      .eq('id', deal.partner_id)
+      .eq('id', deal.expert_id)
       .single()
-    if (partner) {
-      partnerName = partner.name || '파트너'
-      partnerField = partner.field || ''
+    if (expert) {
+      expertName = expert.name || '전문가'
+      expertField = expert.field || ''
     }
   }
 
@@ -132,8 +132,8 @@ export default async function StatementPage(props: { params: Promise<{ dealId: s
                 <td className="py-2">{requestTitle || '-'}</td>
               </tr>
               <tr className="border-b border-border-light">
-                <td className="py-2 font-medium text-text-muted">담당 파트너</td>
-                <td className="py-2">{partnerName}{partnerField ? ` (${partnerField})` : ''}</td>
+                <td className="py-2 font-medium text-text-muted">담당 전문가</td>
+                <td className="py-2">{expertName}{expertField ? ` (${expertField})` : ''}</td>
               </tr>
               <tr className="border-b border-border-light">
                 <td className="py-2 font-medium text-text-muted">거래 상태</td>
@@ -175,7 +175,7 @@ export default async function StatementPage(props: { params: Promise<{ dealId: s
             <tbody>
               <tr className="border-b border-border-light">
                 <td className="py-2">작업료</td>
-                <td className="py-2 text-center text-xs text-text-muted">파트너 지급액</td>
+                <td className="py-2 text-center text-xs text-text-muted">전문가 지급액</td>
                 <td className="py-2 text-right">{deal.work_fee.toLocaleString('ko-KR')}원</td>
               </tr>
               <tr className="border-b border-border-light">

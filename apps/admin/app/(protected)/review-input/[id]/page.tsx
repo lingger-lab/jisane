@@ -19,13 +19,13 @@ export default async function ReviewInputPage(props: PageProps) {
 
   if (!user) redirect('/')
 
-  // deal + request + partner 조회
+  // deal + request + expert 조회
   const { data: deal } = await adminClient
     .from('deal')
     .select(`
       id, work_fee, match_fee, total_pay, status,
       request:request!inner(id, title, req_type, detail),
-      partner:partner!inner(id, name, field, career_yrs)
+      expert:expert!inner(id, name, field, career_years)
     `)
     .eq('id', dealId)
     .returns<DealForReview[]>()
@@ -34,7 +34,7 @@ export default async function ReviewInputPage(props: PageProps) {
   if (!deal) redirect('/dashboard')
 
   const req = deal.request
-  const partner = deal.partner
+  const expert = deal.expert
 
   // 기존 리뷰 확인 + AI 제안 조회
   const [{ data: existingReview }, { data: aiSuggestion }] = await Promise.all([
@@ -42,7 +42,7 @@ export default async function ReviewInputPage(props: PageProps) {
       .from('review')
       .select('id, rating, comment, internal_note, process_rating, result_rating, response_rating')
       .eq('deal_id', dealId)
-      .eq('author_type', 'gyeotae')
+      .eq('author_type', 'admin')
       .single(),
     adminClient
       .from('review_ai_suggestion')
@@ -70,8 +70,8 @@ export default async function ReviewInputPage(props: PageProps) {
             <p className="text-text">{req.req_type || '-'}</p>
           </div>
           <div>
-            <p className="text-xs text-text-muted">파트너</p>
-            <p className="text-text">{partner.name || '미등록'} ({partner.field}, {partner.career_yrs || 0}년)</p>
+            <p className="text-xs text-text-muted">전문가</p>
+            <p className="text-text">{expert.name || '미등록'} ({expert.field}, {expert.career_years || 0}년)</p>
           </div>
           <div>
             <p className="text-xs text-text-muted">작업비</p>

@@ -10,7 +10,7 @@ interface RequestItem {
   req_type: string | null
   budget_hope: number | null
   created_at: string
-  client: {
+  owner: {
     company: string | null
     ceo_name: string | null
     email: string
@@ -19,10 +19,10 @@ interface RequestItem {
 }
 
 interface Candidate {
-  partner_id: string
+  expert_id: string
   name: string | null
   field: string | null
-  career_yrs: number | null
+  career_years: number | null
   score: number
   score_detail: Record<string, number> | null
   rank: number
@@ -102,10 +102,10 @@ export function MatchingTab({
     setGenerating(false)
   }
 
-  async function handleAssign(requestId: string, partnerId: string) {
+  async function handleAssign(requestId: string, expertId: string) {
     setActionError(null)
     const action = hasAiCandidates ? selectCandidate : createMatching
-    const result = await action(requestId, partnerId)
+    const result = await action(requestId, expertId)
     if (result.error) {
       setActionError(result.error)
     } else {
@@ -157,12 +157,12 @@ export function MatchingTab({
               </div>
               <p className="mt-2 line-clamp-2 text-sm text-text-muted">{req.detail}</p>
               <div className="mt-2 flex flex-wrap items-center gap-x-2 gap-y-0.5 text-xs text-text-subtle">
-                {req.client.company && <span className="font-medium text-text-muted">{req.client.company}</span>}
-                {req.client.ceo_name && <span>{req.client.ceo_name}</span>}
-                {req.client.contact && (
-                  <a href={`tel:${req.client.contact}`} className="rounded px-1 py-0.5 hover:text-accent hover:bg-accent/5 transition-colors">{req.client.contact}</a>
+                {req.owner.company && <span className="font-medium text-text-muted">{req.owner.company}</span>}
+                {req.owner.ceo_name && <span>{req.owner.ceo_name}</span>}
+                {req.owner.contact && (
+                  <a href={`tel:${req.owner.contact}`} className="rounded px-1 py-0.5 hover:text-accent hover:bg-accent/5 transition-colors">{req.owner.contact}</a>
                 )}
-                <a href={`mailto:${req.client.email}`} className="rounded px-1 py-0.5 hover:text-accent hover:bg-accent/5 transition-colors">{req.client.email}</a>
+                <a href={`mailto:${req.owner.email}`} className="rounded px-1 py-0.5 hover:text-accent hover:bg-accent/5 transition-colors">{req.owner.email}</a>
               </div>
               {(interestCounts[req.id] || 0) > 0 && (
                 <span className="mt-1 inline-flex items-center gap-1 rounded bg-accent/10 px-2 py-0.5 text-xs font-medium text-accent">
@@ -221,7 +221,7 @@ export function MatchingTab({
 
                   {candidates.map((c) => (
                     <div
-                      key={c.partner_id}
+                      key={c.expert_id}
                       className={`flex flex-col gap-1 rounded-md p-3 ${
                         c.interested
                           ? 'bg-accent/5 border border-accent/20'
@@ -246,7 +246,7 @@ export function MatchingTab({
                           <div>
                             <span className="font-medium text-text">{c.name || '이름 미등록'}</span>
                             <span className="ml-2 text-xs text-text-muted">
-                              {c.field} · {c.career_yrs || 0}년
+                              {c.field} · {c.career_years || 0}년
                             </span>
                             {c.score > 0 && (
                               <span className="ml-2 rounded bg-info-light px-1.5 py-0.5 text-xs font-medium text-info">
@@ -263,7 +263,7 @@ export function MatchingTab({
                         {c.status !== 'selected' && c.status !== 'skipped' && (
                           <button
                             type="button"
-                            onClick={() => handleAssign(req.id, c.partner_id)}
+                            onClick={() => handleAssign(req.id, c.expert_id)}
                             className="rounded-lg bg-success px-3 py-1 text-xs font-medium text-white hover:bg-success/90"
                           >
                             {hasAiCandidates ? '이 후보로 매칭' : '배정'}

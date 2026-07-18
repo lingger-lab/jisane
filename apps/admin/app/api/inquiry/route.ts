@@ -24,20 +24,20 @@ export async function POST(request: Request) {
   }
 
   // author 판별
-  const { data: partner } = await adminClient
-    .from('partner')
+  const { data: expert } = await adminClient
+    .from('expert')
     .select('id')
     .eq('auth_user_id', user.id)
     .single()
 
-  const { data: client } = await adminClient
-    .from('client')
+  const { data: owner } = await adminClient
+    .from('owner')
     .select('id')
     .eq('auth_user_id', user.id)
     .single()
 
-  const authorId = partner?.id || client?.id
-  const authorType = partner ? 'partner' : client ? 'client' : null
+  const authorId = expert?.id || owner?.id
+  const authorType = expert ? 'expert' : owner ? 'owner' : null
 
   if (!authorId || !authorType) {
     return NextResponse.json({ error: 'User profile not found' }, { status: 404 })
