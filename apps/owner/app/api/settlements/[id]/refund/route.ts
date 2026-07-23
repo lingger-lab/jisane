@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { adminClient } from '@jisane/shared/supabase/admin'
 import { cancelPayment } from '@jisane/shared/payment'
+import crypto from 'crypto'
 
 /**
  * 관리자 전용: 환불 처리
@@ -14,9 +15,18 @@ export async function POST(
 ) {
   const { id: settlementId } = await props.params
 
-  // 관리자 인증
+  // 관리자 인증 (타이밍세이프 비교)
   const adminSecret = request.headers.get('x-admin-secret')
-  if (!adminSecret || adminSecret !== process.env.ADMIN_SECRET) {
+  const expectedSecret = process.env.ADMIN_SECRET
+  if (!expectedSecret) {
+    return NextResponse.json({ error: 'ADMIN_SECRET not configured' }, { status: 500 })
+  }
+  const givenBuf = Buffer.from(adminSecret || '')
+  const expectedBuf = Buffer.from(expectedSecret)
+  if (
+    givenBuf.length !== expectedBuf.length ||
+    !crypto.timingSafeEqual(givenBuf, expectedBuf)
+  ) {
     return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
   }
 
@@ -59,8 +69,10 @@ export async function POST(
   }
 
   // Toss 결제 취소 (payment_key가 있는 경우)
+  // 멱등키: 같은 settlement의 같은 누적환불액 요청이 재시도되어도 이중 취소되지 않음
   if (settlement.payment_key) {
-    const cancelResult = await cancelPayment(settlement.payment_key, reason, amount)
+    const idempotencyKey = `refund_${settlementId}_${newRefundedAmt}`
+    const cancelResult = await cancelPayment(settlement.payment_key, reason, amount, idempotencyKey)
     if (!cancelResult.success) {
       return NextResponse.json(
         { error: `Payment cancel failed: ${cancelResult.error}` },
@@ -89,11 +101,12 @@ export async function POST(
     .eq('id', settlement.deal_id)
     .single()
 
-  const isNewbieGuarantee = (dealInfo?.expert as any)?.is_newbie === true
+  const expertInfo = dealInfo?.expert as { is_newbie: boolean | null } | null | undefined
+  const isNewbieGuarantee = expertInfo?.is_newbie === true
 
   // guarantee_fund_ledger에 적립금 사용 기록
   if (settlement.guarantee_fee > 0) {
-    await adminClient
+    const { error: ledgerErr } = await adminClient
       .from('guarantee_fund_ledger')
       .insert({
         settlement_id: settlementId,
@@ -103,6 +116,16 @@ export async function POST(
           ? `신규자 보증 환불 — ${reason}`
           : `환불 처리 — ${reason}`,
       })
+
+    if (ledgerErr) {
+      // 환불 자체는 완료됨 — 원장 드리프트만 경고로 노출
+      console.error(`[refund] ledger insert failed for settlement ${settlementId}:`, ledgerErr.message)
+      return NextResponse.json({
+        success: true,
+        refunded_amt: newRefundedAmt,
+        warning: `환불은 완료됐으나 적립금 원장 기록에 실패했습니다: ${ledgerErr.message}`,
+      })
+    }
   }
 
   return NextResponse.json({ success: true, refunded_amt: newRefundedAmt })

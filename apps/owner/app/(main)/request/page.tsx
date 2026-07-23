@@ -68,7 +68,7 @@ export default function RequestPage() {
                 className={`rounded-lg px-3 py-1.5 text-xs font-medium transition-colors ${
                   selectedMajor === idx
                     ? 'bg-primary text-white'
-                    : 'bg-surface text-text-muted hover:bg-surface-hover'
+                    : 'bg-surface text-text-muted hover:bg-surface-warm'
                 }`}
               >
                 {major.label}

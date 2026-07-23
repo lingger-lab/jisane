@@ -18,6 +18,7 @@ export function QuoteSection({ deal, expert }: QuoteSectionProps) {
   const [inquirySent, setInquirySent] = useState(false)
 
   async function handleApprove() {
+    if (!confirm(`견적 ${deal.total_pay.toLocaleString('ko-KR')}원(VAT 별도)을 승인하시겠습니까?`)) return
     const result = await approveDeal(deal.id)
     if (result?.error) {
       setError(result.error)

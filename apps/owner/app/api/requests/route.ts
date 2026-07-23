@@ -68,13 +68,21 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: '내용은 5000자 이내로 입력해주세요.' }, { status: 400 })
   }
 
+  let budgetHope: number | null = null
+  if (budget_hope != null && budget_hope !== '') {
+    budgetHope = Number(budget_hope)
+    if (!Number.isSafeInteger(budgetHope) || budgetHope < 0) {
+      return NextResponse.json({ error: '희망 예산은 0 이상의 정수로 입력해주세요.' }, { status: 400 })
+    }
+  }
+
   const { data, error } = await adminClient.from('request').insert({
     owner_id: ownerRow.id,
     title: title.trim(),
     detail: detail.trim(),
     req_type: req_type || null,
     scope: scope || null,
-    budget_hope: budget_hope ? parseInt(budget_hope, 10) : null,
+    budget_hope: budgetHope,
   }).select().single()
 
   if (error) {

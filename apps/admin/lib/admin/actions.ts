@@ -445,7 +445,10 @@ export async function releaseSettlement(
   }
 
   // 전문가 스코어 재계산 (completion_score 반영)
-  const deal = settlement.deal as any
+  const deal = settlement.deal as unknown as {
+    expert_id: string | null
+    request: { owner_id: string | null } | null
+  } | null
   const expertId = deal?.expert_id
   if (expertId) {
     await recalcExpertScores(adminClient, expertId)

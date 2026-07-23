@@ -92,6 +92,7 @@ export function MessageThread({
           value={content}
           onChange={(e) => setContent(e.target.value)}
           placeholder="메시지 입력..."
+          aria-label="메시지 입력"
           maxLength={1000}
           className="flex-1 rounded-lg border border-border-light bg-background px-3 py-2 text-sm text-text placeholder:text-text-subtle focus:border-accent focus:outline-none"
         />

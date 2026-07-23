@@ -133,6 +133,10 @@ export async function acceptMatching(matchingId: string): Promise<{ error?: stri
 
   if (workflowErr) {
     console.error('[acceptMatching] workflow insert failed:', workflowErr.message)
+    // 롤백: deal 삭제(settlement/workflow는 ON DELETE CASCADE) + matching을 proposed로 되돌림
+    await adminClient.from('deal').delete().eq('id', deal.id)
+    await adminClient.from('matching').update({ status: 'proposed' }).eq('id', matchingId)
+    return { error: '작업 단계 생성에 실패했습니다. 다시 시도해주세요.' }
   }
 
   // 5. request.status → 'dealt'
@@ -143,6 +147,10 @@ export async function acceptMatching(matchingId: string): Promise<{ error?: stri
 
   if (reqErr) {
     console.error('[acceptMatching] request status update failed:', reqErr.message)
+    // 방치 시 재매칭 이중예약 가능 — 전체 롤백
+    await adminClient.from('deal').delete().eq('id', deal.id)
+    await adminClient.from('matching').update({ status: 'proposed' }).eq('id', matchingId)
+    return { error: '의뢰 상태 변경에 실패했습니다. 다시 시도해주세요.' }
   }
 
   redirect(`/work/${deal.id}`)

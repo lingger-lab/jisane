@@ -3,14 +3,7 @@
 import { useState } from 'react'
 import { updateWorkflowStep } from '@/lib/workflow/actions'
 import type { DealWorkflowRow, WorkflowStep, StepStatus } from '@jisane/shared/types'
-
-const STEP_LABELS: Record<WorkflowStep, string> = {
-  intake: '요건 수집',
-  structure: '구조화',
-  generate: '작업 수행',
-  verify: '검증',
-  deliver: '납품',
-}
+import { WORKFLOW_STEP_LABELS } from '@jisane/shared/labels'
 
 const ORDERED_STEPS: WorkflowStep[] = ['intake', 'structure', 'generate', 'verify', 'deliver']
 
@@ -70,7 +63,7 @@ export function WorkflowForm({ dealId, steps }: WorkflowFormProps) {
               {i + 1}
             </span>
             <span className="flex-1 text-sm font-medium text-text">
-              {STEP_LABELS[stepKey]}
+              {WORKFLOW_STEP_LABELS[stepKey]}
             </span>
 
             {status === 'done' ? (

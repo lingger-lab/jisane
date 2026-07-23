@@ -65,6 +65,12 @@ export async function confirmDealOp(dealId: string): Promise<{ error?: string; r
 
   if (settlementErr) {
     console.error('[confirmDeal] settlement update failed:', settlementErr.message)
+    // 보상: deal을 working으로 되돌려 deal/settlement 상태 괴리를 방지
+    await adminClient
+      .from('deal')
+      .update({ status: 'working' })
+      .eq('id', dealId)
+    return { error: '검수 확인에 실패했습니다. 다시 시도해주세요.' }
   }
 
   return { requestId }

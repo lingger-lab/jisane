@@ -30,9 +30,16 @@ jobs:
 
       - run: npm ci
 
+      - name: Lint
+        run: npx turbo run lint
+
       - name: Build all apps
         run: npx turbo run build --force
 
       - name: Summary
-        if: always()
-        run: echo "### Build Result" >> $GITHUB_STEP_SUMMARY && echo "✅ 3 apps built successfully" >> $GITHUB_STEP_SUMMARY
+        if: success()
+        run: echo "### Build Result" >> $GITHUB_STEP_SUMMARY && echo "✅ Lint passed, 3 apps built successfully" >> $GITHUB_STEP_SUMMARY
+
+      - name: Summary (failure)
+        if: failure()
+        run: echo "### Build Result" >> $GITHUB_STEP_SUMMARY && echo "❌ CI failed — check the logs" >> $GITHUB_STEP_SUMMARY

@@ -43,6 +43,7 @@ export default async function AdminDashboardPage() {
   }
 
   // 요약 카운트
+  // eslint-disable-next-line react-hooks/purity -- 요청마다 새로 렌더되는 동적 서버 컴포넌트의 기준 시각
   const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString()
 
   const [requestsRes, proposedRes, dealsRes, settlementsRes, accrueRes, payoutRes, inquiryRes, serviceOrdersRes, invitationRes, disputeRes, overdueSettlementRes, auditPendingRes] = await Promise.all([
@@ -199,8 +200,8 @@ export default async function AdminDashboardPage() {
   const authorIds = (rawInquiries || []).map((i) => i.author_id).filter(Boolean) as string[]
 
   let workflowData: DealWorkflowRow[] = []
-  let messageCounts: Record<string, number> = {}
-  let authorEmailMap: Record<string, string> = {}
+  const messageCounts: Record<string, number> = {}
+  const authorEmailMap: Record<string, string> = {}
 
   // 종속 쿼리 병렬 실행
   const secondaryPromises: Promise<void>[] = []

@@ -23,6 +23,7 @@ export function MatchingActions({ matchingId }: MatchingActionsProps) {
   }
 
   async function handleReject() {
+    if (!confirm('이 매칭 제안을 거절하시겠습니까? 거절 후에는 되돌릴 수 없습니다.')) return
     const result = await rejectMatching(matchingId)
     if (result?.error) {
       setError(result.error)
