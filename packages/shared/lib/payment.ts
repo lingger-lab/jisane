@@ -4,6 +4,7 @@
  */
 
 const TOSS_BASE_URL = 'https://api.tosspayments.com/v1'
+const TOSS_TIMEOUT_MS = 15_000
 
 function getAuthHeader(): string {
   const secretKey = process.env.TOSS_SECRET_KEY
@@ -26,6 +27,9 @@ export async function createCheckoutSession(
   amount: number,
   orderName: string
 ): Promise<CheckoutResult> {
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL
+  if (!siteUrl) throw new Error('NEXT_PUBLIC_SITE_URL is not configured')
+
   const orderId = `jisane_${dealId}_${Date.now()}`
 
   const res = await fetch(`${TOSS_BASE_URL}/payments`, {
@@ -39,9 +43,10 @@ export async function createCheckoutSession(
       orderId,
       orderName,
       method: '카드',
-      successUrl: `${process.env.NEXT_PUBLIC_SITE_URL}/api/payments/success?dealId=${dealId}`,
-      failUrl: `${process.env.NEXT_PUBLIC_SITE_URL}/api/payments/fail?dealId=${dealId}`,
+      successUrl: `${siteUrl}/api/payments/success?dealId=${dealId}`,
+      failUrl: `${siteUrl}/api/payments/fail?dealId=${dealId}`,
     }),
+    signal: AbortSignal.timeout(TOSS_TIMEOUT_MS),
   })
 
   if (!res.ok) {
@@ -63,7 +68,7 @@ export async function confirmPayment(
   paymentKey: string,
   orderId: string,
   amount: number
-): Promise<{ success: boolean; data?: Record<string, unknown>; error?: string }> {
+): Promise<{ success: boolean; data?: Record<string, unknown>; error?: string; code?: string }> {
   const res = await fetch(`${TOSS_BASE_URL}/payments/confirm`, {
     method: 'POST',
     headers: {
@@ -71,12 +76,17 @@ export async function confirmPayment(
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({ paymentKey, orderId, amount }),
+    signal: AbortSignal.timeout(TOSS_TIMEOUT_MS),
   })
 
   const data = await res.json().catch(() => ({}))
 
   if (!res.ok) {
-    return { success: false, error: data.message || `Toss confirm error: ${res.status}` }
+    return {
+      success: false,
+      error: data.message || `Toss confirm error: ${res.status}`,
+      code: data.code,
+    }
   }
 
   return { success: true, data }
@@ -88,20 +98,28 @@ export async function confirmPayment(
 export async function cancelPayment(
   paymentKey: string,
   cancelReason: string,
-  cancelAmount?: number
+  cancelAmount?: number,
+  idempotencyKey?: string
 ): Promise<{ success: boolean; error?: string }> {
   const body: Record<string, unknown> = { cancelReason }
   if (cancelAmount !== undefined) {
     body.cancelAmount = cancelAmount
   }
 
+  const headers: Record<string, string> = {
+    Authorization: getAuthHeader(),
+    'Content-Type': 'application/json',
+  }
+  // 재시도 시 이중 취소(이중 환불)를 막는 Toss 멱등키
+  if (idempotencyKey) {
+    headers['Idempotency-Key'] = idempotencyKey
+  }
+
   const res = await fetch(`${TOSS_BASE_URL}/payments/${paymentKey}/cancel`, {
     method: 'POST',
-    headers: {
-      Authorization: getAuthHeader(),
-      'Content-Type': 'application/json',
-    },
+    headers,
     body: JSON.stringify(body),
+    signal: AbortSignal.timeout(TOSS_TIMEOUT_MS),
   })
 
   if (!res.ok) {

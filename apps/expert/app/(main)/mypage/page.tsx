@@ -93,9 +93,17 @@ export default async function MyPage() {
       : Promise.resolve({ data: [], error: null }),
   ])
 
-  const deals = dealsRes.data || []
-  const orders = ordersRes.data || []
-  const matchings = matchingsRes.data || []
+  const deals = (dealsRes.data || []) as unknown as Array<{
+    id: string; status: string; work_fee: number | null; created_at: string
+    request: { title: string } | null
+  }>
+  const orders = (ordersRes.data || []) as Array<{
+    id: string; package_name: string; status: string; created_at: string; price: number
+  }>
+  const matchings = (matchingsRes.data || []) as unknown as Array<{
+    id: string; status: string; created_at: string
+    request: { title: string; req_type: string | null } | null
+  }>
   const activities = (activitiesRes.data || []) as Array<{
     id: string; type: string; points: number; created_at: string; expires_at: string | null
   }>
@@ -216,7 +224,7 @@ export default async function MyPage() {
           </div>
         ) : (
           <ul className="flex flex-col gap-2">
-            {deals.map((deal: any) => (
+            {deals.map((deal) => (
               <li key={deal.id}>
                 <Link
                   href={`/work/${deal.id}`}
@@ -252,7 +260,7 @@ export default async function MyPage() {
           </div>
         ) : (
           <ul className="flex flex-col gap-2">
-            {orders.map((order: any) => (
+            {orders.map((order) => (
               <li key={order.id}>
                 <div className="rounded-lg border border-border-light p-3 shadow-xs">
                   <div className="flex items-center justify-between gap-2">
@@ -290,7 +298,7 @@ export default async function MyPage() {
           </div>
         ) : (
           <ul className="flex flex-col gap-2">
-            {matchings.map((m: any) => (
+            {matchings.map((m) => (
               <li key={m.id}>
                 <Link
                   href={`/matching/${m.id}`}

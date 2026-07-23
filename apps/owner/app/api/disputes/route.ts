@@ -45,7 +45,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: '정산 정보를 찾을 수 없습니다.' }, { status: 404 })
   }
 
-  const deal = settlement.deal as any
+  const deal = settlement.deal as unknown as { request: { owner_id: string } | null } | null
   if (deal?.request?.owner_id !== owner.id) {
     return NextResponse.json({ error: '접근 권한이 없습니다.' }, { status: 403 })
   }

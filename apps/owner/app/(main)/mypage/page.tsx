@@ -93,9 +93,16 @@ export default async function OwnerMyPage() {
       .limit(5),
   ])
 
-  const requests = requestsRes.data || []
-  const orders = ordersRes.data || []
-  const deals = dealsRes.data || []
+  const requests = (requestsRes.data || []) as Array<{
+    id: string; title: string; status: string; created_at: string
+  }>
+  const orders = (ordersRes.data || []) as Array<{
+    id: string; package_name: string; status: string; created_at: string; price: number
+  }>
+  const deals = (dealsRes.data || []) as unknown as Array<{
+    id: string; status: string; work_fee: number | null; created_at: string
+    request: { title: string; owner_id: string } | null
+  }>
   const interests = (interestsRes.data || []) as unknown as Array<{
     id: string; note: string | null; created_at: string
     request: { id: string; title: string; owner_id: string }
@@ -146,7 +153,7 @@ export default async function OwnerMyPage() {
           </div>
         ) : (
           <ul className="flex flex-col gap-2">
-            {requests.map((req: any) => (
+            {requests.map((req) => (
               <li key={req.id}>
                 <Link
                   href={`/status/${req.id}`}
@@ -181,7 +188,7 @@ export default async function OwnerMyPage() {
           </div>
         ) : (
           <ul className="flex flex-col gap-2">
-            {orders.map((order: any) => (
+            {orders.map((order) => (
               <li key={order.id}>
                 <div className="rounded-lg border border-border-light p-3 shadow-xs">
                   <div className="flex items-center justify-between gap-2">
@@ -219,7 +226,7 @@ export default async function OwnerMyPage() {
           </div>
         ) : (
           <ul className="flex flex-col gap-2">
-            {deals.map((deal: any) => (
+            {deals.map((deal) => (
               <li key={deal.id}>
                 <div className="rounded-lg border border-border-light p-3 shadow-xs">
                   <div className="flex items-center justify-between gap-2">

@@ -45,7 +45,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: '리뷰를 찾을 수 없습니다.' }, { status: 404 })
   }
 
-  const deal = review.deal as any
+  const deal = review.deal as unknown as { expert_id: string } | null
   if (deal?.expert_id !== expert.id) {
     return NextResponse.json({ error: '접근 권한이 없습니다.' }, { status: 403 })
   }

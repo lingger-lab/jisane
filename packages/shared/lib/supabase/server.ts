@@ -23,7 +23,8 @@ export const createClient = (
           cookiesToSet.forEach(({ name, value, options }) =>
             cookieStore.set(name, value, {
               ...options,
-              domain: process.env.NODE_ENV === 'production' ? '.jisane.cloud' : undefined,
+              domain: process.env.COOKIE_DOMAIN ||
+                (process.env.NODE_ENV === 'production' ? '.jisane.cloud' : undefined),
             })
           );
         } catch {

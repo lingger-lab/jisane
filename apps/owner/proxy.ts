@@ -15,7 +15,8 @@ export async function proxy(request: NextRequest) {
           cookiesToSet.forEach(({ name, value, options }) => {
             response.cookies.set(name, value, {
               ...options,
-              domain: process.env.NODE_ENV === 'production' ? '.jisane.cloud' : undefined,
+              domain: process.env.COOKIE_DOMAIN ||
+                (process.env.NODE_ENV === 'production' ? '.jisane.cloud' : undefined),
             })
           })
         },

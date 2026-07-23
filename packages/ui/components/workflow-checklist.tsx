@@ -1,12 +1,5 @@
 import type { DealWorkflowRow, WorkflowStep, StepStatus } from '@jisane/shared/types'
-
-const STEP_LABELS: Record<WorkflowStep, string> = {
-  intake: '요건 수집',
-  structure: '구조화',
-  generate: '작업 수행',
-  verify: '검증',
-  deliver: '납품',
-}
+import { WORKFLOW_STEP_LABELS } from '@jisane/shared/labels'
 
 const STATUS_STYLES: Record<StepStatus, { bg: string; text: string; label: string }> = {
   pending: { bg: 'bg-surface', text: 'text-text-subtle', label: '대기' },
@@ -37,7 +30,7 @@ export function WorkflowChecklist({ steps }: WorkflowChecklistProps) {
               {i + 1}
             </span>
             <span className="flex-1 text-sm font-medium text-text">
-              {STEP_LABELS[stepKey]}
+              {WORKFLOW_STEP_LABELS[stepKey]}
             </span>
             <span
               className={`rounded-full px-2 py-0.5 text-xs font-medium ${style.bg} ${style.text}`}

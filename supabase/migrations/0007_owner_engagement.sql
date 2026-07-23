@@ -1,7 +1,7 @@
 -- 0007: 오너(기업) 능동적 참여 — deal_message 확장 + client RLS
 
 -- deal_message sender_type CHECK 확장: 'client' 추가
-alter table deal_message drop constraint deal_message_sender_type_check;
+alter table deal_message drop constraint if exists deal_message_sender_type_check;
 alter table deal_message add constraint deal_message_sender_type_check
   check (sender_type in ('partner', 'admin', 'client'));
 

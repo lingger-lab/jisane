@@ -1,6 +1,5 @@
 import { NextResponse } from 'next/server'
-import { adminClient } from '@jisane/shared/supabase/admin'
-import { confirmPayment } from '@jisane/shared/payment'
+import { confirmAndRecordDeposit } from '@/lib/payments/confirm-deposit'
 import crypto from 'crypto'
 
 /**
@@ -23,7 +22,12 @@ export async function POST(request: Request) {
     .createHmac('sha256', webhookSecret)
     .update(body)
     .digest('base64')
-  if (signature !== expected) {
+  const signatureBuf = Buffer.from(signature)
+  const expectedBuf = Buffer.from(expected)
+  if (
+    signatureBuf.length !== expectedBuf.length ||
+    !crypto.timingSafeEqual(signatureBuf, expectedBuf)
+  ) {
     return NextResponse.json({ error: 'Invalid signature' }, { status: 401 })
   }
 
@@ -56,40 +60,15 @@ export async function POST(request: Request) {
   }
   const dealId = parts[1]
 
-  // deal 조회
-  const { data: deal } = await adminClient
-    .from('deal')
-    .select('id, total_pay, status')
-    .eq('id', dealId)
-    .single()
+  const result = await confirmAndRecordDeposit(dealId, paymentKey, orderId)
 
-  if (!deal) {
-    return NextResponse.json({ error: 'Deal not found' }, { status: 404 })
+  if (!result.ok) {
+    // 캡처 이후 DB 기록 실패 포함 — non-2xx를 반환해 Toss 재전송을 유도
+    return NextResponse.json({ error: result.error }, { status: result.status })
   }
 
-  // Toss 결제 승인
-  const confirmResult = await confirmPayment(paymentKey, orderId, deal.total_pay)
-  if (!confirmResult.success) {
-    return NextResponse.json({ error: confirmResult.error }, { status: 500 })
-  }
-
-  // settlement 업데이트
-  await adminClient
-    .from('settlement')
-    .update({
-      escrow_status: 'deposited',
-      payment_key: paymentKey,
-      deposited_at: new Date().toISOString(),
-    })
-    .eq('deal_id', dealId)
-
-  // deal.status → 'working' (quoted인 경우에만)
-  if (deal.status === 'quoted') {
-    await adminClient
-      .from('deal')
-      .update({ status: 'working' })
-      .eq('id', dealId)
-  }
-
-  return NextResponse.json({ success: true })
+  return NextResponse.json({
+    success: true,
+    ...(result.alreadyProcessed ? { message: 'Already processed' } : {}),
+  })
 }
