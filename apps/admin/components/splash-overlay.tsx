@@ -1,25 +1,16 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { OwlIcon } from '@jisane/ui/icons/owl'
 
-const SPLASH_SEEN_KEY = 'jisane_splash_seen'
-
 export function SplashOverlay() {
-  // SSR/하이드레이션 불일치 방지: 기본 숨김 → 마운트 후 세션 첫 방문일 때만 표시
-  const [visible, setVisible] = useState(false)
+  // 허브 메인 진입 시마다 표시 (반복 노출 — 브랜드 인상 목적, 세션 제한 없음)
+  const [visible, setVisible] = useState(true)
   const [fading, setFading] = useState(false)
-
-  useEffect(() => {
-    if (!sessionStorage.getItem(SPLASH_SEEN_KEY)) {
-      setVisible(true)
-    }
-  }, [])
 
   if (!visible) return null
 
   function handleEnter() {
-    sessionStorage.setItem(SPLASH_SEEN_KEY, '1')
     setFading(true)
     setTimeout(() => setVisible(false), 500)
   }
