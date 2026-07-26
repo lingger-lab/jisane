@@ -8,6 +8,7 @@ import { KakaoIcon } from '@jisane/ui/icons/kakao'
 import { fetchOwnerLandingStats } from '@jisane/shared/landing-stats'
 import { getPackagesByAudience } from '@jisane/shared/service-catalog'
 import { CategoryBrowse } from '@jisane/ui/category-browse'
+import { CollapsibleSection } from '@jisane/ui/collapsible-section'
 import { AnimatedCounter } from '@jisane/ui/animated-counter'
 import { OwlIcon } from '@jisane/ui/icons/owl'
 
@@ -144,10 +145,13 @@ export default async function OwnerHome() {
         </section>
       </div>
 
-      {/* [4] 전문 서비스 */}
+      {/* [4] 전문 서비스 — 클릭 시 펼침 */}
       <section className="responsive-container px-4 md:px-6 py-8 md:py-12">
-        <h2 className="text-xl md:text-2xl font-bold text-text">{stats.totalServices}+ 전문 서비스를 둘러보세요</h2>
-        <div className="mt-4 flex flex-col gap-4">
+        <CollapsibleSection
+          title={`${stats.totalServices}+ 전문 서비스를 둘러보세요`}
+          subtitle="AX·경영 컨설팅 등 엄선된 전문 서비스"
+        >
+          <div className="flex flex-col gap-4">
           {services.map((pkg) => (
             <div
               key={pkg.slug}
@@ -190,7 +194,8 @@ export default async function OwnerHome() {
               </div>
             </div>
           ))}
-        </div>
+          </div>
+        </CollapsibleSection>
       </section>
 
       {/* [5] 신뢰 배지 — 풀블리드 배경 */}
@@ -204,16 +209,16 @@ export default async function OwnerHome() {
             ]).map((badge) => {
               const card = (
                 <div
-                  className={`flex flex-col items-center rounded-xl border border-border-light bg-white p-5 md:p-6 text-center shadow-sm${badge.href ? ' transition-colors hover:border-primary/30' : ''}`}
+                  className={`flex h-full flex-col items-center rounded-xl border border-border-light bg-white p-5 md:p-6 text-center shadow-sm${badge.href ? ' transition-colors hover:border-primary/30' : ''}`}
                 >
                   <span className="text-base md:text-lg font-bold text-primary">{badge.title}</span>
                   <span className="mt-1 text-xs md:text-sm text-text-muted">{badge.desc}</span>
                 </div>
               )
               return badge.href ? (
-                <a key={badge.title} href={badge.href}>{card}</a>
+                <a key={badge.title} href={badge.href} className="h-full">{card}</a>
               ) : (
-                <div key={badge.title}>{card}</div>
+                <div key={badge.title} className="h-full">{card}</div>
               )
             })}
           </div>

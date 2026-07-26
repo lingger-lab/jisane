@@ -110,38 +110,18 @@ export default async function AdminHome() {
             </div>
           </section>
 
-          {/* 먼저 꺼내놓는 다섯 가지 */}
+          {/* 지사네 표준 — 정책 페이지 링크 */}
           <section className="w-full animate-fade-in stagger-2">
-            <div className="rounded-2xl bg-white p-5 md:p-8 shadow-sm">
-              <h2 className="text-xl md:text-2xl font-bold font-serif text-text mb-4">먼저 꺼내놓는 다섯 가지</h2>
-              <div className="flex flex-col gap-3">
-                {([
-                  { num: '1', item: '값', desc: '수수료율을 계약 전에 확인합니다', href: '' },
-                  { num: '2', item: '범위', desc: '업무 범위, 착수 전에 못 박습니다', href: '/standard/scope' },
-                  { num: '3', item: '약속', desc: '대금, 에스크로에 먼저 보관합니다', href: '' },
-                  { num: '4', item: '몫', desc: '분배 구조, 숨기지 않습니다', href: '' },
-                  { num: '5', item: '복구', desc: '문제 시, 적립금으로 먼저 보전합니다', href: '/standard/guarantee' },
-                ]).map((row) => {
-                  const card = (
-                    <div className={`flex items-center gap-4 rounded-xl border border-border-light p-4 md:p-5${row.href ? ' transition-colors hover:border-primary/30 hover:shadow-xs' : ''}`}>
-                      <span className="text-xl md:text-2xl font-bold text-primary shrink-0 w-7 text-center">{row.num}</span>
-                      <div className="min-w-0 flex-1">
-                        <p className="text-sm md:text-base font-semibold text-text">{row.item}</p>
-                        <p className="mt-0.5 text-xs md:text-sm text-text-muted">{row.desc}</p>
-                      </div>
-                      {row.href && (
-                        <span className="text-sm font-medium text-primary shrink-0">&rarr;</span>
-                      )}
-                    </div>
-                  )
-                  return row.href ? (
-                    <Link key={row.item} href={row.href}>{card}</Link>
-                  ) : (
-                    <div key={row.item}>{card}</div>
-                  )
-                })}
+            <Link
+              href="/standard"
+              className="flex items-center justify-between gap-4 rounded-2xl border border-border-light bg-white p-5 md:p-6 shadow-sm transition-colors hover:border-primary/30 card-hover"
+            >
+              <div className="min-w-0">
+                <p className="text-base md:text-lg font-bold font-serif text-text">먼저 꺼내놓는 다섯 가지</p>
+                <p className="mt-1 text-sm text-text-muted">값 · 범위 · 약속 · 몫 · 복구 — 지사네 표준 보기</p>
               </div>
-            </div>
+              <span className="text-sm font-semibold text-primary shrink-0">&rarr;</span>
+            </Link>
           </section>
         </main>
       </div>

@@ -1,15 +1,25 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { OwlIcon } from '@jisane/ui/icons/owl'
 
+const SPLASH_SEEN_KEY = 'jisane_splash_seen'
+
 export function SplashOverlay() {
-  const [visible, setVisible] = useState(true)
+  // SSR/하이드레이션 불일치 방지: 기본 숨김 → 마운트 후 세션 첫 방문일 때만 표시
+  const [visible, setVisible] = useState(false)
   const [fading, setFading] = useState(false)
+
+  useEffect(() => {
+    if (!sessionStorage.getItem(SPLASH_SEEN_KEY)) {
+      setVisible(true)
+    }
+  }, [])
 
   if (!visible) return null
 
   function handleEnter() {
+    sessionStorage.setItem(SPLASH_SEEN_KEY, '1')
     setFading(true)
     setTimeout(() => setVisible(false), 500)
   }
@@ -22,14 +32,29 @@ export function SplashOverlay() {
       }`}
     >
       <div className="flex flex-col items-center px-6 text-center">
-        {/* 아이콘 — breathing 애니메이션 */}
-        <div className="splash-breathe">
-          <OwlIcon className="h-20 w-20 md:h-24 md:w-24 text-primary drop-shadow-sm" />
+        {/* 아이콘 — 드롭 바운스 등장 → 주기적 점프(squash&stretch) + 깜빡임 + 발밑 그림자 */}
+        <div className="splash-owl-stage relative">
+          <div className="splash-owl-drop">
+            <div className="splash-owl-hop">
+              <OwlIcon className="h-20 w-20 md:h-24 md:w-24 text-primary splash-owl owl-alive" />
+            </div>
+          </div>
+          <div className="splash-owl-shadow" aria-hidden="true" />
         </div>
 
-        {/* 브랜드명 — 스태거 입장 */}
+        {/* 브랜드명 — 스태거 입장, 부엉이 착지 시 글자별 찌그러짐 파동 */}
         <div className="mt-6 splash-stagger-1">
-          <h2 className="text-4xl md:text-5xl font-bold text-brand-gradient tracking-tight">지사네</h2>
+          <h2 className="text-4xl md:text-5xl font-bold tracking-tight" aria-label="지사네">
+            {['지', '사', '네'].map((ch, i) => (
+              <span
+                key={i}
+                aria-hidden="true"
+                className={`inline-block text-brand-gradient splash-char splash-char-${i + 1}`}
+              >
+                {ch}
+              </span>
+            ))}
+          </h2>
         </div>
 
         {/* 태그라인 */}

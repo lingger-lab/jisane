@@ -9,6 +9,7 @@ import { KakaoIcon } from '@jisane/ui/icons/kakao'
 import { fetchExpertLandingStats } from '@jisane/shared/landing-stats'
 import { getPackagesByAudience } from '@jisane/shared/service-catalog'
 import { CategoryBrowse } from '@jisane/ui/category-browse'
+import { CollapsibleSection } from '@jisane/ui/collapsible-section'
 import { AnimatedCounter } from '@jisane/ui/animated-counter'
 import { OwlIcon } from '@jisane/ui/icons/owl'
 
@@ -159,12 +160,14 @@ export default async function ExpertHome() {
         </section>
       </div>
 
-      {/* [4] 전문가 역량 강화 프로그램 — 풀블리드 배경 */}
+      {/* [4] 전문가 역량 강화 프로그램 — 풀블리드 배경, 클릭 시 펼침 */}
       <div className="w-full bg-accent/5 py-8 md:py-12">
         <section className="responsive-container px-4 md:px-6">
-          <h2 className="text-xl md:text-2xl font-bold text-text">당신의 30년, AI로 증폭하다</h2>
-          <p className="mt-1 text-sm md:text-base text-text-muted">경험 × AI = 증폭 — 역량 강화 프로그램</p>
-          <div className="mt-4 flex flex-col gap-4">
+          <CollapsibleSection
+            title="당신의 30년, AI로 증폭하다"
+            subtitle="경험 × AI = 증폭 — 역량 강화 프로그램"
+          >
+            <div className="flex flex-col gap-4">
             {education.map((pkg) => (
               <div
                 key={pkg.slug}
@@ -191,7 +194,8 @@ export default async function ExpertHome() {
                 </div>
               </div>
             ))}
-          </div>
+            </div>
+          </CollapsibleSection>
         </section>
       </div>
 
@@ -206,16 +210,16 @@ export default async function ExpertHome() {
             ]).map((badge) => {
               const card = (
                 <div
-                  className={`flex flex-col items-center rounded-xl border border-border-light bg-white p-5 md:p-6 text-center shadow-sm${badge.href ? ' transition-colors hover:border-accent/30' : ''}`}
+                  className={`flex h-full flex-col items-center rounded-xl border border-border-light bg-white p-5 md:p-6 text-center shadow-sm${badge.href ? ' transition-colors hover:border-accent/30' : ''}`}
                 >
                   <span className="text-base md:text-lg font-bold text-accent">{badge.title}</span>
                   <span className="mt-1 text-xs md:text-sm text-text-muted">{badge.desc}</span>
                 </div>
               )
               return badge.href ? (
-                <a key={badge.title} href={badge.href}>{card}</a>
+                <a key={badge.title} href={badge.href} className="h-full">{card}</a>
               ) : (
-                <div key={badge.title}>{card}</div>
+                <div key={badge.title} className="h-full">{card}</div>
               )
             })}
           </div>

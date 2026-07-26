@@ -17,6 +17,7 @@
     "./login-dropdown": "./components/login-dropdown.tsx",
     "./text-rotator": "./components/text-rotator.tsx",
     "./animated-counter": "./components/animated-counter.tsx",
+    "./collapsible-section": "./components/collapsible-section.tsx",
     "./chatbot-hint": "./components/chatbot-hint.tsx"
   },
   "devDependencies": {

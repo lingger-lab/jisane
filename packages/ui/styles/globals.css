@@ -157,13 +157,19 @@ body {
   .animate-scale-in,
   .animate-slide-up,
   .cta-pulse,
-  .splash-breathe,
   .splash-stagger-1,
   .splash-stagger-2,
   .splash-stagger-3,
   .splash-stagger-4,
   .splash-stagger-5,
-  .splash-line {
+  .splash-line,
+  .splash-owl-drop,
+  .splash-owl-hop,
+  .splash-owl-shadow,
+  .splash-char,
+  .owl-alive .owl-pupil,
+  .splash-owl .owl-eye,
+  .splash-owl .owl-pupil {
     animation: none;
   }
   .card-hover {
@@ -229,11 +235,6 @@ summary {
 .stagger-5 { animation-delay: 0.25s; }
 
 /* 스플래시 오버레이 애니메이션 */
-@keyframes breathe {
-  0%, 100% { transform: scale(1); opacity: 0.9; }
-  50% { transform: scale(1.04); opacity: 1; }
-}
-
 @keyframes splash-enter {
   from { opacity: 0; transform: translateY(12px); }
   to { opacity: 1; transform: translateY(0); }
@@ -242,10 +243,6 @@ summary {
 @keyframes line-expand {
   from { width: 0; opacity: 0; }
   to { width: 3rem; opacity: 1; }
-}
-
-.splash-breathe {
-  animation: breathe 3s ease-in-out infinite;
 }
 
 .splash-stagger-1 { animation: splash-enter 0.6s ease-out 0.2s both; }
@@ -257,6 +254,102 @@ summary {
 .splash-line {
   animation: line-expand 0.8s ease-out 0.6s both;
 }
+
+/* 스플래시 부엉이 — 드롭 등장 / 주기 점프(squash&stretch) / 발밑 그림자 / 깜빡임 / 글자 충격파 */
+@keyframes owl-drop {
+  0% { transform: translateY(-56px); opacity: 0; }
+  45% { transform: translateY(0) scale(1, 1); opacity: 1; }
+  55% { transform: translateY(0) scale(1.08, 0.92); }
+  70% { transform: translateY(-10px) scale(0.98, 1.02); }
+  85% { transform: translateY(0) scale(1.04, 0.96); }
+  100% { transform: translateY(0) scale(1, 1); }
+}
+
+@keyframes owl-hop {
+  0%, 55% { transform: translateY(0) scale(1, 1); }
+  58% { transform: translateY(2px) scale(1.06, 0.94); }
+  63% { transform: translateY(-12px) scale(0.96, 1.06); }
+  70% { transform: translateY(0) scale(1.1, 0.9); }
+  76% { transform: translateY(-4px) scale(0.98, 1.02); }
+  82%, 100% { transform: translateY(0) scale(1, 1); }
+}
+
+@keyframes owl-shadow-hop {
+  0%, 55% { transform: scaleX(1); opacity: 0.14; }
+  63% { transform: scaleX(0.8); opacity: 0.07; }
+  70% { transform: scaleX(1.15); opacity: 0.18; }
+  82%, 100% { transform: scaleX(1); opacity: 0.14; }
+}
+
+@keyframes owl-blink {
+  0%, 91%, 97%, 100% { transform: scaleY(1); }
+  94% { transform: scaleY(0.08); }
+}
+
+/* 두리번 — 깜빡임(transform)과 겹쳐도 충돌하지 않도록 독립 translate 속성 사용 */
+@keyframes owl-look {
+  0%, 68%, 100% { translate: 0 0; }
+  72%, 78% { translate: -1.5px 0; }
+  82%, 88% { translate: 1.5px 0; }
+  92% { translate: 0 0; }
+}
+
+/* 부엉이 착지(hop 70%) 직후 글자가 찌그러졌다 복원 — hop과 동일 주기/딜레이 */
+@keyframes char-squash {
+  0%, 69% { transform: translateY(0) scale(1, 1); }
+  73% { transform: translateY(2px) scale(1.08, 0.88); }
+  79% { transform: translateY(0) scale(0.97, 1.04); }
+  85%, 100% { transform: translateY(0) scale(1, 1); }
+}
+
+.splash-owl-drop {
+  animation: owl-drop 0.9s ease-out both;
+}
+
+.splash-owl-hop {
+  animation: owl-hop 3.6s ease-in-out 1.4s infinite;
+}
+
+.splash-owl-shadow {
+  position: absolute;
+  left: 50%;
+  bottom: -10px;
+  width: 56px;
+  height: 10px;
+  margin-left: -28px;
+  border-radius: 9999px;
+  background: rgba(28, 33, 29, 0.35);
+  filter: blur(4px);
+  opacity: 0.14;
+  animation: owl-shadow-hop 3.6s ease-in-out 1.4s infinite;
+}
+
+/* 헤더 로고 — 눈동자만 주기적으로 두리번 (지켜보는 느낌) */
+.owl-alive .owl-pupil {
+  transform-box: fill-box;
+  animation: owl-look 7s ease-in-out infinite;
+}
+
+.splash-owl .owl-eye {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: owl-blink 4.2s ease-in-out 1.6s infinite;
+}
+
+/* 스플래시 동공: 깜빡임 + 두리번 동시 (owl-alive 규칙보다 뒤에 두어 우선) */
+.splash-owl .owl-pupil {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: owl-blink 4.2s ease-in-out 1.6s infinite, owl-look 7s ease-in-out infinite;
+}
+
+.splash-char {
+  transform-origin: bottom;
+  animation: char-squash 3.6s ease-in-out 1.4s infinite;
+}
+
+.splash-char-2 { animation-delay: 1.44s; }
+.splash-char-3 { animation-delay: 1.48s; }
 
 /* iOS safe area 지원 */
 @supports (padding-bottom: env(safe-area-inset-bottom)) {
