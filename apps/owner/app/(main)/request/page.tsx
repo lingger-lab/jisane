@@ -3,6 +3,7 @@
 import { useActionState, useState } from 'react'
 import { createRequest } from '@/lib/request/actions'
 import { SubmitButton } from '@jisane/ui/submit-button'
+import { MoneyInput } from '@jisane/ui/money-input'
 
 /** 대분류 → 중분류 구조 (category 테이블과 동기) */
 const CATEGORY_TREE = [
@@ -133,13 +134,10 @@ export default function RequestPage() {
             희망 예산 <span className="text-xs text-text-subtle">(선택)</span>
           </label>
           <div className="relative">
-            <input
+            <MoneyInput
               id="budget_hope"
               name="budget_hope"
-              type="number"
-              min="0"
-              step="10000"
-              placeholder="예: 500000"
+              placeholder="예: 500,000"
               className="w-full rounded-xl border border-border-light bg-background px-4 py-3 pr-10 text-sm text-text placeholder:text-text-subtle focus:border-primary focus:ring-1 focus:ring-primary/20 focus:outline-none transition-colors"
             />
             <span className="absolute right-4 top-1/2 -translate-y-1/2 text-sm text-text-muted">

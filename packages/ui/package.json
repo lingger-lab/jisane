@@ -18,6 +18,7 @@
     "./text-rotator": "./components/text-rotator.tsx",
     "./animated-counter": "./components/animated-counter.tsx",
     "./collapsible-section": "./components/collapsible-section.tsx",
+    "./money-input": "./components/money-input.tsx",
     "./chatbot-hint": "./components/chatbot-hint.tsx"
   },
   "devDependencies": {
