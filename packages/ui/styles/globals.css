@@ -463,9 +463,11 @@ summary {
    콘텐츠 폭 기준(calc(50vw-350px))이라 뷰포트 코너가 아닌 화면 중앙-우측에 어정쩡하게 떠서
    덮어쓰기를 제거했다. 브랜드색·좌우 위치는 Docent 외형 탭에서 설정할 것.
 
-   예외(의도적 오버라이드): 모바일 세로 위치만 뷰포트 비율(vh)로 상향. 런처가 우하단
-   코너(bottom 20px)에 있으면 하단 CTA·푸터를 가리는데, 대시보드 offsetBottom은 px 고정값이라
-   "화면 높이 1/4 지점"을 표현할 수 없어 여기서만 덮는다. 색·좌우 위치는 여전히 대시보드 제어.
+   예외(의도적 오버라이드): 위치·노출 방식만 여기서 제어. 색·추천질문은 여전히 대시보드 제어.
+   ① 모바일 세로 위치를 화면 하단 1/4(25vh)로 상향 — 대시보드 offsetBottom은 px 고정값이라
+      비율 위치를 표현할 수 없음.
+   ② 닫힌 런처는 오른쪽 가장자리에 반쯤 숨김(peek 탭) — 콘텐츠 가림을 최소화하고,
+      마우스를 대거나(데스크톱) 터치하면(모바일) 슬라이드로 나온다. 열린 상태(닫기 X)는 항상 노출.
    (대시보드에서 런처 라벨을 설정하면 aria-label이 라벨 텍스트로 바뀌어 이 셀렉터가 빗나감 —
    그 경우 셀렉터 갱신 필요.) */
 @media (max-width: 767px) {
@@ -473,6 +475,21 @@ summary {
   button[aria-label="채팅 닫기"] {
     bottom: 25vh !important;
   }
+}
+
+/* 닫힌 런처: 오른쪽 가장자리에 손잡이(14px)만 보이게 밀어둔다 */
+button[aria-label="채팅 열기"] {
+  transform: translateX(calc(100% + 20px - 14px));
+  opacity: 0.55;
+  transition: transform 0.25s ease, opacity 0.25s ease;
+}
+
+/* 가장자리에 마우스 오버/포커스/터치 시 슬라이드 아웃 */
+button[aria-label="채팅 열기"]:hover,
+button[aria-label="채팅 열기"]:focus-visible,
+button[aria-label="채팅 열기"]:active {
+  transform: translateX(0);
+  opacity: 1;
 }
 
 /* 터치 타겟 최소 크기 */
