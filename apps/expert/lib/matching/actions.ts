@@ -161,7 +161,7 @@ export async function rejectMatching(matchingId: string): Promise<{ error?: stri
 
   const { data: matching } = await adminClient
     .from('matching')
-    .select('id, status, expert_id')
+    .select('id, status, expert_id, request_id')
     .eq('id', matchingId)
     .single()
 
@@ -177,6 +177,14 @@ export async function rejectMatching(matchingId: string): Promise<{ error?: stri
     .from('matching')
     .update({ status: 'rejected' })
     .eq('id', matchingId)
+
+  // 거절된 의뢰를 open으로 복귀 — 관리자 재매칭 액션은 open만 받으므로
+  // 복귀하지 않으면 의뢰가 matching 상태로 영구 고착된다 (dealt로 넘어간 경우는 제외)
+  await adminClient
+    .from('request')
+    .update({ status: 'open' })
+    .eq('id', matching.request_id)
+    .eq('status', 'matching')
 
   redirect('/matching')
 }

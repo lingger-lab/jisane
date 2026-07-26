@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { releaseSettlement } from '@/lib/admin/actions'
+import { confirmDepositManual, releaseSettlement } from '@/lib/admin/actions'
 
 interface SettlementItem {
   id: string
@@ -51,6 +51,18 @@ export function SettlementTab({
     setReleasing(settlementId)
     setError(null)
     const result = await releaseSettlement(settlementId)
+    if (result.error) {
+      setError(result.error)
+    }
+    setReleasing(null)
+  }
+
+  async function handleConfirmDeposit(settlementId: string, totalPay: number) {
+    if (!confirm(`입금 확인 처리하시겠습니까?\n총 결제액 ${totalPay.toLocaleString('ko-KR')}원이 실제 입금되었는지 계좌를 먼저 확인해주세요.`)) return
+
+    setReleasing(settlementId)
+    setError(null)
+    const result = await confirmDepositManual(settlementId)
     if (result.error) {
       setError(result.error)
     }
@@ -128,11 +140,13 @@ export function SettlementTab({
                     </span>
                   )}
                   <span className={`rounded-full px-2 py-0.5 text-xs font-medium ${
-                    s.escrow_status === 'deposited'
+                    s.escrow_status === 'pending'
+                      ? 'bg-error-light text-error'
+                      : s.escrow_status === 'deposited'
                       ? 'bg-info-light text-info'
                       : 'bg-warning-light text-warning'
                   }`}>
-                    {s.escrow_status === 'deposited' ? '입금 완료' : '검수 중'}
+                    {s.escrow_status === 'pending' ? '입금 대기' : s.escrow_status === 'deposited' ? '입금 완료' : '검수 중'}
                   </span>
                 </div>
               </div>
@@ -152,14 +166,25 @@ export function SettlementTab({
                 </div>
               </div>
 
-              <button
-                type="button"
-                onClick={() => handleRelease(s.id)}
-                disabled={releasing === s.id}
-                className="mt-3 w-full rounded-lg bg-success py-2 text-sm font-medium text-white hover:bg-success/90 disabled:opacity-50"
-              >
-                {releasing === s.id ? '처리 중...' : '정산 실행'}
-              </button>
+              {s.escrow_status === 'pending' ? (
+                <button
+                  type="button"
+                  onClick={() => handleConfirmDeposit(s.id, s.deal.total_pay)}
+                  disabled={releasing === s.id}
+                  className="mt-3 w-full rounded-lg bg-info py-2 text-sm font-medium text-white hover:bg-info/90 disabled:opacity-50"
+                >
+                  {releasing === s.id ? '처리 중...' : `입금 확인 (${s.deal.total_pay.toLocaleString('ko-KR')}원)`}
+                </button>
+              ) : (
+                <button
+                  type="button"
+                  onClick={() => handleRelease(s.id)}
+                  disabled={releasing === s.id}
+                  className="mt-3 w-full rounded-lg bg-success py-2 text-sm font-medium text-white hover:bg-success/90 disabled:opacity-50"
+                >
+                  {releasing === s.id ? '처리 중...' : '정산 실행'}
+                </button>
+              )}
             </div>
           ))}
         </div>

@@ -30,11 +30,11 @@ export async function expressInterest(
 ): Promise<{ error?: string }> {
   const expertId = await getExpertId()
 
-  // 동시 활성 관심표현 제한 (platform_config.max_interests, 기본 5)
+  // 동시 활성 관심표현 제한 (platform_config.max_active_interests, 기본 5)
   const { data: config } = await adminClient
     .from('platform_config')
     .select('value')
-    .eq('key', 'max_interests')
+    .eq('key', 'max_active_interests')
     .single()
 
   const maxInterests = config?.value ? Number(config.value) : 5

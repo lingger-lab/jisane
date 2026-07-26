@@ -136,7 +136,7 @@ export default async function AdminDashboardPage() {
           expert:expert!inner(id, name)
         )
       `)
-      .in('escrow_status', ['deposited', 'reviewing'])
+      .in('escrow_status', ['pending', 'deposited', 'reviewing'])
       .order('created_at', { ascending: false })
       .returns<SettlementWithDeal[]>(),
     adminClient

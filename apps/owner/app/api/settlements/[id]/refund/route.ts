@@ -41,16 +41,18 @@ export async function POST(
     return NextResponse.json({ error: 'Refund reason is required' }, { status: 400 })
   }
 
-  // settlement 조회
+  // settlement 조회 — 총 결제액은 settlement에 없으므로 deal에서 조인
   const { data: settlement } = await adminClient
     .from('settlement')
-    .select('id, deal_id, escrow_status, payment_key, refunded_amt, guarantee_fee, total_pay')
+    .select('id, deal_id, escrow_status, payment_key, refunded_amt, guarantee_fee, deal:deal!inner(total_pay)')
     .eq('id', settlementId)
     .single()
 
   if (!settlement) {
     return NextResponse.json({ error: 'Settlement not found' }, { status: 404 })
   }
+
+  const totalPay = (settlement.deal as unknown as { total_pay: number }).total_pay
 
   if (settlement.escrow_status !== 'deposited' && settlement.escrow_status !== 'reviewing') {
     return NextResponse.json(
@@ -61,9 +63,9 @@ export async function POST(
 
   // 환불 초과 검증
   const newRefundedAmt = (settlement.refunded_amt || 0) + amount
-  if (newRefundedAmt > settlement.total_pay) {
+  if (newRefundedAmt > totalPay) {
     return NextResponse.json(
-      { error: `환불 금액 초과: 총 결제액 ${settlement.total_pay}원, 누적 환불 요청 ${newRefundedAmt}원` },
+      { error: `환불 금액 초과: 총 결제액 ${totalPay}원, 누적 환불 요청 ${newRefundedAmt}원` },
       { status: 400 }
     )
   }
@@ -80,10 +82,12 @@ export async function POST(
       )
     }
   }
+  // 부분 환불은 기존 상태 유지 — 전액 환불됐을 때만 refunded로 전환
+  const isFullyRefunded = newRefundedAmt >= totalPay
   const { error: updateError } = await adminClient
     .from('settlement')
     .update({
-      escrow_status: 'refunded',
+      escrow_status: isFullyRefunded ? 'refunded' : settlement.escrow_status,
       refunded_amt: newRefundedAmt,
       refund_reason: reason,
       refunded_at: new Date().toISOString(),

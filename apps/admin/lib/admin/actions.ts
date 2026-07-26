@@ -253,6 +253,8 @@ export async function selectCandidate(
 
 /** 24시간 초과 시 1순위 자동 배정 체크 (배치 최적화) */
 export async function autoAssignOverdue(): Promise<number> {
+  await verifyAdmin()
+
   const { data: overdue } = await adminClient
     .from('matching_candidate')
     .select('id, request_id, expert_id, rank')
@@ -387,6 +389,43 @@ export async function createMatching(
   return {}
 }
 
+/**
+ * 수동 입금 확인 — 계좌이체 입금을 관리자가 확인하고 pending → deposited 전환.
+ * 토스페이먼츠 연동 전 브리지: 결제 연동이 붙으면 웹훅(confirmAndRecordDeposit)이
+ * 같은 전환을 자동으로 수행하며, 이 액션은 예외 처리용으로 남는다.
+ */
+export async function confirmDepositManual(
+  settlementId: string
+): Promise<{ error?: string }> {
+  await verifyAdmin()
+
+  const { data: settlement } = await adminClient
+    .from('settlement')
+    .select('id, escrow_status')
+    .eq('id', settlementId)
+    .single()
+
+  if (!settlement) return { error: '정산 정보를 찾을 수 없습니다.' }
+
+  if (settlement.escrow_status !== 'pending') {
+    return { error: `현재 상태(${settlement.escrow_status})에서는 입금 확인이 불가합니다.` }
+  }
+
+  const { error } = await adminClient
+    .from('settlement')
+    .update({
+      escrow_status: 'deposited',
+      deposited_at: new Date().toISOString(),
+    })
+    .eq('id', settlementId)
+    .eq('escrow_status', 'pending')
+
+  if (error) return { error: error.message }
+
+  revalidatePath('/dashboard')
+  return {}
+}
+
 export async function releaseSettlement(
   settlementId: string
 ): Promise<{ error?: string }> {
@@ -394,7 +433,7 @@ export async function releaseSettlement(
 
   const { data: settlement } = await adminClient
     .from('settlement')
-    .select('id, deal_id, escrow_status, guarantee_fee, deal:deal!inner(expert_id, request:request!inner(owner_id))')
+    .select('id, deal_id, escrow_status, guarantee_fee, deal:deal!inner(status, expert_id, request:request!inner(owner_id))')
     .eq('id', settlementId)
     .single()
 
@@ -402,6 +441,12 @@ export async function releaseSettlement(
 
   if (settlement.escrow_status !== 'deposited' && settlement.escrow_status !== 'reviewing') {
     return { error: `현재 상태(${settlement.escrow_status})에서는 정산 실행이 불가합니다.` }
+  }
+
+  // 검수 완료(done) 전 정산 금지 — quoted/working 상태에서 release하면 deal이 done으로 점프한다
+  const dealStatus = (settlement.deal as unknown as { status: string }).status
+  if (dealStatus !== 'done') {
+    return { error: '검수가 완료되지 않은 거래입니다. 발주자 검수 확인 후 정산할 수 있습니다.' }
   }
 
   // open dispute 가드
@@ -661,6 +706,8 @@ export async function getMessagesForDeal(dealId: string) {
 
 /** 정산 자동 release (대시보드 로드 시 실행) */
 export async function runAutoRelease() {
+  await verifyAdmin()
+
   const result = await autoReleaseSettlements(adminClient, recalcExpertScores, batchRecalcExpertScores)
   if (result.released > 0) revalidatePath('/dashboard')
   return result

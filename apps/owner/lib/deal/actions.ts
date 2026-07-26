@@ -5,6 +5,7 @@ import { revalidatePath } from 'next/cache'
 import { adminClient } from '@jisane/shared/supabase/admin'
 import { getAuthUserId, verifyDealOwnership } from '@jisane/shared/auth/server-helpers'
 import { approveDealOp, confirmDealOp, requestRevisionOp } from '@jisane/shared/deal/deal-operations'
+import { recalcExpertScores } from '@jisane/shared/expert-scoring'
 
 export async function approveDeal(dealId: string): Promise<{ error?: string }> {
   const result = await approveDealOp(dealId)
@@ -80,6 +81,17 @@ export async function submitReview(
     })
 
   if (error) return { error: error.message }
+
+  // 리뷰 점수를 전문가 스코어에 즉시 반영 — release 시점 재계산에만 의존하면
+  // release 후 작성된 리뷰가 다음 관리자 이벤트까지 미반영으로 남는다
+  const { data: dealRow } = await adminClient
+    .from('deal')
+    .select('expert_id')
+    .eq('id', dealId)
+    .single()
+  if (dealRow?.expert_id) {
+    await recalcExpertScores(adminClient, dealRow.expert_id)
+  }
 
   revalidatePath(`/status/${requestId}`)
   return {}

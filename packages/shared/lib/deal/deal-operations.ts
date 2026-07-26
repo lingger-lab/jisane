@@ -49,6 +49,18 @@ export async function confirmDealOp(dealId: string): Promise<{ error?: string; r
     return { error: '검수할 수 없는 상태입니다.' }
   }
 
+  // 입금 확인(deposited) 전 검수 완료 차단 — 미입금 정산이 reviewing으로 넘어가
+  // 3일 후 자동정산(released)까지 진행되는 것을 구조적으로 막는다
+  const { data: settlement } = await adminClient
+    .from('settlement')
+    .select('escrow_status')
+    .eq('deal_id', dealId)
+    .single()
+
+  if (!settlement || settlement.escrow_status !== 'deposited') {
+    return { error: '입금 확인 전에는 검수를 완료할 수 없습니다. 입금이 확인되면 다시 시도해주세요.' }
+  }
+
   const { error: dealError } = await adminClient
     .from('deal')
     .update({ status: 'done' })
