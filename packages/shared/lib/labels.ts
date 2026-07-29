@@ -76,3 +76,29 @@ export const ESCROW_STATUS_LABELS: Record<string, string> = {
   released: '정산 완료',
   refunded: '환불',
 }
+
+export const PROVIDER_STATUS_LABELS: Record<string, string> = {
+  pending: '승인 대기',
+  active: '활동 중',
+  rejected: '반려',
+  suspended: '중지',
+}
+
+export const PACKAGE_STATUS_LABELS: Record<string, string> = {
+  draft: '비공개 (검수 대기)',
+  published: '공개 중',
+  archived: '보관',
+}
+
+export const PROVIDER_KIND_LABELS: Record<string, string> = {
+  company: '기업',
+  senior: '시니어 전문가',
+}
+
+export const PROVIDER_TYPE_LABELS: Record<string, string> = {
+  consulting: '컨설팅',
+  legal: '법무',
+  tax: '세무',
+  accounting: '회계',
+  insurance: '보험',
+}

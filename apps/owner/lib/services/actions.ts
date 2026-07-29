@@ -4,7 +4,7 @@ import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
 import { createClient } from '@jisane/shared/supabase/server'
 import { adminClient } from '@jisane/shared/supabase/admin'
-import { getPackageBySlug } from '@jisane/shared/service-catalog'
+import { getPackageBySlug } from '@jisane/shared/service-package/queries'
 
 interface CreateServiceOrderState {
   error?: string
@@ -29,7 +29,7 @@ export async function createServiceOrder(
     return { error: '패키지 정보가 없습니다.' }
   }
 
-  const pkg = getPackageBySlug(slug)
+  const pkg = await getPackageBySlug(slug)
   if (!pkg || pkg.targetAudience !== 'owner') {
     return { error: '유효하지 않은 서비스입니다.' }
   }
@@ -64,6 +64,7 @@ export async function createServiceOrder(
     detail: detail?.trim() || null,
     provider_id: pkg.providerId,
     is_free: pkg.isFree,
+    service_package_id: pkg.id ?? null,
   })
 
   if (error) {

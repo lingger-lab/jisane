@@ -7,7 +7,7 @@ import { signInWithGoogle, signInWithKakao } from '@jisane/shared/auth/actions'
 import { GoogleIcon } from '@jisane/ui/icons/google'
 import { KakaoIcon } from '@jisane/ui/icons/kakao'
 import { fetchExpertLandingStats } from '@jisane/shared/landing-stats'
-import { getPackagesByAudience } from '@jisane/shared/service-catalog'
+import { getPackagesByAudience } from '@jisane/shared/service-package/queries'
 import { CategoryBrowse } from '@jisane/ui/category-browse'
 import { CollapsibleSection } from '@jisane/ui/collapsible-section'
 import { AnimatedCounter } from '@jisane/ui/animated-counter'
@@ -32,7 +32,7 @@ export default async function ExpertHome() {
   }
 
   const stats = await fetchExpertLandingStats()
-  const education = getPackagesByAudience('expert')
+  const education = await getPackagesByAudience('expert')
   const adminUrl = process.env.NEXT_PUBLIC_ADMIN_URL || 'https://jisane.cloud'
   const ownerUrl = process.env.NEXT_PUBLIC_OWNER_URL || 'https://owner.jisane.cloud'
 

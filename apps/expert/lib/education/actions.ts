@@ -4,7 +4,7 @@ import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
 import { createClient } from '@jisane/shared/supabase/server'
 import { adminClient } from '@jisane/shared/supabase/admin'
-import { getPackageBySlug } from '@jisane/shared/service-catalog'
+import { getPackageBySlug } from '@jisane/shared/service-package/queries'
 
 interface CreateEducationOrderState {
   error?: string
@@ -29,7 +29,7 @@ export async function createEducationOrder(
     return { error: '과정 정보가 없습니다.' }
   }
 
-  const pkg = getPackageBySlug(slug)
+  const pkg = await getPackageBySlug(slug)
   if (!pkg || pkg.targetAudience !== 'expert') {
     return { error: '유효하지 않은 교육 과정입니다.' }
   }
@@ -54,6 +54,7 @@ export async function createEducationOrder(
     detail: detail?.trim() || null,
     provider_id: pkg.providerId,
     is_free: pkg.isFree,
+    service_package_id: pkg.id ?? null,
   })
 
   if (error) {

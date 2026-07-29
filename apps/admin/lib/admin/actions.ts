@@ -389,6 +389,42 @@ export async function createMatching(
   return {}
 }
 
+/** 파트너(provider) 상태 변경 — 승인/반려/중지/재활성 */
+export async function updateProviderStatus(
+  providerId: string,
+  status: 'active' | 'rejected' | 'suspended'
+): Promise<{ error?: string }> {
+  await verifyAdmin()
+
+  const { error } = await adminClient
+    .from('provider')
+    .update({ status })
+    .eq('id', providerId)
+
+  if (error) return { error: error.message }
+
+  revalidatePath('/dashboard')
+  return {}
+}
+
+/** 파트너 서비스 검수 — draft ↔ published / archived 전환 */
+export async function updatePackageStatus(
+  packageId: string,
+  status: 'draft' | 'published' | 'archived'
+): Promise<{ error?: string }> {
+  await verifyAdmin()
+
+  const { error } = await adminClient
+    .from('service_package')
+    .update({ status })
+    .eq('id', packageId)
+
+  if (error) return { error: error.message }
+
+  revalidatePath('/dashboard')
+  return {}
+}
+
 /**
  * 수동 입금 확인 — 계좌이체 입금을 관리자가 확인하고 pending → deposited 전환.
  * 토스페이먼츠 연동 전 브리지: 결제 연동이 붙으면 웹훅(confirmAndRecordDeposit)이

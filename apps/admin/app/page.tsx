@@ -107,6 +107,20 @@ export default async function AdminHome() {
                 )}
                 <div className="mt-4 text-sm font-semibold text-accent">전문가공간 바로가기 &rarr;</div>
               </a>
+
+              {/* 파트너공간 — 특수관계 제공기관용 슬림 카드 */}
+              <Link
+                href="/partner"
+                className="flex items-center justify-between rounded-2xl border-t-4 border-t-info border border-border-light bg-white p-4 md:p-5 shadow-sm card-hover transition-all"
+              >
+                <div className="min-w-0">
+                  <p className="text-base md:text-lg font-bold text-info">파트너공간</p>
+                  <p className="mt-1 text-xs md:text-sm text-text-muted">
+                    전문서비스를 등록하고 기업·전문가에게 제공하세요 — 서비스 등록 · 신청 관리
+                  </p>
+                </div>
+                <span className="text-sm font-semibold text-info shrink-0">&rarr;</span>
+              </Link>
             </div>
           </section>
 

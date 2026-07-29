@@ -748,30 +748,125 @@ export type Database = {
       }
       provider: {
         Row: {
+          auth_user_id: string | null
+          contact: string | null
           created_at: string
+          description: string | null
+          email: string | null
           id: string
+          kind: Database["public"]["Enums"]["provider_kind"]
           logo: string | null
           name: string
+          provider: Database["public"]["Enums"]["auth_provider"] | null
+          status: Database["public"]["Enums"]["provider_status"]
           type: Database["public"]["Enums"]["provider_type"]
           updated_at: string
+          website: string | null
         }
         Insert: {
+          auth_user_id?: string | null
+          contact?: string | null
           created_at?: string
+          description?: string | null
+          email?: string | null
           id?: string
+          kind?: Database["public"]["Enums"]["provider_kind"]
           logo?: string | null
           name: string
+          provider?: Database["public"]["Enums"]["auth_provider"] | null
+          status?: Database["public"]["Enums"]["provider_status"]
           type: Database["public"]["Enums"]["provider_type"]
           updated_at?: string
+          website?: string | null
         }
         Update: {
+          auth_user_id?: string | null
+          contact?: string | null
           created_at?: string
+          description?: string | null
+          email?: string | null
           id?: string
+          kind?: Database["public"]["Enums"]["provider_kind"]
           logo?: string | null
           name?: string
+          provider?: Database["public"]["Enums"]["auth_provider"] | null
+          status?: Database["public"]["Enums"]["provider_status"]
           type?: Database["public"]["Enums"]["provider_type"]
           updated_at?: string
+          website?: string | null
         }
         Relationships: []
+      }
+      service_package: {
+        Row: {
+          ax_dashboard_url: string | null
+          category: Database["public"]["Enums"]["service_category"]
+          created_at: string
+          deliverables: string[]
+          description: string
+          duration: string | null
+          featured: boolean
+          id: string
+          is_free: boolean
+          name: string
+          price: number
+          provider_id: string
+          slug: string
+          sort_order: number
+          status: Database["public"]["Enums"]["service_package_status"]
+          target_audience: Database["public"]["Enums"]["service_audience"]
+          updated_at: string
+          value_desc: string
+        }
+        Insert: {
+          ax_dashboard_url?: string | null
+          category: Database["public"]["Enums"]["service_category"]
+          created_at?: string
+          deliverables?: string[]
+          description: string
+          duration?: string | null
+          featured?: boolean
+          id?: string
+          is_free?: boolean
+          name: string
+          price: number
+          provider_id: string
+          slug: string
+          sort_order?: number
+          status?: Database["public"]["Enums"]["service_package_status"]
+          target_audience: Database["public"]["Enums"]["service_audience"]
+          updated_at?: string
+          value_desc?: string
+        }
+        Update: {
+          ax_dashboard_url?: string | null
+          category?: Database["public"]["Enums"]["service_category"]
+          created_at?: string
+          deliverables?: string[]
+          description?: string
+          duration?: string | null
+          featured?: boolean
+          id?: string
+          is_free?: boolean
+          name?: string
+          price?: number
+          provider_id?: string
+          slug?: string
+          sort_order?: number
+          status?: Database["public"]["Enums"]["service_package_status"]
+          target_audience?: Database["public"]["Enums"]["service_audience"]
+          updated_at?: string
+          value_desc?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "service_package_provider_id_fkey"
+            columns: ["provider_id"]
+            isOneToOne: false
+            referencedRelation: "provider"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       request: {
         Row: {
@@ -959,6 +1054,7 @@ export type Database = {
           package_slug: string
           price: number
           provider_id: string | null
+          service_package_id: string | null
           status: Database["public"]["Enums"]["order_status"]
           updated_at: string
         }
@@ -974,6 +1070,7 @@ export type Database = {
           package_slug: string
           price: number
           provider_id?: string | null
+          service_package_id?: string | null
           status?: Database["public"]["Enums"]["order_status"]
           updated_at?: string
         }
@@ -989,10 +1086,18 @@ export type Database = {
           package_slug?: string
           price?: number
           provider_id?: string | null
+          service_package_id?: string | null
           status?: Database["public"]["Enums"]["order_status"]
           updated_at?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "service_order_service_package_id_fkey"
+            columns: ["service_package_id"]
+            isOneToOne: false
+            referencedRelation: "service_package"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "service_order_owner_id_fkey"
             columns: ["owner_id"]
@@ -1108,11 +1213,15 @@ export type Database = {
       message_sender_type: "owner" | "expert" | "admin"
       order_status: "pending" | "paid" | "processing" | "completed" | "cancelled"
       owner_status: "active" | "inactive"
+      provider_kind: "company" | "senior"
+      provider_status: "pending" | "active" | "rejected" | "suspended"
       provider_type: "consulting" | "legal" | "tax" | "accounting" | "insurance"
       queue_status: "auto_passed" | "pending_review" | "audited"
       request_status: "open" | "matching" | "dealt" | "closed"
       review_author: "owner" | "expert" | "admin"
+      service_audience: "owner" | "expert"
       service_category: "ax_consulting" | "biz_consulting" | "education"
+      service_package_status: "draft" | "published" | "archived"
       step_status: "pending" | "in_progress" | "done"
       workflow_step: "intake" | "structure" | "generate" | "verify" | "deliver"
     }
@@ -1268,11 +1377,15 @@ export const Constants = {
       message_sender_type: ["owner", "expert", "admin"],
       order_status: ["pending", "paid", "processing", "completed", "cancelled"],
       owner_status: ["active", "inactive"],
+      provider_kind: ["company", "senior"],
+      provider_status: ["pending", "active", "rejected", "suspended"],
       provider_type: ["consulting", "legal", "tax", "accounting", "insurance"],
       queue_status: ["auto_passed", "pending_review", "audited"],
       request_status: ["open", "matching", "dealt", "closed"],
       review_author: ["owner", "expert", "admin"],
+      service_audience: ["owner", "expert"],
       service_category: ["ax_consulting", "biz_consulting", "education"],
+      service_package_status: ["draft", "published", "archived"],
       step_status: ["pending", "in_progress", "done"],
       workflow_step: ["intake", "structure", "generate", "verify", "deliver"],
     },

@@ -24,6 +24,7 @@ const TAB_GROUPS = [
     label: '지원',
     tabs: [
       { key: 'service', label: '서비스 주문' },
+      { key: 'partner', label: '파트너' },
       { key: 'inquiry', label: '문의' },
     ],
   },
@@ -39,6 +40,7 @@ interface DashboardTabsProps {
   settlementTab: ReactNode
   disputeTab: ReactNode
   serviceTab: ReactNode
+  partnerTab: ReactNode
   inquiryTab: ReactNode
   urgentCount: number
   auditCount: number
@@ -52,6 +54,7 @@ export function DashboardTabs({
   settlementTab,
   disputeTab,
   serviceTab,
+  partnerTab,
   inquiryTab,
   urgentCount,
   auditCount,
@@ -118,6 +121,7 @@ export function DashboardTabs({
       {activeTab === 'settlement' && settlementTab}
       {activeTab === 'dispute' && disputeTab}
       {activeTab === 'service' && serviceTab}
+      {activeTab === 'partner' && partnerTab}
       {activeTab === 'inquiry' && inquiryTab}
     </div>
   )

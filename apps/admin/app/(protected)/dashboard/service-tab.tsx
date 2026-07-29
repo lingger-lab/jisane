@@ -1,7 +1,11 @@
 'use client'
 
 import { useState } from 'react'
-import { getPackageBySlug } from '@jisane/shared/service-catalog'
+
+/** 서버(dashboard page)에서 service_package를 조회해 slug 맵으로 내려준다 */
+export interface PackageInfoBySlug {
+  [slug: string]: { duration: string | null; deliverables: string[] }
+}
 
 interface ServiceOrderItem {
   id: string
@@ -42,7 +46,13 @@ const CATEGORY_FILTERS = [
 
 const STATUS_OPTIONS = ['pending', 'paid', 'processing', 'completed', 'cancelled']
 
-export function ServiceTab({ orders }: { orders: ServiceOrderItem[] }) {
+export function ServiceTab({
+  orders,
+  packagesBySlug,
+}: {
+  orders: ServiceOrderItem[]
+  packagesBySlug: PackageInfoBySlug
+}) {
   const [items, setItems] = useState(orders)
   const [updating, setUpdating] = useState<string | null>(null)
   const [updateError, setUpdateError] = useState<string | null>(null)
@@ -116,7 +126,7 @@ export function ServiceTab({ orders }: { orders: ServiceOrderItem[] }) {
         <div className="flex flex-col gap-3">
           {filtered.map((order) => {
             const statusInfo = STATUS_LABELS[order.status] || STATUS_LABELS.pending
-            const pkg = getPackageBySlug(order.package_slug)
+            const pkg = packagesBySlug[order.package_slug]
             const isExpanded = expandedId === order.id
 
             return (

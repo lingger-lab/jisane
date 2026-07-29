@@ -20,6 +20,7 @@ import { ProposedTab } from './proposed-tab'
 import { ProgressTab } from './progress-tab'
 import { InvitationTab } from './invitation-tab'
 import { SettlementTab } from './settlement-tab'
+import { PartnerTab, type ProviderItem, type DraftPackageItem } from './partner-tab'
 import { ServiceTab } from './service-tab'
 import { DisputeTab } from './dispute-tab'
 import { InquiryTab } from './inquiry-tab'
@@ -185,6 +186,28 @@ export default async function AdminDashboardPage() {
   const allDisputes = allDisputesRes.data
   const rawInquiries = rawInquiriesRes.data
 
+  // 주문 카드의 제공 내용/소요 표시용 — service_package를 slug 맵으로 (하드코딩 카탈로그 대체)
+  // + 파트너 탭: 전체 provider 목록·검수 대기(draft) 서비스
+  const [{ data: packageRows }, { data: allProviders }, { data: draftPackages }] =
+    await Promise.all([
+      adminClient.from('service_package').select('slug, duration, deliverables'),
+      adminClient
+        .from('provider')
+        .select('id, name, kind, type, status, email, contact, description, website, auth_user_id, created_at')
+        .order('created_at', { ascending: false }),
+      adminClient
+        .from('service_package')
+        .select('id, name, category, price, is_free, target_audience, status, created_at, provider:provider!inner(name)')
+        .eq('status', 'draft')
+        .order('created_at', { ascending: false }),
+    ])
+  const packagesBySlug = Object.fromEntries(
+    (packageRows || []).map((p) => [
+      p.slug,
+      { duration: p.duration, deliverables: p.deliverables },
+    ])
+  )
+
   // 의뢰별 관심 표현 카운트
   const interestsByRequest = new Map<string, number>()
   for (const interest of (interestsDataRes.data || []) as Array<{ request_id: string }>) {
@@ -297,7 +320,13 @@ export default async function AdminDashboardPage() {
           <DisputeTab disputes={allDisputes || []} />
         }
         serviceTab={
-          <ServiceTab orders={serviceOrders || []} />
+          <ServiceTab orders={serviceOrders || []} packagesBySlug={packagesBySlug} />
+        }
+        partnerTab={
+          <PartnerTab
+            providers={(allProviders || []) as ProviderItem[]}
+            draftPackages={(draftPackages || []) as unknown as DraftPackageItem[]}
+          />
         }
         inquiryTab={
           <InquiryTab inquiries={inquiries || []} />

@@ -14,16 +14,19 @@ function getSiteUrl(): string {
   return 'http://localhost:3000'
 }
 
-export async function signInWithGoogle() {
+async function signInWithOAuth(
+  provider: 'google' | 'kakao',
+  redirectPath: string = '/callback'
+) {
   const cookieStore = await cookies()
   const supabase = createClient(cookieStore)
 
   const siteUrl = getSiteUrl()
 
   const { data, error } = await supabase.auth.signInWithOAuth({
-    provider: 'google',
+    provider,
     options: {
-      redirectTo: `${siteUrl}/callback`,
+      redirectTo: `${siteUrl}${redirectPath}`,
     },
   })
 
@@ -34,24 +37,21 @@ export async function signInWithGoogle() {
   redirect(data.url)
 }
 
+export async function signInWithGoogle() {
+  return signInWithOAuth('google')
+}
+
 export async function signInWithKakao() {
-  const cookieStore = await cookies()
-  const supabase = createClient(cookieStore)
+  return signInWithOAuth('kakao')
+}
 
-  const siteUrl = getSiteUrl()
+/** 파트너공간 로그인 — /partner/callback으로 복귀 (Supabase Redirect URLs 등록 필요) */
+export async function signInWithGooglePartner() {
+  return signInWithOAuth('google', '/partner/callback')
+}
 
-  const { data, error } = await supabase.auth.signInWithOAuth({
-    provider: 'kakao',
-    options: {
-      redirectTo: `${siteUrl}/callback`,
-    },
-  })
-
-  if (error || !data.url) {
-    redirect('/?error=auth')
-  }
-
-  redirect(data.url)
+export async function signInWithKakaoPartner() {
+  return signInWithOAuth('kakao', '/partner/callback')
 }
 
 export async function signOut() {
