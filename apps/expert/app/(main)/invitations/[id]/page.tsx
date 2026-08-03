@@ -5,6 +5,7 @@ import { createClient } from '@jisane/shared/supabase/server'
 import { adminClient } from '@jisane/shared/supabase/admin'
 import { INVITATION_STATUS_LABELS } from '@jisane/shared/labels'
 import type { InvitationWithOwner } from '@jisane/shared/query-types'
+import { PageHero } from '@jisane/ui/page-hero'
 import { InvitationActions } from './invitation-actions'
 
 interface PageProps {
@@ -62,18 +63,18 @@ export default async function InvitationDetailPage(props: PageProps) {
   const hourlyRate = expert.hourly_rate ?? 25000
 
   return (
-    <div className="flex flex-1 flex-col px-4 py-5 sm:px-6 sm:py-8 animate-fade-in">
-      {/* 네비게이션 */}
-      <div className="mb-4 flex items-center gap-2 text-sm text-text-muted">
-        <Link href="/invitations" className="hover:text-text transition-colors">&larr; 초빙 목록</Link>
-      </div>
-
+    <div className="flex flex-1 flex-col animate-fade-in">
+      <PageHero
+        eyebrow="시니어지식인회원"
+        title={invitation.owner.company ?? invitation.owner.ceo_name ?? '기업'}
+        subtitle={`${new Date(invitation.created_at).toLocaleDateString('ko-KR')} 초빙 요청`}
+        back={<Link href="/invitations" className="text-sm text-white/70 hover:text-white transition-colors">&larr; 초빙 목록</Link>}
+      />
+      <div className="responsive-container px-4 md:px-6 py-6">
       {/* 기업 정보 */}
       <section className="rounded-xl border border-border-light bg-surface-warm p-4 shadow-sm">
         <div className="flex items-center justify-between gap-2">
-          <h1 className="text-lg font-bold text-text">
-            {invitation.owner.company ?? invitation.owner.ceo_name ?? '기업'}
-          </h1>
+          <h2 className="text-sm font-bold text-text">기업 정보</h2>
           <span className={`rounded-full px-2.5 py-1 text-xs font-medium ${
             invitation.status === 'invited'
               ? 'bg-info-light text-info'
@@ -84,6 +85,7 @@ export default async function InvitationDetailPage(props: PageProps) {
             {INVITATION_STATUS_LABELS[invitation.status] ?? invitation.status}
           </span>
         </div>
+        <p className="mt-2 font-medium text-text">{invitation.owner.company ?? invitation.owner.ceo_name ?? '기업'}</p>
         <p className="mt-1 text-xs text-text-muted">{invitation.owner.email}</p>
         <div className="mt-2 flex gap-2 text-xs text-text-subtle">
           <span>{new Date(invitation.created_at).toLocaleDateString('ko-KR')} 요청</span>
@@ -138,6 +140,7 @@ export default async function InvitationDetailPage(props: PageProps) {
           hourlyRate={hourlyRate}
         />
       )}
+      </div>
     </div>
   )
 }

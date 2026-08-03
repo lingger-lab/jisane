@@ -93,14 +93,8 @@ export function RequestList({
 
   return (
     <div>
-      {/* 헤더 */}
-      <div className="mb-4 flex items-center gap-2">
-        <Link href="/" className="text-sm text-text-muted hover:text-text transition-colors">
-          &larr; 홈
-        </Link>
-      </div>
-      <h1 className="text-lg md:text-xl lg:text-2xl font-bold text-text">열린 의뢰 탐색</h1>
-      <p className="mt-1 text-sm text-text-muted">
+      {/* 결과 요약 */}
+      <p className="text-sm text-text-muted">
         {query
           ? `"${query}" 검색 결과 ${requests.length}건`
           : requests.length > 0

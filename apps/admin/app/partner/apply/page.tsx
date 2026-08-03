@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { createClient } from '@jisane/shared/supabase/server'
 import { getProviderByAuthUser } from '@jisane/shared/provider/auth'
 import { ApplyForm } from './apply-form'
+import { PageHero } from '@jisane/ui/page-hero'
 
 export const metadata = { title: '전문가회원 등록 신청 | 지사네 전문가회원' }
 
@@ -58,12 +59,15 @@ export default async function PartnerApplyPage(props: {
   }
 
   return (
-    <div className="mx-auto max-w-xl px-6 py-10 animate-fade-in">
-      <h1 className="text-xl font-bold text-text">전문가회원 등록 신청</h1>
-      <p className="mt-1 mb-6 text-sm text-text-muted">
-        신청 내용을 검토한 뒤 관리자가 승인합니다. 승인 후 서비스 등록·신청 관리가 가능합니다.
-      </p>
-      <ApplyForm />
+    <div className="flex flex-1 flex-col animate-fade-in">
+      <PageHero
+        eyebrow="전문가회원"
+        title="전문가회원 등록 신청"
+        subtitle="신청 내용을 검토한 뒤 관리자가 승인합니다. 승인 후 서비스 등록·신청 관리가 가능합니다."
+      />
+      <div className="mx-auto w-full max-w-xl px-4 md:px-6 py-6">
+        <ApplyForm />
+      </div>
     </div>
   )
 }

@@ -7,6 +7,7 @@ import { adminClient } from '@jisane/shared/supabase/admin'
 import { signOut } from '@jisane/shared/auth/actions'
 import { REQUEST_STATUS_LABELS, ORDER_STATUS_LABELS, DEAL_STATUS_LABELS, INVITATION_STATUS_LABELS } from '@jisane/shared/labels'
 import { SuccessToast } from '@jisane/ui/toast'
+import { PageHero } from '@jisane/ui/page-hero'
 import { OwnerProfileForm } from './owner-profile-form'
 
 const STATUS_COLORS: Record<string, string> = {
@@ -122,13 +123,11 @@ export default async function OwnerMyPage() {
   }>
 
   return (
-    <div className="flex flex-1 flex-col px-4 py-5 sm:px-6 sm:py-8 animate-fade-in">
+    <div className="flex flex-1 flex-col animate-fade-in">
       <Suspense><SuccessToast /></Suspense>
-      <h1 className="mb-2 text-2xl font-bold text-primary">마이페이지</h1>
-      <p className="mb-6 text-sm text-text-muted">
-        회사 정보를 등록하면 의뢰·매칭이 더 정확해집니다.
-      </p>
+      <PageHero eyebrow="기업회원" title="마이페이지" subtitle="회사 정보를 등록하면 의뢰·매칭이 더 정확해집니다." />
 
+      <div className="responsive-container px-4 md:px-6 py-6">
       {/* 계정 요약 */}
       <div className="mb-6 flex items-center gap-3 rounded-xl border border-border-light bg-surface-warm p-4 shadow-sm">
         <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10 text-lg font-bold text-primary">
@@ -371,6 +370,7 @@ export default async function OwnerMyPage() {
           로그아웃
         </button>
       </form>
+      </div>
     </div>
   )
 }

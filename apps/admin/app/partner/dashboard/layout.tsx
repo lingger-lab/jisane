@@ -3,6 +3,7 @@ import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import { createClient } from '@jisane/shared/supabase/server'
 import { requireActiveProvider } from '@jisane/shared/provider/auth'
+import { PageHero } from '@jisane/ui/page-hero'
 
 /**
  * 전문가회원 대시보드 가드 — 인가는 세션이 아니라 provider 레코드+status로 판단.
@@ -26,17 +27,13 @@ export default async function PartnerDashboardLayout({
   }
 
   return (
-    <div className="mx-auto max-w-4xl px-6 py-6">
-      <div className="mb-5 flex items-center justify-between">
-        <div>
-          <p className="text-xs text-text-subtle">전문가회원 대시보드</p>
-          <p className="text-lg font-bold text-text">{guard.provider.name}</p>
-        </div>
-        <span className="rounded-full bg-success-light px-2.5 py-1 text-xs font-medium text-success">
-          활동 중
-        </span>
-      </div>
-
+    <div className="flex flex-1 flex-col">
+      <PageHero
+        eyebrow="전문가회원"
+        title={guard.provider.name}
+        subtitle="전문가회원 대시보드 · 활동 중"
+      />
+      <div className="mx-auto w-full max-w-4xl px-4 md:px-6 py-6">
       <nav className="mb-6 flex gap-1 overflow-x-auto rounded-lg bg-surface p-1">
         {[
           { href: '/partner/dashboard', label: '개요' },
@@ -55,6 +52,7 @@ export default async function PartnerDashboardLayout({
       </nav>
 
       {children}
+      </div>
     </div>
   )
 }

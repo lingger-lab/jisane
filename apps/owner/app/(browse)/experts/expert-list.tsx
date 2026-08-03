@@ -1,6 +1,5 @@
 'use client'
 
-import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { SearchBox } from '@jisane/ui/search-box'
 import { ExpertCard } from './expert-card'
@@ -52,14 +51,7 @@ export function ExpertList({ experts, categoryTree, selectedCategory, query }: E
 
   return (
     <div>
-      {/* 헤더 */}
-      <div className="mb-4 flex items-center gap-2">
-        <Link href="/" className="text-sm text-text-muted hover:text-text transition-colors">
-          &larr; 홈
-        </Link>
-      </div>
-      <h1 className="text-lg md:text-xl lg:text-2xl font-bold text-text">분야별 시니어지식인</h1>
-      <p className="mt-1 text-sm text-text-muted">
+      <p className="mb-3 text-sm text-text-muted">
         {query
           ? `"${query}" 검색 결과 ${experts.length}명`
           : experts.length > 0

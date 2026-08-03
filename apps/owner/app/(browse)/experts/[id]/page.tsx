@@ -6,6 +6,7 @@ import { adminClient } from '@jisane/shared/supabase/admin'
 import { getCachedCategories } from '@jisane/shared/categories'
 import { InviteButton } from '@/components/invite-button'
 import { SuccessToast } from '@jisane/ui/toast'
+import { PageHero } from '@jisane/ui/page-hero'
 import { Suspense } from 'react'
 
 interface PageProps {
@@ -99,24 +100,23 @@ export default async function ExpertDetailPage(props: PageProps) {
   }
 
   return (
-    <div className="flex flex-1 flex-col items-center">
-      <div className="responsive-container px-4 md:px-6 py-6 md:py-8">
-        {/* 네비게이션 */}
-        <div className="mb-4 flex items-center gap-2 text-sm text-text-muted">
-          <Link href="/" className="hover:text-text transition-colors">&larr; 홈</Link>
-          <span>/</span>
-          <Link href="/experts" className="hover:text-text transition-colors">시니어지식인</Link>
-        </div>
-
+    <div className="flex flex-1 flex-col">
+      <PageHero
+        eyebrow="기업회원"
+        title={expert.name ?? '시니어지식인'}
+        subtitle={expert.field ?? undefined}
+        back={
+          <div className="flex items-center gap-2 text-sm text-white/70">
+            <Link href="/" className="hover:text-white transition-colors">&larr; 홈</Link>
+            <span>/</span>
+            <Link href="/experts" className="hover:text-white transition-colors">시니어지식인</Link>
+          </div>
+        }
+      />
+      <div className="responsive-container w-full px-4 md:px-6 py-6 md:py-8">
         {/* 시니어지식인 프로필 */}
         <section className="rounded-2xl border border-border-light bg-white p-5 md:p-6 lg:p-8 shadow-xs">
-          <div className="flex items-start justify-between gap-3">
-            <div>
-              <h1 className="text-xl md:text-2xl font-bold text-text">{expert.name ?? '시니어지식인'}</h1>
-              {expert.field && (
-                <p className="mt-1 text-sm text-text-muted">{expert.field}</p>
-              )}
-            </div>
+          <div className="flex items-center justify-end gap-3">
             <span
               className={`shrink-0 rounded-full px-2.5 py-1 text-xs font-semibold ${
                 expert.grade === 'veteran'

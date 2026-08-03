@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import { PageHero } from '@jisane/ui/page-hero'
 
 export const metadata = {
   title: '서비스 안내 | 지사네',
@@ -18,19 +19,14 @@ export default function ServicePage() {
   const expertUrl = process.env.NEXT_PUBLIC_EXPERT_URL || 'https://expert.jisane.cloud'
 
   return (
-    <div className="mx-auto max-w-2xl px-6 py-12">
-      {/* 히어로 */}
-      <section className="mb-12 animate-fade-in">
-        <h1 className="text-3xl font-bold text-primary leading-tight">
-          지사네 서비스 안내
-        </h1>
-        <p className="mt-3 text-base text-text-muted leading-relaxed">
-          시니어지식인 인력 매칭 시스템과 기업용 전문 서비스를 제공합니다.
-          <br />
-          부울경 시니어지식인과 기업을 에스크로 직거래로 연결합니다.
-        </p>
-      </section>
-
+    <div className="flex flex-1 flex-col">
+      <PageHero
+        eyebrow="지사네 서비스"
+        title="지사네 서비스 안내"
+        subtitle="시니어지식인 인력 매칭 시스템과 기업용 전문 서비스를 제공합니다. 부울경 시니어지식인과 기업을 에스크로 직거래로 연결합니다."
+        size="lg"
+      />
+      <div className="responsive-container px-4 md:px-6 py-6">
       {/* 서비스 소개 */}
       <section className="mb-12 animate-fade-in stagger-1">
         <h2 className="mb-4 text-lg font-bold text-text">지사네가 하는 일</h2>
@@ -168,6 +164,7 @@ export default function ServicePage() {
           </span>
         </Link>
       </section>
+      </div>
     </div>
   )
 }

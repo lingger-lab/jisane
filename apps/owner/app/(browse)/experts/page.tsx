@@ -1,5 +1,6 @@
 import { adminClient } from '@jisane/shared/supabase/admin'
 import { getCachedCategories } from '@jisane/shared/categories'
+import { PageHero } from '@jisane/ui/page-hero'
 import { ExpertList } from './expert-list'
 
 export const metadata = {
@@ -103,8 +104,13 @@ export default async function ExpertsPage(props: PageProps) {
   }))
 
   return (
-    <div className="flex flex-1 flex-col items-center">
-      <div className="responsive-container px-4 md:px-6 py-6 md:py-8">
+    <div className="flex flex-1 flex-col">
+      <PageHero
+        eyebrow="기업회원"
+        title="분야별 시니어지식인"
+        subtitle="분야·검색으로 필요한 시니어지식인을 찾아보세요."
+      />
+      <div className="responsive-container w-full px-4 md:px-6 py-6 md:py-8">
         <ExpertList
           experts={(experts ?? []).map((p) => ({
             id: p.id,

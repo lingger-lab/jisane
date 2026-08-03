@@ -26,6 +26,7 @@ import { DisputeTab } from './dispute-tab'
 import { InquiryTab } from './inquiry-tab'
 import { DashboardTabs } from './dashboard-tabs'
 import { SummaryCard } from './summary-card'
+import { PageHero } from '@jisane/ui/page-hero'
 
 export default async function AdminDashboardPage() {
   const cookieStore = await cookies()
@@ -270,9 +271,9 @@ export default async function AdminDashboardPage() {
   }))
 
   return (
-    <div className="px-4 py-5 sm:px-6 sm:py-8 animate-fade-in">
-      <h1 className="mb-6 text-xl font-bold text-text">대시보드</h1>
-
+    <div className="flex flex-1 flex-col animate-fade-in">
+      <PageHero eyebrow="관리자" title="대시보드" />
+      <div className="px-4 py-6 sm:px-6">
       {/* 요약 카드 */}
       <div className="mb-6 grid grid-cols-3 gap-3 sm:grid-cols-3 md:grid-cols-5 lg:grid-cols-9">
         <SummaryCard label="매칭 대기" value={summary.matchingWaiting} unit="건" color="text-info" />
@@ -334,6 +335,7 @@ export default async function AdminDashboardPage() {
         urgentCount={urgentCount}
         auditCount={auditCount}
       />
+      </div>
     </div>
   )
 }

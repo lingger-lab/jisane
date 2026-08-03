@@ -1,3 +1,5 @@
+import { PageHero } from '@jisane/ui/page-hero'
+
 export const metadata = {
   title: '용역 명세서 | 지사네 거래 표준',
   description: '지사네 용역 명세서 양식 — 착수 전에 범위를 동사와 숫자로 못 박습니다.',
@@ -5,11 +7,14 @@ export const metadata = {
 
 export default function ScopePage() {
   return (
-    <div className="mx-auto max-w-2xl px-6 py-12">
-      <p className="text-xs font-semibold text-primary tracking-wide mb-2">거래 표준 문서 ①</p>
-      <h1 className="text-2xl font-bold text-text mb-2">지사네 용역 명세서</h1>
-      <p className="text-xs text-text-subtle mb-8">초안 v1.0 · 오해 제거 5대 메커니즘 ② 범위 실물화</p>
-
+    <div className="flex flex-1 flex-col">
+      <PageHero
+        eyebrow="거래 표준 문서 ①"
+        title="지사네 용역 명세서"
+        subtitle="초안 v1.0 · 오해 제거 5대 메커니즘 ② 범위 실물화"
+        size="lg"
+      />
+      <div className="responsive-container px-4 md:px-6 py-6">
       <div className="rounded-xl bg-surface-warm p-4 mb-8 text-sm text-text-muted leading-relaxed">
         <p className="font-semibold text-text mb-1">이 문서는 왜 존재하나요?</p>
         <p>
@@ -179,6 +184,7 @@ export default function ScopePage() {
             </div>
           </div>
         </section>
+      </div>
       </div>
     </div>
   )

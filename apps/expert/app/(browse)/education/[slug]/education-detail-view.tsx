@@ -4,6 +4,7 @@ import { useActionState } from 'react'
 import Link from 'next/link'
 import type { ServicePackage } from '@jisane/shared/service-catalog'
 import { SubmitButton } from '@jisane/ui/submit-button'
+import { PageHero } from '@jisane/ui/page-hero'
 import { createEducationOrder } from '@/lib/education/actions'
 
 export function EducationDetailView({ pkg }: { pkg: ServicePackage }) {
@@ -12,19 +13,17 @@ export function EducationDetailView({ pkg }: { pkg: ServicePackage }) {
   const axDashboardBase = process.env.NEXT_PUBLIC_ADMIN_URL || 'https://jisane.cloud'
 
   return (
-    <div className="flex flex-1 flex-col px-4 py-5 sm:px-6 sm:py-8 animate-fade-in">
-      <Link href="/education" className="mb-4 inline-flex items-center gap-1 text-sm text-text-muted hover:text-text transition-colors">
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="h-4 w-4">
-          <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" />
-        </svg>
-        교육 목록
-      </Link>
-
+    <div className="flex flex-1 flex-col animate-fade-in">
+      <PageHero
+        eyebrow="시니어지식인회원"
+        title={pkg.name}
+        subtitle={`제공: ${pkg.provider}`}
+        back={<Link href="/education" className="text-sm text-white/70 hover:text-white transition-colors">&larr; 교육 목록</Link>}
+      />
+      <div className="responsive-container px-4 md:px-6 py-6">
       {/* 과정 정보 */}
       <div className="mb-6">
-        <h1 className="text-2xl font-bold text-text">{pkg.name}</h1>
-        <p className="mt-1 text-xs text-text-subtle">제공: {pkg.provider}</p>
-        <p className="mt-2 text-sm text-text-muted leading-relaxed">{pkg.description}</p>
+        <p className="text-sm text-text-muted leading-relaxed">{pkg.description}</p>
 
         <div className="mt-4 flex items-baseline gap-2">
           <span className="text-2xl font-bold text-accent">
@@ -93,6 +92,7 @@ export function EducationDetailView({ pkg }: { pkg: ServicePackage }) {
           신청 후 담당 매니저가 연락드립니다.
         </p>
       </form>
+      </div>
     </div>
   )
 }

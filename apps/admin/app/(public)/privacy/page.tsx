@@ -1,13 +1,19 @@
+import { PageHero } from '@jisane/ui/page-hero'
+
 export const metadata = {
   title: '개인정보처리방침 | 지사네',
 }
 
 export default function PrivacyPage() {
   return (
-    <div className="mx-auto max-w-2xl px-6 py-12">
-      <h1 className="text-2xl font-bold text-text mb-2">개인정보처리방침</h1>
-      <p className="text-xs text-text-subtle mb-8">시행일: 2025년 6월 15일</p>
-
+    <div className="flex flex-1 flex-col">
+      <PageHero
+        eyebrow="지사네"
+        title="개인정보처리방침"
+        subtitle="시행일: 2025년 6월 15일"
+        size="lg"
+      />
+      <div className="responsive-container px-4 md:px-6 py-6">
       <div className="flex flex-col gap-8 text-sm leading-relaxed text-text-muted">
         <section>
           <h2 className="mb-3 text-base font-semibold text-text">1. 개인정보의 수집 및 이용 목적</h2>
@@ -170,6 +176,7 @@ export default function PrivacyPage() {
             내용이 변경될 경우 시행 7일 전부터 서비스 내 공지사항을 통해 안내합니다.
           </p>
         </section>
+      </div>
       </div>
     </div>
   )

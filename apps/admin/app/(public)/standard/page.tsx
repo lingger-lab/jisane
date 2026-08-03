@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import { PageHero } from '@jisane/ui/page-hero'
 
 export const metadata = {
   title: '지사네 표준 | 먼저 꺼내놓는 다섯 가지',
@@ -53,14 +54,14 @@ const PRINCIPLES = [
 
 export default function StandardIndexPage() {
   return (
-    <div className="mx-auto max-w-2xl px-6 py-12">
-      <p className="text-xs font-semibold text-primary tracking-wide mb-2">지사네 표준</p>
-      <h1 className="text-2xl font-bold font-serif text-text mb-2">먼저 꺼내놓는 다섯 가지</h1>
-      <p className="text-sm text-text-muted mb-8 leading-relaxed">
-        감추는 것이 관행이 된 시장에서, 지사네는 먼저 꺼내놓는 것을 표준으로 삼습니다.
-        거래 전에 이 다섯 가지를 확인하실 수 있습니다.
-      </p>
-
+    <div className="flex flex-1 flex-col">
+      <PageHero
+        eyebrow="지사네 표준"
+        title="먼저 꺼내놓는 다섯 가지"
+        subtitle="감추는 것이 관행이 된 시장에서, 지사네는 먼저 꺼내놓는 것을 표준으로 삼습니다. 거래 전에 이 다섯 가지를 확인하실 수 있습니다."
+        size="lg"
+      />
+      <div className="responsive-container px-4 md:px-6 py-6">
       <div className="flex flex-col gap-4">
         {PRINCIPLES.map((p) => (
           <section key={p.item} className="rounded-xl border border-border-light bg-white p-5 md:p-6 shadow-xs">
@@ -89,6 +90,7 @@ export default function StandardIndexPage() {
         {' · '}
         <Link href="/standard/guarantee" className="underline hover:text-text-muted">② 책임적립금 규정</Link>
       </p>
+      </div>
     </div>
   )
 }

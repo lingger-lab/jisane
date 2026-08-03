@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { createClient } from '@jisane/shared/supabase/server'
 import { adminClient } from '@jisane/shared/supabase/admin'
 import type { RequestRow } from '@jisane/shared/types'
+import { PageHero } from '@jisane/ui/page-hero'
 import { MatchingActions } from './matching-actions'
 
 interface PageProps {
@@ -47,21 +48,19 @@ export default async function MatchingDetailPage(props: PageProps) {
   const req = request as RequestRow | null
 
   return (
-    <div className="flex flex-1 flex-col px-6 py-8">
-      <Link href="/matching" className="mb-4 text-sm text-text-muted hover:text-text">
-        &larr; 매칭 목록
-      </Link>
-
-      <h1 className="mb-2 text-xl font-bold text-text">매칭 상세</h1>
-
+    <div className="flex flex-1 flex-col animate-fade-in">
+      <PageHero
+        eyebrow="시니어지식인회원"
+        title={req?.title || '매칭 상세'}
+        subtitle={req?.req_type ? `분야: ${req.req_type}` : undefined}
+        back={<Link href="/matching" className="text-sm text-white/70 hover:text-white transition-colors">&larr; 매칭 목록</Link>}
+      />
+      <div className="responsive-container px-4 md:px-6 py-6">
       {req && (
         <>
           {/* 의뢰 정보 */}
           <div className="mb-4 rounded-lg border border-border p-4">
-            <h2 className="mb-2 font-semibold text-text">{req.title}</h2>
-            {req.req_type && (
-              <p className="mb-2 text-xs text-text-muted">분야: {req.req_type}</p>
-            )}
+            <h2 className="mb-2 font-semibold text-text">의뢰 내용</h2>
             <p className="whitespace-pre-wrap text-sm text-text-muted">{req.detail}</p>
             {req.scope && (
               <p className="mt-2 text-sm text-text-muted">범위: {req.scope}</p>
@@ -92,6 +91,7 @@ export default async function MatchingDetailPage(props: PageProps) {
           </p>
         </div>
       )}
+      </div>
     </div>
   )
 }

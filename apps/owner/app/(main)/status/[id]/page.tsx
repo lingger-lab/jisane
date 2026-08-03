@@ -8,6 +8,7 @@ import { ProgressBar } from '@jisane/ui/progress-bar'
 import { SuccessToast, ErrorToast } from '@jisane/ui/toast'
 import type { RequestRow, DealRow, DealWorkflowRow, ExpertRow } from '@jisane/shared/types'
 import { WORKFLOW_STEP_LABELS, STEP_STATUS_LABELS } from '@jisane/shared/labels'
+import { PageHero } from '@jisane/ui/page-hero'
 import { QuoteSection } from './quote-section'
 import { InspectionSection } from './inspection-section'
 import { MessageThread } from './message-thread'
@@ -131,20 +132,21 @@ export default async function StatusDetailPage(props: PageProps) {
   const remainingHours = Math.max(0, Math.ceil(remainingMs / (1000 * 60 * 60)))
 
   return (
-    <div className="flex flex-1 flex-col px-4 py-5 sm:px-6 sm:py-8 animate-fade-in">
+    <div className="flex flex-1 flex-col animate-fade-in">
       <Suspense><SuccessToast /><ErrorToast /></Suspense>
-      {/* 뒤로가기 */}
-      <Link href="/status" className="mb-4 text-sm text-text-muted hover:text-text transition-colors">
-        &larr; 의뢰 목록
-      </Link>
 
-      {/* 제목 + 상태 */}
-      <h1 className="mb-2 text-xl font-bold text-text">{req.title}</h1>
-      <p className="mb-6 text-xs text-text-muted">
-        {new Date(req.created_at).toLocaleDateString('ko-KR')}
-        {req.req_type && ` · ${req.req_type}`}
-      </p>
+      <PageHero
+        eyebrow="기업회원"
+        title={req.title}
+        subtitle={`${new Date(req.created_at).toLocaleDateString('ko-KR')}${req.req_type ? ` · ${req.req_type}` : ''}`}
+        back={
+          <Link href="/status" className="text-sm text-white/70 hover:text-white transition-colors">
+            &larr; 의뢰 목록
+          </Link>
+        }
+      />
 
+      <div className="responsive-container px-4 md:px-6 py-6">
       {/* 프로그레스 바 */}
       <div className="mb-6">
         <ProgressBar requestStatus={req.status} dealStatus={deal?.status} />
@@ -281,6 +283,7 @@ export default async function StatusDetailPage(props: PageProps) {
             희망 예산: {req.budget_hope.toLocaleString('ko-KR')}원
           </p>
         )}
+      </div>
       </div>
     </div>
   )
