@@ -12,6 +12,7 @@ import { CategoryBrowse } from '@jisane/ui/category-browse'
 import { CollapsibleSection } from '@jisane/ui/collapsible-section'
 import { AnimatedCounter } from '@jisane/ui/animated-counter'
 import { OwlIcon } from '@jisane/ui/icons/owl'
+import { ScrollReveal } from '@jisane/ui/scroll-reveal'
 
 export default async function ExpertHome() {
   const cookieStore = await cookies()
@@ -47,22 +48,24 @@ export default async function ExpertHome() {
   }
 
   return (
-    <div className="flex flex-1 flex-col items-center animate-slide-up">
-      {/* [1] 히어로 + 0% 배지 */}
-      <section className="responsive-container flex flex-col items-center gap-4 px-4 md:px-6 pt-12 md:pt-16 pb-8 md:pb-10 text-center">
-        <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold font-serif text-text leading-snug">
-          경험의 값어치,
-          <br />
-          온전히 받으세요.
-        </h1>
+    <div className="flex flex-1 flex-col items-center">
+      {/* [1] 히어로 — 브랜드 딥그린 다크 밴드 + 0% 배지 */}
+      <div className="hero-dark w-full">
+        <section className="responsive-container flex flex-col items-center gap-4 px-4 md:px-6 pt-14 md:pt-20 pb-12 md:pb-16 text-center animate-fade-in">
+          <span className="hero-eyebrow">당신의 30년, AI로 증폭하다 · 전문가공간</span>
+          <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold font-serif text-white leading-snug">
+            경험의 값어치,
+            <br />
+            <span className="text-accent-light">온전히</span> 받으세요.
+          </h1>
 
-        {/* 0% 수수료 배지 */}
-        <div className="inline-flex items-center gap-2 rounded-full border border-accent/20 bg-accent/10 px-4 py-2">
-          <span className="text-2xl md:text-3xl font-bold text-accent">0%</span>
-          <span className="text-sm font-medium text-accent">수수료 — 작업료 전액 직접 정산</span>
-        </div>
+          {/* 0% 수수료 배지 — 다크 배경 위 버전 */}
+          <div className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-4 py-2">
+            <span className="text-2xl md:text-3xl font-bold text-accent-light">0%</span>
+            <span className="text-sm font-medium text-white/90">수수료 — 작업료 전액 직접 정산</span>
+          </div>
 
-        <div className="flex w-full flex-col gap-3 mt-2">
+          <div className="flex w-full flex-col gap-3 mt-2">
           <form action={signInWithKakao}>
             <button
               type="submit"
@@ -81,10 +84,12 @@ export default async function ExpertHome() {
               Google로 시작하기
             </button>
           </form>
-        </div>
-      </section>
+          </div>
+        </section>
+      </div>
 
       {/* [2] 핵심 수치 — 풀블리드 배경 */}
+      <ScrollReveal className="w-full">
       <div className="w-full bg-surface-warm py-8 md:py-12">
         <section className="responsive-container px-4 md:px-6">
           <div className={`grid gap-3 md:gap-4 ${metrics.length === 4 ? 'grid-cols-2 md:grid-cols-4' : 'grid-cols-3'}`}>
@@ -97,8 +102,10 @@ export default async function ExpertHome() {
           </div>
         </section>
       </div>
+      </ScrollReveal>
 
       {/* [2.5] 이런 경험, 있으셨나요? — 고통 언어화 */}
+      <ScrollReveal className="w-full">
       <section className="responsive-container px-4 md:px-6 py-8 md:py-12">
         <div className="rounded-xl border-t-4 border-t-warning bg-surface-warm p-5 md:p-6">
           <p className="text-base font-bold text-text">이런 경험, 있으셨나요?</p>
@@ -121,8 +128,10 @@ export default async function ExpertHome() {
           </p>
         </div>
       </section>
+      </ScrollReveal>
 
       {/* [3] 카테고리별 의뢰 현황 */}
+      <ScrollReveal className="w-full">
       <section className="responsive-container px-4 md:px-6 py-8 md:py-12">
         <CategoryBrowse
           categoryCounts={stats.categoryCounts}
@@ -134,8 +143,10 @@ export default async function ExpertHome() {
           baseHref="/requests"
         />
       </section>
+      </ScrollReveal>
 
       {/* [3.5] 비교해보세요 — 풀블리드 배경 */}
+      <ScrollReveal className="w-full">
       <div className="w-full bg-white py-8 md:py-12">
         <section className="responsive-container px-4 md:px-6">
           <h2 className="text-xl md:text-2xl font-bold text-text">비교해보세요</h2>
@@ -159,8 +170,10 @@ export default async function ExpertHome() {
           </div>
         </section>
       </div>
+      </ScrollReveal>
 
       {/* [4] 전문가 역량 강화 프로그램 — 풀블리드 배경, 클릭 시 펼침 */}
+      <ScrollReveal className="w-full">
       <div className="w-full bg-accent/5 py-8 md:py-12">
         <section className="responsive-container px-4 md:px-6">
           <CollapsibleSection
@@ -198,9 +211,11 @@ export default async function ExpertHome() {
           </CollapsibleSection>
         </section>
       </div>
+      </ScrollReveal>
 
-      {/* [5] 신뢰 배지 — 풀블리드 배경 */}
-      <div className="w-full bg-accent/5 py-8 md:py-12">
+      {/* [5] 신뢰 배지 — 풀블리드 배경 (교육 섹션과 연속 동일색 방지 위해 화이트) */}
+      <ScrollReveal className="w-full">
+      <div className="w-full bg-white py-8 md:py-12">
         <section className="responsive-container px-4 md:px-6">
           <div className="grid grid-cols-3 gap-3 md:gap-4">
             {([
@@ -225,8 +240,10 @@ export default async function ExpertHome() {
           </div>
         </section>
       </div>
+      </ScrollReveal>
 
       {/* [6] CTA 반복 */}
+      <ScrollReveal className="w-full">
       <section className="responsive-container px-4 md:px-6 py-8 md:py-12">
         <div className="rounded-2xl bg-accent/10 p-6 md:p-8">
           <p className="mb-4 text-center text-base md:text-lg font-semibold text-text leading-relaxed">
@@ -255,6 +272,7 @@ export default async function ExpertHome() {
           </div>
         </div>
       </section>
+      </ScrollReveal>
 
       {/* [7] 크로스링크 배너 */}
       <section className="responsive-container px-4 md:px-6 py-6 md:py-8">

@@ -50,23 +50,26 @@ export default async function AdminHome() {
 
       <SplashOverlay />
 
+      {/* 히어로 — 브랜드 딥그린 다크 밴드 (렐라랩 벤치마킹: 아이브로우→제목→서브→수치) */}
+      <div className="hero-dark w-full">
+        <section className="responsive-container flex flex-col items-center gap-4 px-4 md:px-6 pt-14 md:pt-20 pb-12 md:pb-16 text-center animate-fade-in">
+          <span className="hero-eyebrow">부울경 전문가 직거래 플랫폼</span>
+          <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold font-serif text-white leading-snug">
+            맡기기 전에,
+            <br />
+            <span className="text-accent-light">이것만</span> 확인해 보세요.
+          </h1>
+          <p className="text-base md:text-lg text-white/75 leading-relaxed">
+            값·범위·약속·몫·복구 — 다섯 가지를 먼저 볼 수 있습니다.
+          </p>
+          <p className="text-xs text-white/50">
+            {stats.owner.totalMajorFields}개 분야 · {stats.owner.totalCategories}개 전문영역 · {stats.owner.totalServices}+ 서비스
+          </p>
+        </section>
+      </div>
+
       <div className="flex flex-1 flex-col items-center px-4 md:px-6 py-10 md:py-14">
         <main className="responsive-container flex flex-col items-center gap-10 md:gap-14 lg:gap-16">
-          {/* 히어로 */}
-          <section className="flex flex-col items-center gap-3 text-center animate-fade-in">
-            <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold font-serif text-text leading-snug">
-              맡기기 전에,
-              <br />
-              이것만 확인해 보세요.
-            </h1>
-            <p className="text-base md:text-lg text-text-muted leading-relaxed">
-              값·범위·약속·몫·복구 — 다섯 가지를 먼저 볼 수 있습니다.
-            </p>
-            <p className="text-xs text-text-subtle">
-              {stats.owner.totalMajorFields}개 분야 · {stats.owner.totalCategories}개 전문영역 · {stats.owner.totalServices}+ 서비스
-            </p>
-          </section>
-
           {/* 공간 선택 카드 */}
           <section className="w-full animate-fade-in stagger-1">
             <div className="flex flex-col gap-4 rounded-2xl bg-surface-warm p-4 md:p-6">

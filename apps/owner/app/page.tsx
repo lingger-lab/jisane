@@ -11,6 +11,7 @@ import { CategoryBrowse } from '@jisane/ui/category-browse'
 import { CollapsibleSection } from '@jisane/ui/collapsible-section'
 import { AnimatedCounter } from '@jisane/ui/animated-counter'
 import { OwlIcon } from '@jisane/ui/icons/owl'
+import { ScrollReveal } from '@jisane/ui/scroll-reveal'
 
 export default async function OwnerHome() {
   const cookieStore = await cookies()
@@ -37,17 +38,19 @@ export default async function OwnerHome() {
   }
 
   return (
-    <div className="flex flex-1 flex-col items-center animate-slide-up">
-      {/* [1] 히어로 */}
-      <section className="responsive-container flex flex-col items-center gap-4 px-4 md:px-6 pt-12 md:pt-16 pb-8 md:pb-10 text-center">
-        <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold font-serif text-text leading-snug">
-          일을 맡겼는데,
-          <br />
-          끝나고 보니 생각한 것과 달랐던 적 있으셨나요?
-        </h1>
-        <p className="text-base md:text-lg text-text-muted">조건을 먼저 볼 수 있는 곳에 맡깁니다 — 에스크로 직거래</p>
+    <div className="flex flex-1 flex-col items-center">
+      {/* [1] 히어로 — 브랜드 딥그린 다크 밴드 */}
+      <div className="hero-dark w-full">
+        <section className="responsive-container flex flex-col items-center gap-4 px-4 md:px-6 pt-14 md:pt-20 pb-12 md:pb-16 text-center animate-fade-in">
+          <span className="hero-eyebrow">에스크로 직거래 · 기업공간</span>
+          <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold font-serif text-white leading-snug">
+            일을 맡겼는데, 끝나고 보니
+            <br />
+            <span className="text-accent-light">생각한 것과 달랐던</span> 적 있으셨나요?
+          </h1>
+          <p className="text-base md:text-lg text-white/75">조건을 먼저 볼 수 있는 곳에 맡깁니다 — 에스크로 직거래</p>
 
-        <div className="flex w-full flex-col gap-3 mt-2">
+          <div className="flex w-full flex-col gap-3 mt-2">
           <form action={signInWithKakao}>
             <button
               type="submit"
@@ -66,10 +69,12 @@ export default async function OwnerHome() {
               Google로 시작하기
             </button>
           </form>
-        </div>
-      </section>
+          </div>
+        </section>
+      </div>
 
       {/* [2] 핵심 수치 — 풀블리드 배경 */}
+      <ScrollReveal className="w-full">
       <div className="w-full bg-surface-warm py-8 md:py-12">
         <section className="responsive-container px-4 md:px-6">
           <div className={`grid gap-3 md:gap-4 ${metrics.length === 4 ? 'grid-cols-2 md:grid-cols-4' : 'grid-cols-3'}`}>
@@ -82,8 +87,10 @@ export default async function OwnerHome() {
           </div>
         </section>
       </div>
+      </ScrollReveal>
 
       {/* [2.5] 이런 경험, 있으셨나요? — 고통 언어화 */}
+      <ScrollReveal className="w-full">
       <section className="responsive-container px-4 md:px-6 py-8 md:py-12">
         <div className="rounded-xl border-t-4 border-t-warning bg-surface-warm p-5 md:p-6">
           <p className="text-base font-bold text-text">이런 경험, 있으셨나요?</p>
@@ -106,8 +113,10 @@ export default async function OwnerHome() {
           </p>
         </div>
       </section>
+      </ScrollReveal>
 
       {/* [3] 카테고리 탐색 */}
+      <ScrollReveal className="w-full">
       <section className="responsive-container px-4 md:px-6 py-8 md:py-12">
         <CategoryBrowse
           categoryCounts={stats.categoryCounts}
@@ -119,8 +128,10 @@ export default async function OwnerHome() {
           baseHref="/experts"
         />
       </section>
+      </ScrollReveal>
 
       {/* [3.5] 비교해보세요 — 풀블리드 배경 */}
+      <ScrollReveal className="w-full">
       <div className="w-full bg-white py-8 md:py-12">
         <section className="responsive-container px-4 md:px-6">
           <h2 className="text-xl md:text-2xl font-bold text-text">비교해보세요</h2>
@@ -144,8 +155,10 @@ export default async function OwnerHome() {
           </div>
         </section>
       </div>
+      </ScrollReveal>
 
       {/* [4] 전문 서비스 — 클릭 시 펼침 */}
+      <ScrollReveal className="w-full">
       <section className="responsive-container px-4 md:px-6 py-8 md:py-12">
         <CollapsibleSection
           title={`${stats.totalServices}+ 전문 서비스를 둘러보세요`}
@@ -197,8 +210,10 @@ export default async function OwnerHome() {
           </div>
         </CollapsibleSection>
       </section>
+      </ScrollReveal>
 
       {/* [5] 신뢰 배지 — 풀블리드 배경 */}
+      <ScrollReveal className="w-full">
       <div className="w-full bg-primary/5 py-8 md:py-12">
         <section className="responsive-container px-4 md:px-6">
           <div className="grid grid-cols-3 gap-3 md:gap-4">
@@ -224,8 +239,10 @@ export default async function OwnerHome() {
           </div>
         </section>
       </div>
+      </ScrollReveal>
 
       {/* [6] CTA 반복 */}
+      <ScrollReveal className="w-full">
       <section className="responsive-container px-4 md:px-6 py-8 md:py-12">
         <div className="rounded-2xl bg-primary/10 p-6 md:p-8">
           <p className="mb-4 text-center text-base md:text-lg font-semibold text-text leading-relaxed">
@@ -254,6 +271,7 @@ export default async function OwnerHome() {
           </div>
         </div>
       </section>
+      </ScrollReveal>
 
       {/* [7] 크로스링크 배너 */}
       <section className="responsive-container px-4 md:px-6 py-6 md:py-8">
