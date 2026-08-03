@@ -56,10 +56,10 @@ function MyIcon({ active }: { active: boolean }) {
 }
 
 const TABS = [
-  { href: '/status', label: '홈', Icon: HomeIcon },
+  { href: '/', label: '홈', Icon: HomeIcon },
   { href: '/request', label: '의뢰하기', Icon: RequestIcon },
   { href: '/services', label: '서비스', Icon: ServiceIcon },
-  { href: '/mypage', label: '프로필', Icon: MyIcon },
+  { href: '/mypage', label: '마이페이지', Icon: MyIcon },
 ] as const
 
 export function ClientNav() {

@@ -1,8 +1,9 @@
 import Link from 'next/link'
 import { cookies } from 'next/headers'
-import { redirect } from 'next/navigation'
 import { createClient } from '@jisane/shared/supabase/server'
+import { adminClient } from '@jisane/shared/supabase/admin'
 import { signInWithGoogle, signInWithKakao } from '@jisane/shared/auth/actions'
+import { OwnerDashboard } from './owner-dashboard'
 import { GoogleIcon } from '@jisane/ui/icons/google'
 import { KakaoIcon } from '@jisane/ui/icons/kakao'
 import { fetchOwnerLandingStats } from '@jisane/shared/landing-stats'
@@ -18,8 +19,16 @@ export default async function OwnerHome() {
   const supabase = createClient(cookieStore)
   const { data: { user } } = await supabase.auth.getUser()
 
+  // 로그인 상태: 홈을 개인화 대시보드로 (redirect 없이 홈 유지)
   if (user) {
-    redirect('/status')
+    const { data: owner } = await adminClient
+      .from('owner')
+      .select('id, email, company')
+      .eq('auth_user_id', user.id)
+      .single()
+    if (owner) {
+      return <OwnerDashboard ownerId={owner.id} email={owner.email} company={owner.company} />
+    }
   }
 
   const stats = await fetchOwnerLandingStats()
