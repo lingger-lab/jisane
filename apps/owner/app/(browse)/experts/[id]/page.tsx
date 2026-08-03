@@ -26,10 +26,10 @@ export async function generateMetadata(props: PageProps) {
     .eq('id', id)
     .single()
 
-  if (!expert) return { title: '시니어지식인 - 지사네 기업공간' }
+  if (!expert) return { title: '시니어지식인 - 지사네 기업회원' }
 
   return {
-    title: `${expert.name ?? '시니어지식인'} - ${expert.field ?? '시니어지식인'} | 지사네 기업공간`,
+    title: `${expert.name ?? '시니어지식인'} - ${expert.field ?? '시니어지식인'} | 지사네 기업회원`,
     description: `${expert.name ?? '시니어지식인'}님의 전문 분야와 경력을 확인하세요.`,
   }
 }

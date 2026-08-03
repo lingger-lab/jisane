@@ -10,7 +10,7 @@ import { GoogleIcon } from '@jisane/ui/icons/google'
 import { KakaoIcon } from '@jisane/ui/icons/kakao'
 
 export const metadata = {
-  title: '지사네 전문가공간',
+  title: '지사네 전문가회원',
   description: '지사네와 함께 전문서비스를 제공하는 전문가회원을 위한 공간입니다.',
 }
 

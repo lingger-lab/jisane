@@ -10,10 +10,10 @@ import Script from "next/script";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://owner.jisane.cloud"),
-  title: "지사네 기업공간",
+  title: "지사네 기업회원",
   description: "일은 사람이 합니다 — 부울경 시니어지식인 직거래 플랫폼.",
   openGraph: {
-    title: "지사네 기업공간",
+    title: "지사네 기업회원",
     description: "조건을 먼저 볼 수 있는 곳에 맡깁니다 — 에스크로 직거래.",
     url: "https://owner.jisane.cloud",
     siteName: "지사네",
@@ -22,7 +22,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "지사네 기업공간",
+    title: "지사네 기업회원",
     description: "조건을 먼저 볼 수 있는 곳에 맡깁니다 — 에스크로 직거래.",
   },
 };

@@ -7,7 +7,7 @@ import { PROVIDER_KIND_LABELS, PROVIDER_TYPE_LABELS } from '@jisane/shared/label
 import { SuccessToast } from '@jisane/ui/toast'
 import { ProfileForm } from './profile-form'
 
-export const metadata = { title: '전문가회원 정보 | 지사네 전문가공간' }
+export const metadata = { title: '전문가회원 정보 | 지사네 전문가회원' }
 
 export default async function PartnerProfilePage() {
   const cookieStore = await cookies()

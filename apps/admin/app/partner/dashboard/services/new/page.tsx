@@ -1,6 +1,6 @@
 import { PackageForm } from '../package-form'
 
-export const metadata = { title: '서비스 등록 | 지사네 전문가공간' }
+export const metadata = { title: '서비스 등록 | 지사네 전문가회원' }
 
 export default function NewServicePackagePage() {
   return (

@@ -9,10 +9,10 @@ import Script from "next/script";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://expert.jisane.cloud"),
-  title: "지사네 시니어지식인공간",
+  title: "지사네 시니어지식인회원",
   description: "경험으로 일하고, 정당한 대가를 받으세요. 지사네 시니어지식인 플랫폼.",
   openGraph: {
-    title: "지사네 시니어지식인공간",
+    title: "지사네 시니어지식인회원",
     description: "경험으로 일하고, 정당한 대가를 받으세요. 지사네 시니어지식인 플랫폼.",
     url: "https://expert.jisane.cloud",
     siteName: "지사네",
@@ -21,7 +21,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "지사네 시니어지식인공간",
+    title: "지사네 시니어지식인회원",
     description: "경험으로 일하고, 정당한 대가를 받으세요. 지사네 시니어지식인 플랫폼.",
   },
 };

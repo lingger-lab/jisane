@@ -6,7 +6,7 @@ import { getProviderByAuthUser } from '@jisane/shared/provider/auth'
 import { ORDER_STATUS_LABELS_FALLBACK } from '../order-labels'
 import { CompleteOrderButton } from './complete-order-button'
 
-export const metadata = { title: '신청 확인 | 지사네 전문가공간' }
+export const metadata = { title: '신청 확인 | 지사네 전문가회원' }
 
 const STATUS_BADGE: Record<string, string> = {
   pending: 'bg-info-light text-info',

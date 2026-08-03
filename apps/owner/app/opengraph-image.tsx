@@ -1,7 +1,7 @@
 import { ImageResponse } from 'next/og'
 
 export const runtime = 'edge'
-export const alt = '지사네 기업공간'
+export const alt = '지사네 기업회원'
 export const size = { width: 1200, height: 630 }
 export const contentType = 'image/png'
 
@@ -34,7 +34,7 @@ export default function Image() {
           지사네
         </div>
         <div style={{ fontSize: 28, marginTop: 12, opacity: 0.85 }}>
-          기업공간 — 에스크로 직거래
+          기업회원 — 에스크로 직거래
         </div>
       </div>
     ),

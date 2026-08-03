@@ -9,7 +9,7 @@ import { PACKAGE_STATUS_LABELS } from '@jisane/shared/labels'
 import { SuccessToast } from '@jisane/ui/toast'
 import { ArchiveButton } from './archive-button'
 
-export const metadata = { title: '서비스 관리 | 지사네 전문가공간' }
+export const metadata = { title: '서비스 관리 | 지사네 전문가회원' }
 
 const STATUS_BADGE: Record<string, string> = {
   draft: 'bg-warning-light text-warning',

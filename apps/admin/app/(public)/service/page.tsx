@@ -71,10 +71,10 @@ export default function ServicePage() {
         </div>
       </section>
 
-      {/* 기업공간 */}
+      {/* 기업회원 */}
       <section className="mb-8 animate-fade-in stagger-3">
         <div className="rounded-2xl border border-primary/20 bg-white p-6 shadow-sm">
-          <h2 className="text-lg font-bold text-primary">기업공간</h2>
+          <h2 className="text-lg font-bold text-primary">기업회원</h2>
           <p className="mt-2 text-sm text-text-muted">
             일은 사람이 합니다 — 시니어지식인에게 직접 의뢰하세요.
             의뢰를 등록하면 지사네 매니저가 24시간 내에 적합한 시니어지식인을 연결해드립니다.
@@ -102,10 +102,10 @@ export default function ServicePage() {
         </div>
       </section>
 
-      {/* 시니어지식인공간 */}
+      {/* 시니어지식인회원 */}
       <section className="mb-12 animate-fade-in stagger-4">
         <div className="rounded-2xl border border-accent/20 bg-white p-6 shadow-sm">
-          <h2 className="text-lg font-bold text-accent">시니어지식인공간</h2>
+          <h2 className="text-lg font-bold text-accent">시니어지식인회원</h2>
           <p className="mt-2 text-sm text-text-muted">
             경험을 살려 일하고, 정당한 대가를 받으세요.
             시니어지식인으로 등록하면 지사네 매니저가 적합한 의뢰를 매칭해드립니다.

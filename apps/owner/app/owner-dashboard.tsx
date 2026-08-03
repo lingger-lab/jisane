@@ -47,7 +47,7 @@ export async function OwnerDashboard({
       {/* 인사 히어로 — 로그인 상태 */}
       <div className="hero-dark w-full">
         <section className="responsive-container flex flex-col gap-2 px-4 md:px-6 pt-10 md:pt-14 pb-8 md:pb-10">
-          <span className="hero-eyebrow self-start">기업공간</span>
+          <span className="hero-eyebrow self-start">기업회원</span>
           <h1 className="text-2xl md:text-3xl font-bold font-serif text-white leading-snug">
             {greeting}님, 반갑습니다
           </h1>

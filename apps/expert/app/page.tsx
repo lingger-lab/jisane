@@ -52,7 +52,7 @@ export default async function ExpertHome() {
       {/* [1] 히어로 — 브랜드 딥그린 다크 밴드 + 0% 배지 */}
       <div className="hero-dark w-full">
         <section className="responsive-container flex flex-col items-center gap-4 px-4 md:px-6 pt-14 md:pt-20 pb-12 md:pb-16 text-center animate-fade-in">
-          <span className="hero-eyebrow">당신의 30년, AI로 증폭하다 · 시니어지식인공간</span>
+          <span className="hero-eyebrow">당신의 30년, AI로 증폭하다 · 시니어지식인회원</span>
           <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold font-serif text-white leading-snug">
             경험의 값어치,
             <br />
@@ -300,7 +300,7 @@ export default async function ExpertHome() {
           </div>
           <div className="flex flex-wrap gap-3 text-xs text-text-subtle">
             <a href={`${adminUrl}/service`} className="hover:text-text-muted transition-colors">서비스 안내</a>
-            <a href={ownerUrl} className="hover:text-text-muted transition-colors">기업공간</a>
+            <a href={ownerUrl} className="hover:text-text-muted transition-colors">기업회원</a>
             <a href={`${adminUrl}/privacy`} className="hover:text-text-muted transition-colors">개인정보처리방침</a>
           </div>
           <p className="text-xs text-text-subtle">&copy; 2026 (주)지사네. All rights reserved.</p>

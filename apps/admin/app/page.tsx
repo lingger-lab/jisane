@@ -77,7 +77,7 @@ export default async function AdminHome() {
                 href={ownerUrl}
                 className="rounded-2xl border-t-4 border-t-primary border border-border-light bg-white p-6 md:p-8 text-left shadow-sm card-hover card-glow transition-all"
               >
-                <h2 className="text-2xl md:text-3xl font-bold text-primary">기업공간</h2>
+                <h2 className="text-2xl md:text-3xl font-bold text-primary">기업회원</h2>
                 <p className="mt-2 text-sm md:text-base text-text-muted">일은 사람이 합니다 — 시니어지식인에게 직접 의뢰</p>
                 <div className="mt-4 flex flex-wrap gap-2">
                   <span className="rounded-full bg-primary/10 px-3 py-1.5 text-xs font-medium text-primary">에스크로 선입금</span>
@@ -89,14 +89,14 @@ export default async function AdminHome() {
                     인기 분야: {topExpertMajors.join(' / ')}
                   </p>
                 )}
-                <div className="mt-4 text-sm font-semibold text-primary">기업공간 바로가기 &rarr;</div>
+                <div className="mt-4 text-sm font-semibold text-primary">기업회원 바로가기 &rarr;</div>
               </a>
 
               <a
                 href={expertUrl}
                 className="rounded-2xl border-t-4 border-t-accent border border-border-light bg-white p-6 md:p-8 text-left shadow-sm card-hover card-glow transition-all"
               >
-                <h2 className="text-2xl md:text-3xl font-bold text-accent">시니어지식인공간</h2>
+                <h2 className="text-2xl md:text-3xl font-bold text-accent">시니어지식인회원</h2>
                 <p className="mt-2 text-sm md:text-base text-text-muted">당신의 30년, AI로 증폭하다 — 작업료 전액 수령</p>
                 <div className="mt-4 flex flex-wrap gap-2">
                   <span className="rounded-full bg-accent/10 px-3 py-1.5 text-xs font-medium text-accent">열린 의뢰 {stats.expert.totalOpenRequests}건</span>
@@ -108,16 +108,16 @@ export default async function AdminHome() {
                     의뢰 많은 분야: {topRequestMajors.join(' / ')}
                   </p>
                 )}
-                <div className="mt-4 text-sm font-semibold text-accent">시니어지식인공간 바로가기 &rarr;</div>
+                <div className="mt-4 text-sm font-semibold text-accent">시니어지식인회원 바로가기 &rarr;</div>
               </a>
 
-              {/* 전문가공간(파트너) — 특수관계 제공기관용 슬림 카드 */}
+              {/* 전문가회원(파트너) — 특수관계 제공기관용 슬림 카드 */}
               <Link
                 href="/partner"
                 className="flex items-center justify-between rounded-2xl border-t-4 border-t-info border border-border-light bg-white p-4 md:p-5 shadow-sm card-hover transition-all"
               >
                 <div className="min-w-0">
-                  <p className="text-base md:text-lg font-bold text-info">전문가공간(파트너)</p>
+                  <p className="text-base md:text-lg font-bold text-info">전문가회원(파트너)</p>
                   <p className="mt-1 text-xs md:text-sm text-text-muted">
                     전문서비스를 제공하는 특수관계 회원 — 기업 또는 시니어지식인 — 서비스 등록 · 신청 관리
                   </p>

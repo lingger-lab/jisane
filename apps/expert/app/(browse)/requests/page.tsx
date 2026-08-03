@@ -5,7 +5,7 @@ import { getCachedCategories } from '@jisane/shared/categories'
 import { RequestList } from './request-list'
 
 export const metadata = {
-  title: '열린 의뢰 탐색 - 지사네 시니어지식인공간',
+  title: '열린 의뢰 탐색 - 지사네 시니어지식인회원',
   description: '시니어지식인을 찾는 기업의 의뢰를 카테고리별로 탐색하세요.',
 }
 

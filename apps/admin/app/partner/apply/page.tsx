@@ -5,7 +5,7 @@ import { createClient } from '@jisane/shared/supabase/server'
 import { getProviderByAuthUser } from '@jisane/shared/provider/auth'
 import { ApplyForm } from './apply-form'
 
-export const metadata = { title: '전문가회원 등록 신청 | 지사네 전문가공간' }
+export const metadata = { title: '전문가회원 등록 신청 | 지사네 전문가회원' }
 
 export default async function PartnerApplyPage(props: {
   searchParams: Promise<{ submitted?: string }>
@@ -51,7 +51,7 @@ export default async function PartnerApplyPage(props: {
           </>
         )}
         <Link href="/partner" className="mt-6 inline-block text-sm text-info hover:underline">
-          전문가공간 홈으로
+          전문가회원 홈으로
         </Link>
       </div>
     )

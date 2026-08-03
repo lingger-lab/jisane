@@ -6,7 +6,7 @@ import { getProviderByAuthUser } from '@jisane/shared/provider/auth'
 import { PACKAGE_STATUS_LABELS } from '@jisane/shared/labels'
 import { PackageForm } from '../package-form'
 
-export const metadata = { title: '서비스 수정 | 지사네 전문가공간' }
+export const metadata = { title: '서비스 수정 | 지사네 전문가회원' }
 
 export default async function EditServicePackagePage(props: {
   params: Promise<{ id: string }>
