@@ -4,9 +4,14 @@ import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
 import { createClient } from '../supabase/server'
 
+/** env URL 정규화 — 값에 섞인 공백·줄바꿈·후행 슬래시 제거 (오염된 env가 콜백 URL을 깨뜨리는 사고 방지) */
+function cleanUrl(value: string): string {
+  return value.trim().replace(/\s+/g, '').replace(/\/+$/, '')
+}
+
 function getSiteUrl(): string {
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL
-  if (siteUrl) return siteUrl
+  if (siteUrl) return cleanUrl(siteUrl)
   if (process.env.NODE_ENV === 'production') {
     // localhost로 조용히 리다이렉트되는 사고 방지 — prod에서는 필수
     throw new Error('NEXT_PUBLIC_SITE_URL is not configured')
@@ -42,10 +47,10 @@ async function signInWithOAuth(
 // ── 회원가입(/join) 역할별 OAuth — 각 역할의 콜백으로 복귀 ──
 // 콜백 URL은 Supabase Redirect URLs 등록 필요(owner/expert는 기존 로그인이 이미 사용 중).
 function ownerCallback() {
-  return `${process.env.NEXT_PUBLIC_OWNER_URL || 'https://owner.jisane.cloud'}/callback`
+  return `${cleanUrl(process.env.NEXT_PUBLIC_OWNER_URL || 'https://owner.jisane.cloud')}/callback`
 }
 function expertCallback() {
-  return `${process.env.NEXT_PUBLIC_EXPERT_URL || 'https://expert.jisane.cloud'}/callback`
+  return `${cleanUrl(process.env.NEXT_PUBLIC_EXPERT_URL || 'https://expert.jisane.cloud')}/callback`
 }
 
 export async function joinAsOwnerKakao() {
