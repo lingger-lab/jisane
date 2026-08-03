@@ -4,6 +4,7 @@ import { redirect } from 'next/navigation'
 import { createClient } from '@jisane/shared/supabase/server'
 import { adminClient } from '@jisane/shared/supabase/admin'
 import { signInWithGoogle, signInWithKakao } from '@jisane/shared/auth/actions'
+import { ExpertDashboard } from './expert-dashboard'
 import { GoogleIcon } from '@jisane/ui/icons/google'
 import { KakaoIcon } from '@jisane/ui/icons/kakao'
 import { fetchExpertLandingStats } from '@jisane/shared/landing-stats'
@@ -19,16 +20,18 @@ export default async function ExpertHome() {
   const supabase = createClient(cookieStore)
   const { data: { user } } = await supabase.auth.getUser()
 
+  // 로그인 상태: 홈을 개인화 대시보드로 (redirect 없이 홈 유지)
   if (user) {
     const { data: expert } = await adminClient
       .from('expert')
-      .select('id')
+      .select('id, name, field')
       .eq('auth_user_id', user.id)
       .single()
 
     if (expert) {
-      redirect('/matching')
+      return <ExpertDashboard expertId={expert.id} name={expert.name} field={expert.field} />
     }
+    // 신규 시니어지식인: 온보딩(프로필 등록)으로
     redirect('/register')
   }
 

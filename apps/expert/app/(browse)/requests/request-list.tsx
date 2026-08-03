@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
+import { SearchBox } from '@jisane/ui/search-box'
 import { expressInterest, withdrawInterest } from '@/lib/interest/actions'
 
 interface RequestItem {
@@ -26,6 +27,7 @@ interface RequestListProps {
   requests: RequestItem[]
   categoryTree: MajorCategory[]
   selectedCategory: string | null
+  query: string
   interestedIds: string[]
   isAuthenticated: boolean
   isExpert: boolean
@@ -35,6 +37,7 @@ export function RequestList({
   requests,
   categoryTree,
   selectedCategory,
+  query,
   interestedIds,
   isAuthenticated,
   isExpert,
@@ -54,11 +57,11 @@ export function RequestList({
     : -1
 
   function handleCategoryChange(categoryId: string | null) {
-    if (categoryId) {
-      router.push(`/requests?category=${categoryId}`)
-    } else {
-      router.push('/requests')
-    }
+    const params = new URLSearchParams()
+    if (categoryId) params.set('category', categoryId)
+    if (query) params.set('q', query)
+    const qs = params.toString()
+    router.push(qs ? `/requests?${qs}` : '/requests')
   }
 
   async function handleInterest(requestId: string) {
@@ -98,10 +101,23 @@ export function RequestList({
       </div>
       <h1 className="text-lg md:text-xl lg:text-2xl font-bold text-text">열린 의뢰 탐색</h1>
       <p className="mt-1 text-sm text-text-muted">
-        {requests.length > 0
-          ? `${requests.length}건의 열린 의뢰`
-          : '카테고리별로 의뢰를 찾아보세요'}
+        {query
+          ? `"${query}" 검색 결과 ${requests.length}건`
+          : requests.length > 0
+            ? `${requests.length}건의 열린 의뢰`
+            : '카테고리별로 의뢰를 찾아보세요'}
       </p>
+
+      {/* 검색 (제목·내용) — 카테고리 필터 보존 */}
+      <div className="mt-4">
+        <SearchBox
+          target="/requests"
+          placeholder="제목·내용으로 열린 의뢰 검색"
+          defaultValue={query}
+          extraParams={selectedCategory ? { category: selectedCategory } : {}}
+          colorToken="accent"
+        />
+      </div>
 
       {/* 대분류 탭 */}
       <div className="mt-4 flex flex-wrap gap-2">

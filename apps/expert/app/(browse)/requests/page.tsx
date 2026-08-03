@@ -10,11 +10,12 @@ export const metadata = {
 }
 
 interface PageProps {
-  searchParams: Promise<{ category?: string }>
+  searchParams: Promise<{ category?: string; q?: string }>
 }
 
 export default async function RequestsPage(props: PageProps) {
-  const { category } = await props.searchParams
+  const { category, q } = await props.searchParams
+  const query = (q ?? '').trim()
 
   // 선택적 인증 (공개 페이지 — 리다이렉트 없음)
   const cookieStore = await cookies()
@@ -67,6 +68,12 @@ export default async function RequestsPage(props: PageProps) {
     }
   }
 
+  // 검색어: 제목·내용 부분 일치 (카테고리 필터와 공존)
+  if (query) {
+    const safe = query.replace(/[%,]/g, '')
+    requestsQuery = requestsQuery.or(`title.ilike.%${safe}%,detail.ilike.%${safe}%`)
+  }
+
   const { data: requests } = await requestsQuery
 
   const interestedIds = (interestsResult.data ?? []).map((i) => i.request_id)
@@ -102,6 +109,7 @@ export default async function RequestsPage(props: PageProps) {
           }))}
           categoryTree={categoryTree}
           selectedCategory={category ?? null}
+          query={query}
           interestedIds={interestedIds}
           isAuthenticated={!!user}
           isExpert={!!expertId}

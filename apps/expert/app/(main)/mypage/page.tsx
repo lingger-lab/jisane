@@ -154,6 +154,12 @@ export default async function MyPage() {
         </div>
       </div>
 
+      {/* 프로필 편집 (개인정보 수정) — 상단 */}
+      <section className="mb-8">
+        <h2 className="mb-4 text-base font-bold text-text">프로필 편집</h2>
+        <ProfileEditor profile={profile} />
+      </section>
+
       {/* 종합점수 카드 */}
       <div className="mb-6 rounded-xl border border-border-light bg-background p-4 shadow-sm">
         <div className="flex items-center justify-between mb-3">
@@ -389,12 +395,6 @@ export default async function MyPage() {
             ))}
           </ul>
         )}
-      </section>
-
-      {/* 프로필 편집 */}
-      <section className="mb-8">
-        <h2 className="mb-4 text-base font-bold text-text">프로필 편집</h2>
-        <ProfileEditor profile={profile} />
       </section>
 
       {/* 로그아웃 */}

@@ -4,6 +4,7 @@ import { cookies } from "next/headers";
 import { createClient } from "@jisane/shared/supabase/server";
 import { signInWithGoogle, signInWithKakao, signOut } from "@jisane/shared/auth/actions";
 import { AppHeader } from "@jisane/ui/app-header";
+import { ExpertNav } from "@/components/expert-nav";
 import Script from "next/script";
 
 
@@ -55,7 +56,7 @@ export default async function RootLayout({
           href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&display=swap"
         />
       </head>
-      <body className="min-h-full flex flex-col bg-background text-foreground font-sans" suppressHydrationWarning>
+      <body className="min-h-full flex flex-col bg-background text-foreground font-sans pb-16" suppressHydrationWarning>
         <AppHeader
           appName="지사네"
           hubUrl="/"
@@ -66,6 +67,8 @@ export default async function RootLayout({
           signInWithGoogle={signInWithGoogle}
         />
         {children}
+        {/* 하단 탭 — 로그인 전후 공통 */}
+        <ExpertNav />
         {/* Docent RAG 챗봇 위젯 */}
         <Script
           src="https://ragbot-web-n6qj3b5f3q-du.a.run.app/embed.js"

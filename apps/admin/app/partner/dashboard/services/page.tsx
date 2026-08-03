@@ -5,17 +5,10 @@ import Link from 'next/link'
 import { createClient } from '@jisane/shared/supabase/server'
 import { adminClient } from '@jisane/shared/supabase/admin'
 import { getProviderByAuthUser } from '@jisane/shared/provider/auth'
-import { PACKAGE_STATUS_LABELS } from '@jisane/shared/labels'
 import { SuccessToast } from '@jisane/ui/toast'
-import { ArchiveButton } from './archive-button'
+import { ServicesList } from './services-list'
 
 export const metadata = { title: '서비스 관리 | 지사네 전문가회원' }
-
-const STATUS_BADGE: Record<string, string> = {
-  draft: 'bg-warning-light text-warning',
-  published: 'bg-success-light text-success',
-  archived: 'bg-surface text-text-subtle',
-}
 
 export default async function PartnerServicesPage() {
   const cookieStore = await cookies()
@@ -59,33 +52,7 @@ export default async function PartnerServicesPage() {
           </Link>
         </div>
       ) : (
-        <div className="flex flex-col gap-3">
-          {items.map((pkg) => (
-            <div key={pkg.id} className="flex items-center justify-between gap-3 rounded-xl border border-border-light bg-white p-4 shadow-xs">
-              <div className="min-w-0 flex-1">
-                <div className="flex items-center gap-2">
-                  <p className="truncate text-sm font-medium text-text">{pkg.name}</p>
-                  <span className={`shrink-0 rounded-full px-2 py-0.5 text-xs font-medium ${STATUS_BADGE[pkg.status] || ''}`}>
-                    {PACKAGE_STATUS_LABELS[pkg.status] || pkg.status}
-                  </span>
-                </div>
-                <p className="mt-0.5 text-xs text-text-subtle">
-                  {pkg.target_audience === 'owner' ? '기업 대상' : '시니어지식인 대상'} ·{' '}
-                  {pkg.is_free ? '무료' : `${pkg.price.toLocaleString('ko-KR')}원`}
-                </p>
-              </div>
-              <div className="flex shrink-0 items-center gap-2">
-                <Link
-                  href={`/partner/dashboard/services/${pkg.id}`}
-                  className="rounded-lg border border-border-light px-3 py-1.5 text-xs font-medium text-text-muted transition-colors hover:border-info/30 hover:text-info"
-                >
-                  수정
-                </Link>
-                {pkg.status !== 'archived' && <ArchiveButton packageId={pkg.id} />}
-              </div>
-            </div>
-          ))}
-        </div>
+        <ServicesList items={items} />
       )}
     </div>
   )

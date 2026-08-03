@@ -67,7 +67,7 @@ function MyIcon({ active }: { active: boolean }) {
 }
 
 const TABS = [
-  { href: '/matching', label: '홈', Icon: HomeIcon },
+  { href: '/', label: '홈', Icon: HomeIcon },
   { href: '/invitations', label: '초빙', Icon: InvitationIcon },
   { href: '/work', label: '작업', Icon: WorkIcon },
   { href: '/education', label: '교육', Icon: EducationIcon },
