@@ -1,6 +1,10 @@
 import Link from 'next/link'
 import { adminClient } from '@jisane/shared/supabase/admin'
 import { REQUEST_STATUS_LABELS, DEAL_STATUS_LABELS } from '@jisane/shared/labels'
+import { fetchOwnerLandingStats } from '@jisane/shared/landing-stats'
+import { CategoryBrowse } from '@jisane/ui/category-browse'
+import { SearchBox } from '@jisane/ui/search-box'
+import { ExpertCard, type ExpertCardData } from './(browse)/experts/expert-card'
 
 const STATUS_COLORS: Record<string, string> = {
   open: 'bg-info-light text-info',
@@ -25,7 +29,7 @@ export async function OwnerDashboard({
   email: string
   company: string | null
 }) {
-  const [reqCountRes, dealCountRes, orderCountRes, recentReqRes] = await Promise.all([
+  const [reqCountRes, dealCountRes, orderCountRes, recentReqRes, stats, topExpertsRes] = await Promise.all([
     adminClient.from('request').select('id', { count: 'exact', head: true })
       .eq('owner_id', ownerId).in('status', ['open', 'matching']),
     adminClient.from('deal').select('id, request:request!inner(owner_id)', { count: 'exact', head: true })
@@ -34,6 +38,13 @@ export async function OwnerDashboard({
       .eq('owner_id', ownerId).in('status', ['pending', 'paid', 'processing']),
     adminClient.from('request').select('id, title, status, created_at')
       .eq('owner_id', ownerId).order('created_at', { ascending: false }).limit(3),
+    fetchOwnerLandingStats(),
+    adminClient.from('expert')
+      .select('id, name, field, career_years, grade, total_score, activity_points')
+      .eq('status', 'active')
+      .order('total_score', { ascending: false })
+      .order('activity_points', { ascending: false })
+      .limit(4),
   ])
 
   const progressRequests = reqCountRes.count || 0
@@ -41,6 +52,16 @@ export async function OwnerDashboard({
   const progressOrders = orderCountRes.count || 0
   const recent = (recentReqRes.data || []) as Array<{ id: string; title: string; status: string; created_at: string }>
   const greeting = company || email.split('@')[0]
+
+  const topExperts: ExpertCardData[] = (topExpertsRes.data || []).map((p) => ({
+    id: p.id,
+    name: p.name,
+    field: p.field,
+    careerYears: p.career_years,
+    grade: p.grade,
+    totalScore: p.total_score,
+    activityPoints: p.activity_points,
+  }))
 
   return (
     <div className="flex flex-1 flex-col items-center animate-fade-in">
@@ -114,6 +135,36 @@ export async function OwnerDashboard({
                 </li>
               ))}
             </ul>
+          </section>
+        )}
+
+        {/* 시니어지식인 탐색 — 검색 + 카테고리 + 추천 */}
+        <section>
+          <h2 className="mb-3 text-base font-bold text-text">시니어지식인 찾기</h2>
+          <SearchBox target="/experts" placeholder="이름·분야로 시니어지식인 검색" />
+          <div className="mt-4">
+            <CategoryBrowse
+              categoryCounts={stats.categoryCounts}
+              newRequestsThisMonth={stats.newRequestsThisMonth}
+              title="어떤 분야의 시니어지식인이 필요하세요?"
+              countLabel="시니어지식인"
+              countUnit="명"
+              colorToken="primary"
+              baseHref="/experts"
+            />
+          </div>
+        </section>
+
+        {/* 추천 시니어지식인 */}
+        {topExperts.length > 0 && (
+          <section>
+            <div className="mb-3 flex items-center justify-between">
+              <h2 className="text-base font-bold text-text">추천 시니어지식인</h2>
+              <Link href="/experts" className="text-xs font-medium text-primary hover:underline">전체 보기</Link>
+            </div>
+            <div className="grid gap-3 md:grid-cols-2">
+              {topExperts.map((e) => <ExpertCard key={e.id} expert={e} />)}
+            </div>
           </section>
         )}
 

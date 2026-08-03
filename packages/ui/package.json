@@ -20,6 +20,7 @@
     "./collapsible-section": "./components/collapsible-section.tsx",
     "./money-input": "./components/money-input.tsx",
     "./scroll-reveal": "./components/scroll-reveal.tsx",
+    "./search-box": "./components/search-box.tsx",
     "./chatbot-hint": "./components/chatbot-hint.tsx"
   },
   "devDependencies": {

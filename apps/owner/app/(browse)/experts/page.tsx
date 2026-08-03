@@ -8,11 +8,12 @@ export const metadata = {
 }
 
 interface PageProps {
-  searchParams: Promise<{ category?: string }>
+  searchParams: Promise<{ category?: string; q?: string }>
 }
 
 export default async function ExpertsPage(props: PageProps) {
-  const { category } = await props.searchParams
+  const { category, q } = await props.searchParams
+  const query = (q ?? '').trim()
 
   // 카테고리 목록 + 시니어지식인 목록 병렬 조회
   const [allCategories, { data: allExpertCats }] = await Promise.all([
@@ -66,6 +67,12 @@ export default async function ExpertsPage(props: PageProps) {
     }
   }
 
+  // 검색어: 이름·분야 부분 일치 (카테고리 필터와 공존)
+  if (query) {
+    const safe = query.replace(/[%,]/g, '')
+    expertsQuery = expertsQuery.or(`name.ilike.%${safe}%,field.ilike.%${safe}%`)
+  }
+
   const { data: experts } = await expertsQuery
 
   // 시니어지식인별 카테고리 매핑 (표시용)
@@ -113,6 +120,7 @@ export default async function ExpertsPage(props: PageProps) {
           }))}
           categoryTree={categoryTree}
           selectedCategory={category ?? null}
+          query={query}
         />
       </div>
     </div>
