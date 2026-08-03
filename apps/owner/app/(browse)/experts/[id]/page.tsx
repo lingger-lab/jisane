@@ -14,7 +14,7 @@ interface PageProps {
 
 const GRADE_LABEL: Record<string, string> = {
   veteran: '베테랑',
-  standard: '전문가',
+  standard: '시니어지식인',
   new: '신규',
 }
 
@@ -26,11 +26,11 @@ export async function generateMetadata(props: PageProps) {
     .eq('id', id)
     .single()
 
-  if (!expert) return { title: '전문가 - 지사네 기업공간' }
+  if (!expert) return { title: '시니어지식인 - 지사네 기업공간' }
 
   return {
-    title: `${expert.name ?? '전문가'} - ${expert.field ?? '전문가'} | 지사네 기업공간`,
-    description: `${expert.name ?? '전문가'}님의 전문 분야와 경력을 확인하세요.`,
+    title: `${expert.name ?? '시니어지식인'} - ${expert.field ?? '시니어지식인'} | 지사네 기업공간`,
+    description: `${expert.name ?? '시니어지식인'}님의 전문 분야와 경력을 확인하세요.`,
   }
 }
 
@@ -42,7 +42,7 @@ export default async function ExpertDetailPage(props: PageProps) {
   const supabase = createClient(cookieStore)
   const { data: { user } } = await supabase.auth.getUser()
 
-  // 전문가 정보 + 카테고리 매핑 병렬 조회
+  // 시니어지식인 정보 + 카테고리 매핑 병렬 조회
   const [{ data: expert }, { data: expertCats }] = await Promise.all([
     adminClient
       .from('expert')
@@ -105,14 +105,14 @@ export default async function ExpertDetailPage(props: PageProps) {
         <div className="mb-4 flex items-center gap-2 text-sm text-text-muted">
           <Link href="/" className="hover:text-text transition-colors">&larr; 홈</Link>
           <span>/</span>
-          <Link href="/experts" className="hover:text-text transition-colors">전문가</Link>
+          <Link href="/experts" className="hover:text-text transition-colors">시니어지식인</Link>
         </div>
 
-        {/* 전문가 프로필 */}
+        {/* 시니어지식인 프로필 */}
         <section className="rounded-2xl border border-border-light bg-white p-5 md:p-6 lg:p-8 shadow-xs">
           <div className="flex items-start justify-between gap-3">
             <div>
-              <h1 className="text-xl md:text-2xl font-bold text-text">{expert.name ?? '전문가'}</h1>
+              <h1 className="text-xl md:text-2xl font-bold text-text">{expert.name ?? '시니어지식인'}</h1>
               {expert.field && (
                 <p className="mt-1 text-sm text-text-muted">{expert.field}</p>
               )}
@@ -199,7 +199,7 @@ export default async function ExpertDetailPage(props: PageProps) {
             의뢰서 작성으로 매칭 받기
           </Link>
           <p className="mt-1 text-center text-xs text-text-subtle">
-            초빙하기: 이 전문가에게 직접 요청 · 의뢰서: AI가 최적의 전문가를 매칭
+            초빙하기: 이 시니어지식인에게 직접 요청 · 의뢰서: AI가 최적의 시니어지식인을 매칭
           </p>
         </section>
       </div>

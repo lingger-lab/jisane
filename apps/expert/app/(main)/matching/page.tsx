@@ -99,7 +99,7 @@ export default async function MatchingListPage() {
       {/* 대시보드 헤더 */}
       <div className="mb-5">
         <p className="text-lg font-bold text-text">
-          안녕하세요, {expert.name || '전문가'}님
+          안녕하세요, {expert.name || '시니어지식인'}님
         </p>
       </div>
 

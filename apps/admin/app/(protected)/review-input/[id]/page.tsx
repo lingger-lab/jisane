@@ -70,7 +70,7 @@ export default async function ReviewInputPage(props: PageProps) {
             <p className="text-text">{req.req_type || '-'}</p>
           </div>
           <div>
-            <p className="text-xs text-text-muted">전문가</p>
+            <p className="text-xs text-text-muted">시니어지식인</p>
             <p className="text-text">{expert.name || '미등록'} ({expert.field}, {expert.career_years || 0}년)</p>
           </div>
           <div>

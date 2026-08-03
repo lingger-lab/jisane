@@ -230,7 +230,7 @@ export function RequestList({
                       href="/"
                       className="rounded-xl bg-surface px-3 py-2 text-xs font-medium text-text-muted hover:bg-surface-warm transition-colors"
                     >
-                      {isAuthenticated ? '전문가 등록 후 관심 표현' : '로그인 후 관심 표현'}
+                      {isAuthenticated ? '시니어지식인 등록 후 관심 표현' : '로그인 후 관심 표현'}
                     </Link>
                   )}
                 </div>

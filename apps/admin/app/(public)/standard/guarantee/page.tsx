@@ -69,14 +69,14 @@ export default function GuaranteePage() {
                 <tr className="border-b border-border-light">
                   <td className="py-2.5 pr-2 text-text-subtle">1</td>
                   <td className="py-2.5 pr-4">
-                    전문가가 명세서 범위를 이행했으나 결과에 하자가 있는 경우
+                    시니어지식인이 명세서 범위를 이행했으나 결과에 하자가 있는 경우
                   </td>
                   <td className="py-2.5">대금의 일정% 한도</td>
                 </tr>
                 <tr className="border-b border-border-light">
                   <td className="py-2.5 pr-2 text-text-subtle">2</td>
                   <td className="py-2.5 pr-4">
-                    전문가 사정으로 용역이 중단된 경우
+                    시니어지식인 사정으로 용역이 중단된 경우
                   </td>
                   <td className="py-2.5">예치 대금 환급 + 재매칭</td>
                 </tr>

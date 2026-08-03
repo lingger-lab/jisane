@@ -6,7 +6,7 @@ import { getProviderByAuthUser } from '@jisane/shared/provider/auth'
 import { ORDER_STATUS_LABELS_FALLBACK } from '../order-labels'
 import { CompleteOrderButton } from './complete-order-button'
 
-export const metadata = { title: '신청 확인 | 지사네 파트너공간' }
+export const metadata = { title: '신청 확인 | 지사네 전문가공간' }
 
 const STATUS_BADGE: Record<string, string> = {
   pending: 'bg-info-light text-info',
@@ -37,13 +37,13 @@ export default async function PartnerOrdersPage() {
     <div className="animate-fade-in">
       <h1 className="mb-1 text-lg font-bold text-text">신청 확인</h1>
       <p className="mb-5 text-sm text-text-muted">
-        결제 확인·취소는 지사네 관리자가 처리하며, 파트너는 진행 중 건의 <strong className="text-text">완료 처리</strong>를 담당합니다.
+        결제 확인·취소는 지사네 관리자가 처리하며, 전문가회원은 진행 중 건의 <strong className="text-text">완료 처리</strong>를 담당합니다.
       </p>
 
       {items.length === 0 ? (
         <div className="rounded-xl border border-border-light bg-white p-10 text-center">
           <p className="text-sm text-text-muted">아직 신청이 없습니다.</p>
-          <p className="mt-1 text-xs text-text-subtle">서비스가 공개되면 기업·전문가의 신청이 여기에 표시됩니다.</p>
+          <p className="mt-1 text-xs text-text-subtle">서비스가 공개되면 기업회원·시니어지식인회원의 신청이 여기에 표시됩니다.</p>
         </div>
       ) : (
         <div className="flex flex-col gap-3">
@@ -52,7 +52,7 @@ export default async function PartnerOrdersPage() {
             const expertInfo = o.expert as unknown as { name: string | null } | null
             const orderer = ownerInfo
               ? (ownerInfo.company || ownerInfo.ceo_name || '기업')
-              : (expertInfo?.name || '전문가')
+              : (expertInfo?.name || '시니어지식인')
             return (
               <div key={o.id} className="rounded-xl border border-border-light bg-white p-4 shadow-xs">
                 <div className="flex items-start justify-between gap-3">

@@ -61,8 +61,8 @@ export function PackageForm({ defaults = {} }: { defaults?: PackageFormDefaults 
             </label>
             <select id="target_audience" name="target_audience" required defaultValue={defaults.targetAudience ?? ''} className={INPUT_CLASS}>
               <option value="" disabled>선택</option>
-              <option value="owner">기업</option>
-              <option value="expert">전문가</option>
+              <option value="owner">기업회원</option>
+              <option value="expert">시니어지식인회원</option>
             </select>
           </div>
         </div>

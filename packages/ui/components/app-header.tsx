@@ -4,6 +4,7 @@ import { OwlIcon } from './icons/owl'
 export function AppHeader({
   appName,
   hubUrl,
+  joinUrl,
   userEmail,
   signOutAction,
   signInWithKakao,
@@ -12,6 +13,7 @@ export function AppHeader({
 }: {
   appName: string
   hubUrl?: string
+  joinUrl?: string
   userEmail?: string | null
   signOutAction?: () => Promise<void>
   signInWithKakao?: () => Promise<void>
@@ -51,10 +53,20 @@ export function AppHeader({
               </form>
             </>
           ) : signInWithKakao && signInWithGoogle ? (
-            <LoginDropdown
-              signInWithKakao={signInWithKakao}
-              signInWithGoogle={signInWithGoogle}
-            />
+            <>
+              {joinUrl && (
+                <a
+                  href={joinUrl}
+                  className="text-xs font-medium text-primary hover:text-primary-light transition-colors"
+                >
+                  회원가입
+                </a>
+              )}
+              <LoginDropdown
+                signInWithKakao={signInWithKakao}
+                signInWithGoogle={signInWithGoogle}
+              />
+            </>
           ) : null}
         </div>
       </div>

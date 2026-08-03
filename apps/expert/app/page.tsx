@@ -52,7 +52,7 @@ export default async function ExpertHome() {
       {/* [1] 히어로 — 브랜드 딥그린 다크 밴드 + 0% 배지 */}
       <div className="hero-dark w-full">
         <section className="responsive-container flex flex-col items-center gap-4 px-4 md:px-6 pt-14 md:pt-20 pb-12 md:pb-16 text-center animate-fade-in">
-          <span className="hero-eyebrow">당신의 30년, AI로 증폭하다 · 전문가공간</span>
+          <span className="hero-eyebrow">당신의 30년, AI로 증폭하다 · 시니어지식인공간</span>
           <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold font-serif text-white leading-snug">
             경험의 값어치,
             <br />
@@ -172,7 +172,7 @@ export default async function ExpertHome() {
       </div>
       </ScrollReveal>
 
-      {/* [4] 전문가 역량 강화 프로그램 — 풀블리드 배경, 클릭 시 펼침 */}
+      {/* [4] 시니어지식인 역량 강화 프로그램 — 풀블리드 배경, 클릭 시 펼침 */}
       <ScrollReveal className="w-full">
       <div className="w-full bg-accent/5 py-8 md:py-12">
         <section className="responsive-container px-4 md:px-6">

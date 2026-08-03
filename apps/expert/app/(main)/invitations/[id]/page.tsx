@@ -21,7 +21,7 @@ export async function generateMetadata(props: PageProps) {
 
   const invOwner = (inv as { owner: { company: string | null; ceo_name: string | null } | null } | null)?.owner
   const label = invOwner?.company ?? invOwner?.ceo_name ?? '초빙'
-  return { title: `${label} - 초빙 상세 | 지사네 전문가` }
+  return { title: `${label} - 초빙 상세 | 지사네 시니어지식인` }
 }
 
 export default async function InvitationDetailPage(props: PageProps) {

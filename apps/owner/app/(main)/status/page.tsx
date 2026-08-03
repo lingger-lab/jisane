@@ -114,7 +114,7 @@ export default async function StatusPage() {
         <div className="flex flex-1 flex-col items-center justify-center gap-4 text-center py-12">
           <p className="text-text-muted">아직 등록한 의뢰가 없습니다.</p>
           <p className="text-xs text-text-subtle max-w-xs">
-            전문가에게 맡길 작업을 등록하세요.
+            시니어지식인에게 맡길 작업을 등록하세요.
           </p>
         </div>
       ) : (

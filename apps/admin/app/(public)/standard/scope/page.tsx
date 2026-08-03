@@ -14,7 +14,7 @@ export default function ScopePage() {
         <p className="font-semibold text-text mb-1">이 문서는 왜 존재하나요?</p>
         <p>
           오해의 90%는 &ldquo;해줄 줄 알았는데&rdquo;에서 나옵니다.
-          이 명세서는 착수 전에 발주자와 전문가가 함께 확인하고 서명합니다.
+          이 명세서는 착수 전에 발주자와 시니어지식인이 함께 확인하고 서명합니다.
           &ldquo;이건 합니다 / 이건 안 합니다&rdquo;를 명문화해,
           끝나고 &ldquo;그건 안 했잖아요&rdquo;가 생길 자리를 없앱니다.
         </p>
@@ -37,7 +37,7 @@ export default function ScopePage() {
                 {[
                   '용역명',
                   '발주자 (성함/상호)',
-                  '수행 전문가',
+                  '수행 시니어지식인',
                   '계약 체결일',
                   '착수일 ~ 완료일',
                 ].map((label) => (
@@ -150,7 +150,7 @@ export default function ScopePage() {
             </table>
           </div>
           <p className="mt-3">
-            대금은 토스페이먼츠 에스크로에 보관되며, 발주자의 검수 완료 확인 후 전문가에게 지급됩니다.
+            대금은 토스페이먼츠 에스크로에 보관되며, 발주자의 검수 완료 확인 후 시니어지식인에게 지급됩니다.
             <br />
             <span className="font-medium text-text">착수 전 예치 → 완료 확인 → 지급.</span>
           </p>
@@ -172,7 +172,7 @@ export default function ScopePage() {
               <p className="text-text-subtle mt-1">일자: ____ . ____ . ____</p>
             </div>
             <div className="rounded-xl border border-border-light p-4">
-              <p className="text-xs font-semibold text-text mb-2">전문가</p>
+              <p className="text-xs font-semibold text-text mb-2">시니어지식인</p>
               <p className="text-text-subtle">성명: ________</p>
               <p className="text-text-subtle mt-1">서명: ________</p>
               <p className="text-text-subtle mt-1">일자: ____ . ____ . ____</p>

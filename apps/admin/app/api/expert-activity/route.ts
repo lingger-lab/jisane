@@ -5,7 +5,7 @@ import { getDefaultPoints, recalcActivityPoints } from '@jisane/shared/expert-ac
 
 /**
  * POST /api/expert-activity
- * 관리자가 전문가 활동(band_join/post)을 등록
+ * 관리자가 시니어지식인 활동(band_join/post)을 등록
  * body: { expert_id, type, approved_by }
  */
 export async function POST(req: NextRequest) {

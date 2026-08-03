@@ -159,7 +159,7 @@ export default async function RequestDetailPage(props: PageProps) {
               href="/"
               className="block w-full rounded-xl bg-accent px-4 py-3 text-center text-sm font-semibold text-white shadow-sm transition-all hover:bg-accent/90 hover:shadow-md"
             >
-              {user ? '전문가 등록 후 관심 표현' : '로그인 후 관심 표현'}
+              {user ? '시니어지식인 등록 후 관심 표현' : '로그인 후 관심 표현'}
             </Link>
           )}
         </div>

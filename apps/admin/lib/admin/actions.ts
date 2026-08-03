@@ -87,7 +87,7 @@ export async function getCandidatesForRequest(requestId: string) {
     }
   )
 
-  // 관심 표현 전문가 매핑
+  // 관심 표현 시니어지식인 매핑
   const interestMap = new Map<string, string | null>()
   for (const i of (interests || [])) {
     interestMap.set(i.expert_id, i.note)
@@ -108,7 +108,7 @@ export async function getCandidatesForRequest(requestId: string) {
     interest_note: interestMap.get(c.expert.id) || null,
   }))
 
-  // 관심 표현했지만 알고리즘 후보가 아닌 전문가 추가
+  // 관심 표현했지만 알고리즘 후보가 아닌 시니어지식인 추가
   for (const i of (interests || [])) {
     if (!candidateIds.has(i.expert_id)) {
       merged.push({
@@ -127,7 +127,7 @@ export async function getCandidatesForRequest(requestId: string) {
     }
   }
 
-  // 관심 표현 전문가를 상단으로 정렬
+  // 관심 표현 시니어지식인을 상단으로 정렬
   merged.sort((a, b) => {
     if (a.interested && !b.interested) return -1
     if (!a.interested && b.interested) return 1
@@ -358,15 +358,15 @@ export async function createMatching(
   if (!req) return { error: '의뢰를 찾을 수 없습니다.' }
   if (req.status !== 'open') return { error: '이미 매칭 진행 중인 의뢰입니다.' }
 
-  // 전문가 확인
+  // 시니어지식인 확인
   const { data: expert } = await adminClient
     .from('expert')
     .select('id, status')
     .eq('id', expertId)
     .single()
 
-  if (!expert) return { error: '전문가를 찾을 수 없습니다.' }
-  if (expert.status !== 'active') return { error: '비활성 전문가입니다.' }
+  if (!expert) return { error: '시니어지식인을 찾을 수 없습니다.' }
+  if (expert.status !== 'active') return { error: '비활성 시니어지식인입니다.' }
 
   // matching 생성
   const { error: matchError } = await adminClient
@@ -525,7 +525,7 @@ export async function releaseSettlement(
       })
   }
 
-  // 전문가 스코어 재계산 (completion_score 반영)
+  // 시니어지식인 스코어 재계산 (completion_score 반영)
   const deal = settlement.deal as unknown as {
     expert_id: string | null
     request: { owner_id: string | null } | null
@@ -607,7 +607,7 @@ export async function submitReview(
     .eq('deal_id', dealId)
     .eq('status', 'pending')
 
-  // 전문가 스코어 재계산 (review_score + completion_score)
+  // 시니어지식인 스코어 재계산 (review_score + completion_score)
   if (deal.expert_id) {
     await recalcExpertScores(adminClient, deal.expert_id)
   }

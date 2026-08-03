@@ -39,7 +39,7 @@ export function ProposedTab({ matchings }: { matchings: ProposedItem[] }) {
     return (
       <div className="flex flex-col items-center gap-1 py-12 text-center">
         <span className="text-2xl">&#9203;</span>
-        <p className="text-sm text-text-muted">전문가 응답 대기 중인 매칭이 없습니다.</p>
+        <p className="text-sm text-text-muted">시니어지식인 응답 대기 중인 매칭이 없습니다.</p>
       </div>
     )
   }
@@ -72,7 +72,7 @@ export function ProposedTab({ matchings }: { matchings: ProposedItem[] }) {
                   )}
                 </div>
                 <div className="flex flex-wrap items-center gap-x-2">
-                  <span className="text-text-muted">전문가:</span>
+                  <span className="text-text-muted">시니어지식인:</span>
                   <span className="font-medium text-text">{m.expert.name || '이름 미등록'}</span>
                   {m.expert.field && <span>{m.expert.field}</span>}
                   {m.expert.contact && (

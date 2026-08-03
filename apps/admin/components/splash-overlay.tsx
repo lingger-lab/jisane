@@ -61,7 +61,7 @@ export function SplashOverlay() {
         {/* 서브카피 */}
         <div className="mt-4 splash-stagger-4">
           <p className="text-sm md:text-base text-text-muted">
-            부울경 전문가 직거래 플랫폼
+            부울경 시니어지식인 직거래 플랫폼
           </p>
         </div>
 

@@ -45,7 +45,7 @@ export async function updateExpertProfile(
     .single()
 
   if (!expert) {
-    return { error: '전문가 계정 정보를 찾을 수 없습니다.' }
+    return { error: '시니어지식인 계정 정보를 찾을 수 없습니다.' }
   }
 
   const { error } = await adminClient

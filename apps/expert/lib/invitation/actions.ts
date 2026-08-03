@@ -89,8 +89,8 @@ export async function acceptInvitation(
       .from('request')
       .insert({
         owner_id: invitation.owner_id,
-        title: `[초빙] ${expertName} 전문가 직접 의뢰`,
-        detail: `전문가 초빙으로 시작된 거래입니다. 예상 작업 ${estHours}시간 × 시간당 ${rate.toLocaleString('ko-KR')}원 (캡 ${capAmount.toLocaleString('ko-KR')}원)`,
+        title: `[초빙] ${expertName} 시니어지식인 직접 의뢰`,
+        detail: `시니어지식인 초빙으로 시작된 거래입니다. 예상 작업 ${estHours}시간 × 시간당 ${rate.toLocaleString('ko-KR')}원 (캡 ${capAmount.toLocaleString('ko-KR')}원)`,
         req_type: '초빙',
         budget_hope: estAmount,
         status: 'dealt',

@@ -46,7 +46,7 @@ export function ProfileForm({
           name="description"
           rows={5}
           defaultValue={defaults.description}
-          placeholder="기업·전문가에게 보여줄 소개를 적어주세요."
+          placeholder="기업회원·시니어지식인회원에게 보여줄 소개를 적어주세요."
           className={`${INPUT_CLASS} resize-none`}
         />
       </div>

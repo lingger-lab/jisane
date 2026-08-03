@@ -5,7 +5,7 @@ import { createClient } from '@jisane/shared/supabase/server'
 import { getProviderByAuthUser } from '@jisane/shared/provider/auth'
 import { ApplyForm } from './apply-form'
 
-export const metadata = { title: '파트너 등록 신청 | 지사네 파트너공간' }
+export const metadata = { title: '전문가회원 등록 신청 | 지사네 전문가공간' }
 
 export default async function PartnerApplyPage(props: {
   searchParams: Promise<{ submitted?: string }>
@@ -33,7 +33,7 @@ export default async function PartnerApplyPage(props: {
             <h1 className="mt-3 text-xl font-bold text-text">등록 신청 심사 중입니다</h1>
             <p className="mt-2 text-sm text-text-muted leading-relaxed">
               {submitted ? '신청이 접수되었습니다. ' : ''}
-              관리자 검토 후 승인되면 파트너 활동을 시작할 수 있습니다.
+              관리자 검토 후 승인되면 전문가회원 활동을 시작할 수 있습니다.
               보통 1~2 영업일이 소요됩니다.
             </p>
           </>
@@ -46,12 +46,12 @@ export default async function PartnerApplyPage(props: {
         ) : (
           <>
             <p className="text-3xl">&#9888;&#65039;</p>
-            <h1 className="mt-3 text-xl font-bold text-text">파트너 활동이 중지되었습니다</h1>
+            <h1 className="mt-3 text-xl font-bold text-text">전문가회원 활동이 중지되었습니다</h1>
             <p className="mt-2 text-sm text-text-muted">문의: iamblackwhite86@gmail.com</p>
           </>
         )}
         <Link href="/partner" className="mt-6 inline-block text-sm text-info hover:underline">
-          파트너공간 홈으로
+          전문가공간 홈으로
         </Link>
       </div>
     )
@@ -59,7 +59,7 @@ export default async function PartnerApplyPage(props: {
 
   return (
     <div className="mx-auto max-w-xl px-6 py-10 animate-fade-in">
-      <h1 className="text-xl font-bold text-text">파트너 등록 신청</h1>
+      <h1 className="text-xl font-bold text-text">전문가회원 등록 신청</h1>
       <p className="mt-1 mb-6 text-sm text-text-muted">
         신청 내용을 검토한 뒤 관리자가 승인합니다. 승인 후 서비스 등록·신청 관리가 가능합니다.
       </p>

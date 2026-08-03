@@ -187,7 +187,7 @@ export default async function AdminDashboardPage() {
   const rawInquiries = rawInquiriesRes.data
 
   // 주문 카드의 제공 내용/소요 표시용 — service_package를 slug 맵으로 (하드코딩 카탈로그 대체)
-  // + 파트너 탭: 전체 provider 목록·검수 대기(draft) 서비스
+  // + 전문가회원 탭: 전체 provider 목록·검수 대기(draft) 서비스
   const [{ data: packageRows }, { data: allProviders }, { data: draftPackages }] =
     await Promise.all([
       adminClient.from('service_package').select('slug, duration, deliverables'),

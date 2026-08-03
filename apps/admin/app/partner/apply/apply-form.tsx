@@ -22,12 +22,12 @@ export function ApplyForm() {
       <div className="grid grid-cols-2 gap-3">
         <div>
           <label htmlFor="kind" className="mb-1 block text-sm font-medium text-text">
-            파트너 유형 <span className="text-error">*</span>
+            전문가회원 유형 <span className="text-error">*</span>
           </label>
           <select id="kind" name="kind" required defaultValue="" className={INPUT_CLASS}>
             <option value="" disabled>선택</option>
             <option value="company">기업</option>
-            <option value="senior">시니어 전문가</option>
+            <option value="senior">시니어지식인</option>
           </select>
         </div>
         <div>

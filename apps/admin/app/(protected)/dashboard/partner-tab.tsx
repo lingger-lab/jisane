@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { updateProviderStatus, updatePackageStatus } from '@/lib/admin/actions'
+import { PROVIDER_KIND_LABELS } from '@jisane/shared/labels'
 
 export interface ProviderItem {
   id: string
@@ -36,7 +37,7 @@ const PROVIDER_STATUS_BADGE: Record<string, { label: string; color: string }> = 
   suspended: { label: '중지', color: 'bg-surface text-text-subtle' },
 }
 
-const KIND_LABELS: Record<string, string> = { company: '기업', senior: '시니어 전문가' }
+const KIND_LABELS = PROVIDER_KIND_LABELS
 const TYPE_LABELS: Record<string, string> = {
   consulting: '컨설팅', legal: '법무', tax: '세무', accounting: '회계', insurance: '보험',
 }
@@ -79,14 +80,14 @@ export function PartnerTab({
     <div className="flex flex-col gap-6">
       {error && <p className="text-xs text-error">{error}</p>}
 
-      {/* 승인 대기 파트너 */}
+      {/* 승인 대기 전문가회원 */}
       <section>
         <h3 className="mb-3 text-sm font-bold text-text">
-          승인 대기 파트너 {pendingProviders.length > 0 && <span className="text-warning">({pendingProviders.length})</span>}
+          승인 대기 전문가회원 {pendingProviders.length > 0 && <span className="text-warning">({pendingProviders.length})</span>}
         </h3>
         {pendingProviders.length === 0 ? (
           <p className="rounded-lg border border-border-light p-4 text-center text-sm text-text-muted">
-            승인 대기 중인 파트너가 없습니다.
+            승인 대기 중인 전문가회원이 없습니다.
           </p>
         ) : (
           <div className="flex flex-col gap-3">
@@ -111,7 +112,7 @@ export function PartnerTab({
                     <button
                       type="button"
                       disabled={busy === p.id}
-                      onClick={() => handleProviderStatus(p.id, 'active', `${p.name} 파트너를 승인할까요?`)}
+                      onClick={() => handleProviderStatus(p.id, 'active', `${p.name} 전문가회원을 승인할까요?`)}
                       className="rounded-lg bg-success px-3 py-1.5 text-xs font-medium text-white hover:bg-success/90 disabled:opacity-50"
                     >
                       승인
@@ -119,7 +120,7 @@ export function PartnerTab({
                     <button
                       type="button"
                       disabled={busy === p.id}
-                      onClick={() => handleProviderStatus(p.id, 'rejected', `${p.name} 파트너 신청을 반려할까요?`)}
+                      onClick={() => handleProviderStatus(p.id, 'rejected', `${p.name} 전문가회원 신청을 반려할까요?`)}
                       className="rounded-lg border border-error/30 px-3 py-1.5 text-xs font-medium text-error hover:bg-error-light disabled:opacity-50"
                     >
                       반려
@@ -150,7 +151,7 @@ export function PartnerTab({
                     <p className="font-medium text-text">{pkg.name}</p>
                     <p className="mt-0.5 text-xs text-text-muted">
                       {pkg.provider.name} · {CATEGORY_LABELS[pkg.category] || pkg.category} ·{' '}
-                      {pkg.target_audience === 'owner' ? '기업 대상' : '전문가 대상'} ·{' '}
+                      {pkg.target_audience === 'owner' ? '기업 대상' : '시니어지식인 대상'} ·{' '}
                       {pkg.is_free ? '무료' : `${pkg.price.toLocaleString('ko-KR')}원`}
                     </p>
                   </div>
@@ -179,12 +180,12 @@ export function PartnerTab({
         )}
       </section>
 
-      {/* 전체 파트너 */}
+      {/* 전체 전문가회원 */}
       <section>
-        <h3 className="mb-3 text-sm font-bold text-text">전체 파트너</h3>
+        <h3 className="mb-3 text-sm font-bold text-text">전체 전문가회원</h3>
         {otherProviders.length === 0 ? (
           <p className="rounded-lg border border-border-light p-4 text-center text-sm text-text-muted">
-            등록된 파트너가 없습니다.
+            등록된 전문가회원이 없습니다.
           </p>
         ) : (
           <div className="flex flex-col gap-2">
@@ -207,7 +208,7 @@ export function PartnerTab({
                       <button
                         type="button"
                         disabled={busy === p.id}
-                        onClick={() => handleProviderStatus(p.id, 'suspended', `${p.name} 파트너를 중지할까요? 등록 서비스 노출은 유지됩니다.`)}
+                        onClick={() => handleProviderStatus(p.id, 'suspended', `${p.name} 전문가회원을 중지할까요? 등록 서비스 노출은 유지됩니다.`)}
                         className="rounded-lg border border-border-light px-2.5 py-1 text-xs text-text-muted hover:border-error/30 hover:text-error disabled:opacity-50"
                       >
                         중지
@@ -216,7 +217,7 @@ export function PartnerTab({
                       <button
                         type="button"
                         disabled={busy === p.id}
-                        onClick={() => handleProviderStatus(p.id, 'active', `${p.name} 파트너를 다시 활성화할까요?`)}
+                        onClick={() => handleProviderStatus(p.id, 'active', `${p.name} 전문가회원을 다시 활성화할까요?`)}
                         className="rounded-lg border border-border-light px-2.5 py-1 text-xs text-text-muted hover:border-success/30 hover:text-success disabled:opacity-50"
                       >
                         활성화

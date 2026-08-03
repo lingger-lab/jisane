@@ -19,7 +19,7 @@ export function InspectionSection({ dealId }: InspectionSectionProps) {
   const [issueError, setIssueError] = useState<string | null>(null)
 
   async function handleConfirm() {
-    if (!confirm('검수를 완료하시겠습니까? 완료 후 결제 금액이 전문가에게 정산됩니다.')) return
+    if (!confirm('검수를 완료하시겠습니까? 완료 후 결제 금액이 시니어지식인에게 정산됩니다.')) return
     const result = await confirmDeal(dealId)
     if (result?.error) {
       setConfirmError(result.error)

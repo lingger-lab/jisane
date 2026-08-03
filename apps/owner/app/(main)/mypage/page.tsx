@@ -253,7 +253,7 @@ export default async function OwnerMyPage() {
         <h2 className="mb-3 text-base font-bold text-text">받은 관심표현</h2>
         {interests.length === 0 ? (
           <div className="flex flex-col items-center gap-3 rounded-xl border border-dashed border-border-light py-8 text-center">
-            <p className="text-sm text-text-muted">전문가의 관심 표현이 없습니다</p>
+            <p className="text-sm text-text-muted">시니어지식인의 관심 표현이 없습니다</p>
           </div>
         ) : (
           <ul className="flex flex-col gap-2">

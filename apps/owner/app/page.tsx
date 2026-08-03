@@ -121,8 +121,8 @@ export default async function OwnerHome() {
         <CategoryBrowse
           categoryCounts={stats.categoryCounts}
           newRequestsThisMonth={stats.newRequestsThisMonth}
-          title="어떤 분야의 전문가가 필요하세요?"
-          countLabel="전문가"
+          title="어떤 분야의 시니어지식인이 필요하세요?"
+          countLabel="시니어지식인"
           countUnit="명"
           colorToken="primary"
           baseHref="/experts"
@@ -280,7 +280,7 @@ export default async function OwnerHome() {
           className="flex items-center justify-between rounded-xl border border-accent/20 bg-accent/5 p-5 md:p-6 transition-colors hover:bg-accent/10"
         >
           <div>
-            <p className="text-base font-semibold text-text">전문가이신가요?</p>
+            <p className="text-base font-semibold text-text">시니어지식인이신가요?</p>
             <p className="mt-1 text-sm text-text-muted">당신의 30년, AI로 증폭하다 — 작업료 전액 수령</p>
           </div>
           <span className="text-sm font-medium text-accent shrink-0">&rarr;</span>
@@ -300,7 +300,7 @@ export default async function OwnerHome() {
           <div className="flex flex-wrap gap-3 text-xs text-text-subtle">
             <a href={`${adminUrl}/service`} className="hover:text-text-muted transition-colors">서비스 안내</a>
             <a href={`${adminUrl}/ax`} className="hover:text-text-muted transition-colors">AX 전환</a>
-            <a href={expertUrl} className="hover:text-text-muted transition-colors">전문가공간</a>
+            <a href={expertUrl} className="hover:text-text-muted transition-colors">시니어지식인공간</a>
             <a href={`${adminUrl}/privacy`} className="hover:text-text-muted transition-colors">개인정보처리방침</a>
           </div>
           <p className="text-xs text-text-subtle">&copy; 2026 (주)지사네. All rights reserved.</p>

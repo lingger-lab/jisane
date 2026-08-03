@@ -6,7 +6,7 @@ import { getProviderByAuthUser } from '@jisane/shared/provider/auth'
 import { PACKAGE_STATUS_LABELS } from '@jisane/shared/labels'
 import { PackageForm } from '../package-form'
 
-export const metadata = { title: '서비스 수정 | 지사네 파트너공간' }
+export const metadata = { title: '서비스 수정 | 지사네 전문가공간' }
 
 export default async function EditServicePackagePage(props: {
   params: Promise<{ id: string }>
@@ -20,7 +20,7 @@ export default async function EditServicePackagePage(props: {
   const provider = await getProviderByAuthUser(user.id)
   if (!provider) redirect('/partner/apply')
 
-  // 소유권 필터 포함 조회 — 타 파트너 패키지는 404
+  // 소유권 필터 포함 조회 — 타 전문가회원 패키지는 404
   const { data: pkg } = await adminClient
     .from('service_package')
     .select('id, name, category, target_audience, description, value_desc, price, is_free, duration, deliverables, status')

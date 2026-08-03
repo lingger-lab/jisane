@@ -9,11 +9,11 @@ import Script from "next/script";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://expert.jisane.cloud"),
-  title: "지사네 전문가공간",
-  description: "경험으로 일하고, 정당한 대가를 받으세요. 지사네 전문가 플랫폼.",
+  title: "지사네 시니어지식인공간",
+  description: "경험으로 일하고, 정당한 대가를 받으세요. 지사네 시니어지식인 플랫폼.",
   openGraph: {
-    title: "지사네 전문가공간",
-    description: "경험으로 일하고, 정당한 대가를 받으세요. 지사네 전문가 플랫폼.",
+    title: "지사네 시니어지식인공간",
+    description: "경험으로 일하고, 정당한 대가를 받으세요. 지사네 시니어지식인 플랫폼.",
     url: "https://expert.jisane.cloud",
     siteName: "지사네",
     locale: "ko_KR",
@@ -21,8 +21,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "지사네 전문가공간",
-    description: "경험으로 일하고, 정당한 대가를 받으세요. 지사네 전문가 플랫폼.",
+    title: "지사네 시니어지식인공간",
+    description: "경험으로 일하고, 정당한 대가를 받으세요. 지사네 시니어지식인 플랫폼.",
   },
 };
 
@@ -59,6 +59,7 @@ export default async function RootLayout({
         <AppHeader
           appName="지사네"
           hubUrl="/"
+          joinUrl={`${process.env.NEXT_PUBLIC_ADMIN_URL || 'https://jisane.cloud'}/join`}
           userEmail={user?.email}
           signOutAction={signOut}
           signInWithKakao={signInWithKakao}

@@ -5,7 +5,7 @@ import { adminClient } from '@jisane/shared/supabase/admin'
 
 /**
  * POST /api/disputes
- * 전문가(expert)가 리뷰 이의제기 생성
+ * 시니어지식인(expert)가 리뷰 이의제기 생성
  * body: { review_id, reason }
  */
 export async function POST(req: NextRequest) {
@@ -24,7 +24,7 @@ export async function POST(req: NextRequest) {
     .single()
 
   if (!expert) {
-    return NextResponse.json({ error: '전문가 정보를 찾을 수 없습니다.' }, { status: 403 })
+    return NextResponse.json({ error: '시니어지식인 정보를 찾을 수 없습니다.' }, { status: 403 })
   }
 
   const body = await req.json()

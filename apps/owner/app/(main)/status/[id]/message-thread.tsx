@@ -13,7 +13,7 @@ interface Message {
 
 const SENDER_LABELS: Record<string, string> = {
   owner: '나',
-  expert: '전문가',
+  expert: '시니어지식인',
   admin: '매니저',
 }
 
@@ -59,7 +59,7 @@ export function MessageThread({
 
       {messages.length === 0 ? (
         <p className="mb-3 text-xs text-text-subtle">
-          전문가나 매니저에게 질문이나 요청사항을 전달할 수 있습니다.
+          시니어지식인나 매니저에게 질문이나 요청사항을 전달할 수 있습니다.
         </p>
       ) : (
         <div className="mb-3 flex max-h-64 flex-col gap-2 overflow-y-auto">

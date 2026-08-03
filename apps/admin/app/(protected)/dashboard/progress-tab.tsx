@@ -31,7 +31,7 @@ interface Message {
 
 const SENDER_LABELS: Record<string, string> = {
   owner: '기업',
-  expert: '전문가',
+  expert: '시니어지식인',
   admin: '매니저',
 }
 
@@ -125,7 +125,7 @@ export function ProgressTab({
                     <a href={`mailto:${deal.request.owner.email}`} className="rounded px-1 py-0.5 hover:text-accent hover:bg-accent/5 transition-colors">{deal.request.owner.email}</a>
                   </div>
                   <div className="flex flex-wrap items-center gap-x-2">
-                    <span className="text-text-muted">전문가:</span>
+                    <span className="text-text-muted">시니어지식인:</span>
                     <span>{deal.expert.name || '이름 미등록'}</span>
                     <span>{deal.expert.field}</span>
                     {deal.expert.contact && (

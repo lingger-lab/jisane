@@ -19,7 +19,7 @@ export async function GET() {
     .single()
 
   if (!expert) {
-    return NextResponse.json({ error: '전문가 정보 없음' }, { status: 404 })
+    return NextResponse.json({ error: '시니어지식인 정보 없음' }, { status: 404 })
   }
 
   return NextResponse.json({ expert })

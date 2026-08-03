@@ -59,9 +59,16 @@ export const DISPUTE_TARGET_LABELS: Record<string, string> = {
 }
 
 export const DISPUTE_RAISED_BY_LABELS: Record<string, string> = {
-  owner: '기업',
-  expert: '전문가',
+  owner: '기업회원',
+  expert: '시니어지식인',
   admin: '관리자',
+}
+
+/** 회원 유형 공식 명칭 (박희중 이사 방향 문서 2026-08 — 가입·안내 공용) */
+export const MEMBER_TYPE_LABELS: Record<string, string> = {
+  owner: '기업회원',
+  expert: '시니어지식인회원',
+  provider: '전문가회원',
 }
 
 export const ACTIVITY_TYPE_LABELS: Record<string, string> = {
@@ -92,7 +99,7 @@ export const PACKAGE_STATUS_LABELS: Record<string, string> = {
 
 export const PROVIDER_KIND_LABELS: Record<string, string> = {
   company: '기업',
-  senior: '시니어 전문가',
+  senior: '시니어지식인',
 }
 
 export const PROVIDER_TYPE_LABELS: Record<string, string> = {

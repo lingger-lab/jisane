@@ -41,7 +41,7 @@ export function QuoteSection({ deal, expert }: QuoteSectionProps) {
     <div className="rounded-xl border border-accent/20 bg-surface-warm p-4 shadow-sm animate-scale-in">
       <h2 className="mb-4 font-semibold text-text">견적이 도착했습니다</h2>
 
-      {/* 익명 전문가 카드 */}
+      {/* 익명 시니어지식인 카드 */}
       <div className="mb-4 rounded-xl border border-border-light bg-background p-3">
         <div className="flex items-center gap-3">
           <div className="flex h-10 w-10 items-center justify-center rounded-full bg-accent/10 text-accent font-medium">
@@ -50,8 +50,8 @@ export function QuoteSection({ deal, expert }: QuoteSectionProps) {
           <div>
             <p className="font-medium text-text">
               {expert?.career_years
-                ? `경력 ${expert.career_years}년 전문가`
-                : '지사네 인증 전문가'}
+                ? `경력 ${expert.career_years}년 시니어지식인`
+                : '지사네 인증 시니어지식인'}
             </p>
             {expert?.field && (
               <p className="text-xs text-text-muted">전문 분야: {expert.field}</p>
@@ -74,7 +74,7 @@ export function QuoteSection({ deal, expert }: QuoteSectionProps) {
       <div className="mb-4 rounded-xl bg-background p-3">
         <p className="text-xs text-text-muted">
           지사네 에스크로 안전결제로 진행됩니다. 결제 금액은 작업 완료 및 검수
-          확인 후 전문가에게 정산됩니다.
+          확인 후 시니어지식인에게 정산됩니다.
         </p>
       </div>
 

@@ -17,7 +17,7 @@ export default async function AdminHome() {
 
   const stats = await fetchHubLandingStats()
 
-  // 인기 분야 (전문가 수 기준 상위 4개 대분류)
+  // 인기 분야 (시니어지식인 수 기준 상위 4개 대분류)
   const topExpertMajors = [...stats.owner.categoryCounts]
     .sort((a, b) => {
       const aSum = a.midCategories.reduce((s, m) => s + m.count, 0)
@@ -53,7 +53,7 @@ export default async function AdminHome() {
       {/* 히어로 — 브랜드 딥그린 다크 밴드 (렐라랩 벤치마킹: 아이브로우→제목→서브→수치) */}
       <div className="hero-dark w-full">
         <section className="responsive-container flex flex-col items-center gap-4 px-4 md:px-6 pt-14 md:pt-20 pb-12 md:pb-16 text-center animate-fade-in">
-          <span className="hero-eyebrow">부울경 전문가 직거래 플랫폼</span>
+          <span className="hero-eyebrow">부울경 시니어지식인 직거래 플랫폼</span>
           <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold font-serif text-white leading-snug">
             맡기기 전에,
             <br />
@@ -78,7 +78,7 @@ export default async function AdminHome() {
                 className="rounded-2xl border-t-4 border-t-primary border border-border-light bg-white p-6 md:p-8 text-left shadow-sm card-hover card-glow transition-all"
               >
                 <h2 className="text-2xl md:text-3xl font-bold text-primary">기업공간</h2>
-                <p className="mt-2 text-sm md:text-base text-text-muted">일은 사람이 합니다 — 전문가에게 직접 의뢰</p>
+                <p className="mt-2 text-sm md:text-base text-text-muted">일은 사람이 합니다 — 시니어지식인에게 직접 의뢰</p>
                 <div className="mt-4 flex flex-wrap gap-2">
                   <span className="rounded-full bg-primary/10 px-3 py-1.5 text-xs font-medium text-primary">에스크로 선입금</span>
                   <span className="rounded-full bg-primary/10 px-3 py-1.5 text-xs font-medium text-primary">매칭비 사전 공개</span>
@@ -96,7 +96,7 @@ export default async function AdminHome() {
                 href={expertUrl}
                 className="rounded-2xl border-t-4 border-t-accent border border-border-light bg-white p-6 md:p-8 text-left shadow-sm card-hover card-glow transition-all"
               >
-                <h2 className="text-2xl md:text-3xl font-bold text-accent">전문가공간</h2>
+                <h2 className="text-2xl md:text-3xl font-bold text-accent">시니어지식인공간</h2>
                 <p className="mt-2 text-sm md:text-base text-text-muted">당신의 30년, AI로 증폭하다 — 작업료 전액 수령</p>
                 <div className="mt-4 flex flex-wrap gap-2">
                   <span className="rounded-full bg-accent/10 px-3 py-1.5 text-xs font-medium text-accent">열린 의뢰 {stats.expert.totalOpenRequests}건</span>
@@ -108,18 +108,18 @@ export default async function AdminHome() {
                     의뢰 많은 분야: {topRequestMajors.join(' / ')}
                   </p>
                 )}
-                <div className="mt-4 text-sm font-semibold text-accent">전문가공간 바로가기 &rarr;</div>
+                <div className="mt-4 text-sm font-semibold text-accent">시니어지식인공간 바로가기 &rarr;</div>
               </a>
 
-              {/* 파트너공간 — 특수관계 제공기관용 슬림 카드 */}
+              {/* 전문가공간(파트너) — 특수관계 제공기관용 슬림 카드 */}
               <Link
                 href="/partner"
                 className="flex items-center justify-between rounded-2xl border-t-4 border-t-info border border-border-light bg-white p-4 md:p-5 shadow-sm card-hover transition-all"
               >
                 <div className="min-w-0">
-                  <p className="text-base md:text-lg font-bold text-info">파트너공간</p>
+                  <p className="text-base md:text-lg font-bold text-info">전문가공간(파트너)</p>
                   <p className="mt-1 text-xs md:text-sm text-text-muted">
-                    전문서비스를 등록하고 기업·전문가에게 제공하세요 — 서비스 등록 · 신청 관리
+                    전문서비스를 제공하는 특수관계 회원 — 기업 또는 시니어지식인 — 서비스 등록 · 신청 관리
                   </p>
                 </div>
                 <span className="text-sm font-semibold text-info shrink-0">&rarr;</span>

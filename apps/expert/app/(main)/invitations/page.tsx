@@ -15,7 +15,7 @@ const STATUS_COLORS: Record<string, string> = {
 }
 
 export const metadata = {
-  title: '초빙 현황 - 지사네 전문가',
+  title: '초빙 현황 - 지사네 시니어지식인',
 }
 
 export default async function InvitationsPage() {
@@ -54,7 +54,7 @@ export default async function InvitationsPage() {
       {items.length === 0 ? (
         <div className="flex flex-col items-center gap-3 rounded-xl border border-dashed border-border-light py-12 text-center">
           <p className="text-sm text-text-muted">아직 초빙 요청이 없습니다.</p>
-          <p className="text-xs text-text-subtle">기업이 전문가를 탐색한 뒤 초빙을 보내면 여기에 표시됩니다.</p>
+          <p className="text-xs text-text-subtle">기업이 시니어지식인을 탐색한 뒤 초빙을 보내면 여기에 표시됩니다.</p>
         </div>
       ) : (
         <ul className="flex flex-col gap-3">

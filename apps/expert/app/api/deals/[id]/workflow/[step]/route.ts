@@ -91,7 +91,7 @@ export async function PATCH(
         .eq('step', 'verify')
 
       return NextResponse.json(
-        { error: '신규 전문가 결과물은 관리자 검수가 필요합니다. 검수 완료 후 전달됩니다.' },
+        { error: '신규 시니어지식인 결과물은 관리자 검수가 필요합니다. 검수 완료 후 전달됩니다.' },
         { status: 403 }
       )
     }

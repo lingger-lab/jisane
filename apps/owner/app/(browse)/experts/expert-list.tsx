@@ -30,7 +30,7 @@ interface ExpertListProps {
 
 const GRADE_LABEL: Record<string, string> = {
   veteran: '베테랑',
-  standard: '전문가',
+  standard: '시니어지식인',
   new: '신규',
 }
 
@@ -61,11 +61,11 @@ export function ExpertList({ experts, categoryTree, selectedCategory }: ExpertLi
           &larr; 홈
         </Link>
       </div>
-      <h1 className="text-lg md:text-xl lg:text-2xl font-bold text-text">분야별 전문가</h1>
+      <h1 className="text-lg md:text-xl lg:text-2xl font-bold text-text">분야별 시니어지식인</h1>
       <p className="mt-1 text-sm text-text-muted">
         {experts.length > 0
-          ? `${experts.length}명의 활동 전문가`
-          : '카테고리별로 전문가를 찾아보세요'}
+          ? `${experts.length}명의 활동 시니어지식인`
+          : '카테고리별로 시니어지식인을 찾아보세요'}
       </p>
 
       {/* 대분류 탭 */}
@@ -122,14 +122,14 @@ export function ExpertList({ experts, categoryTree, selectedCategory }: ExpertLi
         </div>
       )}
 
-      {/* 전문가 리스트 */}
+      {/* 시니어지식인 리스트 */}
       <div className="mt-4 flex flex-col gap-3">
         {experts.length === 0 ? (
           <div className="rounded-xl border border-dashed border-border-light py-8 text-center">
             <p className="text-sm text-text-muted">
               {selectedCategory
-                ? '현재 이 분야의 활동 전문가가 없습니다.'
-                : '현재 활동 전문가가 없습니다.'}
+                ? '현재 이 분야의 활동 시니어지식인이 없습니다.'
+                : '현재 활동 시니어지식인이 없습니다.'}
             </p>
             {selectedCategory && (
               <button
@@ -137,7 +137,7 @@ export function ExpertList({ experts, categoryTree, selectedCategory }: ExpertLi
                 onClick={() => handleCategoryChange(null)}
                 className="mt-2 text-xs text-primary hover:underline"
               >
-                전체 전문가 보기
+                전체 시니어지식인 보기
               </button>
             )}
           </div>
@@ -150,7 +150,7 @@ export function ExpertList({ experts, categoryTree, selectedCategory }: ExpertLi
             >
               <div className="flex items-start justify-between gap-2">
                 <div className="min-w-0 flex-1">
-                  <h3 className="font-medium text-text">{expert.name ?? '전문가'}</h3>
+                  <h3 className="font-medium text-text">{expert.name ?? '시니어지식인'}</h3>
                   {expert.field && (
                     <p className="mt-0.5 text-xs text-text-muted">{expert.field}</p>
                   )}

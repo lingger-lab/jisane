@@ -10,7 +10,7 @@ import Script from "next/script";
 export const metadata: Metadata = {
   metadataBase: new URL("https://owner.jisane.cloud"),
   title: "지사네 기업공간",
-  description: "일은 사람이 합니다 — 부울경 전문가 직거래 플랫폼.",
+  description: "일은 사람이 합니다 — 부울경 시니어지식인 직거래 플랫폼.",
   openGraph: {
     title: "지사네 기업공간",
     description: "조건을 먼저 볼 수 있는 곳에 맡깁니다 — 에스크로 직거래.",
@@ -59,6 +59,7 @@ export default async function RootLayout({
         <AppHeader
           appName="지사네"
           hubUrl="/"
+          joinUrl={`${process.env.NEXT_PUBLIC_ADMIN_URL || 'https://jisane.cloud'}/join`}
           userEmail={user?.email}
           signOutAction={signOut}
           signInWithKakao={signInWithKakao}
