@@ -58,27 +58,6 @@ export default async function OwnerHome() {
             <span className="text-accent-light">생각한 것과 달랐던</span> 적 있으셨나요?
           </h1>
           <p className="text-base md:text-lg text-white/75">조건을 먼저 볼 수 있는 곳에 맡깁니다 — 에스크로 직거래</p>
-
-          <div className="flex w-full flex-col gap-3 mt-2">
-          <form action={signInWithKakao}>
-            <button
-              type="submit"
-              className="flex h-14 w-full items-center justify-center gap-2 rounded-xl overflow-hidden bg-[#FEE500] text-base font-semibold text-[#191919] shadow-sm transition-all hover:bg-[#FDD800] hover:shadow-md btn-press"
-            >
-              <KakaoIcon className="h-5 w-5 shrink-0" />
-              카카오로 시작하기
-            </button>
-          </form>
-          <form action={signInWithGoogle}>
-            <button
-              type="submit"
-              className="flex h-14 w-full items-center justify-center gap-2 rounded-xl overflow-hidden border border-border bg-white text-base font-medium text-[#1f1f1f] shadow-sm transition-all hover:bg-surface hover:shadow-md btn-press"
-            >
-              <GoogleIcon className="h-5 w-5 shrink-0" />
-              Google로 시작하기
-            </button>
-          </form>
-          </div>
         </section>
       </div>
 
