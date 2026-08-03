@@ -44,7 +44,7 @@ export async function OwnerDashboard({
       .eq('status', 'active')
       .order('total_score', { ascending: false })
       .order('activity_points', { ascending: false })
-      .limit(4),
+      .limit(10),
   ])
 
   const progressRequests = reqCountRes.count || 0
