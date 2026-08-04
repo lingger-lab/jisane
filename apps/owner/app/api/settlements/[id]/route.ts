@@ -30,10 +30,10 @@ export async function GET(
     return NextResponse.json({ error: 'Settlement not found' }, { status: 404 })
   }
 
-  // 소유권 확인: 기업(owner) 또는 전문가(expert)
+  // 소유권 확인: 기업(owner) 또는 시니어지식인(expert)
   const deal = settlement.deal
 
-  // 전문가 확인
+  // 시니어지식인 확인
   const { data: expert } = await adminClient
     .from('expert')
     .select('id')

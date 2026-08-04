@@ -5,6 +5,7 @@ import { createClient } from '@jisane/shared/supabase/server'
 import { adminClient } from '@jisane/shared/supabase/admin'
 import type { DealForReview } from '@jisane/shared/query-types'
 import { ReviewForm } from './review-form'
+import { PageHero } from '@jisane/ui/page-hero'
 
 interface PageProps {
   params: Promise<{ id: string }>
@@ -54,23 +55,27 @@ export default async function ReviewInputPage(props: PageProps) {
   ])
 
   return (
-    <div className="px-6 py-8">
-      <Link href="/dashboard" className="mb-4 inline-block text-sm text-text-muted hover:text-text">
-        &larr; 대시보드
-      </Link>
-
-      <h1 className="mb-6 text-xl font-bold text-text">지사네 리뷰 입력</h1>
-
+    <div className="flex flex-1 flex-col">
+      <PageHero
+        eyebrow="관리자"
+        title={req.title}
+        subtitle="지사네 리뷰 입력"
+        back={
+          <Link href="/dashboard" className="inline-block text-sm text-white/70 hover:text-white">
+            &larr; 대시보드
+          </Link>
+        }
+      />
+      <div className="responsive-container px-4 md:px-6 py-6">
       {/* 거래 요약 */}
       <div className="mb-6 rounded-xl border border-border-light p-4 shadow-xs">
-        <h2 className="font-medium text-text">{req.title}</h2>
         <div className="mt-2 grid grid-cols-2 gap-3 text-sm">
           <div>
             <p className="text-xs text-text-muted">분야</p>
             <p className="text-text">{req.req_type || '-'}</p>
           </div>
           <div>
-            <p className="text-xs text-text-muted">전문가</p>
+            <p className="text-xs text-text-muted">시니어지식인</p>
             <p className="text-text">{expert.name || '미등록'} ({expert.field}, {expert.career_years || 0}년)</p>
           </div>
           <div>
@@ -103,6 +108,7 @@ export default async function ReviewInputPage(props: PageProps) {
       ) : (
         <ReviewForm dealId={dealId} aiSuggestion={aiSuggestion} />
       )}
+      </div>
     </div>
   )
 }

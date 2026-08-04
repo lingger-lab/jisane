@@ -147,8 +147,8 @@ export function ServiceTab({
                         {order.owner
                           ? (order.owner.company || order.owner.ceo_name || '기업')
                           : order.expert
-                            ? (order.expert.name || '전문가')
-                            : (order.owner_id ? '기업' : '전문가')}
+                            ? (order.expert.name || '시니어지식인')
+                            : (order.owner_id ? '기업' : '시니어지식인')}
                       </span>
                       <span>
                         {order.price === 0 ? '무료' : `${order.price.toLocaleString('ko-KR')}원`}

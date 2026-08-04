@@ -18,7 +18,10 @@
     "./text-rotator": "./components/text-rotator.tsx",
     "./animated-counter": "./components/animated-counter.tsx",
     "./collapsible-section": "./components/collapsible-section.tsx",
-    "./money-input": "./components/money-input.tsx"
+    "./money-input": "./components/money-input.tsx",
+    "./scroll-reveal": "./components/scroll-reveal.tsx",
+    "./search-box": "./components/search-box.tsx",
+    "./page-hero": "./components/page-hero.tsx"
   },
   "devDependencies": {
     "typescript": "^5"

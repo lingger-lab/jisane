@@ -7,6 +7,7 @@ import { adminClient } from '@jisane/shared/supabase/admin'
 import { INVITATION_STATUS_LABELS } from '@jisane/shared/labels'
 import type { InvitationWithOwner } from '@jisane/shared/query-types'
 import { SuccessToast } from '@jisane/ui/toast'
+import { PageHero } from '@jisane/ui/page-hero'
 
 const STATUS_COLORS: Record<string, string> = {
   invited: 'bg-info-light text-info',
@@ -15,7 +16,7 @@ const STATUS_COLORS: Record<string, string> = {
 }
 
 export const metadata = {
-  title: '초빙 현황 - 지사네 전문가',
+  title: '초빙 현황 - 지사네 시니어지식인',
 }
 
 export default async function InvitationsPage() {
@@ -44,17 +45,18 @@ export default async function InvitationsPage() {
   const items = invitations ?? []
 
   return (
-    <div className="flex flex-1 flex-col px-4 py-5 sm:px-6 sm:py-8 animate-fade-in">
+    <div className="flex flex-1 flex-col animate-fade-in">
       <Suspense><SuccessToast /></Suspense>
-      <h1 className="mb-2 text-xl font-bold text-accent">초빙 현황</h1>
-      <p className="mb-5 text-sm text-text-muted">
-        기업으로부터 받은 초빙 요청을 확인하세요.
-      </p>
-
+      <PageHero
+        eyebrow="시니어지식인회원"
+        title="초빙 현황"
+        subtitle="기업으로부터 받은 초빙 요청을 확인하세요."
+      />
+      <div className="responsive-container px-4 md:px-6 py-6">
       {items.length === 0 ? (
         <div className="flex flex-col items-center gap-3 rounded-xl border border-dashed border-border-light py-12 text-center">
           <p className="text-sm text-text-muted">아직 초빙 요청이 없습니다.</p>
-          <p className="text-xs text-text-subtle">기업이 전문가를 탐색한 뒤 초빙을 보내면 여기에 표시됩니다.</p>
+          <p className="text-xs text-text-subtle">기업이 시니어지식인을 탐색한 뒤 초빙을 보내면 여기에 표시됩니다.</p>
         </div>
       ) : (
         <ul className="flex flex-col gap-3">
@@ -91,6 +93,7 @@ export default async function InvitationsPage() {
           ))}
         </ul>
       )}
+      </div>
     </div>
   )
 }

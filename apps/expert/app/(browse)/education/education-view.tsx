@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import type { ServicePackage, ProviderInfo } from '@jisane/shared/service-catalog'
+import { PageHero } from '@jisane/ui/page-hero'
 
 const PRICE_FILTERS = [
   { key: 'all' as const, label: '전체' },
@@ -29,12 +30,13 @@ export function EducationView({
     : []
 
   return (
-    <div className="flex flex-1 flex-col px-4 py-5 sm:px-6 sm:py-8 animate-fade-in">
-      <h1 className="mb-2 text-2xl font-bold text-accent">전문 교육</h1>
-      <p className="mb-5 text-sm text-text-muted">
-        역량을 강화하는 교육 과정을 수강하세요.
-      </p>
-
+    <div className="flex flex-1 flex-col animate-fade-in">
+      <PageHero
+        eyebrow="시니어지식인회원"
+        title="전문 교육"
+        subtitle="역량을 강화하는 교육 과정을 수강하세요."
+      />
+      <div className="responsive-container px-4 md:px-6 py-6">
       {/* 제공기관 카드 */}
       <div className="mb-5 flex flex-col gap-2">
         {providers.map((prov) => (
@@ -149,6 +151,7 @@ export function EducationView({
           ))}
         </div>
       )}
+      </div>
     </div>
   )
 }

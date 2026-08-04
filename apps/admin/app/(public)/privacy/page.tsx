@@ -1,13 +1,19 @@
+import { PageHero } from '@jisane/ui/page-hero'
+
 export const metadata = {
   title: '개인정보처리방침 | 지사네',
 }
 
 export default function PrivacyPage() {
   return (
-    <div className="mx-auto max-w-2xl px-6 py-12">
-      <h1 className="text-2xl font-bold text-text mb-2">개인정보처리방침</h1>
-      <p className="text-xs text-text-subtle mb-8">시행일: 2025년 6월 15일</p>
-
+    <div className="flex flex-1 flex-col">
+      <PageHero
+        eyebrow="지사네"
+        title="개인정보처리방침"
+        subtitle="시행일: 2025년 6월 15일"
+        size="lg"
+      />
+      <div className="responsive-container px-4 md:px-6 py-6">
       <div className="flex flex-col gap-8 text-sm leading-relaxed text-text-muted">
         <section>
           <h2 className="mb-3 text-base font-semibold text-text">1. 개인정보의 수집 및 이용 목적</h2>
@@ -18,7 +24,7 @@ export default function PrivacyPage() {
           <ul className="mt-2 list-disc pl-5 flex flex-col gap-1">
             <li>회원 가입 및 본인 확인</li>
             <li>의뢰 등록, 매칭, 계약 체결 등 서비스 제공</li>
-            <li>전문가 검증 및 신뢰도 평가</li>
+            <li>시니어지식인 검증 및 신뢰도 평가</li>
             <li>결제 및 정산 처리</li>
             <li>고객 문의 응대 및 공지사항 전달</li>
             <li>서비스 개선 및 통계 분석</li>
@@ -48,7 +54,7 @@ export default function PrivacyPage() {
                   <td className="py-2">서비스 이용 중 입력</td>
                 </tr>
                 <tr className="border-b border-border-light">
-                  <td className="py-2 pr-4">전문가</td>
+                  <td className="py-2 pr-4">시니어지식인</td>
                   <td className="py-2 pr-4">이름, 분야, 경력, 자기소개, 포트폴리오</td>
                   <td className="py-2">서비스 이용 중 입력</td>
                 </tr>
@@ -89,7 +95,7 @@ export default function PrivacyPage() {
           </p>
           <ul className="mt-2 list-disc pl-5 flex flex-col gap-1">
             <li>이용자가 사전에 동의한 경우</li>
-            <li>의뢰-전문가 매칭 시 계약 이행을 위해 필요한 최소한의 정보 (이름, 연락처)</li>
+            <li>의뢰-시니어지식인 매칭 시 계약 이행을 위해 필요한 최소한의 정보 (이름, 연락처)</li>
             <li>법령에 의하여 요구되는 경우</li>
           </ul>
         </section>
@@ -170,6 +176,7 @@ export default function PrivacyPage() {
             내용이 변경될 경우 시행 7일 전부터 서비스 내 공지사항을 통해 안내합니다.
           </p>
         </section>
+      </div>
       </div>
     </div>
   )

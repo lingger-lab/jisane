@@ -1,20 +1,22 @@
 import { adminClient } from '@jisane/shared/supabase/admin'
 import { getCachedCategories } from '@jisane/shared/categories'
+import { PageHero } from '@jisane/ui/page-hero'
 import { ExpertList } from './expert-list'
 
 export const metadata = {
-  title: '분야별 전문가 탐색 - 지사네 기업공간',
-  description: '부울경 전문가를 분야별로 탐색하세요.',
+  title: '분야별 시니어지식인 탐색 - 지사네 기업회원',
+  description: '부울경 시니어지식인을 분야별로 탐색하세요.',
 }
 
 interface PageProps {
-  searchParams: Promise<{ category?: string }>
+  searchParams: Promise<{ category?: string; q?: string }>
 }
 
 export default async function ExpertsPage(props: PageProps) {
-  const { category } = await props.searchParams
+  const { category, q } = await props.searchParams
+  const query = (q ?? '').trim()
 
-  // 카테고리 목록 + 전문가 목록 병렬 조회
+  // 카테고리 목록 + 시니어지식인 목록 병렬 조회
   const [allCategories, { data: allExpertCats }] = await Promise.all([
     getCachedCategories(adminClient),
     adminClient
@@ -48,7 +50,7 @@ export default async function ExpertsPage(props: PageProps) {
     }
   }
 
-  // 전문가 조회
+  // 시니어지식인 조회
   let expertsQuery = adminClient
     .from('expert')
     .select('id, name, field, career_years, grade, total_score, review_score, completion_score, activity_points')
@@ -59,16 +61,22 @@ export default async function ExpertsPage(props: PageProps) {
 
   if (targetExpertIds !== null) {
     if (targetExpertIds.length === 0) {
-      // 해당 카테고리에 전문가 없음
+      // 해당 카테고리에 시니어지식인 없음
       expertsQuery = expertsQuery.in('id', ['__none__'])
     } else {
       expertsQuery = expertsQuery.in('id', targetExpertIds)
     }
   }
 
+  // 검색어: 이름·분야 부분 일치 (카테고리 필터와 공존)
+  if (query) {
+    const safe = query.replace(/[%,]/g, '')
+    expertsQuery = expertsQuery.or(`name.ilike.%${safe}%,field.ilike.%${safe}%`)
+  }
+
   const { data: experts } = await expertsQuery
 
-  // 전문가별 카테고리 매핑 (표시용)
+  // 시니어지식인별 카테고리 매핑 (표시용)
   const expertIdSet = new Set((experts ?? []).map((p) => p.id))
   const expertCatMap = new Map<string, string[]>()
   for (const pc of expertCats) {
@@ -96,8 +104,13 @@ export default async function ExpertsPage(props: PageProps) {
   }))
 
   return (
-    <div className="flex flex-1 flex-col items-center">
-      <div className="responsive-container px-4 md:px-6 py-6 md:py-8">
+    <div className="flex flex-1 flex-col">
+      <PageHero
+        eyebrow="기업회원"
+        title="분야별 시니어지식인"
+        subtitle="분야·검색으로 필요한 시니어지식인을 찾아보세요."
+      />
+      <div className="responsive-container w-full px-4 md:px-6 py-6 md:py-8">
         <ExpertList
           experts={(experts ?? []).map((p) => ({
             id: p.id,
@@ -113,6 +126,7 @@ export default async function ExpertsPage(props: PageProps) {
           }))}
           categoryTree={categoryTree}
           selectedCategory={category ?? null}
+          query={query}
         />
       </div>
     </div>

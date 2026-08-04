@@ -4,16 +4,17 @@ import { cookies } from "next/headers";
 import { createClient } from "@jisane/shared/supabase/server";
 import { signInWithGoogle, signInWithKakao, signOut } from "@jisane/shared/auth/actions";
 import { AppHeader } from "@jisane/ui/app-header";
+import { ExpertNav } from "@/components/expert-nav";
 import Script from "next/script";
 
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://expert.jisane.cloud"),
-  title: "지사네 전문가공간",
-  description: "경험으로 일하고, 정당한 대가를 받으세요. 지사네 전문가 플랫폼.",
+  title: "지사네 시니어지식인회원",
+  description: "경험으로 일하고, 정당한 대가를 받으세요. 지사네 시니어지식인 플랫폼.",
   openGraph: {
-    title: "지사네 전문가공간",
-    description: "경험으로 일하고, 정당한 대가를 받으세요. 지사네 전문가 플랫폼.",
+    title: "지사네 시니어지식인회원",
+    description: "경험으로 일하고, 정당한 대가를 받으세요. 지사네 시니어지식인 플랫폼.",
     url: "https://expert.jisane.cloud",
     siteName: "지사네",
     locale: "ko_KR",
@@ -21,8 +22,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "지사네 전문가공간",
-    description: "경험으로 일하고, 정당한 대가를 받으세요. 지사네 전문가 플랫폼.",
+    title: "지사네 시니어지식인회원",
+    description: "경험으로 일하고, 정당한 대가를 받으세요. 지사네 시니어지식인 플랫폼.",
   },
 };
 
@@ -55,16 +56,19 @@ export default async function RootLayout({
           href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&display=swap"
         />
       </head>
-      <body className="min-h-full flex flex-col bg-background text-foreground font-sans" suppressHydrationWarning>
+      <body className="min-h-full flex flex-col bg-background text-foreground font-sans pb-16" suppressHydrationWarning>
         <AppHeader
           appName="지사네"
           hubUrl="/"
+          joinUrl={`${process.env.NEXT_PUBLIC_ADMIN_URL || 'https://jisane.cloud'}/join`}
           userEmail={user?.email}
           signOutAction={signOut}
           signInWithKakao={signInWithKakao}
           signInWithGoogle={signInWithGoogle}
         />
         {children}
+        {/* 하단 탭 — 로그인 전후 공통 */}
+        <ExpertNav />
         {/* Docent RAG 챗봇 위젯 */}
         <Script
           src="https://ragbot-web-n6qj3b5f3q-du.a.run.app/embed.js"

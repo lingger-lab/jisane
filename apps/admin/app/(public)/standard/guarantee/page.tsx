@@ -1,3 +1,5 @@
+import { PageHero } from '@jisane/ui/page-hero'
+
 export const metadata = {
   title: '책임 적립금 운영 규정 | 지사네 거래 표준',
   description: '지사네 책임 적립금 운영 규정 — 문제가 생기면 고객보다 지사네가 먼저 움직입니다.',
@@ -5,11 +7,14 @@ export const metadata = {
 
 export default function GuaranteePage() {
   return (
-    <div className="mx-auto max-w-2xl px-6 py-12">
-      <p className="text-xs font-semibold text-primary tracking-wide mb-2">거래 표준 문서 ②</p>
-      <h1 className="text-2xl font-bold text-text mb-2">지사네 책임 적립금 운영 규정</h1>
-      <p className="text-xs text-text-subtle mb-8">초안 v1.0 · 오해 제거 5대 메커니즘 ⑤ 복구 실물화</p>
-
+    <div className="flex flex-1 flex-col">
+      <PageHero
+        eyebrow="거래 표준 문서 ②"
+        title="지사네 책임 적립금 운영 규정"
+        subtitle="초안 v1.0 · 오해 제거 5대 메커니즘 ⑤ 복구 실물화"
+        size="lg"
+      />
+      <div className="responsive-container px-4 md:px-6 py-6">
       <div className="rounded-xl bg-surface-warm p-4 mb-8 text-sm text-text-muted leading-relaxed">
         <p className="font-semibold text-text mb-1">이 규정은 왜 존재하나요?</p>
         <p>
@@ -69,14 +74,14 @@ export default function GuaranteePage() {
                 <tr className="border-b border-border-light">
                   <td className="py-2.5 pr-2 text-text-subtle">1</td>
                   <td className="py-2.5 pr-4">
-                    전문가가 명세서 범위를 이행했으나 결과에 하자가 있는 경우
+                    시니어지식인이 명세서 범위를 이행했으나 결과에 하자가 있는 경우
                   </td>
                   <td className="py-2.5">대금의 일정% 한도</td>
                 </tr>
                 <tr className="border-b border-border-light">
                   <td className="py-2.5 pr-2 text-text-subtle">2</td>
                   <td className="py-2.5 pr-4">
-                    전문가 사정으로 용역이 중단된 경우
+                    시니어지식인 사정으로 용역이 중단된 경우
                   </td>
                   <td className="py-2.5">예치 대금 환급 + 재매칭</td>
                 </tr>
@@ -160,6 +165,7 @@ export default function GuaranteePage() {
             이 두 문서가 지사네의 약속을 실물로 지탱합니다.
           </p>
         </section>
+      </div>
       </div>
     </div>
   )

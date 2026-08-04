@@ -4,15 +4,16 @@ import { cookies } from "next/headers";
 import { createClient } from "@jisane/shared/supabase/server";
 import { signInWithGoogle, signInWithKakao, signOut } from "@jisane/shared/auth/actions";
 import { AppHeader } from "@jisane/ui/app-header";
+import { ClientNav } from "@/components/client-nav";
 import Script from "next/script";
 
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://owner.jisane.cloud"),
-  title: "지사네 기업공간",
-  description: "일은 사람이 합니다 — 부울경 전문가 직거래 플랫폼.",
+  title: "지사네 기업회원",
+  description: "일은 사람이 합니다 — 부울경 시니어지식인 직거래 플랫폼.",
   openGraph: {
-    title: "지사네 기업공간",
+    title: "지사네 기업회원",
     description: "조건을 먼저 볼 수 있는 곳에 맡깁니다 — 에스크로 직거래.",
     url: "https://owner.jisane.cloud",
     siteName: "지사네",
@@ -21,7 +22,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "지사네 기업공간",
+    title: "지사네 기업회원",
     description: "조건을 먼저 볼 수 있는 곳에 맡깁니다 — 에스크로 직거래.",
   },
 };
@@ -55,16 +56,19 @@ export default async function RootLayout({
           href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&display=swap"
         />
       </head>
-      <body className="min-h-full flex flex-col bg-background text-foreground font-sans" suppressHydrationWarning>
+      <body className="min-h-full flex flex-col bg-background text-foreground font-sans pb-16" suppressHydrationWarning>
         <AppHeader
           appName="지사네"
           hubUrl="/"
+          joinUrl={`${process.env.NEXT_PUBLIC_ADMIN_URL || 'https://jisane.cloud'}/join`}
           userEmail={user?.email}
           signOutAction={signOut}
           signInWithKakao={signInWithKakao}
           signInWithGoogle={signInWithGoogle}
         />
         {children}
+        {/* 하단 탭 — 로그인 전후 공통 (크롬 연속) */}
+        <ClientNav />
         {/* Docent RAG 챗봇 위젯 */}
         <Script
           src="https://ragbot-web-n6qj3b5f3q-du.a.run.app/embed.js"

@@ -23,7 +23,7 @@ export async function requestRevision(dealId: string, reason: string): Promise<{
   const result = await requestRevisionOp(dealId, reason)
   if (result.error) return { error: result.error }
 
-  // owner-specific: 전문가에게 수정 요청 알림 (deal_message)
+  // owner-specific: 시니어지식인에게 수정 요청 알림 (deal_message)
   if (result.ownerId) {
     await adminClient
       .from('deal_message')
@@ -82,7 +82,7 @@ export async function submitReview(
 
   if (error) return { error: error.message }
 
-  // 리뷰 점수를 전문가 스코어에 즉시 반영 — release 시점 재계산에만 의존하면
+  // 리뷰 점수를 시니어지식인 스코어에 즉시 반영 — release 시점 재계산에만 의존하면
   // release 후 작성된 리뷰가 다음 관리자 이벤트까지 미반영으로 남는다
   const { data: dealRow } = await adminClient
     .from('deal')

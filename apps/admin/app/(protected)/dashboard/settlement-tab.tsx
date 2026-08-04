@@ -46,7 +46,7 @@ export function SettlementTab({
   const [error, setError] = useState<string | null>(null)
 
   async function handleRelease(settlementId: string) {
-    if (!confirm('정산을 실행하시겠습니까? 에스크로가 해제되고 전문가에게 지급됩니다.')) return
+    if (!confirm('정산을 실행하시겠습니까? 에스크로가 해제되고 시니어지식인에게 지급됩니다.')) return
 
     setReleasing(settlementId)
     setError(null)
@@ -125,7 +125,7 @@ export function SettlementTab({
                       )}
                       <a href={`mailto:${s.deal.request.owner.email}`} className="rounded px-1 py-0.5 hover:text-accent hover:bg-accent/5 transition-colors">{s.deal.request.owner.email}</a>
                     </div>
-                    <p className="text-text-muted">전문가: {s.deal.expert.name || '미등록'}</p>
+                    <p className="text-text-muted">시니어지식인: {s.deal.expert.name || '미등록'}</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-1">

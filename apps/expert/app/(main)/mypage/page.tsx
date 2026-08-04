@@ -7,6 +7,7 @@ import { adminClient } from '@jisane/shared/supabase/admin'
 import { signOut } from '@jisane/shared/auth/actions'
 import { DEAL_STATUS_LABELS, ORDER_STATUS_LABELS, MATCHING_STATUS_LABELS, ACTIVITY_TYPE_LABELS } from '@jisane/shared/labels'
 import { SuccessToast, ErrorToast } from '@jisane/ui/toast'
+import { PageHero } from '@jisane/ui/page-hero'
 import { ProfileEditor } from '@/components/profile-editor'
 
 const DEAL_STATUS_COLORS: Record<string, string> = {
@@ -128,12 +129,14 @@ export default async function MyPage() {
   }
 
   return (
-    <div className="flex flex-1 flex-col px-4 py-5 sm:px-6 sm:py-8 animate-fade-in">
+    <div className="flex flex-1 flex-col animate-fade-in">
+      <PageHero
+        eyebrow="시니어지식인회원"
+        title="마이페이지"
+        subtitle="내 현황을 확인하고 프로필을 수정할 수 있습니다."
+      />
+      <div className="responsive-container px-4 md:px-6 py-6">
       <Suspense><SuccessToast /><ErrorToast /></Suspense>
-      <h1 className="mb-2 text-2xl font-bold text-accent">마이페이지</h1>
-      <p className="mb-6 text-sm text-text-muted">
-        내 현황을 확인하고 프로필을 수정할 수 있습니다.
-      </p>
 
       {/* 프로필 요약 카드 */}
       <div className="mb-6 rounded-xl border border-border-light bg-surface-warm p-4 shadow-sm">
@@ -153,6 +156,12 @@ export default async function MyPage() {
           <span>가입: {new Date(expert.created_at).toLocaleDateString('ko-KR')}</span>
         </div>
       </div>
+
+      {/* 프로필 편집 (개인정보 수정) — 상단 */}
+      <section className="mb-8">
+        <h2 className="mb-4 text-base font-bold text-text">프로필 편집</h2>
+        <ProfileEditor profile={profile} />
+      </section>
 
       {/* 종합점수 카드 */}
       <div className="mb-6 rounded-xl border border-border-light bg-background p-4 shadow-sm">
@@ -391,12 +400,6 @@ export default async function MyPage() {
         )}
       </section>
 
-      {/* 프로필 편집 */}
-      <section className="mb-8">
-        <h2 className="mb-4 text-base font-bold text-text">프로필 편집</h2>
-        <ProfileEditor profile={profile} />
-      </section>
-
       {/* 로그아웃 */}
       <form action={signOut}>
         <button
@@ -406,6 +409,7 @@ export default async function MyPage() {
           로그아웃
         </button>
       </form>
+      </div>
     </div>
   )
 }

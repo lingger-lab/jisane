@@ -4,7 +4,7 @@ import { createClient } from '@jisane/shared/supabase/server'
 import { getProviderByAuthUser } from '@jisane/shared/provider/auth'
 
 /**
- * 파트너 전용 OAuth callback — 기존 (auth)/callback(ADMIN_EMAILS 검사)과 별도 경로.
+ * 전문가회원 전용 OAuth callback — 기존 (auth)/callback(ADMIN_EMAILS 검사)과 별도 경로.
  * Supabase 대시보드 Redirect URLs에 {SITE_URL}/partner/callback 등록 필요.
  */
 export async function GET(request: Request) {

@@ -7,6 +7,7 @@ import { adminClient } from '@jisane/shared/supabase/admin'
 import { SuccessToast, ErrorToast } from '@jisane/ui/toast'
 import type { RequestRow, ServiceOrderRow } from '@jisane/shared/types'
 import { REQUEST_STATUS_LABELS, ORDER_STATUS_LABELS } from '@jisane/shared/labels'
+import { PageHero } from '@jisane/ui/page-hero'
 
 const STATUS_COLORS: Record<string, string> = {
   open: 'bg-info-light text-info',
@@ -79,14 +80,12 @@ export default async function StatusPage() {
   const closedCount = requestList.filter((r) => r.status === 'closed').length
 
   return (
-    <div className="flex flex-1 flex-col px-4 py-5 sm:px-6 sm:py-8 animate-fade-in">
+    <div className="flex flex-1 flex-col animate-fade-in">
       <Suspense><SuccessToast /><ErrorToast /></Suspense>
 
-      {/* 대시보드 헤더 */}
-      <div className="mb-5">
-        <p className="text-lg font-bold text-text">안녕하세요</p>
-      </div>
+      <PageHero eyebrow="기업회원" title="의뢰 현황" subtitle="등록한 의뢰와 전문서비스 진행 상태를 한눈에 확인하세요." />
 
+      <div className="responsive-container px-4 md:px-6 py-6">
       {/* 요약 카드 */}
       <div className="mb-4 grid grid-cols-2 gap-3">
         <div className="rounded-xl border border-border-light bg-surface-warm p-4 text-center">
@@ -114,7 +113,7 @@ export default async function StatusPage() {
         <div className="flex flex-1 flex-col items-center justify-center gap-4 text-center py-12">
           <p className="text-text-muted">아직 등록한 의뢰가 없습니다.</p>
           <p className="text-xs text-text-subtle max-w-xs">
-            전문가에게 맡길 작업을 등록하세요.
+            시니어지식인에게 맡길 작업을 등록하세요.
           </p>
         </div>
       ) : (
@@ -190,6 +189,7 @@ export default async function StatusPage() {
           ))}
         </ul>
       )}
+      </div>
     </div>
   )
 }

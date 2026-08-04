@@ -4,9 +4,14 @@ import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
 import { createClient } from '../supabase/server'
 
+/** env URL 정규화 — 값에 섞인 공백·줄바꿈·후행 슬래시 제거 (오염된 env가 콜백 URL을 깨뜨리는 사고 방지) */
+function cleanUrl(value: string): string {
+  return value.trim().replace(/\s+/g, '').replace(/\/+$/, '')
+}
+
 function getSiteUrl(): string {
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL
-  if (siteUrl) return siteUrl
+  if (siteUrl) return cleanUrl(siteUrl)
   if (process.env.NODE_ENV === 'production') {
     // localhost로 조용히 리다이렉트되는 사고 방지 — prod에서는 필수
     throw new Error('NEXT_PUBLIC_SITE_URL is not configured')
@@ -21,13 +26,15 @@ async function signInWithOAuth(
   const cookieStore = await cookies()
   const supabase = createClient(cookieStore)
 
-  const siteUrl = getSiteUrl()
+  // 절대 URL이면 그대로 사용(가입 페이지에서 타 서브도메인 콜백으로 보낼 때),
+  // 상대 경로면 현재 사이트 기준. 쿠키가 .jisane.cloud 공유라 크로스 서브도메인도 동작.
+  const redirectTo = redirectPath.startsWith('http')
+    ? redirectPath
+    : `${getSiteUrl()}${redirectPath}`
 
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider,
-    options: {
-      redirectTo: `${siteUrl}${redirectPath}`,
-    },
+    options: { redirectTo },
   })
 
   if (error || !data.url) {
@@ -35,6 +42,28 @@ async function signInWithOAuth(
   }
 
   redirect(data.url)
+}
+
+// ── 회원가입(/join) 역할별 OAuth — 각 역할의 콜백으로 복귀 ──
+// 콜백 URL은 Supabase Redirect URLs 등록 필요(owner/expert는 기존 로그인이 이미 사용 중).
+function ownerCallback() {
+  return `${cleanUrl(process.env.NEXT_PUBLIC_OWNER_URL || 'https://owner.jisane.cloud')}/callback`
+}
+function expertCallback() {
+  return `${cleanUrl(process.env.NEXT_PUBLIC_EXPERT_URL || 'https://expert.jisane.cloud')}/callback`
+}
+
+export async function joinAsOwnerKakao() {
+  return signInWithOAuth('kakao', ownerCallback())
+}
+export async function joinAsOwnerGoogle() {
+  return signInWithOAuth('google', ownerCallback())
+}
+export async function joinAsExpertKakao() {
+  return signInWithOAuth('kakao', expertCallback())
+}
+export async function joinAsExpertGoogle() {
+  return signInWithOAuth('google', expertCallback())
 }
 
 export async function signInWithGoogle() {

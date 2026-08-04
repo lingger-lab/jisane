@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import { PageHero } from '@jisane/ui/page-hero'
 
 export const metadata = {
   title: 'AX 전환 프로세스 | 지사네',
@@ -80,24 +81,19 @@ export default function AXProcessPage() {
   const ownerUrl = process.env.NEXT_PUBLIC_OWNER_URL || 'https://owner.jisane.cloud'
 
   return (
-    <div className="mx-auto max-w-2xl px-6 py-12">
-      <Link href="/ax" className="mb-8 inline-block text-sm text-text-muted hover:text-text transition-colors">
-        &larr; AX 전환이란?
-      </Link>
-
-      {/* 히어로 */}
-      <section className="mb-12 animate-fade-in">
-        <p className="mb-2 text-sm font-semibold text-accent tracking-wide">Process</p>
-        <h1 className="text-3xl font-bold text-primary leading-tight">
-          AX 전환 프로세스
-        </h1>
-        <p className="mt-4 text-base text-text-muted leading-relaxed">
-          진단 &rarr; 실험 &rarr; 측정 &rarr; 확장.
-          <br />
-          4단계를 반복하며 AI 전환을 체계적으로 완성합니다.
-        </p>
-      </section>
-
+    <div className="flex flex-1 flex-col">
+      <PageHero
+        eyebrow="Process"
+        title="AX 전환 프로세스"
+        subtitle="진단 → 실험 → 측정 → 확장. 4단계를 반복하며 AI 전환을 체계적으로 완성합니다."
+        back={
+          <Link href="/ax" className="inline-block text-sm text-white/70 hover:text-white transition-colors">
+            &larr; AX 전환이란?
+          </Link>
+        }
+        size="lg"
+      />
+      <div className="responsive-container px-4 md:px-6 py-6">
       {/* 4단계 프로세스 */}
       <section className="mb-12 animate-fade-in stagger-1">
         <h2 className="mb-5 text-lg font-bold text-text">4단계 프로세스</h2>
@@ -223,6 +219,7 @@ export default function AXProcessPage() {
           AX 전환이란?
         </Link>
       </section>
+      </div>
     </div>
   )
 }

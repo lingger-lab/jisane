@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import { PageHero } from '@jisane/ui/page-hero'
 
 export const metadata = {
   title: 'AX 전환 | 지사네',
@@ -46,21 +47,15 @@ export default function AXPage() {
   const ownerUrl = process.env.NEXT_PUBLIC_OWNER_URL || 'https://owner.jisane.cloud'
 
   return (
-    <div className="mx-auto max-w-2xl px-6 py-12">
-      {/* 히어로 */}
-      <section className="mb-12 animate-fade-in">
-        <p className="mb-2 text-sm font-semibold text-accent tracking-wide">AI Transformation</p>
-        <h1 className="text-3xl font-bold text-primary leading-tight">
-          AX 전환: AI로 비즈니스를 바꾸다
-        </h1>
-        <p className="mt-4 text-base text-text-muted leading-relaxed">
-          AX(AI Transformation)는 기존 업무 프로세스에 AI를 적용하여 비용을 절감하고, 수익을 높이며,
-          새로운 비즈니스 모델을 만드는 전환 과정입니다.
-          <br className="hidden sm:block" />
-          지사네는 중소기업이 작게 시작해 단계적으로 AI 전환을 이룰 수 있도록 동행합니다.
-        </p>
-      </section>
-
+    <div className="flex flex-1 flex-col">
+      <PageHero
+        eyebrow="AI Transformation"
+        title="AX 전환: AI로 비즈니스를 바꾸다"
+        highlight="AX 전환"
+        subtitle="기존 업무 프로세스에 AI를 적용해 비용을 절감하고, 수익을 높이며, 새로운 비즈니스 모델을 만드는 전환 과정입니다. 작게 시작해 단계적으로 동행합니다."
+        size="lg"
+      />
+      <div className="responsive-container px-4 md:px-6 py-6">
       {/* AX 5가지 가치 */}
       <section className="mb-12 animate-fade-in stagger-1">
         <h2 className="mb-4 text-lg font-bold text-text">AX 5가지 가치</h2>
@@ -159,6 +154,7 @@ export default function AXPage() {
           AX 프로세스 알아보기
         </Link>
       </section>
+      </div>
     </div>
   )
 }

@@ -46,5 +46,5 @@ export async function GET(request: Request) {
     return NextResponse.redirect(`${origin}/register`)
   }
 
-  return NextResponse.redirect(`${origin}/matching`)
+  return NextResponse.redirect(`${origin}/`)
 }

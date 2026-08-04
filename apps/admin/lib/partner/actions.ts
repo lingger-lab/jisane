@@ -22,7 +22,7 @@ async function getSessionUser() {
   return user
 }
 
-/** 파트너 등록 신청 — provider 행 생성 (pending, 관리자 승인 대기) */
+/** 전문가회원 등록 신청 — provider 행 생성 (pending, 관리자 승인 대기) */
 export async function applyAsPartner(
   _prev: ActionState,
   formData: FormData
@@ -31,7 +31,7 @@ export async function applyAsPartner(
   if (!user) return { error: '로그인이 필요합니다.' }
 
   const existing = await getProviderByAuthUser(user.id)
-  if (existing) return { error: '이미 파트너 신청 이력이 있습니다.' }
+  if (existing) return { error: '이미 전문가회원 신청 이력이 있습니다.' }
 
   const name = (formData.get('name') as string | null)?.trim()
   const kind = formData.get('kind') as string | null
@@ -41,7 +41,7 @@ export async function applyAsPartner(
   const website = (formData.get('website') as string | null)?.trim()
 
   if (!name) return { error: '기관명(또는 성함)을 입력해주세요.' }
-  if (kind !== 'company' && kind !== 'senior') return { error: '파트너 유형을 선택해주세요.' }
+  if (kind !== 'company' && kind !== 'senior') return { error: '전문가회원 유형을 선택해주세요.' }
   const validTypes = ['consulting', 'legal', 'tax', 'accounting', 'insurance']
   if (!type || !validTypes.includes(type)) return { error: '전문 분야를 선택해주세요.' }
 
@@ -62,13 +62,13 @@ export async function applyAsPartner(
 
   if (error) {
     console.error('[applyAsPartner] insert failed:', error.message)
-    return { error: '파트너 신청에 실패했습니다. 다시 시도해주세요.' }
+    return { error: '전문가회원 신청에 실패했습니다. 다시 시도해주세요.' }
   }
 
   redirect('/partner/apply?submitted=1')
 }
 
-/** 파트너 정보 수정 (active만) */
+/** 전문가회원 정보 수정 (active만) */
 export async function updateProviderProfile(
   _prev: ActionState,
   formData: FormData
@@ -77,7 +77,7 @@ export async function updateProviderProfile(
   if (!user) return { error: '로그인이 필요합니다.' }
 
   const guard = await requireActiveProvider(user.id)
-  if (!guard.ok) return { error: '활동 중인 파트너만 정보를 수정할 수 있습니다.' }
+  if (!guard.ok) return { error: '활동 중인 전문가회원만 정보를 수정할 수 있습니다.' }
 
   const name = (formData.get('name') as string | null)?.trim()
   if (!name) return { error: '기관명(또는 성함)을 입력해주세요.' }
@@ -120,7 +120,7 @@ export async function createServicePackage(
   if (!user) return { error: '로그인이 필요합니다.' }
 
   const guard = await requireActiveProvider(user.id)
-  if (!guard.ok) return { error: '활동 중인 파트너만 서비스를 등록할 수 있습니다.' }
+  if (!guard.ok) return { error: '활동 중인 전문가회원만 서비스를 등록할 수 있습니다.' }
 
   const name = (formData.get('name') as string | null)?.trim()
   const category = formData.get('category') as string | null
@@ -190,7 +190,7 @@ export async function updateServicePackage(
   if (!user) return { error: '로그인이 필요합니다.' }
 
   const guard = await requireActiveProvider(user.id)
-  if (!guard.ok) return { error: '활동 중인 파트너만 수정할 수 있습니다.' }
+  if (!guard.ok) return { error: '활동 중인 전문가회원만 수정할 수 있습니다.' }
 
   const packageId = formData.get('package_id') as string | null
   if (!packageId || !(await verifyPackageOwnership(guard.provider.id, packageId))) {
@@ -258,7 +258,7 @@ export async function archiveServicePackage(packageId: string): Promise<ActionSt
   return {}
 }
 
-/** 주문 완료 처리 — 파트너 권한은 processing → completed 전환만 */
+/** 주문 완료 처리 — 전문가회원 권한은 processing → completed 전환만 */
 export async function completeOrder(orderId: string): Promise<ActionState> {
   const user = await getSessionUser()
   if (!user) return { error: '로그인이 필요합니다.' }

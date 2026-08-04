@@ -5,6 +5,7 @@ import { createClient } from '@jisane/shared/supabase/server'
 import { adminClient } from '@jisane/shared/supabase/admin'
 import type { DealStatus } from '@jisane/shared/types'
 import { DEAL_STATUS_LABELS } from '@jisane/shared/labels'
+import { PageHero } from '@jisane/ui/page-hero'
 
 const STATUS_COLORS: Record<DealStatus, string> = {
   quoted: 'bg-info-light text-info',
@@ -49,9 +50,13 @@ export default async function WorkListPage() {
   }>
 
   return (
-    <div className="flex flex-1 flex-col px-4 py-5 sm:px-6 sm:py-8 animate-fade-in">
-      <h1 className="mb-6 text-2xl font-bold text-accent">작업 현황</h1>
-
+    <div className="flex flex-1 flex-col animate-fade-in">
+      <PageHero
+        eyebrow="시니어지식인회원"
+        title="작업 현황"
+        subtitle="진행 중인 작업을 확인하고 단계를 관리하세요."
+      />
+      <div className="responsive-container px-4 md:px-6 py-6">
       {dealList.length === 0 ? (
         <div className="flex flex-1 flex-col items-center justify-center gap-4 text-center">
           <p className="text-text-muted">아직 진행 중인 작업이 없습니다.</p>
@@ -101,6 +106,7 @@ export default async function WorkListPage() {
           ))}
         </ul>
       )}
+      </div>
     </div>
   )
 }

@@ -7,7 +7,7 @@ import { PROVIDER_KIND_LABELS, PROVIDER_TYPE_LABELS } from '@jisane/shared/label
 import { SuccessToast } from '@jisane/ui/toast'
 import { ProfileForm } from './profile-form'
 
-export const metadata = { title: '파트너 정보 | 지사네 파트너공간' }
+export const metadata = { title: '전문가회원 정보 | 지사네 전문가회원' }
 
 export default async function PartnerProfilePage() {
   const cookieStore = await cookies()
@@ -20,7 +20,7 @@ export default async function PartnerProfilePage() {
   return (
     <div className="animate-fade-in">
       <Suspense><SuccessToast /></Suspense>
-      <h1 className="mb-1 text-lg font-bold text-text">파트너 정보</h1>
+      <h1 className="mb-1 text-lg font-bold text-text">전문가회원 정보</h1>
       <p className="mb-5 text-sm text-text-muted">
         {PROVIDER_KIND_LABELS[provider.kind]} · {PROVIDER_TYPE_LABELS[provider.type]} —
         유형·분야 변경은 관리자에게 문의해주세요.

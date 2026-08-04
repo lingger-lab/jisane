@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { createClient } from '@jisane/shared/supabase/server'
 import { adminClient } from '@jisane/shared/supabase/admin'
 import { WorkflowChecklist } from '@jisane/ui/workflow-checklist'
+import { PageHero } from '@jisane/ui/page-hero'
 import type { DealRow, DealWorkflowRow, RequestRow, SettlementRow } from '@jisane/shared/types'
 import { WorkflowForm } from './workflow-form'
 import { MessageThread } from './message-thread'
@@ -109,18 +110,14 @@ export default async function WorkDetailPage(props: PageProps) {
   const allStepsDone = steps.length === 5 && steps.every((s) => s.status === 'done')
 
   return (
-    <div className="flex flex-1 flex-col px-4 py-5 sm:px-6 sm:py-8 animate-fade-in">
-      <Link href="/work" className="mb-4 text-sm text-text-muted hover:text-text transition-colors">
-        &larr; 작업 목록
-      </Link>
-
-      <h1 className="mb-2 text-xl font-bold text-text">
-        {request?.title || '작업 상세'}
-      </h1>
-      {request?.req_type && (
-        <p className="mb-4 text-xs text-text-muted">분야: {request.req_type}</p>
-      )}
-
+    <div className="flex flex-1 flex-col animate-fade-in">
+      <PageHero
+        eyebrow="시니어지식인회원"
+        title={request?.title || '작업 상세'}
+        subtitle={request?.req_type ? `분야: ${request.req_type}` : undefined}
+        back={<Link href="/work" className="text-sm text-white/70 hover:text-white transition-colors">&larr; 작업 목록</Link>}
+      />
+      <div className="responsive-container px-4 md:px-6 py-6">
       {/* 작업비 — work_fee만 표시 */}
       <div className="mb-4 rounded-xl border border-accent/20 bg-surface-warm p-4 text-center shadow-sm">
         <p className="text-sm text-text-muted">작업비</p>
@@ -197,6 +194,7 @@ export default async function WorkDetailPage(props: PageProps) {
           <p className="whitespace-pre-wrap text-sm text-text-muted">{request.detail}</p>
         </div>
       )}
+      </div>
     </div>
   )
 }

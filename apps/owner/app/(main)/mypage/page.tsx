@@ -1,10 +1,14 @@
 import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
+import { Suspense } from 'react'
 import { createClient } from '@jisane/shared/supabase/server'
 import { adminClient } from '@jisane/shared/supabase/admin'
 import { signOut } from '@jisane/shared/auth/actions'
 import { REQUEST_STATUS_LABELS, ORDER_STATUS_LABELS, DEAL_STATUS_LABELS, INVITATION_STATUS_LABELS } from '@jisane/shared/labels'
+import { SuccessToast } from '@jisane/ui/toast'
+import { PageHero } from '@jisane/ui/page-hero'
+import { OwnerProfileForm } from './owner-profile-form'
 
 const STATUS_COLORS: Record<string, string> = {
   open: 'bg-info-light text-info',
@@ -43,7 +47,7 @@ export default async function OwnerMyPage() {
 
   const { data: owner } = await adminClient
     .from('owner')
-    .select('id, email, created_at')
+    .select('id, email, created_at, company, ceo_name, contact, region, industry')
     .eq('auth_user_id', user.id)
     .single()
 
@@ -119,26 +123,37 @@ export default async function OwnerMyPage() {
   }>
 
   return (
-    <div className="flex flex-1 flex-col px-4 py-5 sm:px-6 sm:py-8 animate-fade-in">
-      <h1 className="mb-2 text-2xl font-bold text-primary">마이페이지</h1>
-      <p className="mb-6 text-sm text-text-muted">
-        계정 정보와 신청 현황을 확인할 수 있습니다.
-      </p>
+    <div className="flex flex-1 flex-col animate-fade-in">
+      <Suspense><SuccessToast /></Suspense>
+      <PageHero eyebrow="기업회원" title="마이페이지" subtitle="회사 정보를 등록하면 의뢰·매칭이 더 정확해집니다." />
 
-      {/* 프로필 카드 */}
-      <div className="mb-8 rounded-xl border border-border-light bg-surface-warm p-4 shadow-sm">
-        <div className="flex items-center gap-3">
-          <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10 text-lg font-bold text-primary">
-            {owner.email[0].toUpperCase()}
-          </div>
-          <div>
-            <p className="font-medium text-text">{owner.email}</p>
-            <p className="text-xs text-text-muted">
-              가입: {new Date(owner.created_at).toLocaleDateString('ko-KR')}
-            </p>
-          </div>
+      <div className="responsive-container px-4 md:px-6 py-6">
+      {/* 계정 요약 */}
+      <div className="mb-6 flex items-center gap-3 rounded-xl border border-border-light bg-surface-warm p-4 shadow-sm">
+        <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10 text-lg font-bold text-primary">
+          {(owner.company || owner.email)[0].toUpperCase()}
+        </div>
+        <div>
+          <p className="font-medium text-text">{owner.email}</p>
+          <p className="text-xs text-text-muted">
+            가입: {new Date(owner.created_at).toLocaleDateString('ko-KR')}
+          </p>
         </div>
       </div>
+
+      {/* 개인정보 수정 */}
+      <section className="mb-8">
+        <h2 className="mb-3 text-base font-bold text-text">회사 정보</h2>
+        <OwnerProfileForm
+          defaults={{
+            company: owner.company ?? '',
+            ceo_name: owner.ceo_name ?? '',
+            contact: owner.contact ?? '',
+            region: owner.region ?? '',
+            industry: owner.industry ?? '',
+          }}
+        />
+      </section>
 
       {/* 섹션 A — 의뢰 현황 */}
       <section className="mb-6">
@@ -253,7 +268,7 @@ export default async function OwnerMyPage() {
         <h2 className="mb-3 text-base font-bold text-text">받은 관심표현</h2>
         {interests.length === 0 ? (
           <div className="flex flex-col items-center gap-3 rounded-xl border border-dashed border-border-light py-8 text-center">
-            <p className="text-sm text-text-muted">전문가의 관심 표현이 없습니다</p>
+            <p className="text-sm text-text-muted">시니어지식인의 관심 표현이 없습니다</p>
           </div>
         ) : (
           <ul className="flex flex-col gap-2">
@@ -355,6 +370,7 @@ export default async function OwnerMyPage() {
           로그아웃
         </button>
       </form>
+      </div>
     </div>
   )
 }

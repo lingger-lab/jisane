@@ -6,7 +6,7 @@ import { adminClient } from '@jisane/shared/supabase/admin'
 import { getProviderByAuthUser } from '@jisane/shared/provider/auth'
 import { ORDER_STATUS_LABELS_FALLBACK } from './order-labels'
 
-export const metadata = { title: '파트너 대시보드 | 지사네' }
+export const metadata = { title: '전문가회원 대시보드 | 지사네' }
 
 export default async function PartnerDashboardHome() {
   const cookieStore = await cookies()

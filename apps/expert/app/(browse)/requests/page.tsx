@@ -1,20 +1,23 @@
 import { cookies } from 'next/headers'
 import { createClient } from '@jisane/shared/supabase/server'
 import { adminClient } from '@jisane/shared/supabase/admin'
+import Link from 'next/link'
 import { getCachedCategories } from '@jisane/shared/categories'
+import { PageHero } from '@jisane/ui/page-hero'
 import { RequestList } from './request-list'
 
 export const metadata = {
-  title: '열린 의뢰 탐색 - 지사네 전문가공간',
-  description: '전문가를 찾는 기업의 의뢰를 카테고리별로 탐색하세요.',
+  title: '열린 의뢰 탐색 - 지사네 시니어지식인회원',
+  description: '시니어지식인을 찾는 기업의 의뢰를 카테고리별로 탐색하세요.',
 }
 
 interface PageProps {
-  searchParams: Promise<{ category?: string }>
+  searchParams: Promise<{ category?: string; q?: string }>
 }
 
 export default async function RequestsPage(props: PageProps) {
-  const { category } = await props.searchParams
+  const { category, q } = await props.searchParams
+  const query = (q ?? '').trim()
 
   // 선택적 인증 (공개 페이지 — 리다이렉트 없음)
   const cookieStore = await cookies()
@@ -67,6 +70,12 @@ export default async function RequestsPage(props: PageProps) {
     }
   }
 
+  // 검색어: 제목·내용 부분 일치 (카테고리 필터와 공존)
+  if (query) {
+    const safe = query.replace(/[%,]/g, '')
+    requestsQuery = requestsQuery.or(`title.ilike.%${safe}%,detail.ilike.%${safe}%`)
+  }
+
   const { data: requests } = await requestsQuery
 
   const interestedIds = (interestsResult.data ?? []).map((i) => i.request_id)
@@ -87,8 +96,14 @@ export default async function RequestsPage(props: PageProps) {
   }))
 
   return (
-    <div className="flex flex-1 flex-col items-center">
-      <div className="responsive-container px-4 md:px-6 py-6 md:py-8">
+    <div className="flex flex-1 flex-col">
+      <PageHero
+        eyebrow="시니어지식인회원"
+        title="열린 의뢰 탐색"
+        subtitle="시니어지식인을 찾는 기업의 의뢰를 카테고리별로 탐색하세요."
+        back={<Link href="/" className="text-sm text-white/70 hover:text-white transition-colors">&larr; 홈</Link>}
+      />
+      <div className="responsive-container w-full px-4 md:px-6 py-6 md:py-8">
         <RequestList
           requests={(requests ?? []).map((r) => ({
             id: r.id,
@@ -102,6 +117,7 @@ export default async function RequestsPage(props: PageProps) {
           }))}
           categoryTree={categoryTree}
           selectedCategory={category ?? null}
+          query={query}
           interestedIds={interestedIds}
           isAuthenticated={!!user}
           isExpert={!!expertId}

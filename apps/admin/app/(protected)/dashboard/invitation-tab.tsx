@@ -78,7 +78,7 @@ export function InvitationTab({ invitations }: { invitations: InvitationItem[] }
                     </span>
                     <span className="text-text-subtle">&rarr;</span>
                     <span className="font-medium text-text">
-                      {inv.expert.name ?? '전문가'}
+                      {inv.expert.name ?? '시니어지식인'}
                     </span>
                   </div>
                   {inv.expert.field && (

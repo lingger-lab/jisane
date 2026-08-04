@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation'
 import { cookies } from 'next/headers'
 import { createClient } from '@jisane/shared/supabase/server'
 import { adminClient } from '@jisane/shared/supabase/admin'
+import { PageHero } from '@jisane/ui/page-hero'
 import { InterestButton } from './interest-button'
 
 interface PageProps {
@@ -84,26 +85,23 @@ export default async function RequestDetailPage(props: PageProps) {
   const client = request.owner as unknown as { company: string | null; region: string | null; industry: string | null }
 
   return (
-    <div className="flex flex-1 flex-col items-center animate-slide-up">
-      <div className="responsive-container px-4 md:px-6 py-6 md:py-8">
-        {/* 뒤로 가기 */}
-        <Link
-          href={request.category_id ? `/requests?category=${request.category_id}` : '/requests'}
-          className="text-sm text-text-muted hover:text-text transition-colors"
-        >
-          &larr; 의뢰 탐색
-        </Link>
-
-        {/* 카테고리 브레드크럼 */}
-        {breadcrumb && (
-          <p className="mt-3 text-xs text-text-subtle">{breadcrumb}</p>
-        )}
-
-        {/* 제목 */}
-        <h1 className="mt-2 text-xl md:text-2xl font-bold text-text">{request.title}</h1>
-
+    <div className="flex flex-1 flex-col animate-slide-up">
+      <PageHero
+        eyebrow="시니어지식인회원"
+        title={request.title}
+        subtitle={breadcrumb ?? undefined}
+        back={
+          <Link
+            href={request.category_id ? `/requests?category=${request.category_id}` : '/requests'}
+            className="text-sm text-white/70 hover:text-white transition-colors"
+          >
+            &larr; 의뢰 탐색
+          </Link>
+        }
+      />
+      <div className="responsive-container w-full px-4 md:px-6 py-6 md:py-8">
         {/* 메타 정보 */}
-        <div className="mt-2 flex flex-wrap gap-2 text-xs text-text-muted">
+        <div className="flex flex-wrap gap-2 text-xs text-text-muted">
           {request.req_type && (
             <span className="rounded bg-accent/10 px-2 py-0.5 font-medium text-accent">
               {request.req_type}
@@ -159,7 +157,7 @@ export default async function RequestDetailPage(props: PageProps) {
               href="/"
               className="block w-full rounded-xl bg-accent px-4 py-3 text-center text-sm font-semibold text-white shadow-sm transition-all hover:bg-accent/90 hover:shadow-md"
             >
-              {user ? '전문가 등록 후 관심 표현' : '로그인 후 관심 표현'}
+              {user ? '시니어지식인 등록 후 관심 표현' : '로그인 후 관심 표현'}
             </Link>
           )}
         </div>

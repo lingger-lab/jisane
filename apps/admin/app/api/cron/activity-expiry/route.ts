@@ -6,7 +6,7 @@ import { batchExpireAndRecalc } from '@jisane/shared/expert-activity'
  * 활동 가점 만료 크론 (배치 최적화)
  *
  * 만료된 expert_activity를 일괄 삭제하고
- * 영향받는 전문가의 activity_points를 재계산합니다.
+ * 영향받는 시니어지식인의 activity_points를 재계산합니다.
  *
  * Vercel Cron 또는 수동 호출:
  * POST /api/cron/activity-expiry

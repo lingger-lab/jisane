@@ -10,14 +10,14 @@ import { GoogleIcon } from '@jisane/ui/icons/google'
 import { KakaoIcon } from '@jisane/ui/icons/kakao'
 
 export const metadata = {
-  title: '지사네 파트너공간',
-  description: '지사네와 함께 전문서비스를 제공하는 파트너를 위한 공간입니다.',
+  title: '지사네 전문가회원',
+  description: '지사네와 함께 전문서비스를 제공하는 전문가회원을 위한 공간입니다.',
 }
 
 const FEATURES = [
-  { title: '파트너 정보 관리', desc: '기관 소개·연락처를 직접 등록하고 관리합니다' },
+  { title: '전문가회원 정보 관리', desc: '기관 소개·연락처를 직접 등록하고 관리합니다' },
   { title: '전문서비스 등록', desc: '무료 S/W·P/G부터 유료 서비스까지 직접 올립니다' },
-  { title: '신청 내용 확인', desc: '기업·전문가의 서비스 신청을 실시간으로 확인합니다' },
+  { title: '신청 내용 확인', desc: '기업회원·시니어지식인회원의 서비스 신청을 실시간으로 확인합니다' },
 ]
 
 export default async function PartnerHome() {
@@ -38,8 +38,11 @@ export default async function PartnerHome() {
           전문서비스를 제공하세요
         </h1>
         <p className="mt-3 text-sm md:text-base text-text-muted">
-          파트너는 지사네와 협력해 기업·전문가에게 전문서비스를 제공하는
-          특수관계 기관(기업 또는 시니어 전문가)입니다.
+          전문가회원은 지사네와 협력해 기업회원·시니어지식인회원에게 전문서비스를 제공하는
+          특수관계 회원(기업 또는 시니어지식인)입니다.
+        </p>
+        <p className="mt-2 text-xs text-text-subtle">
+          플랫폼 이용 수익의 20%를 수수료로 납부하고, 플랫폼 월 수익의 1%를 성장 공유로 돌려받습니다.
         </p>
       </section>
 
@@ -58,7 +61,7 @@ export default async function PartnerHome() {
         {!user ? (
           <>
             <p className="mb-4 text-center text-sm font-semibold text-text">
-              파트너 계정으로 로그인하고 시작하세요
+              전문가회원 계정으로 로그인하고 시작하세요
             </p>
             <div className="flex flex-col gap-3">
               <form action={signInWithKakaoPartner}>
@@ -83,23 +86,23 @@ export default async function PartnerHome() {
           </>
         ) : !provider ? (
           <div className="text-center">
-            <p className="text-sm font-semibold text-text">아직 파트너 등록 전입니다</p>
+            <p className="text-sm font-semibold text-text">아직 전문가회원 등록 전입니다</p>
             <p className="mt-1 text-xs text-text-muted">등록 신청 후 관리자 승인을 거쳐 활동할 수 있습니다.</p>
             <Link
               href="/partner/apply"
               className="mt-4 inline-block rounded-xl bg-info px-6 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-info/90"
             >
-              파트너 등록 신청하기
+              전문가회원 등록 신청하기
             </Link>
           </div>
         ) : provider.status === 'active' ? (
           <div className="text-center">
-            <p className="text-sm font-semibold text-text">{provider.name} 파트너님, 환영합니다</p>
+            <p className="text-sm font-semibold text-text">{provider.name} 전문가회원님, 환영합니다</p>
             <Link
               href="/partner/dashboard"
               className="mt-4 inline-block rounded-xl bg-info px-6 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-info/90"
             >
-              파트너 대시보드 열기
+              전문가회원 대시보드 열기
             </Link>
           </div>
         ) : (
@@ -109,7 +112,7 @@ export default async function PartnerHome() {
                 ? '등록 신청 심사 중입니다'
                 : provider.status === 'rejected'
                 ? '등록 신청이 반려되었습니다'
-                : '파트너 활동이 중지된 상태입니다'}
+                : '전문가회원 활동이 중지된 상태입니다'}
             </p>
             <p className="mt-1 text-xs text-text-muted">
               문의: iamblackwhite86@gmail.com

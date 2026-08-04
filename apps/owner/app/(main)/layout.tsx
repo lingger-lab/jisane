@@ -1,7 +1,6 @@
 import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
 import { createClient } from '@jisane/shared/supabase/server'
-import { ClientNav } from '@/components/client-nav'
 
 export default async function ClientMainLayout({ children }: { children: React.ReactNode }) {
   const cookieStore = await cookies()
@@ -12,10 +11,6 @@ export default async function ClientMainLayout({ children }: { children: React.R
     redirect('/')
   }
 
-  return (
-    <div className="flex flex-1 flex-col pb-16">
-      {children}
-      <ClientNav />
-    </div>
-  )
+  // 하단 탭은 root layout에서 전역 렌더 (로그인 전후 공통)
+  return <div className="flex flex-1 flex-col">{children}</div>
 }

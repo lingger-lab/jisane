@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
+import { SearchBox } from '@jisane/ui/search-box'
 import { expressInterest, withdrawInterest } from '@/lib/interest/actions'
 
 interface RequestItem {
@@ -26,6 +27,7 @@ interface RequestListProps {
   requests: RequestItem[]
   categoryTree: MajorCategory[]
   selectedCategory: string | null
+  query: string
   interestedIds: string[]
   isAuthenticated: boolean
   isExpert: boolean
@@ -35,6 +37,7 @@ export function RequestList({
   requests,
   categoryTree,
   selectedCategory,
+  query,
   interestedIds,
   isAuthenticated,
   isExpert,
@@ -54,11 +57,11 @@ export function RequestList({
     : -1
 
   function handleCategoryChange(categoryId: string | null) {
-    if (categoryId) {
-      router.push(`/requests?category=${categoryId}`)
-    } else {
-      router.push('/requests')
-    }
+    const params = new URLSearchParams()
+    if (categoryId) params.set('category', categoryId)
+    if (query) params.set('q', query)
+    const qs = params.toString()
+    router.push(qs ? `/requests?${qs}` : '/requests')
   }
 
   async function handleInterest(requestId: string) {
@@ -90,18 +93,25 @@ export function RequestList({
 
   return (
     <div>
-      {/* 헤더 */}
-      <div className="mb-4 flex items-center gap-2">
-        <Link href="/" className="text-sm text-text-muted hover:text-text transition-colors">
-          &larr; 홈
-        </Link>
-      </div>
-      <h1 className="text-lg md:text-xl lg:text-2xl font-bold text-text">열린 의뢰 탐색</h1>
-      <p className="mt-1 text-sm text-text-muted">
-        {requests.length > 0
-          ? `${requests.length}건의 열린 의뢰`
-          : '카테고리별로 의뢰를 찾아보세요'}
+      {/* 결과 요약 */}
+      <p className="text-sm text-text-muted">
+        {query
+          ? `"${query}" 검색 결과 ${requests.length}건`
+          : requests.length > 0
+            ? `${requests.length}건의 열린 의뢰`
+            : '카테고리별로 의뢰를 찾아보세요'}
       </p>
+
+      {/* 검색 (제목·내용) — 카테고리 필터 보존 */}
+      <div className="mt-4">
+        <SearchBox
+          target="/requests"
+          placeholder="제목·내용으로 열린 의뢰 검색"
+          defaultValue={query}
+          extraParams={selectedCategory ? { category: selectedCategory } : {}}
+          colorToken="accent"
+        />
+      </div>
 
       {/* 대분류 탭 */}
       <div className="mt-4 flex flex-wrap gap-2">
@@ -230,7 +240,7 @@ export function RequestList({
                       href="/"
                       className="rounded-xl bg-surface px-3 py-2 text-xs font-medium text-text-muted hover:bg-surface-warm transition-colors"
                     >
-                      {isAuthenticated ? '전문가 등록 후 관심 표현' : '로그인 후 관심 표현'}
+                      {isAuthenticated ? '시니어지식인 등록 후 관심 표현' : '로그인 후 관심 표현'}
                     </Link>
                   )}
                 </div>

@@ -24,7 +24,7 @@ const TAB_GROUPS = [
     label: '지원',
     tabs: [
       { key: 'service', label: '서비스 주문' },
-      { key: 'partner', label: '파트너' },
+      { key: 'partner', label: '전문가회원' },
       { key: 'inquiry', label: '문의' },
     ],
   },

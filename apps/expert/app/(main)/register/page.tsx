@@ -37,17 +37,24 @@ export default function RegisterPage() {
   }
 
   return (
-    <div className="flex flex-1 flex-col px-4 py-5 sm:px-6 sm:py-8 animate-fade-in">
-      <h1 className="mb-2 text-2xl font-bold text-accent">전문가 등록</h1>
-      <p className="mb-6 text-sm text-text-muted">
-        지사네 전문가로 등록하고 의뢰를 받아보세요.
-      </p>
+    <div className="flex flex-1 flex-col animate-fade-in">
+      {/* 다크 히어로 — 브랜드 딥그린 밴드 (렐라랩 벤치마킹) */}
+      <div className="hero-dark w-full">
+        <section className="responsive-container flex flex-col items-center gap-2 px-4 md:px-6 pt-10 md:pt-14 pb-8 md:pb-10 text-center">
+          <span className="hero-eyebrow">시니어지식인공간 · 등록</span>
+          <h1 className="text-2xl md:text-3xl font-bold font-serif text-white leading-snug">
+            경험의 값어치, <span className="text-accent-light">온전히</span> 받으세요
+          </h1>
+          <p className="text-sm md:text-base text-white/75">전문 분야를 등록하면 맞춤 의뢰가 연결됩니다.</p>
+        </section>
+      </div>
 
+      <div className="responsive-container px-4 md:px-6 py-6">
       {/* 작업료 0% 수수료 강조 */}
       <div className="mb-6 rounded-xl border border-accent/20 bg-surface-warm p-4 text-center shadow-sm">
         <p className="text-lg font-bold text-accent">작업료 0% 수수료</p>
         <p className="mt-1 text-xs text-text-muted">
-          전문가님이 받는 작업료에서 수수료를 떼지 않습니다.
+          시니어지식인님이 받는 작업료에서 수수료를 떼지 않습니다.
         </p>
       </div>
 
@@ -165,9 +172,10 @@ export default function RegisterPage() {
 
         {/* 제출 */}
         <SubmitButton className="rounded-xl bg-accent px-6 py-3 font-semibold text-white shadow-sm transition-all hover:bg-accent/90 hover:shadow-md disabled:opacity-50">
-          전문가 등록 완료
+          시니어지식인 등록 완료
         </SubmitButton>
       </form>
+      </div>
     </div>
   )
 }

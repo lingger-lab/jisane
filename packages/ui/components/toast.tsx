@@ -5,7 +5,7 @@ import { useSearchParams, useRouter } from 'next/navigation'
 
 const SUCCESS_MESSAGES: Record<string, string> = {
   request_created: '의뢰가 등록되었습니다',
-  expert_registered: '전문가 등록이 완료되었습니다',
+  expert_registered: '시니어지식인 등록이 완료되었습니다',
   profile_updated: '프로필이 수정되었습니다',
   deal_approved: '견적이 승인되었습니다',
   deal_confirmed: '검수가 완료되었습니다',
