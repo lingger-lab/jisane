@@ -5,7 +5,6 @@ import Link from 'next/link'
 import { createClient } from '@jisane/shared/supabase/server'
 import { adminClient } from '@jisane/shared/supabase/admin'
 import { getProviderByAuthUser } from '@jisane/shared/provider/auth'
-import { SuccessToast } from '@jisane/ui/toast'
 import { ServicesList } from './services-list'
 
 export const metadata = { title: '서비스 관리 | 지사네 전문가회원' }
@@ -28,7 +27,6 @@ export default async function PartnerServicesPage() {
 
   return (
     <div className="animate-fade-in">
-      <Suspense><SuccessToast /></Suspense>
       <div className="mb-5 flex items-center justify-between">
         <div>
           <h1 className="text-lg font-bold text-text">서비스 관리</h1>

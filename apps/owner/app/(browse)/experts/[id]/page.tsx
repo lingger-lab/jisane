@@ -5,7 +5,6 @@ import { createClient } from '@jisane/shared/supabase/server'
 import { adminClient } from '@jisane/shared/supabase/admin'
 import { getCachedCategories } from '@jisane/shared/categories'
 import { InviteButton } from '@/components/invite-button'
-import { SuccessToast } from '@jisane/ui/toast'
 import { PageHero } from '@jisane/ui/page-hero'
 import { Suspense } from 'react'
 
@@ -186,7 +185,6 @@ export default async function ExpertDetailPage(props: PageProps) {
 
         {/* CTA — 초빙 */}
         <section className="mt-6 flex flex-col gap-3">
-          <Suspense><SuccessToast /></Suspense>
           <InviteButton
             expertId={expert.id}
             isLoggedIn={!!user}

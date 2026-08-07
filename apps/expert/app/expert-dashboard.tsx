@@ -1,7 +1,6 @@
 import { Suspense } from 'react'
 import Link from 'next/link'
 import { adminClient } from '@jisane/shared/supabase/admin'
-import { SuccessToast, ErrorToast } from '@jisane/ui/toast'
 import { SearchBox } from '@jisane/ui/search-box'
 import type { MatchingStatus, ServiceOrderRow } from '@jisane/shared/types'
 import { MATCHING_STATUS_LABELS, ORDER_STATUS_LABELS } from '@jisane/shared/labels'
@@ -90,7 +89,6 @@ export async function ExpertDashboard({
 
   return (
     <div className="flex flex-1 flex-col animate-fade-in">
-      <Suspense><SuccessToast /><ErrorToast /></Suspense>
 
       {/* 인사 히어로 */}
       <div className="hero-dark w-full">

@@ -6,7 +6,6 @@ import { createClient } from '@jisane/shared/supabase/server'
 import { adminClient } from '@jisane/shared/supabase/admin'
 import { INVITATION_STATUS_LABELS } from '@jisane/shared/labels'
 import type { InvitationWithOwner } from '@jisane/shared/query-types'
-import { SuccessToast } from '@jisane/ui/toast'
 import { PageHero } from '@jisane/ui/page-hero'
 
 const STATUS_COLORS: Record<string, string> = {
@@ -46,7 +45,6 @@ export default async function InvitationsPage() {
 
   return (
     <div className="flex flex-1 flex-col animate-fade-in">
-      <Suspense><SuccessToast /></Suspense>
       <PageHero
         eyebrow="시니어지식인회원"
         title="초빙 현황"

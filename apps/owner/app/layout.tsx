@@ -1,4 +1,6 @@
 import type { Metadata, Viewport } from "next";
+import { Suspense } from "react";
+import { SuccessToast, ErrorToast } from "@jisane/ui/toast";
 import "@jisane/ui/styles/globals.css";
 import { cookies } from "next/headers";
 import { createClient } from "@jisane/shared/supabase/server";
@@ -67,6 +69,12 @@ export default async function RootLayout({
           signInWithGoogle={signInWithGoogle}
         />
         {children}
+        {/* 토스트는 루트에 한 번만 마운트한다 — 페이지별로 달면 마운트되지 않은 화면
+            (특히 로그인 실패가 향하는 "/")에서 안내가 통째로 사라진다. */}
+        <Suspense>
+          <SuccessToast />
+          <ErrorToast />
+        </Suspense>
         {/* 하단 탭 — 로그인 전후 공통 (크롬 연속) */}
         <ClientNav />
         {/* Docent RAG 챗봇 위젯 */}

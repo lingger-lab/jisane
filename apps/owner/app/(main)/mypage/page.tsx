@@ -6,7 +6,6 @@ import { createClient } from '@jisane/shared/supabase/server'
 import { adminClient } from '@jisane/shared/supabase/admin'
 import { signOut } from '@jisane/shared/auth/actions'
 import { REQUEST_STATUS_LABELS, ORDER_STATUS_LABELS, DEAL_STATUS_LABELS, INVITATION_STATUS_LABELS } from '@jisane/shared/labels'
-import { SuccessToast } from '@jisane/ui/toast'
 import { PageHero } from '@jisane/ui/page-hero'
 import { OwnerProfileForm } from './owner-profile-form'
 
@@ -124,7 +123,6 @@ export default async function OwnerMyPage() {
 
   return (
     <div className="flex flex-1 flex-col animate-fade-in">
-      <Suspense><SuccessToast /></Suspense>
       <PageHero eyebrow="기업회원" title="마이페이지" subtitle="회사 정보를 등록하면 의뢰·매칭이 더 정확해집니다." />
 
       <div className="responsive-container px-4 md:px-6 py-6">

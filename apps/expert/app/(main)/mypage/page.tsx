@@ -6,7 +6,6 @@ import { createClient } from '@jisane/shared/supabase/server'
 import { adminClient } from '@jisane/shared/supabase/admin'
 import { signOut } from '@jisane/shared/auth/actions'
 import { DEAL_STATUS_LABELS, ORDER_STATUS_LABELS, MATCHING_STATUS_LABELS, ACTIVITY_TYPE_LABELS } from '@jisane/shared/labels'
-import { SuccessToast, ErrorToast } from '@jisane/ui/toast'
 import { PageHero } from '@jisane/ui/page-hero'
 import { ProfileEditor } from '@/components/profile-editor'
 
@@ -136,7 +135,6 @@ export default async function MyPage() {
         subtitle="내 현황을 확인하고 프로필을 수정할 수 있습니다."
       />
       <div className="responsive-container px-4 md:px-6 py-6">
-      <Suspense><SuccessToast /><ErrorToast /></Suspense>
 
       {/* 프로필 요약 카드 */}
       <div className="mb-6 rounded-xl border border-border-light bg-surface-warm p-4 shadow-sm">

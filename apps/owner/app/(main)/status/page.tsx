@@ -4,7 +4,6 @@ import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import { createClient } from '@jisane/shared/supabase/server'
 import { adminClient } from '@jisane/shared/supabase/admin'
-import { SuccessToast, ErrorToast } from '@jisane/ui/toast'
 import type { RequestRow, ServiceOrderRow } from '@jisane/shared/types'
 import { REQUEST_STATUS_LABELS, ORDER_STATUS_LABELS } from '@jisane/shared/labels'
 import { PageHero } from '@jisane/ui/page-hero'
@@ -81,7 +80,6 @@ export default async function StatusPage() {
 
   return (
     <div className="flex flex-1 flex-col animate-fade-in">
-      <Suspense><SuccessToast /><ErrorToast /></Suspense>
 
       <PageHero eyebrow="기업회원" title="의뢰 현황" subtitle="등록한 의뢰와 전문서비스 진행 상태를 한눈에 확인하세요." />
 
