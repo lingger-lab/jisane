@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 import { confirmAndRecordDeposit } from '@/lib/payments/confirm-deposit'
+import { parseOrderId } from '@jisane/shared/payment'
 
 /**
  * Toss 결제 성공 리다이렉트 종단
@@ -17,9 +18,9 @@ export async function GET(request: NextRequest) {
     return NextResponse.redirect(new URL('/?error=payment_invalid', request.url))
   }
 
-  // orderId 형식 검증: jisane_{dealId}_{timestamp}
-  const parts = orderId.split('_')
-  if (parts.length < 3 || parts[0] !== 'jisane' || parts[1] !== dealId) {
+  // orderId 해석은 공유 파서로 (생성 측과 단일 계약). 쿼리 dealId와도 일치해야 한다.
+  const parsed = parseOrderId(orderId)
+  if (!parsed || parsed.dealId !== dealId) {
     return NextResponse.redirect(new URL('/?error=payment_invalid', request.url))
   }
 

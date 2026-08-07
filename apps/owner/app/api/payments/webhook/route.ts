@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import { confirmAndRecordDeposit } from '@/lib/payments/confirm-deposit'
+import { parseOrderId } from '@jisane/shared/payment'
 import crypto from 'crypto'
 
 /**
@@ -53,12 +54,12 @@ export async function POST(request: Request) {
     return NextResponse.json({ success: true, message: 'Ignored non-DONE status' })
   }
 
-  // orderId에서 dealId 추출: jisane_{dealId}_{timestamp}
-  const parts = orderId.split('_')
-  if (parts.length < 3 || parts[0] !== 'jisane') {
+  // orderId 해석은 공유 파서로 — 생성 측과 형식이 어긋나지 않도록 한 곳에서만 정의한다.
+  const parsed = parseOrderId(orderId)
+  if (!parsed) {
     return NextResponse.json({ error: 'Invalid orderId format' }, { status: 400 })
   }
-  const dealId = parts[1]
+  const dealId = parsed.dealId
 
   const result = await confirmAndRecordDeposit(dealId, paymentKey, orderId)
 
