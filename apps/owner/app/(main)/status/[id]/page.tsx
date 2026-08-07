@@ -4,8 +4,8 @@ import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import { createClient } from '@jisane/shared/supabase/server'
 import { adminClient } from '@jisane/shared/supabase/admin'
+import { isPaymentEnabled } from '@jisane/shared/payment'
 import { ProgressBar } from '@jisane/ui/progress-bar'
-import { SuccessToast, ErrorToast } from '@jisane/ui/toast'
 import type { RequestRow, DealRow, DealWorkflowRow, ExpertRow } from '@jisane/shared/types'
 import { WORKFLOW_STEP_LABELS, STEP_STATUS_LABELS } from '@jisane/shared/labels'
 import { PageHero } from '@jisane/ui/page-hero'
@@ -55,11 +55,15 @@ export default async function StatusDetailPage(props: PageProps) {
 
   const req = request as RequestRow
 
-  // 관련 deal 조회
+  // 관련 deal 조회.
+  // request_id에 unique 제약이 없어 한 의뢰에 deal이 여러 건 존재할 수 있다(매칭 복수 수락·초빙).
+  // ORDER BY 없이 첫 행을 쓰면 어떤 deal의 금액을 청구하는지가 비결정적이므로 최신 건으로 고정한다.
   const { data: deals } = await adminClient
     .from('deal')
     .select('*')
     .eq('request_id', id)
+    .order('created_at', { ascending: false })
+    .limit(1)
 
   const deal = (deals && deals.length > 0 ? deals[0] : null) as DealRow | null
 
@@ -133,7 +137,6 @@ export default async function StatusDetailPage(props: PageProps) {
 
   return (
     <div className="flex flex-1 flex-col animate-fade-in">
-      <Suspense><SuccessToast /><ErrorToast /></Suspense>
 
       <PageHero
         eyebrow="기업회원"
@@ -176,9 +179,15 @@ export default async function StatusDetailPage(props: PageProps) {
         </div>
       )}
 
-      {/* 견적 카드 (deal 존재 + quoted 상태) */}
+      {/* 견적 카드 (deal 존재 + quoted 상태).
+          화면에 쓰는 필드만 전달한다 — 클라이언트 컴포넌트라 props가 브라우저에 직렬화되므로
+          deal/expert 전체를 넘기면 내부 수수료·전문가 실명이 노출된다. */}
       {deal && deal.status === 'quoted' && (
-        <QuoteSection deal={deal} expert={expert} />
+        <QuoteSection
+          deal={{ id: deal.id, total_pay: deal.total_pay, due_date: deal.due_date }}
+          expert={expert ? { field: expert.field, career_years: expert.career_years } : null}
+          paymentEnabled={isPaymentEnabled()}
+        />
       )}
 
       {/* 작업 진행 중 */}
@@ -253,6 +262,28 @@ export default async function StatusDetailPage(props: PageProps) {
           )}
         </div>
       )}
+
+      {/* 위 분기가 모두 빗나가는 조합(예: request가 dealt/closed인데 deal이 없거나
+          deal이 표시 대상 상태가 아닌 경우) — 안내 없이 프로그레스 바만 남는 막다른 화면을 막는다. */}
+      {!(req.status === 'open' || req.status === 'matching') &&
+        !(deal && ['quoted', 'working', 'done'].includes(deal.status)) && (
+          <div className="rounded-xl border border-border-light p-4 shadow-xs">
+            <h2 className="mb-2 font-semibold text-text">
+              {req.status === 'closed' ? '종료된 의뢰입니다' : '진행 상황을 확인 중입니다'}
+            </h2>
+            <p className="text-sm text-text-muted">
+              {req.status === 'closed'
+                ? '이 의뢰는 종료되었습니다. 새로운 의뢰가 필요하시면 의뢰하기에서 등록해주세요.'
+                : '표시할 상세 내용이 아직 없습니다. 잠시 후 다시 확인해주시고, 계속 이 화면이 보이면 문의해주세요.'}
+            </p>
+            <Link
+              href="/status"
+              className="focus-ring mt-3 inline-block text-sm font-medium text-accent hover:underline"
+            >
+              의뢰 목록으로
+            </Link>
+          </div>
+        )}
 
       {/* 서류 다운로드 */}
       {deal && (

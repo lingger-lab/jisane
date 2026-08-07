@@ -1,32 +1,36 @@
 'use client'
 
 import { useState } from 'react'
-import { approveDeal } from '@/lib/deal/actions'
 import { sendDealInquiry } from '@/lib/message/actions'
 import { SubmitButton } from '@jisane/ui/submit-button'
-import type { DealRow, ExpertRow } from '@jisane/shared/types'
+import { calcPayableAmount, calcVat } from '@jisane/shared/pricing'
+import { PaymentButton } from './payment-button'
 
+/**
+ * 이 컴포넌트는 클라이언트 컴포넌트라 props가 RSC 페이로드로 브라우저에 직렬화된다.
+ * 따라서 화면에 실제로 쓰는 필드만 받는다 — DealRow/ExpertRow 전체를 넘기면
+ * 내부 수수료 분해(work_fee·match_fee)와 전문가 실명·auth_user_id까지 노출되어
+ * 익명화(직거래 방지) 설계가 무너진다.
+ */
 interface QuoteSectionProps {
-  deal: DealRow
-  expert: ExpertRow | null
+  deal: { id: string; total_pay: number; due_date: string | null }
+  expert: { field: string | null; career_years: number | null } | null
+  /** 서버에서 판정한 결제 활성화 여부 (토스 키 주입 전이면 false) */
+  paymentEnabled: boolean
 }
 
-export function QuoteSection({ deal, expert }: QuoteSectionProps) {
+export function QuoteSection({ deal, expert, paymentEnabled }: QuoteSectionProps) {
   const [error, setError] = useState<string | null>(null)
   const [showInquiry, setShowInquiry] = useState(false)
   const [inquiryText, setInquiryText] = useState('')
   const [inquirySent, setInquirySent] = useState(false)
 
-  async function handleApprove() {
-    if (!confirm(`견적 ${deal.total_pay.toLocaleString('ko-KR')}원(VAT 별도)을 승인하시겠습니까?`)) return
-    const result = await approveDeal(deal.id)
-    if (result?.error) {
-      setError(result.error)
-    }
-  }
-
   async function handleInquiry() {
-    if (!inquiryText.trim()) return
+    // 빈 제출을 조용히 무시하면 사용자는 버튼이 고장난 줄 안다 — 이유를 표시한다.
+    if (!inquiryText.trim()) {
+      setError('문의 내용을 입력해주세요.')
+      return
+    }
     setError(null)
     const result = await sendDealInquiry(deal.id, inquiryText.trim(), 'deal_quote')
     if (result.error) {
@@ -45,7 +49,7 @@ export function QuoteSection({ deal, expert }: QuoteSectionProps) {
       <div className="mb-4 rounded-xl border border-border-light bg-background p-3">
         <div className="flex items-center gap-3">
           <div className="flex h-10 w-10 items-center justify-center rounded-full bg-accent/10 text-accent font-medium">
-            P
+            지
           </div>
           <div>
             <p className="font-medium text-text">
@@ -60,14 +64,18 @@ export function QuoteSection({ deal, expert }: QuoteSectionProps) {
         </div>
       </div>
 
-      {/* 총 금액 — total_pay만 표시 (직거래 방지) */}
+      {/* 총 금액 — 내역(work_fee/match_fee)은 숨기고 합계만 표시 (직거래 방지).
+          결제액은 공급가+부가세이며 견적서·거래명세서의 총 결제 예정액과 같다. */}
       <div className="mb-4 text-center">
-        <p className="text-sm text-text-muted">총 비용</p>
+        <p className="text-sm text-text-muted">총 결제 금액</p>
         <p className="text-3xl font-bold text-accent">
-          {deal.total_pay.toLocaleString('ko-KR')}
+          {calcPayableAmount(deal.total_pay).toLocaleString('ko-KR')}
           <span className="text-base font-normal">원</span>
         </p>
-        <p className="mt-1 text-xs text-text-subtle">VAT 별도</p>
+        <p className="mt-1 text-xs text-text-subtle">
+          공급가 {deal.total_pay.toLocaleString('ko-KR')}원 + 부가세{' '}
+          {calcVat(deal.total_pay).toLocaleString('ko-KR')}원
+        </p>
       </div>
 
       {/* 에스크로 안내 */}
@@ -90,11 +98,12 @@ export function QuoteSection({ deal, expert }: QuoteSectionProps) {
 
       {/* 버튼 */}
       <div className="flex gap-3">
-        <form action={handleApprove} className="flex-1">
-          <SubmitButton className="w-full rounded-xl bg-accent px-4 py-3 font-semibold text-white shadow-sm transition-all hover:bg-accent/90 hover:shadow-md disabled:opacity-50">
-            견적 승인
-          </SubmitButton>
-        </form>
+        <PaymentButton
+          dealId={deal.id}
+          amount={calcPayableAmount(deal.total_pay)}
+          enabled={paymentEnabled}
+          onError={setError}
+        />
         {!showInquiry && !inquirySent && (
           <button
             type="button"
@@ -108,7 +117,11 @@ export function QuoteSection({ deal, expert }: QuoteSectionProps) {
 
       {showInquiry && !inquirySent && (
         <form action={handleInquiry} className="mt-3 flex flex-col gap-2">
+          <label htmlFor="quote-inquiry" className="text-sm font-medium text-text">
+            금액 상의 내용
+          </label>
           <textarea
+            id="quote-inquiry"
             value={inquiryText}
             onChange={(e) => setInquiryText(e.target.value)}
             rows={3}
@@ -133,7 +146,7 @@ export function QuoteSection({ deal, expert }: QuoteSectionProps) {
       {inquirySent && (
         <div className="mt-3 rounded-xl border border-success/20 bg-success-light p-3 text-center">
           <p className="text-sm font-medium text-success">메시지가 전송되었습니다</p>
-          <p className="mt-1 text-xs text-success/70">매니저가 확인 후 안내드리겠습니다.</p>
+          <p className="mt-1 text-xs text-text-muted">매니저가 확인 후 안내드리겠습니다.</p>
           <button
             type="button"
             onClick={() => { setInquirySent(false); setShowInquiry(true) }}
