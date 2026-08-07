@@ -5,6 +5,25 @@
 > 게이트: tsc 3앱 exit 0 · build 3/3 성공 exit 0 · lint 실패는 전부 기존 결함(증명 첨부)
 > axes NOT run: 시각 스윕(visual sweep) — 앱 구동 기반 렌더 검증 미실시
 
+## 처리 현황 (2026-08-07 갱신)
+
+| 등급 | 확정 | 처리 | 미처리 |
+|---|---|---|---|
+| P1 | 2 | **2 ☑** | 0 |
+| P2 | 9 | **8 ☑** | 1 (P2-8 테스트 — 아래 사유) |
+| P3 | 9 | **6 ☑** | 3 |
+
+처리 커밋: `4c3438e`(VAT 단일 소스) · `2d40664`(결제 신뢰성·orderId 계약) ·
+`bb3d3ef`(토스트 전역) · `7da3a6e`(결제 UI 배선·상태화면·a11y)
+
+**의도적 미처리:**
+- **P2-8 머니패스 테스트 0건** ⏸ — 저장소에 테스트 러너 자체가 없어 vitest 도입이 선행돼야 하고,
+  이는 의존성 추가 결정 사안이라 보류(사용자 지시). **결제 로직이 자동 검증 없이 동작 중**임을 명시해 둔다.
+  최소 착수 지점: `buildOrderId`↔`parseOrderId` 왕복 핀 테스트, `confirmAndRecordDeposit` 2회 호출 멱등 테스트.
+- **P3 잔여 3건** ☐ — 순차 DB 왕복 3회(성능), Supabase 에러 무시, "금액 상의" 문의가 owner에게
+  다시 보이지 않음(UX 설계 판단 필요).
+- 방출부 ~20곳을 `SuccessCode`/`ErrorCode` 타입으로 강제하는 작업 ☐ — 현재는 union export까지만.
+
 ## 0. 게이트 증거 (실행 결과)
 
 의존성 설치 후 실제 실행한 결과다. "통과할 것"이 아니라 명령 출력·exit code 기준.
@@ -36,40 +55,40 @@
 
 ## P1
 ### P1-1. Toast auto-dismiss timer is always cancelled by its own router.replace — toast never disappears
-- `packages/ui/components/toast.tsx:36` · correctness · quote-back: OK · ☐ untaken
+- `packages/ui/components/toast.tsx:36` · correctness · quote-back: OK · ☑ fixed (bb3d3ef)
 - The effect (a) sets the message, (b) calls router.replace to strip the query param, (c) schedules the 3s dismiss timer and returns a cleanup that clears it. The router.replace in step (b) changes the URL, so useSearchParams returns a new ReadonlyURLSearchParams; the [searchParams, router] dep array changes, React runs the cleanup (clearTimeout — killing the dismiss timer) and re-runs the effect, which now finds no key and schedules nothing. `message` is never reset, and there is no dismiss button anywhere in the component. The fixed, z-50, non-pointer-events-none banner therefore sticks at the top of the viewport for the rest of the client session and intercepts clicks in that band. Identical bug in ErrorToast (line 83, 4000ms). This component is mounted on ~9 pages across all three apps, so it hits every success/error redirect in the product.
 
 ### P1-2. "VAT 별도" on the paid amount contradicts the quote/statement documents, which bill total_pay + 10% VAT
-- `apps/owner/app/(main)/status/[id]/quote-section.tsx:64` · correctness · quote-back: OK · ☐ untaken
+- `apps/owner/app/(main)/status/[id]/quote-section.tsx:64` · correctness · quote-back: OK · ☑ fixed (4c3438e)
 - The owner is shown total_pay labelled '총 비용 … VAT 별도' and the payment confirm dialog (payment-button.tsx:41) repeats '견적 N원(VAT 별도)을 결제하시겠습니까?', but /api/payments/checkout charges exactly deal.total_pay (checkout/route.ts:62) and confirm-deposit.ts:46 approves that same amount into escrow. Meanwhile the linked documents this very page offers ('견적서 보기' / '거래명세서 보기', page.tsx:262/269) compute `const vat = Math.round(deal.total_pay * 0.1)` and print 합계 = total_pay + vat (apps/admin/app/docs/quote/[dealId]/page.tsx:98,212 and .../statement/[dealId]/page.tsx:97,199). Two surfaces in the same flow answer 'how much does the owner owe' with numbers differing by 10%, and the customer is told VAT is excluded while nothing ever collects it. Money must have one owner: derive the charged amount and the document total from one function.
 
 ## P2
 ### P2-1. deal chosen as deals[0] with no ORDER BY and no unique constraint on deal.request_id
-- `apps/owner/app/(main)/status/[id]/page.tsx:65` · correctness · quote-back: OK · ☐ untaken
+- `apps/owner/app/(main)/status/[id]/page.tsx:65` · correctness · quote-back: OK · ☑ fixed (7da3a6e)
 - The query at line 60-63 selects all deals for the request with no .order() and no .limit(); Postgres gives no row-order guarantee without ORDER BY, so which deal is picked can change between page loads. supabase/migrations/0001_init.sql:86 declares `request_id uuid references request(id)` with NO unique constraint (only matching_id is unique), and a request can have several matchings, so multiple deal rows per request are reachable. Every downstream decision on this page — which quote/amount the owner is asked to pay (QuoteSection→PaymentButton→/api/payments/checkout uses deal.id), which workflow, which message thread, which review, which settlement/dispute — hinges on this arbitrary pick. Fix: order by created_at desc (or filter out terminal deals) and make the intent explicit.
 
 ### P2-2. Expert identity and internal fee split shipped to the browser despite the documented anonymity/직거래-방지 design
-- `apps/owner/app/(main)/status/[id]/page.tsx:182` · security · quote-back: OK · ☐ untaken
+- `apps/owner/app/(main)/status/[id]/page.tsx:182` · security · quote-back: OK · ☑ fixed (7da3a6e)
 - QuoteSection is a client component, so both props are serialized into the RSC flight payload and are readable in page source. `expert` is selected at line 101 as `id, auth_user_id, name, field, career_years, grade` — the card deliberately renders only '경력 N년 시니어지식인' + field, but the expert's real name and their auth_user_id (an internal auth UUID) travel to the owner's browser anyway. `deal` is the full DealRow, so work_fee and match_fee reach the client too, directly contradicting the comment at quote-section.tsx:57 ('총 금액 — total_pay만 표시 (직거래 방지)'): the owner can read exactly what the expert is paid and what the platform takes, which is the disintermediation the design is trying to prevent. Pass only the fields the UI renders (career_years, field, deal.id, total_pay, due_date).
 
 ### P2-3. ErrorToast renders arbitrary attacker-controlled query text as a site-styled alert
-- `packages/ui/components/toast.tsx:77` · security · quote-back: OK · ☐ untaken
+- `packages/ui/components/toast.tsx:77` · security · quote-back: OK · ☑ fixed (bb3d3ef)
 - `ERROR_MESSAGES[key] || key` falls through to the raw ?error= value, so any URL (?error=계정이 정지되었습니다. 1588-XXXX로 전화해 본인확인을 진행하세요) renders that sentence inside the product's own red alert chrome, role=alert, on an authenticated page — a ready-made phishing/social-engineering surface that needs no XSS. SuccessToast (line 27) correctly gates on `SUCCESS_MESSAGES[key]` existing; ErrorToast does not, so the two halves of the same file disagree on whether the query param is trusted. Secondary effect: unmapped internal codes leak raw English identifiers ('exchange_failed') into a Korean UI. Whitelist like SuccessToast does and fall back to a generic message.
 
 ### P2-4. Message maps have drifted from the codes actually emitted — success feedback silently vanishes and auth failures show nothing
-- `packages/ui/components/toast.tsx:6` · structure/state · quote-back: OK · ☐ untaken
+- `packages/ui/components/toast.tsx:6` · structure/state · quote-back: OK · ☑ fixed (bb3d3ef)
 - The maps are one file, the emitters are ~20 redirect sites, and nothing pins them together (there are no tests in the repo at all). Verified drift: `?success=created` and `?success=saved` are emitted (apps/admin/lib/partner/actions.ts:98,174,234) but are absent from SUCCESS_MESSAGES, so the redirect silently shows nothing after a save; `expert_registered` is in the map but no code emits it (dead entry). Worse for errors: `no_code`, `exchange_failed`, `no_user`, `profile_create`, `auth` are emitted by every app's auth callback to `/` (apps/owner/app/(auth)/callback/route.ts:11,19,24,44 and siblings), none are in ERROR_MESSAGES, and `/` does not mount ErrorToast at all (only the pages grepped at status/mypage/dashboard do) — a failed login bounces the user to the home page with zero explanation, a complete dead end in the onboarding flow. Mount the toasts once in the root layout and export the code union so emitters can't invent unknown keys.
 
 ### P2-5. Malformed Toss checkout response silently degrades to an empty checkout URL
-- `packages/shared/lib/payment.ts:69` · honesty · quote-back: OK · ☐ untaken
+- `packages/shared/lib/payment.ts:69` · honesty · quote-back: OK · ☑ fixed (2d40664)
 - If Toss returns 200 with a body lacking `checkout.url` (API change, alternate method, partial response), `|| ''` swallows it and createCheckoutSession reports success. /api/payments/checkout then persists result.paymentKey into settlement (checkout/route.ts:67-70) and returns HTTP 200 with `checkout_url: ''`; the client's `!data.checkout_url` guard (payment-button.tsx:57) shows the generic '결제 요청에 실패했습니다. 잠시 후 다시 시도해주세요.' So a real integration failure is presented as a transient retryable one, a live Toss payment session exists that nobody can reach, and nothing is logged. Throw on a missing checkout URL instead of substituting a falsy placeholder.
 
 ### P2-6. orderId is time-derived, so checkout creation is non-idempotent and its format is re-parsed by hand elsewhere
-- `packages/shared/lib/payment.ts:42` · concurrency & data integrity · quote-back: OK · ☐ untaken
+- `packages/shared/lib/payment.ts:42` · concurrency & data integrity · quote-back: OK · ☑ fixed (2d40664)
 - Every call mints a new orderId for the same deal, and the create call carries no Idempotency-Key (unlike cancelPayment, which does at line 124). A double-click, a browser retry, or two tabs therefore leave multiple live Toss payment sessions for one deal, and settlement.payment_key — a single column — is overwritten by whichever checkout ran last (checkout/route.ts:67), so the stored key can point at a session the customer never paid, corrupting refund/reconciliation lookups until confirm-deposit rewrites it. Capture is saved only by the escrow_status guard in confirm-deposit.ts:41. Second issue from the same line: the `jisane_{dealId}_{ts}` shape is a cross-file contract re-derived by string splitting in apps/owner/app/api/payments/webhook/route.ts:57-61 with no shared builder/parser and no test pinning the two — change the separator here and the webhook silently starts rejecting every callback.
 
 ### P2-7. confirmPayment mixes two error contracts: returns a result for HTTP errors, throws for timeout/network
-- `packages/shared/lib/payment.ts:81` · resilience · quote-back: OK · ☐ untaken
+- `packages/shared/lib/payment.ts:81` · resilience · quote-back: OK · ☑ fixed (2d40664)
 - A 4xx/5xx from Toss comes back as `{success:false,...}`, but the AbortSignal.timeout(15s) at line 88 and any socket error reject the fetch, so the function throws instead. confirmAndRecordDeposit only inspects `confirmResult.success` (apps/owner/lib/payments/confirm-deposit.ts:47) and has no try/catch, so a slow Toss turns into an unhandled rejection propagating out of the route rather than the documented `ok:false` path — the webhook still 500s (Toss retries), but the success redirect surfaces an unhandled error instead of the payment error copy. Also, unlike cancelPayment, confirm accepts no Idempotency-Key even though it is the retried-after-timeout call and is invoked from two independent paths (webhook + redirect). Pick one contract (never throw, or always throw) and add the idempotency key.
 
 ### P2-8. Zero automated tests exist for the money path (or anywhere in the repo)
@@ -77,7 +96,7 @@
 - `find . -name "*.test.ts*" -not -path "*/node_modules/*"` returns nothing across the monorepo. The escrow flow — amount authority (server-side total_pay), orderId↔webhook parsing contract, the idempotency guard in confirm-deposit.ts, the ALREADY_PROCESSED_PAYMENT branch, VAT handling — is entirely unverified, and the map/format couplings flagged above have nothing that can go red when they drift. At minimum: a unit test pinning the orderId build/parse round-trip against the webhook's split logic, and one covering confirmAndRecordDeposit called twice (must be idempotent).
 
 ### P2-9. Alpha-modified success text on success-light background falls below AA contrast
-- `apps/owner/app/(main)/status/[id]/quote-section.tsx:131` · a11y · quote-back: OK · ☐ untaken
+- `apps/owner/app/(main)/status/[id]/quote-section.tsx:131` · a11y · quote-back: OK · ☑ fixed (7da3a6e)
 - `text-success/70` on `bg-success-light` (and the same pattern at page.tsx:238, `text-success/80` on the same background) drops an already low-contrast token to roughly half its luminance separation, well under the 4.5:1 required for body text. Use a darker success token (or the muted text token) rather than reducing the accent's alpha over a tinted surface.
 
 ## P3
