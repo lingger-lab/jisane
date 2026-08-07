@@ -1,5 +1,6 @@
 import { adminClient } from '@jisane/shared/supabase/admin'
 import { confirmPayment } from '@jisane/shared/payment'
+import { calcPayableAmount } from '@jisane/shared/pricing'
 
 export type ConfirmDepositResult =
   | { ok: true; requestId: string | null; alreadyProcessed: boolean }
@@ -42,8 +43,9 @@ export async function confirmAndRecordDeposit(
     return { ok: true, requestId: deal.request_id, alreadyProcessed: true }
   }
 
-  // 금액은 서버측 산출값(deal.total_pay)만 사용 — 위변조 불가
-  const confirmResult = await confirmPayment(paymentKey, orderId, deal.total_pay)
+  // 금액은 서버측 산출값만 사용 — 위변조 불가.
+  // 승인 금액은 체크아웃 생성 금액(공급가+부가세)과 반드시 같아야 하므로 같은 함수에서 파생시킨다.
+  const confirmResult = await confirmPayment(paymentKey, orderId, calcPayableAmount(deal.total_pay))
   if (!confirmResult.success && confirmResult.code !== 'ALREADY_PROCESSED_PAYMENT') {
     return {
       ok: false,

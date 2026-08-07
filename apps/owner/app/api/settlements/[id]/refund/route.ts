@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { adminClient } from '@jisane/shared/supabase/admin'
 import { cancelPayment } from '@jisane/shared/payment'
+import { calcPayableAmount } from '@jisane/shared/pricing'
 import crypto from 'crypto'
 
 /**
@@ -52,7 +53,9 @@ export async function POST(
     return NextResponse.json({ error: 'Settlement not found' }, { status: 404 })
   }
 
-  const totalPay = (settlement.deal as unknown as { total_pay: number }).total_pay
+  // 환불 상한은 실제 청구액(공급가+부가세) 기준이어야 한다 — 공급가로 두면 전액 환불이 부가세만큼 막힌다.
+  const supplyAmount = (settlement.deal as unknown as { total_pay: number }).total_pay
+  const totalPay = calcPayableAmount(supplyAmount)
 
   if (settlement.escrow_status !== 'deposited' && settlement.escrow_status !== 'reviewing') {
     return NextResponse.json(

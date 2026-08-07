@@ -3,6 +3,7 @@ import { cookies } from 'next/headers'
 import { createClient } from '@jisane/shared/supabase/server'
 import { adminClient } from '@jisane/shared/supabase/admin'
 import { createCheckoutSession } from '@jisane/shared/payment'
+import { calcPayableAmount } from '@jisane/shared/pricing'
 
 export async function POST(request: Request) {
   const cookieStore = await cookies()
@@ -57,9 +58,10 @@ export async function POST(request: Request) {
   }
 
   try {
+    // total_pay는 공급가. 실제 청구액은 부가세 포함 — 견적서/거래명세서의 총 결제 예정액과 동일해야 한다.
     const result = await createCheckoutSession(
       deal.id,
-      deal.total_pay,
+      calcPayableAmount(deal.total_pay),
       `지사네 작업 — ${req.title || '의뢰'}`
     )
 

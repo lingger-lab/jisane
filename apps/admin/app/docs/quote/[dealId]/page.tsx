@@ -3,6 +3,7 @@ import { redirect } from 'next/navigation'
 import { createClient } from '@jisane/shared/supabase/server'
 import { adminClient } from '@jisane/shared/supabase/admin'
 import { PrintButton } from '@jisane/ui/print-button'
+import { calcVat } from '@jisane/shared/pricing'
 
 export default async function QuotePage(props: { params: Promise<{ dealId: string }> }) {
   const { dealId } = await props.params
@@ -95,7 +96,7 @@ export default async function QuotePage(props: { params: Promise<{ dealId: strin
   }
 
   const issueDate = new Date(deal.created_at).toLocaleDateString('ko-KR')
-  const vat = Math.round(deal.total_pay * 0.1)
+  const vat = calcVat(deal.total_pay)
 
   return (
     <div className="mx-auto max-w-2xl px-8 py-10 print:max-w-none print:px-0 print:py-0">
