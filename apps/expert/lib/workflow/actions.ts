@@ -51,6 +51,27 @@ export async function updateWorkflowStep(
     return { error: result.error }
   }
 
+  // 전이 검증: pending→in_progress→done 순서만 허용(건너뛰기·되돌리기·임의 상태 직접
+  // 쓰기 차단). 이 검증은 죽은 API 라우트에만 있고 라이브 액션엔 없었다(감사 docs/11 P1-5·P2-33).
+  // 라이브 UI(workflow-form)도 이 순서로만 진행하므로 UI를 깨지 않는다.
+  const { data: current } = await adminClient
+    .from('deal_workflow')
+    .select('status')
+    .eq('deal_id', dealId)
+    .eq('step', step)
+    .single()
+
+  if (current) {
+    const VALID_TRANSITIONS: Record<string, string[]> = {
+      pending: ['in_progress'],
+      in_progress: ['done'],
+      done: [],
+    }
+    if (!VALID_TRANSITIONS[current.status]?.includes(newStatus)) {
+      return { error: `상태 전이 불가: ${current.status} → ${newStatus}` }
+    }
+  }
+
   const updateData: Record<string, unknown> = { status: newStatus }
   if (note !== undefined) {
     updateData.note = note

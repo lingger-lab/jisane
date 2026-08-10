@@ -40,6 +40,24 @@ export async function confirmAndRecordDeposit(
 
   // 멱등 가드: 이미 입금 처리된 건 (웹훅 중복 전송 / 웹훅·리다이렉트 경합)
   if (settlement.escrow_status !== 'pending') {
+    // 직전 시도가 settlement는 deposited로 기록했으나 deal.status 갱신 전에 실패했을 수 있다.
+    // 그 경우 재진입이 여기서 단락되면 deal이 영원히 quoted로 남으므로(발주자는 결제했는데
+    // 에스크로만 deposited) 여기서 마저 보정한다 (감사 docs/11 P1-13).
+    if (deal.status === 'quoted') {
+      const { error: dealErr } = await adminClient
+        .from('deal')
+        .update({ status: 'working' })
+        .eq('id', dealId)
+        .eq('status', 'quoted')
+      if (dealErr) {
+        return {
+          ok: false,
+          status: 500,
+          error: `Deal status reconcile failed: ${dealErr.message}`,
+          requestId: deal.request_id,
+        }
+      }
+    }
     return { ok: true, requestId: deal.request_id, alreadyProcessed: true }
   }
 

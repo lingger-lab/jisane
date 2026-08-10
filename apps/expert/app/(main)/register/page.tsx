@@ -3,17 +3,8 @@
 import { useActionState, useState } from 'react'
 import { updateExpertProfile } from '@/lib/expert/actions'
 import { SubmitButton } from '@jisane/ui/submit-button'
-
-/** 대분류별 중분류 그룹 (category 테이블과 동기) */
-const FIELD_GROUPS = [
-  { label: '경영·창업', fields: ['창업코칭', '사업계획서', '정부자금·보조금', '경영진단'] },
-  { label: 'AI·디지털전환', fields: ['AI진단', 'AEO최적화', '업무자동화', '데이터분석'] },
-  { label: '문서·행정', fields: ['제안서·기획서', '보고서', '매뉴얼·가이드', '번역·통역'] },
-  { label: '생산·품질', fields: ['품질관리', '생산관리', 'ISO·인증', '안전관리'] },
-  { label: '연구개발', fields: ['R&D 기획', '기술개발', '특허·지식재산', '기술이전·사업화'] },
-  { label: '전문서비스', fields: ['세무·회계', '법무', '노무', '마케팅'] },
-  { label: '크리에이티브', fields: ['디자인', '웹개발', '영상제작', '콘텐츠제작'] },
-] as const
+// 대분류별 중분류 그룹 (category 테이블과 동기) — 편집기와 공유하는 단일 소스
+import { FIELD_GROUPS } from '@/lib/fields'
 
 const CAREER_OPTIONS = [
   { value: '', label: '선택 안함' },

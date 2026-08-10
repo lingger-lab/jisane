@@ -3,22 +3,8 @@
 import { useActionState, useState } from 'react'
 import { updateExpertProfile } from '@/lib/expert/actions'
 import { SubmitButton } from '@jisane/ui/submit-button'
-
-const FIELD_CHIPS = [
-  '창업코칭',
-  '정부자금·보조금',
-  '사업계획서',
-  'AEO최적화',
-  'AI진단',
-  '디자인',
-  '웹개발',
-  '영상제작',
-  '마케팅',
-  '세무·회계',
-  '법무',
-  '노무',
-  '기타',
-] as const
+// 등록 페이지와 동일한 단일 소스 — 축약 목록을 쓰면 저장값이 고아가 됨(감사 docs/11 P1-6)
+import { FIELD_GROUPS } from '@/lib/fields'
 
 const CAREER_OPTIONS = [
   { value: '', label: '선택 안함' },
@@ -63,21 +49,28 @@ export function ProfileEditor({ profile }: { profile: ExpertProfile }) {
           전문 분야 <span className="text-error">*</span>
           <span className="ml-1 text-xs font-normal text-text-muted">(최대 5개)</span>
         </label>
-        <div className="flex flex-wrap gap-2">
-          {FIELD_CHIPS.map((chip) => (
-            <button
-              key={chip}
-              type="button"
-              onClick={() => toggleField(chip)}
-              aria-pressed={selectedFields.includes(chip)}
-              className={`rounded-full border px-3 py-1.5 text-sm transition-colors ${
-                selectedFields.includes(chip)
-                  ? 'border-accent bg-accent/10 font-semibold text-accent'
-                  : 'border-border-light text-text-muted hover:border-accent/30'
-              }`}
-            >
-              {chip}
-            </button>
+        <div className="flex flex-col gap-3">
+          {FIELD_GROUPS.map((group) => (
+            <div key={group.label}>
+              <p className="mb-1.5 text-xs font-semibold text-text-muted">{group.label}</p>
+              <div className="flex flex-wrap gap-2">
+                {group.fields.map((chip) => (
+                  <button
+                    key={chip}
+                    type="button"
+                    onClick={() => toggleField(chip)}
+                    aria-pressed={selectedFields.includes(chip)}
+                    className={`rounded-full border px-3 py-1.5 text-sm transition-colors ${
+                      selectedFields.includes(chip)
+                        ? 'border-accent bg-accent/10 font-semibold text-accent'
+                        : 'border-border-light text-text-muted hover:border-accent/30'
+                    }`}
+                  >
+                    {chip}
+                  </button>
+                ))}
+              </div>
+            </div>
           ))}
         </div>
         <input type="hidden" name="field" value={selectedFields.join(',')} />
