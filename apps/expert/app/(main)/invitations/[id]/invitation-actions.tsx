@@ -12,6 +12,7 @@ export function InvitationActions({ invitationId, hourlyRate }: InvitationAction
   const [estHours, setEstHours] = useState('')
   const [showDeclineConfirm, setShowDeclineConfirm] = useState(false)
   const [declining, setDeclining] = useState(false)
+  const [declineError, setDeclineError] = useState<string | null>(null)
 
   const [acceptState, acceptAction, isAccepting] = useActionState(acceptInvitation, {})
 
@@ -19,7 +20,15 @@ export function InvitationActions({ invitationId, hourlyRate }: InvitationAction
 
   async function handleDecline() {
     setDeclining(true)
-    await declineInvitation(invitationId)
+    setDeclineError(null)
+    // 성공 시 서버 액션이 redirect하므로 반환은 에러 경로에서만 온다
+    // ('접근 권한이 없습니다'·'이미 처리된 초빙입니다' — 동시 처리 race 등).
+    // 에러를 표시하고 버튼을 되살려, 영구 '거절 중...' 고착을 막는다(감사 docs/10 P1-4).
+    const result = await declineInvitation(invitationId)
+    if (result?.error) {
+      setDeclineError(result.error)
+      setDeclining(false)
+    }
   }
 
   return (
@@ -103,6 +112,9 @@ export function InvitationActions({ invitationId, hourlyRate }: InvitationAction
               취소
             </button>
           </div>
+          {declineError && (
+            <p className="mt-2 text-center text-xs text-error" role="alert">{declineError}</p>
+          )}
         </div>
       )}
     </section>

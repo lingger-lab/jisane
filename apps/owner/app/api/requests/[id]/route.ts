@@ -39,10 +39,11 @@ export async function GET(
     return NextResponse.json({ error: 'Request not found' }, { status: 404 })
   }
 
-  // 관련 deal 조회
+  // 관련 deal 조회 — 내부 수수료 분해(work_fee/match_fee)는 owner에게 노출하지 않는다
+  // (익명화·직거래 방지 불변식, quote-section.tsx. 감사 docs/10 P1-8). total_pay만 노출.
   const { data: deals } = await adminClient
     .from('deal')
-    .select('id, status, work_fee, match_fee, total_pay, scope, due_date, created_at')
+    .select('id, status, total_pay, scope, due_date, created_at')
     .eq('request_id', id)
 
   return NextResponse.json({ request, deals: deals || [] })

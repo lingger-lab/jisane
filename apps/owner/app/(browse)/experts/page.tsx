@@ -70,7 +70,9 @@ export default async function ExpertsPage(props: PageProps) {
 
   // 검색어: 이름·분야 부분 일치 (카테고리 필터와 공존)
   if (query) {
-    const safe = query.replace(/[%,]/g, '')
+    // PostgREST .or()의 구조 문자(괄호·쉼표)와 LIKE 와일드카드(%,_)를 제거한다.
+    // 괄호를 안 지우면 '(주)지사네' 같은 입력이 or-트리를 깨 400 → 가짜 빈 결과가 됐다(감사 docs/10 P1-7).
+    const safe = query.replace(/[%_,()]/g, '')
     expertsQuery = expertsQuery.or(`name.ilike.%${safe}%,field.ilike.%${safe}%`)
   }
 

@@ -67,7 +67,7 @@ export default async function OwnerMyPage() {
       .limit(5),
     adminClient
       .from('deal')
-      .select('id, status, work_fee, created_at, request:request!inner(title, owner_id)')
+      .select('id, status, total_pay, created_at, request:request!inner(title, owner_id)')
       .eq('request.owner_id', owner.id)
       .order('created_at', { ascending: false })
       .limit(5),
@@ -102,7 +102,7 @@ export default async function OwnerMyPage() {
     id: string; package_name: string; status: string; created_at: string; price: number
   }>
   const deals = (dealsRes.data || []) as unknown as Array<{
-    id: string; status: string; work_fee: number | null; created_at: string
+    id: string; status: string; total_pay: number | null; created_at: string
     request: { title: string; owner_id: string } | null
   }>
   const interests = (interestsRes.data || []) as unknown as Array<{
@@ -246,7 +246,7 @@ export default async function OwnerMyPage() {
                       <p className="truncate text-sm font-medium text-text">{deal.request?.title}</p>
                       <p className="mt-0.5 text-xs text-text-muted">
                         {new Date(deal.created_at).toLocaleDateString('ko-KR')}
-                        {deal.work_fee != null && ` · ${deal.work_fee.toLocaleString('ko-KR')}원`}
+                        {deal.total_pay != null && ` · ${deal.total_pay.toLocaleString('ko-KR')}원`}
                       </p>
                     </div>
                     <span className={`shrink-0 rounded-full px-2 py-0.5 text-xs font-medium ${DEAL_STATUS_COLORS[deal.status] || 'bg-surface text-text-subtle'}`}>

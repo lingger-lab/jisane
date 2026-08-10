@@ -35,16 +35,16 @@ export default async function QuotePage(props: { params: Promise<{ dealId: strin
   const isAdmin = (process.env.ADMIN_EMAILS || '').split(',').map(e => e.trim().toLowerCase()).includes((user.email || '').toLowerCase())
 
   if (!isAdmin) {
-    if (!owner) redirect('/')
-    // owner인 경우 request 소유 확인
-    if (deal.request_id) {
-      const { data: request } = await adminClient
-        .from('request')
-        .select('owner_id')
-        .eq('id', deal.request_id)
-        .single()
-      if (!request || request.owner_id !== owner.id) redirect('/')
-    }
+    // fail-closed: request_id가 null인 deal은 소유권 검증이 불가하므로 접근 차단.
+    // (statement 페이지와 동일. request_id가 있을 때만 검증하면 null인 초빙 deal의
+    //  견적서를 아무 owner나 보게 되어 타인 수수료·전문가 실명이 노출된다. 감사 docs/10 P1-3)
+    if (!owner || !deal.request_id) redirect('/')
+    const { data: request } = await adminClient
+      .from('request')
+      .select('owner_id')
+      .eq('id', deal.request_id)
+      .single()
+    if (!request || request.owner_id !== owner.id) redirect('/')
   }
 
   // request 정보
