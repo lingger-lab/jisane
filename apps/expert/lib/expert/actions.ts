@@ -75,15 +75,23 @@ export async function updateExpertProfile(
 
     // 기존 매핑은 항상 먼저 삭제(교체 의미) — 새 필드가 하나도 category와 매칭되지 않아도
     // stale 매핑이 남지 않도록. 가드 안에 두면 미매칭 시 옛 매핑이 잔존한다(감사 docs/11 P1-6 2차).
-    await adminClient
+    const { error: delErr } = await adminClient
       .from('expert_category')
       .delete()
       .eq('expert_id', expert.id)
+    if (delErr) {
+      console.error('[expert] expert_category delete failed:', delErr.message)
+    }
 
     if (cats && cats.length > 0) {
-      await adminClient
+      const { error: insErr } = await adminClient
         .from('expert_category')
         .insert(cats.map((c) => ({ expert_id: expert.id, category_id: c.id })))
+      // insert 실패는 삭제 후 매핑 공백을 남기므로 반드시 가시화(감사 docs/11 P2-29).
+      // 원자성(delete+insert 트랜잭션)은 RPC 이관이 필요 — 별건(P1-17 계열).
+      if (insErr) {
+        console.error('[expert] expert_category insert failed:', insErr.message)
+      }
     }
   }
 

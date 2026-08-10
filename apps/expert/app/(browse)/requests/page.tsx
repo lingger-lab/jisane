@@ -78,7 +78,12 @@ export default async function RequestsPage(props: PageProps) {
     requestsQuery = requestsQuery.or(`title.ilike.%${safe}%,detail.ilike.%${safe}%`)
   }
 
-  const { data: requests } = await requestsQuery
+  const { data: requests, error: requestsError } = await requestsQuery
+  // 쿼리 실패를 조용히 빈 결과로 렌더하지 않도록 서버에 기록(감사 docs/11 P2-21).
+  // 사용자 대상 에러 상태 UI는 정직 스윕(Batch C)에서 일괄 처리.
+  if (requestsError) {
+    console.error('[requests] search query failed:', requestsError.message)
+  }
 
   const interestedIds = (interestsResult.data ?? []).map((i) => i.request_id)
 

@@ -21,7 +21,7 @@ export async function GET(
   // settlement + deal 조회
   const { data: settlement } = await adminClient
     .from('settlement')
-    .select('*, deal:deal!inner(id, request_id, expert_id, work_fee, match_fee, total_pay, status)')
+    .select('id, deal_id, escrow_status, guarantee_fee, deposited_at, released_at, created_at, deal:deal!inner(id, request_id, expert_id, work_fee, match_fee, total_pay, status)')
     .eq('id', settlementId)
     .returns<SettlementWithDealFlat[]>()
     .single()

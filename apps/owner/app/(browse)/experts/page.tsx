@@ -76,7 +76,12 @@ export default async function ExpertsPage(props: PageProps) {
     expertsQuery = expertsQuery.or(`name.ilike.%${safe}%,field.ilike.%${safe}%`)
   }
 
-  const { data: experts } = await expertsQuery
+  const { data: experts, error: expertsError } = await expertsQuery
+  // 쿼리 실패를 조용히 빈 결과로 렌더하지 않도록 서버에 기록(감사 docs/11 P2-36).
+  // 사용자 대상 에러 상태 UI는 정직 스윕(Batch C)에서 일괄 처리.
+  if (expertsError) {
+    console.error('[experts] search query failed:', expertsError.message)
+  }
 
   // 시니어지식인별 카테고리 매핑 (표시용)
   const expertIdSet = new Set((experts ?? []).map((p) => p.id))

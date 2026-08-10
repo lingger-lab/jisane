@@ -51,6 +51,12 @@ export async function updateWorkflowStep(
     return { error: result.error }
   }
 
+  // deal.status 게이트: 이미 완료(done)된 거래는 워크플로 단계를 변경할 수 없다(정산·전달 후
+  // 재작성 차단, 감사 docs/11 P2-33 — 기존엔 deal.status를 읽고도 쓰지 않았음).
+  if ('deal' in result && result.deal?.status === 'done') {
+    return { error: '이미 완료된 거래는 단계를 변경할 수 없습니다.' }
+  }
+
   // 전이 검증: pending→in_progress→done 순서만 허용(건너뛰기·되돌리기·임의 상태 직접
   // 쓰기 차단). 이 검증은 죽은 API 라우트에만 있고 라이브 액션엔 없었다(감사 docs/11 P1-5·P2-33).
   // 라이브 UI(workflow-form)도 이 순서로만 진행하므로 UI를 깨지 않는다.
