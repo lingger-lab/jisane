@@ -48,12 +48,20 @@ export async function autoReleaseSettlements(
 
   // 2. dispute 일괄 체크 (1쿼리)
   const settlementIds = settlements.map((s: any) => s.id)
-  const { data: disputes } = await adminClient
+  const { data: disputes, error: disputeError } = await adminClient
     .from('dispute')
     .select('target_id')
     .eq('target_type', 'settlement')
     .in('target_id', settlementIds)
     .eq('status', 'open')
+
+  // fail-closed: dispute 조회 실패 시 release하지 않고 중단.
+  // 에러를 무시하면 disputes=null → disputedIds가 빈 Set이 되어, open dispute가 있는
+  // 정산까지 eligible로 통과해 분쟁 중인 거래에 금전이 지급된다(감사 docs/11 P1-15).
+  if (disputeError) {
+    console.error('[auto-settlement] dispute check failed, aborting release:', disputeError.message)
+    return result
+  }
 
   const disputedIds = new Set((disputes || []).map((d: any) => d.target_id))
 
