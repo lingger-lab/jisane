@@ -181,10 +181,19 @@ export async function rejectMatching(matchingId: string): Promise<{ error?: stri
     return { error: '이미 처리된 매칭입니다.' }
   }
 
-  await adminClient
+  // compare-and-set: proposed일 때만 거절. 수락/거절 동시 실행 시 이미 accepted된
+  // 매칭을 rejected로 덮어써 live deal이 딸린 매칭이 rejected로 뒤집히던 경로 차단
+  // (감사 docs/11 P1-7 — rejectMatching도 acceptMatching과 같은 CAS 부재였음).
+  const { data: rejected } = await adminClient
     .from('matching')
     .update({ status: 'rejected' })
     .eq('id', matchingId)
+    .eq('status', 'proposed')
+    .select('id')
+
+  if (!rejected || rejected.length === 0) {
+    return { error: '이미 처리된 매칭입니다.' }
+  }
 
   // 거절된 의뢰를 open으로 복귀 — 관리자 재매칭 액션은 open만 받으므로
   // 복귀하지 않으면 의뢰가 matching 상태로 영구 고착된다 (dealt로 넘어간 경우는 제외)

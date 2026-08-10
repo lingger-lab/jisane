@@ -73,13 +73,14 @@ export async function updateExpertProfile(
       .eq('depth', 1)
       .in('label', fieldLabels)
 
-    if (cats && cats.length > 0) {
-      // 기존 매핑 삭제 후 재삽입
-      await adminClient
-        .from('expert_category')
-        .delete()
-        .eq('expert_id', expert.id)
+    // 기존 매핑은 항상 먼저 삭제(교체 의미) — 새 필드가 하나도 category와 매칭되지 않아도
+    // stale 매핑이 남지 않도록. 가드 안에 두면 미매칭 시 옛 매핑이 잔존한다(감사 docs/11 P1-6 2차).
+    await adminClient
+      .from('expert_category')
+      .delete()
+      .eq('expert_id', expert.id)
 
+    if (cats && cats.length > 0) {
       await adminClient
         .from('expert_category')
         .insert(cats.map((c) => ({ expert_id: expert.id, category_id: c.id })))

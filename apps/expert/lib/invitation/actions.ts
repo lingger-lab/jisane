@@ -224,10 +224,19 @@ export async function declineInvitation(invitationId: string): Promise<{ error?:
     return { error: '이미 처리된 초빙입니다.' }
   }
 
-  await adminClient
+  // compare-and-set: invited일 때만 거절. 수락/거절 동시 실행 시 이미 accepted된
+  // 초빙을 declined로 덮어써 live deal이 딸린 초빙이 뒤집히던 경로 차단
+  // (감사 docs/11 P1-8 — declineInvitation도 acceptInvitation과 같은 CAS 부재였음).
+  const { data: declined } = await adminClient
     .from('invitation')
     .update({ status: 'declined' })
     .eq('id', invitationId)
+    .eq('status', 'invited')
+    .select('id')
+
+  if (!declined || declined.length === 0) {
+    return { error: '이미 처리된 초빙입니다.' }
+  }
 
   redirect('/invitations?success=invitation_declined')
 }
