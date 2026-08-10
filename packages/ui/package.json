@@ -21,7 +21,8 @@
     "./money-input": "./components/money-input.tsx",
     "./scroll-reveal": "./components/scroll-reveal.tsx",
     "./search-box": "./components/search-box.tsx",
-    "./page-hero": "./components/page-hero.tsx"
+    "./page-hero": "./components/page-hero.tsx",
+    "./route-loading": "./components/route-loading.tsx"
   },
   "devDependencies": {
     "typescript": "^5"

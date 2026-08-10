@@ -368,6 +368,24 @@ summary {
   letter-spacing: 0.02em;
 }
 
+/* 페이지 전환 로딩 — 부엉이 펄스 (RouteLoading) */
+.route-loading-owl {
+  display: inline-block;
+  animation: route-loading-pulse 1.4s ease-in-out infinite;
+}
+
+@keyframes route-loading-pulse {
+  0%, 100% { opacity: 0.55; transform: scale(0.94); }
+  50% { opacity: 1; transform: scale(1.04); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .route-loading-owl {
+    animation: none;
+    opacity: 0.9;
+  }
+}
+
 /* 스크롤 등장 — IntersectionObserver(ScrollReveal)가 .revealed 부여 */
 .reveal {
   opacity: 0;
