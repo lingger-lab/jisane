@@ -12,17 +12,11 @@ interface PageProps {
   params: Promise<{ id: string }>
 }
 
-export async function generateMetadata(props: PageProps) {
-  const { id } = await props.params
-  const { data: inv } = await adminClient
-    .from('invitation')
-    .select('owner:owner!inner(company, ceo_name)')
-    .eq('id', id)
-    .single()
-
-  const invOwner = (inv as { owner: { company: string | null; ceo_name: string | null } | null } | null)?.owner
-  const label = invOwner?.company ?? invOwner?.ceo_name ?? '초빙'
-  return { title: `${label} - 초빙 상세 | 지사네 시니어지식인` }
+export async function generateMetadata() {
+  // 초빙 상세는 초빙된 전문가 본인만 보는 비공개 화면이다. 발주자 회사·대표명을 인증 없이
+  // 메타데이터로 노출하면 URL만 아는 누구에게나 새므로 일반 제목만 반환한다(감사 docs/10 P2-20,
+  // docs/11 P3-44). 소유권/인증은 페이지 본문에서 수행.
+  return { title: '초빙 상세 | 지사네 시니어지식인' }
 }
 
 export default async function InvitationDetailPage(props: PageProps) {

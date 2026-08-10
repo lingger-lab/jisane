@@ -14,6 +14,7 @@ import type {
   InvitationAdminItem,
   DisputeItem,
 } from '@jisane/shared/query-types'
+import { verifyAdmin } from '@jisane/shared/auth/server-helpers'
 import { autoAssignOverdue, runAutoRelease } from '@/lib/admin/actions'
 import { MatchingTab } from './matching-tab'
 import { ProposedTab } from './proposed-tab'
@@ -34,6 +35,13 @@ export default async function AdminDashboardPage() {
   const { data: { user } } = await supabase.auth.getUser()
 
   if (!user) redirect('/')
+
+  // page-레벨 admin 게이트 재확인 — layout은 신뢰 가능한 authz 경계가 아니다(Next.js 문서:
+  // layout은 soft nav에서 재실행되지 않음). page가 service-role로 전 owner/expert PII·정산을
+  // 읽으므로 여기서 반드시 재검증(감사 docs/11 P1-1). redirect가 catch에 삼켜지지 않게 flag 사용.
+  let isAdmin = false
+  try { await verifyAdmin(); isAdmin = true } catch { /* not admin */ }
+  if (!isAdmin) redirect('/')
 
   // 자동화: 24시간 초과 자동배정 + 정산 자동 release (병렬 실행)
   const [assignResult, releaseResult] = await Promise.allSettled([autoAssignOverdue(), runAutoRelease()])

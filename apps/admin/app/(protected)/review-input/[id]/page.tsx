@@ -3,6 +3,7 @@ import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import { createClient } from '@jisane/shared/supabase/server'
 import { adminClient } from '@jisane/shared/supabase/admin'
+import { verifyAdmin } from '@jisane/shared/auth/server-helpers'
 import type { DealForReview } from '@jisane/shared/query-types'
 import { ReviewForm } from './review-form'
 import { PageHero } from '@jisane/ui/page-hero'
@@ -19,6 +20,12 @@ export default async function ReviewInputPage(props: PageProps) {
   const { data: { user } } = await supabase.auth.getUser()
 
   if (!user) redirect('/')
+
+  // page-레벨 admin 게이트 재확인 — layout은 신뢰 가능한 authz 경계가 아니다(감사 docs/11 P2-7).
+  // 이 page는 service-role로 deal 수수료·전문가 정보를 읽는다. redirect가 catch에 삼켜지지 않게 flag.
+  let isAdmin = false
+  try { await verifyAdmin(); isAdmin = true } catch { /* not admin */ }
+  if (!isAdmin) redirect('/')
 
   // deal + request + expert 조회
   const { data: deal } = await adminClient

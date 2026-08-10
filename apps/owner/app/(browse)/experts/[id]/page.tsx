@@ -19,10 +19,13 @@ const GRADE_LABEL: Record<string, string> = {
 
 export async function generateMetadata(props: PageProps) {
   const { id } = await props.params
+  // 공개 디렉터리에 노출되는 active 전문가만 메타데이터에 이름/분야 노출(대기·정지 상태
+  // 전문가 정보가 URL만으로 새지 않게, 페이지 가시성 게이트와 일치. 감사 docs/11 P3-71).
   const { data: expert } = await adminClient
     .from('expert')
     .select('name, field')
     .eq('id', id)
+    .eq('status', 'active')
     .single()
 
   if (!expert) return { title: '시니어지식인 - 지사네 기업회원' }

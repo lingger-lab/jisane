@@ -12,10 +12,13 @@ interface PageProps {
 
 export async function generateMetadata(props: PageProps) {
   const { id } = await props.params
+  // 공개(open) 의뢰만 제목을 메타데이터에 노출 — 페이지 본문의 status='open' 게이트와 일치시켜
+  // 마감/매칭된 비공개 의뢰 제목이 새지 않게 한다(감사 docs/11 P3-36).
   const { data: request } = await adminClient
     .from('request')
     .select('title')
     .eq('id', id)
+    .eq('status', 'open')
     .single()
   return {
     title: request ? `${request.title} - 지사네` : '의뢰 상세 - 지사네',
