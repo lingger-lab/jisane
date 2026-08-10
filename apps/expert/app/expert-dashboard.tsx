@@ -1,4 +1,3 @@
-import { Suspense } from 'react'
 import Link from 'next/link'
 import { adminClient } from '@jisane/shared/supabase/admin'
 import { SearchBox } from '@jisane/ui/search-box'

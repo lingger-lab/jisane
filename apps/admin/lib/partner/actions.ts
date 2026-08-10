@@ -152,7 +152,7 @@ export async function createServicePackage(
     .filter(Boolean)
 
   // slug 충돌 시 랜덤 suffix 재시도 (생성 후 불변 정책)
-  let slug = slugify(name)
+  const slug = slugify(name)
   for (let attempt = 0; attempt < 3; attempt++) {
     const candidate = attempt === 0 ? slug : `${slug}-${Math.random().toString(36).slice(2, 7)}`
     const { error } = await adminClient.from('service_package').insert({

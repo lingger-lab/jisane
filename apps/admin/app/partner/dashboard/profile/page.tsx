@@ -1,6 +1,5 @@
 import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
-import { Suspense } from 'react'
 import { createClient } from '@jisane/shared/supabase/server'
 import { getProviderByAuthUser } from '@jisane/shared/provider/auth'
 import { PROVIDER_KIND_LABELS, PROVIDER_TYPE_LABELS } from '@jisane/shared/labels'

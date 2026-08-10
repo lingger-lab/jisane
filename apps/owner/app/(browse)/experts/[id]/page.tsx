@@ -6,7 +6,6 @@ import { adminClient } from '@jisane/shared/supabase/admin'
 import { getCachedCategories } from '@jisane/shared/categories'
 import { InviteButton } from '@/components/invite-button'
 import { PageHero } from '@jisane/ui/page-hero'
-import { Suspense } from 'react'
 
 interface PageProps {
   params: Promise<{ id: string }>
