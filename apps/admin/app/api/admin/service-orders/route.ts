@@ -1,18 +1,12 @@
 import { NextResponse } from 'next/server'
-import { cookies } from 'next/headers'
-import { createClient } from '@jisane/shared/supabase/server'
+import { verifyAdmin } from '@jisane/shared/auth/server-helpers'
 import { adminClient } from '@jisane/shared/supabase/admin'
 
-async function isAdmin(request: Request) {
-  const cookieStore = await cookies()
-  const supabase = createClient(cookieStore)
-  const { data: { user } } = await supabase.auth.getUser()
-  return !!user
-}
-
 export async function GET(request: Request) {
-  if (!(await isAdmin(request))) {
-    return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
+  try {
+    await verifyAdmin()
+  } catch {
+    return NextResponse.json({ error: '관리자 권한이 필요합니다.' }, { status: 403 })
   }
 
   const { searchParams } = new URL(request.url)
@@ -37,8 +31,10 @@ export async function GET(request: Request) {
 }
 
 export async function PATCH(request: Request) {
-  if (!(await isAdmin(request))) {
-    return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
+  try {
+    await verifyAdmin()
+  } catch {
+    return NextResponse.json({ error: '관리자 권한이 필요합니다.' }, { status: 403 })
   }
 
   const body = await request.json()
