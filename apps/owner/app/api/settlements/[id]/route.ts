@@ -59,7 +59,26 @@ export async function GET(
       .single()
 
     if (ownerRow && req.owner_id === ownerRow.id) {
-      return NextResponse.json({ settlement })
+      // 직거래 방지(익명화 불변식 — quote-section.tsx): owner에게는 내부 수수료 분해
+      // (work_fee/match_fee)와 expert_id를 노출하지 않는다. select('*')의 여분 컬럼
+      // (payment_key 등 PSP 자격증명)도 함께 차단하기 위해 안전 필드만 명시 반환한다.
+      return NextResponse.json({
+        settlement: {
+          id: settlement.id,
+          deal_id: settlement.deal_id,
+          escrow_status: settlement.escrow_status,
+          guarantee_fee: settlement.guarantee_fee,
+          deposited_at: settlement.deposited_at,
+          released_at: settlement.released_at,
+          created_at: settlement.created_at,
+          deal: {
+            id: settlement.deal.id,
+            request_id: settlement.deal.request_id,
+            total_pay: settlement.deal.total_pay,
+            status: settlement.deal.status,
+          },
+        },
+      })
     }
   }
 
