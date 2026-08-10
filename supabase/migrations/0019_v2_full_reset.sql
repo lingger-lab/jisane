@@ -144,6 +144,11 @@ CREATE TYPE expert_activity_type AS ENUM ('band_join', 'post');
 -- 자동화 큐
 CREATE TYPE queue_status AS ENUM ('auto_passed', 'pending_review', 'audited');
 
+-- 매칭 후보 상태 / 메시지 발신자 (0021에서 text→enum 변환하던 것을 여기서 직접 정의.
+-- 변환 방식은 populated 컬럼 + RLS 정책 의존 때문에 fresh reset에서 실패했음)
+CREATE TYPE matching_candidate_status AS ENUM ('pending', 'selected', 'skipped');
+CREATE TYPE message_sender_type AS ENUM ('owner', 'expert', 'admin');
+
 -- ============================================================
 -- 3. 테이블 생성 (FK 의존성 순서)
 -- ============================================================
@@ -410,7 +415,7 @@ CREATE TABLE expert_interest (
 CREATE TABLE deal_message (
   id          uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   deal_id     uuid NOT NULL REFERENCES deal(id) ON DELETE CASCADE,
-  sender_type text NOT NULL CHECK (sender_type IN ('expert', 'admin', 'owner')),  -- 용어 통일
+  sender_type message_sender_type NOT NULL,  -- 용어 통일(enum)
   sender_id   uuid NOT NULL,
   content     text NOT NULL,
   created_at  timestamptz NOT NULL DEFAULT now()
@@ -424,7 +429,7 @@ CREATE TABLE matching_candidate (
   rank            smallint NOT NULL,
   score           numeric(6,2) NOT NULL DEFAULT 0,
   score_detail    jsonb,
-  status          text NOT NULL DEFAULT 'pending',
+  status          matching_candidate_status NOT NULL DEFAULT 'pending',
   auto_assign_at  timestamptz,
   created_at      timestamptz NOT NULL DEFAULT now(),
   updated_at      timestamptz NOT NULL DEFAULT now()

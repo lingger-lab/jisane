@@ -62,36 +62,12 @@ CREATE INDEX IF NOT EXISTS idx_review_expert
   ON review(expert_id);
 
 
--- ─── B-3: matching_candidate.status text → enum ──────────────
-
-DO $$
-BEGIN
-  IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'matching_candidate_status') THEN
-    CREATE TYPE matching_candidate_status AS ENUM ('pending', 'selected', 'skipped');
-  END IF;
-END$$;
-
-ALTER TABLE matching_candidate
-  ALTER COLUMN status TYPE matching_candidate_status
-  USING status::matching_candidate_status;
-
-
--- ─── B-4: deal_message.sender_type text → enum ──────────────
-
-DO $$
-BEGIN
-  IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'message_sender_type') THEN
-    CREATE TYPE message_sender_type AS ENUM ('owner', 'expert', 'admin');
-  END IF;
-END$$;
-
--- CHECK 제약 제거 (enum이 대체)
-ALTER TABLE deal_message
-  DROP CONSTRAINT IF EXISTS deal_message_sender_type_check;
-
-ALTER TABLE deal_message
-  ALTER COLUMN sender_type TYPE message_sender_type
-  USING sender_type::message_sender_type;
+-- ─── B-3/B-4: matching_candidate.status / deal_message.sender_type enum화 ──
+-- 두 컬럼은 0019에서 직접 enum(matching_candidate_status·message_sender_type)으로
+-- 생성한다. 여기서 text→enum으로 ALTER하면 (1) status의 DEFAULT 자동 캐스팅 불가,
+-- (2) sender_type을 참조하는 RLS 정책 의존성 때문에 fresh reset이 실패했다.
+-- 라이브 DB는 과거 이 블록으로 이미 변환됐고, 재적용은 마이그레이션 추적으로 스킵되므로
+-- 스키마 결과는 동일하다.
 
 
 -- ─── C-5: RLS 정책 추가 (expert_activity, dispute) ──────────
