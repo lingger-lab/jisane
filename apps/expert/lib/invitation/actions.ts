@@ -115,8 +115,11 @@ export async function acceptInvitation(
     if (createdRequestId) await adminClient.from('request').delete().eq('id', createdRequestId)
   }
 
-  // 2. invitation 상태 → accepted + 금액·request 연결 저장
-  const { error: invErr } = await adminClient
+  // 2. invitation 상태 → accepted + 금액·request 연결 저장 (compare-and-set: invited일 때만)
+  //    동시 수락 시 패자는 0행 매칭 → deal 생성·rollback()에 진입하지 않는다. rollback()이
+  //    승자의 invitation을 invited로 되돌리고 금액을 null로 지우던 clobber 경로 차단
+  //    (감사 docs/11 P1-8).
+  const { data: acceptedInv, error: invErr } = await adminClient
     .from('invitation')
     .update({
       status: 'accepted',
@@ -126,10 +129,17 @@ export async function acceptInvitation(
       request_id: requestId,
     })
     .eq('id', invitationId)
+    .eq('status', 'invited')
+    .select('id')
 
   if (invErr) {
     if (createdRequestId) await adminClient.from('request').delete().eq('id', createdRequestId)
     return { error: '초빙 상태 변경에 실패했습니다.' }
+  }
+  if (!acceptedInv || acceptedInv.length === 0) {
+    // 경쟁 패배: 이 실행이 새로 만든 request 고아를 정리하고 중단
+    if (createdRequestId) await adminClient.from('request').delete().eq('id', createdRequestId)
+    return { error: '이미 처리된 초빙입니다.' }
   }
 
   // 3. deal 생성

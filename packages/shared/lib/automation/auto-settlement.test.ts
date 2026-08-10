@@ -10,15 +10,24 @@ function createMockClient(opts: {
   settlements: any[]
   disputes?: any[] | null
   disputeError?: { message: string } | null
+  releasedRows?: any[] // settlement update가 반환하는 실제 released 행 (CAS 통과분)
 }) {
-  const state = { releaseCalled: false }
+  const state = { releaseCalled: false, releaseCasEq: [] as string[] }
   const from = (table: string) => {
     let isUpdate = false
+    const eqCols: string[] = []
     const chain: any = {
       select: () => chain,
-      eq: () => chain,
+      eq: (col: string) => {
+        eqCols.push(col)
+        return chain
+      },
       lt: () => chain,
       in: () => chain,
+      limit: () => chain,
+      order: () => chain,
+      single: () => chain,
+      maybeSingle: () => chain,
       update: () => {
         isUpdate = true
         if (table === 'settlement') state.releaseCalled = true
@@ -30,7 +39,8 @@ function createMockClient(opts: {
         if (table === 'settlement' && !isUpdate) {
           result = { data: opts.settlements, error: null }
         } else if (table === 'settlement' && isUpdate) {
-          result = { error: null }
+          state.releaseCasEq.push(...eqCols) // settlement update의 eq 컬럼 누적
+          result = { data: opts.releasedRows ?? [], error: null }
         } else if (table === 'dispute') {
           result = { data: opts.disputes ?? null, error: opts.disputeError ?? null }
         } else {
@@ -90,5 +100,38 @@ describe('autoReleaseSettlements — 분쟁 조회 fail-closed', () => {
     const { client } = createMockClient({ settlements: [] })
     const result = await autoReleaseSettlements(client, noopRecalc)
     expect(result.released).toBe(0)
+  })
+})
+
+describe('autoReleaseSettlements — 배치 release compare-and-set (P1-16)', () => {
+  it('release update에 escrow_status CAS 술어가 포함된다', async () => {
+    const { client, state } = createMockClient({
+      settlements: [eligibleSettlement],
+      disputes: [],
+      releasedRows: [{ id: 's1' }],
+    })
+    await autoReleaseSettlements(client, noopRecalc)
+    expect(state.releaseCalled).toBe(true)
+    expect(state.releaseCasEq).toContain('escrow_status') // .eq('escrow_status','reviewing')
+  })
+
+  it('CAS로 0행만 갱신되면(그 사이 전부 refunded) released=0, 후속 처리 없음', async () => {
+    const { client } = createMockClient({
+      settlements: [eligibleSettlement],
+      disputes: [],
+      releasedRows: [], // update가 0행 반환 (동시 환불로 escrow_status가 reviewing이 아님)
+    })
+    const result = await autoReleaseSettlements(client, noopRecalc)
+    expect(result.released).toBe(0)
+  })
+
+  it('실제 released된 행만 카운트 (released=1)', async () => {
+    const { client } = createMockClient({
+      settlements: [eligibleSettlement],
+      disputes: [],
+      releasedRows: [{ id: 's1' }],
+    })
+    const result = await autoReleaseSettlements(client, noopRecalc)
+    expect(result.released).toBe(1)
   })
 })

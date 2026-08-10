@@ -72,14 +72,22 @@ export async function acceptMatching(matchingId: string): Promise<{ error?: stri
   }
   const totalPay = workFee + matchFee
 
-  // 1. matching.status → 'accepted'
-  const { error: matchErr } = await adminClient
+  // 1. matching.status → 'accepted' (compare-and-set: proposed일 때만)
+  //    동시 수락(이중 클릭·두 탭) 시 패자는 0행 매칭 → 아래에서 중단하여 deal 생성·롤백에
+  //    진입하지 않는다. 롤백이 승자의 accepted를 proposed로 되돌려 깨뜨리던 경로 차단
+  //    (감사 docs/11 P1-7). deal.matching_id UNIQUE는 이중 deal은 막지만 이 clobber는 못 막음.
+  const { data: acceptedMatch, error: matchErr } = await adminClient
     .from('matching')
     .update({ status: 'accepted' })
     .eq('id', matchingId)
+    .eq('status', 'proposed')
+    .select('id')
 
   if (matchErr) {
     return { error: '매칭 상태 변경에 실패했습니다.' }
+  }
+  if (!acceptedMatch || acceptedMatch.length === 0) {
+    return { error: '이미 처리된 매칭입니다.' }
   }
 
   // 2. deal 생성

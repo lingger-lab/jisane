@@ -78,8 +78,11 @@ export async function autoReleaseSettlements(
 
   const eligibleIds = eligible.map((s: any) => s.id)
 
-  // 4. 정산 일괄 released (1쿼리)
-  const { error: releaseError } = await adminClient
+  // 4. 정산 일괄 released (1쿼리) — compare-and-set: select 이후 환불(refunded) 등으로
+  //    escrow_status가 바뀐 행은 건너뛴다(.eq('escrow_status','reviewing')). 실제로 갱신된
+  //    행만 반환받아 이후 원장 적립·카운터를 그 집합으로 한정 → 이중적립·lost update 방지
+  //    (감사 docs/11 P1-16).
+  const { data: releasedRows, error: releaseError } = await adminClient
     .from('settlement')
     .update({
       escrow_status: 'released',
@@ -87,14 +90,21 @@ export async function autoReleaseSettlements(
       auto_processed: true,
     })
     .in('id', eligibleIds)
+    .eq('escrow_status', 'reviewing')
+    .select('id')
 
   if (releaseError) {
     console.error('[auto-settlement] settlement batch release failed:', releaseError.message)
     return result
   }
 
+  // 실제 released된 정산만 후속 처리 대상으로 한정
+  const releasedIdSet = new Set((releasedRows || []).map((r: any) => r.id))
+  const released = eligible.filter((s: any) => releasedIdSet.has(s.id))
+  const releasedIds = released.map((s: any) => s.id)
+
   // 5. guarantee_fund_ledger 일괄 적립 (1쿼리)
-  const ledgerRows = eligible
+  const ledgerRows = released
     .filter((s: any) => s.guarantee_fee > 0)
     .map((s: any) => ({
       settlement_id: s.id,
@@ -110,12 +120,12 @@ export async function autoReleaseSettlements(
   }
 
   // 6. 배치 감사 샘플링 (2쿼리 — config 캐싱 + 일괄 update)
-  const sampledIds = await batchApplyAuditSampling(adminClient, 'settlement', eligibleIds)
+  const sampledIds = await batchApplyAuditSampling(adminClient, 'settlement', releasedIds)
   result.audited = sampledIds.length
 
   // 7. expert score 배치 재계산
   const expertIds = [...new Set(
-    eligible
+    released
       .map((s: any) => (s.deal as any)?.expert_id)
       .filter(Boolean) as string[]
   )]
@@ -136,7 +146,7 @@ export async function autoReleaseSettlements(
 
   // 8. owner.completed_deals 원자적 증가 (RPC — TOCTOU 방지)
   const ownerIncrements = new Map<string, number>()
-  for (const s of eligible) {
+  for (const s of released) {
     const ownerId = (s.deal as any)?.request?.owner_id
     if (ownerId) {
       ownerIncrements.set(ownerId, (ownerIncrements.get(ownerId) || 0) + 1)
@@ -150,7 +160,7 @@ export async function autoReleaseSettlements(
     }
   }
 
-  result.released = eligible.length
+  result.released = released.length
   console.info(`[auto-settlement] completed: released=${result.released}, audited=${result.audited}, skipped=${result.skipped}`)
   return result
 }

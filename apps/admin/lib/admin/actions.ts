@@ -498,14 +498,23 @@ export async function releaseSettlement(
     return { error: '미해결 이의제기가 있어 정산을 실행할 수 없습니다. 이의제기를 먼저 처리해주세요.' }
   }
 
-  // 에스크로 해제
-  await adminClient
+  // 에스크로 해제 — compare-and-set: 읽은 escrow_status와 동일할 때만 갱신.
+  // (동시 실행·이중 클릭 시 두 번째 update는 0행 매칭 → 아래에서 중단시켜
+  //  원장 이중적립·completed_deals 이중증가를 막는다. 감사 docs/11 P1-4)
+  const { data: releasedRows, error: releaseError } = await adminClient
     .from('settlement')
     .update({
       escrow_status: 'released',
       released_at: new Date().toISOString(),
     })
     .eq('id', settlementId)
+    .eq('escrow_status', settlement.escrow_status)
+    .select('id')
+
+  if (releaseError) return { error: releaseError.message }
+  if (!releasedRows || releasedRows.length === 0) {
+    return { error: '이미 처리되었거나 상태가 변경된 정산입니다.' }
+  }
 
   // deal.status → 'done'
   await adminClient
