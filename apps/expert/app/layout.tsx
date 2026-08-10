@@ -32,7 +32,9 @@ export const metadata: Metadata = {
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
-  maximumScale: 1,
+  // maximumScale는 지정하지 않는다 — 핀치줌을 막으면 WCAG 2.1 AA 1.4.4(Resize Text)
+  // 위반. 시니어 대상 서비스라 확대 필요성이 특히 큼. initialScale:1만으로 iOS 입력
+  // 포커스 확대 점프는 방지됨(입력 폰트 ≥16px).
 };
 
 export default async function RootLayout({
