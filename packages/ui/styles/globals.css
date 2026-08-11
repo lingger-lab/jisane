@@ -15,12 +15,12 @@
   --border-light: #e6e0d1;
   --text: #1c211d;
   --text-muted: #57544b;
-  --text-subtle: #726d62;
-  --success: #16a34a;
+  --text-subtle: #6b665b; /* was #726d62 — WCAG AA: on --background 4.49→4.98:1 (감사 P3-85) */
+  --success: #15803d; /* was #16a34a — AA: white 3.30→5.02, on-light 3.15→4.79 (감사 P2-47/48) */
   --success-light: #f0fdf4;
-  --warning: #d97706;
+  --warning: #b45309; /* was #d97706 — AA: on-light 3.07→4.84, white 5.02 (감사 P2-48) */
   --warning-light: #fffbeb;
-  --error: #dc2626;
+  --error: #b91c1c; /* was #dc2626 — AA: on-light 4.41→5.91, white 6.47 */
   --error-light: #fef2f2;
   --info: #2563eb;
   --info-light: #eff6ff;
