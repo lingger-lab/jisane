@@ -16,7 +16,8 @@ export interface CapPricingResult {
  * cap_amount = est_amount (설계 확정: 예상액 고정 정산)
  */
 export function calcCapPricing(hourlyRate: number, estHours: number): CapPricingResult {
-  const estAmount = hourlyRate * estHours
+  // 금액은 원(정수) — 소수 hourlyRate 등으로 분수가 나와도 반올림해 원장·결제와 정합(감사 docs/11 P3-104)
+  const estAmount = Math.round(hourlyRate * estHours)
   const capAmount = estAmount
   const workFee = capAmount
   const matchFee = calcMatchFee(workFee)

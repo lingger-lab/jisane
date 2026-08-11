@@ -43,12 +43,11 @@ describe('calcCapPricing — hourlyRate × estHours 고정 정산', () => {
     expect(r.estAmount).toBe(99999)
   })
 
-  // 알려진 갭(docs/11 P3-104): hourlyRate가 소수면 estAmount/workFee가 반올림되지 않는다.
-  // 현재 동작을 고정(pin)해 둔다 — 수정 시 이 기대값이 바뀌어야 함을 드러내기 위함.
-  it('[알려진 갭] 소수 hourlyRate → estAmount 미반올림(현재 동작 고정)', () => {
-    // 10,000.5 × 3 = 30,001.5 (거래 가능 구간이면서 소수)
+  // P3-104 수정: 소수 hourlyRate여도 estAmount는 원(정수)으로 반올림된다.
+  it('소수 hourlyRate여도 estAmount는 정수로 반올림 (P3-104)', () => {
+    // 10,000.5 × 3 = 30,001.5 → 반올림 30,002
     const r = calcCapPricing(10000.5, 3)
-    expect(r.estAmount).toBe(30001.5)
-    expect(Number.isInteger(r.estAmount)).toBe(false)
+    expect(r.estAmount).toBe(30002)
+    expect(Number.isInteger(r.estAmount)).toBe(true)
   })
 })
