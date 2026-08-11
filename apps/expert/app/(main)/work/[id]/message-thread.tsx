@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { sendDealMessage } from '@/lib/message/actions'
 import { SubmitButton } from '@jisane/ui/submit-button'
+import { useSeededState } from '@jisane/ui/use-seeded-state'
 
 interface Message {
   id: string
@@ -18,7 +19,9 @@ export function MessageThread({
   dealId: string
   messages: Message[]
 }) {
-  const [messages, setMessages] = useState(initialMessages)
+  // 서버 prop이 진실원 — sendDealMessage의 revalidatePath가 새 rows를 내리면
+  // 재동기화되어 temp-id 낙관 메시지가 영속 행으로 교체되고, 상대 답장도 반영된다 (감사 P2-25)
+  const [messages, setMessages] = useSeededState(initialMessages, (m) => m)
   const [content, setContent] = useState('')
   const [error, setError] = useState<string | null>(null)
 

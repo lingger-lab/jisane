@@ -1,11 +1,15 @@
 'use client'
 
-import { useState } from 'react'
 import { useRouter } from 'next/navigation'
+import { useSeededState } from './use-seeded-state'
 
 /**
  * 검색 입력 — 제출 시 `${target}?q=검색어`로 이동. extraParams로 기존 필터(카테고리 등) 보존.
  * 홈·의뢰하기(→/experts)와 /experts 내부 검색에 공용.
+ *
+ * defaultValue는 URL(진실원)에서 내려오는 시드다. URL의 q가 바뀌면(뒤로가기,
+ * q를 지우는 필터 링크 등) 입력값을 재동기화하고, 입력 중(prop 불변)에는
+ * 절대 리셋하지 않는다 (감사 UX P2-51 / 코드 P3-118).
  */
 export function SearchBox({
   target,
@@ -23,7 +27,7 @@ export function SearchBox({
   colorToken?: 'primary' | 'accent'
 }) {
   const router = useRouter()
-  const [value, setValue] = useState(defaultValue)
+  const [value, setValue] = useSeededState(defaultValue, (v) => v)
 
   const focus = colorToken === 'accent'
     ? 'focus:border-accent focus:ring-accent/20'

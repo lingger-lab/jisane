@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { expressInterest, withdrawInterest } from '@/lib/interest/actions'
+import { useSeededState } from '@jisane/ui/use-seeded-state'
 
 interface OpenRequest {
   id: string
@@ -19,7 +20,8 @@ export function OpportunitySection({
   requests: OpenRequest[]
   interestedIds: string[]
 }) {
-  const [interested, setInterested] = useState<Set<string>>(new Set(interestedIds))
+  // 서버 prop이 진실원 — revalidatePath('/') 후 새 interestedIds로 재동기화 (감사 P3-43)
+  const [interested, setInterested] = useSeededState(interestedIds, (ids) => new Set(ids))
   const [loading, setLoading] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
 

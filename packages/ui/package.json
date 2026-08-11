@@ -16,6 +16,7 @@
     "./category-browse": "./components/category-browse.tsx",
     "./filter-radio-group": "./components/filter-radio-group.tsx",
     "./roving-focus": "./components/roving-focus.ts",
+    "./focus-trap": "./components/focus-trap.ts",
     "./login-dropdown": "./components/login-dropdown.tsx",
     "./text-rotator": "./components/text-rotator.tsx",
     "./animated-counter": "./components/animated-counter.tsx",
@@ -23,7 +24,9 @@
     "./money-input": "./components/money-input.tsx",
     "./scroll-reveal": "./components/scroll-reveal.tsx",
     "./search-box": "./components/search-box.tsx",
+    "./use-seeded-state": "./components/use-seeded-state.ts",
     "./page-hero": "./components/page-hero.tsx",
+    "./error-state": "./components/error-state.tsx",
     "./route-loading": "./components/route-loading.tsx"
   },
   "devDependencies": {

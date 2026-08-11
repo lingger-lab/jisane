@@ -1,6 +1,8 @@
 'use client'
 
 import { useState } from 'react'
+import { useRouter } from 'next/navigation'
+import { useSeededState } from '@jisane/ui/use-seeded-state'
 
 /** 서버(dashboard page)에서 service_package를 조회해 slug 맵으로 내려준다 */
 export interface PackageInfoBySlug {
@@ -53,7 +55,9 @@ export function ServiceTab({
   orders: ServiceOrderItem[]
   packagesBySlug: PackageInfoBySlug
 }) {
-  const [items, setItems] = useState(orders)
+  const router = useRouter()
+  // 서버 prop이 진실원 — revalidatePath 등으로 새 orders가 오면 재동기화 (감사 P2-6)
+  const [items, setItems] = useSeededState(orders, (o) => o)
   const [updating, setUpdating] = useState<string | null>(null)
   const [updateError, setUpdateError] = useState<string | null>(null)
   const [categoryFilter, setCategoryFilter] = useState('all')
@@ -76,6 +80,8 @@ export function ServiceTab({
         setItems((prev) =>
           prev.map((o) => (o.id === orderId ? { ...o, status: newStatus } : o))
         )
+        // 서버 스냅샷(orders prop)도 갱신해 두 소스가 수렴하도록 (감사 P2-6)
+        router.refresh()
       } else {
         setUpdateError('상태 변경에 실패했습니다. 다시 시도해 주세요.')
       }

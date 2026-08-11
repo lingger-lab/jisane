@@ -65,6 +65,9 @@ export async function expressInterest(
 
   revalidatePath('/matching')
   revalidatePath('/requests')
+  // OpportunitySection은 홈('/')의 expert-dashboard에 마운트된다 — 이 경로를
+  // 갱신하지 않으면 재방문 시 캐시된 옛 관심 상태가 렌더된다 (감사 P3-43)
+  revalidatePath('/')
   return {}
 }
 
@@ -86,5 +89,8 @@ export async function withdrawInterest(
 
   revalidatePath('/matching')
   revalidatePath('/requests')
+  // OpportunitySection은 홈('/')의 expert-dashboard에 마운트된다 — 이 경로를
+  // 갱신하지 않으면 재방문 시 캐시된 옛 관심 상태가 렌더된다 (감사 P3-43)
+  revalidatePath('/')
   return {}
 }
