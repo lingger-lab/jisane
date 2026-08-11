@@ -70,9 +70,15 @@
 | B(부분) | P2-11 | recalcActivityPoints: select/update 에러 시 `{error}` 반환·**미기록**(실패 read 합산 0으로 덮어쓰기 금지), 라우트는 ok+warning(재시도=중복 유도 방지). insert+recalc 원자성·멱등키는 마이그/RPC 잔여 | `c54a938` |
 | §2 (부분) | P3-34·72 | 콜백: email 없는 OAuth 계정 insert 전 가드 → 구분된 `error=email_required`+로그(매 로그인 opaque 실패 반복 제거). **완전 해소는 결정 필요**: Kakao 이메일 동의 필수화(콘솔 설정) 또는 email nullable 마이그 | `48bb494` |
 
+| A 마감 | P2-15 | 파트너 published 편집 저장 시 **published→draft 재검수 회귀**(기존 enum 재사용, 마이그 불요) + 읽은 상태 CAS conflict + 저장 전 안내. 소유권 조회 PGRST116만 not_found | `c096f76` |
+| E 공용모듈 | P2-14·P3-73/74/69 | ORDER_STATUS_LABELS·GRADE_LABEL 단일소스화, proxy 3앱 사본→createProxy() 팩토리(래퍼 pinning 테스트), expert 해석 6곳→resolveExpertFromAuth. 신규 테스트 14건 | `29fcbb8` |
+| D2 a11y | UX P2-25/29/38/39×2/43, P3-10/49 | 미라벨 textarea 5건 aria-label(기존 카피 차용) + 에러 표시 7곳 role="alert"(기존 정답 패턴 준용). 속성 추가만, 시각 델타 0. P3-50(칩그룹 fieldset)은 D3 이월 | `e604c49` |
+
 > 실행 방식: 정직 스윕은 **앱별 분리 병렬 에이전트 3개**(파일 무겹침)로 처리하고 독립 검증(tsc·eslint·
 > 테스트) 후 커밋. 마이그·토큰은 의사환경 정책동작·대비비 계산으로 검증. Batch B 코드전용분은
 > red-green(가드 stash→10 fail→복원→48 pass)·tsc 0(3앱)·eslint 0으로 검증.
+> E·D2·P2-15는 **파일 무겹침 병렬 에이전트 3개**로 실행 후 통합 fresh 게이트(vitest 70/70 ·
+> tsc 0(admin/owner/expert/shared) · eslint 0(변경 전건))로 재검증하고 배치별 커밋.
 
 ## 2. 감사 자체의 오류 (점검으로 발견)
 
