@@ -13,6 +13,7 @@ export function LoginDropdown({
 }) {
   const [open, setOpen] = useState(false)
   const ref = useRef<HTMLDivElement>(null)
+  const triggerRef = useRef<HTMLButtonElement>(null)
 
   useEffect(() => {
     if (!open) return
@@ -25,14 +26,24 @@ export function LoginDropdown({
     return () => document.removeEventListener('mousedown', handleClick)
   }, [open])
 
+  // Esc로 닫고 포커스를 트리거로 복귀 (WCAG 2.1 키보드 조작성 — 닫기 경로가 마우스뿐이면 안 됨)
+  function handleKeyDown(e: React.KeyboardEvent) {
+    if (e.key === 'Escape' && open) {
+      e.preventDefault()
+      setOpen(false)
+      triggerRef.current?.focus()
+    }
+  }
+
   return (
-    <div ref={ref} className="relative">
+    <div ref={ref} className="relative" onKeyDown={handleKeyDown}>
       <button
+        ref={triggerRef}
         type="button"
         onClick={() => setOpen(!open)}
         aria-label="로그인 메뉴"
         aria-expanded={open}
-        className="text-sm text-text-muted hover:text-text transition-colors"
+        className="inline-flex min-h-6 items-center text-sm text-text-muted hover:text-text transition-colors"
       >
         로그인 ▾
       </button>

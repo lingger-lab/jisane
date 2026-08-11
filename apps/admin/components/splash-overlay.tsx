@@ -1,22 +1,49 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { OwlIcon } from '@jisane/ui/icons/owl'
+import { resolveTrapKey } from '@jisane/ui/focus-trap'
 
 export function SplashOverlay() {
   // 허브 메인 진입 시마다 표시 (반복 노출 — 브랜드 인상 목적, 세션 제한 없음)
   const [visible, setVisible] = useState(true)
   const [fading, setFading] = useState(false)
+  const buttonRef = useRef<HTMLButtonElement>(null)
+
+  // 모달 시맨틱(WCAG 2.1.2): 열리면 포커스를 유일한 포커서블(시작하기)로 이동.
+  // 자동 표시 오버레이라 복귀할 트리거가 없다 — 닫히면 문서 처음부터 탐색한다.
+  useEffect(() => {
+    buttonRef.current?.focus()
+  }, [])
 
   if (!visible) return null
 
   function handleEnter() {
+    if (fading) return
     setFading(true)
     setTimeout(() => setVisible(false), 500)
   }
 
+  // Tab은 오버레이 안에서 순환(포커서블 1개 = 제자리), Esc는 '시작하기'와 동일하게 닫는다.
+  function handleKeyDown(e: React.KeyboardEvent) {
+    const focusables = buttonRef.current ? [buttonRef.current] : []
+    const active = focusables.indexOf(document.activeElement as HTMLButtonElement)
+    const result = resolveTrapKey(e.key, e.shiftKey, active, focusables.length)
+    if (result.type === 'close') {
+      e.preventDefault()
+      handleEnter()
+    } else if (result.type === 'focus') {
+      e.preventDefault()
+      focusables[result.index]?.focus()
+    }
+  }
+
   return (
     <div
+      role="dialog"
+      aria-modal="true"
+      aria-label="지사네 시작 화면"
+      onKeyDown={handleKeyDown}
       style={{ position: 'fixed', inset: 0, zIndex: 50, background: 'var(--background)' }}
       className={`flex flex-col items-center justify-center transition-all duration-500 ${
         fading ? 'opacity-0 scale-95' : 'opacity-100 scale-100'
@@ -68,6 +95,7 @@ export function SplashOverlay() {
         {/* CTA 버튼 — pulse glow */}
         <div className="mt-8 splash-stagger-5">
           <button
+            ref={buttonRef}
             type="button"
             onClick={handleEnter}
             className="rounded-xl bg-primary px-10 py-3.5 text-base font-semibold text-white shadow-md transition-all hover:bg-primary-light hover:shadow-lg hover:-translate-y-0.5 btn-press cta-pulse"

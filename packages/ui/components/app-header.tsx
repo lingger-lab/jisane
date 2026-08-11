@@ -46,7 +46,7 @@ export function AppHeader({
               <form action={signOutAction}>
                 <button
                   type="submit"
-                  className="text-xs text-text-subtle hover:text-text transition-colors"
+                  className="inline-flex min-h-6 items-center text-xs text-text-subtle hover:text-text transition-colors"
                 >
                   로그아웃
                 </button>
@@ -57,7 +57,7 @@ export function AppHeader({
               {joinUrl && (
                 <a
                   href={joinUrl}
-                  className="text-xs font-medium text-primary hover:text-primary-light transition-colors"
+                  className="inline-flex min-h-6 items-center text-xs font-medium text-primary hover:text-primary-light transition-colors"
                 >
                   회원가입
                 </a>

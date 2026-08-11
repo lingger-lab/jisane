@@ -73,7 +73,8 @@ export function SuccessToast() {
           type="button"
           onClick={() => setMessage(null)}
           aria-label="알림 닫기"
-          className="focus-ring -mr-1 shrink-0 rounded px-1 text-white/70 transition-colors hover:text-white"
+          // 24×24px 최소 타깃(WCAG 2.5.8) — -my-1로 토스트 높이는 종전과 동일하게 유지
+          className="focus-ring -my-1 -mr-2 flex h-6 w-6 shrink-0 items-center justify-center rounded text-white/70 transition-colors hover:text-white"
         >
           ✕
         </button>
@@ -145,7 +146,8 @@ export function ErrorToast() {
           type="button"
           onClick={() => setMessage(null)}
           aria-label="알림 닫기"
-          className="focus-ring -mr-1 shrink-0 rounded px-1 text-white/70 transition-colors hover:text-white"
+          // 24×24px 최소 타깃(WCAG 2.5.8) — -my-1로 토스트 높이는 종전과 동일하게 유지
+          className="focus-ring -my-1 -mr-2 flex h-6 w-6 shrink-0 items-center justify-center rounded text-white/70 transition-colors hover:text-white"
         >
           ✕
         </button>

@@ -302,10 +302,11 @@ export default async function ExpertHome() {
               <p className="text-xs text-text-subtle">일은 사람이 합니다</p>
             </div>
           </div>
+          {/* min-h-6: 24×24px 최소 타깃(WCAG 2.5.8) */}
           <div className="flex flex-wrap gap-3 text-xs text-text-subtle">
-            <a href={`${adminUrl}/service`} className="hover:text-text-muted transition-colors">서비스 안내</a>
-            <a href={ownerUrl} className="hover:text-text-muted transition-colors">기업회원</a>
-            <a href={`${adminUrl}/privacy`} className="hover:text-text-muted transition-colors">개인정보처리방침</a>
+            <a href={`${adminUrl}/service`} className="inline-flex min-h-6 items-center hover:text-text-muted transition-colors">서비스 안내</a>
+            <a href={ownerUrl} className="inline-flex min-h-6 items-center hover:text-text-muted transition-colors">기업회원</a>
+            <a href={`${adminUrl}/privacy`} className="inline-flex min-h-6 items-center hover:text-text-muted transition-colors">개인정보처리방침</a>
           </div>
           <p className="text-xs text-text-subtle">&copy; 2026 (주)지사네. All rights reserved.</p>
         </div>

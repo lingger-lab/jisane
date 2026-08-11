@@ -10,10 +10,11 @@ export default function PublicLayout({ children }: { children: React.ReactNode }
             <OwlIcon className="h-7 w-7 text-primary" />
             지사네
           </Link>
+          {/* min-h-6: 24×24px 최소 타깃(WCAG 2.5.8) — 헤더 h-14 안이라 레이아웃 불변 */}
           <nav className="flex items-center gap-3">
-            <Link href="/standard/scope" className="text-xs text-text-muted hover:text-text transition-colors">거래 표준</Link>
-            <Link href="/ax" className="text-xs text-text-muted hover:text-text transition-colors">AX 전환</Link>
-            <Link href="/service" className="text-xs text-text-muted hover:text-text transition-colors">서비스 안내</Link>
+            <Link href="/standard/scope" className="inline-flex min-h-6 items-center text-xs text-text-muted hover:text-text transition-colors">거래 표준</Link>
+            <Link href="/ax" className="inline-flex min-h-6 items-center text-xs text-text-muted hover:text-text transition-colors">AX 전환</Link>
+            <Link href="/service" className="inline-flex min-h-6 items-center text-xs text-text-muted hover:text-text transition-colors">서비스 안내</Link>
           </nav>
         </div>
       </header>
@@ -35,12 +36,13 @@ export default function PublicLayout({ children }: { children: React.ReactNode }
             <span>사업자등록번호: 405-02-46113</span>
             <span>이메일: iamblackwhite86@gmail.com</span>
           </div>
+          {/* min-h-6: 24×24px 최소 타깃(WCAG 2.5.8) */}
           <div className="flex gap-3 text-xs">
-            <Link href="/privacy" className="text-text-subtle hover:text-text-muted transition-colors">개인정보처리방침</Link>
-            <Link href="/service" className="text-text-subtle hover:text-text-muted transition-colors">서비스 안내</Link>
-            <Link href="/standard/scope" className="text-text-subtle hover:text-text-muted transition-colors">용역 명세서</Link>
-            <Link href="/standard/guarantee" className="text-text-subtle hover:text-text-muted transition-colors">적립금 규정</Link>
-            <Link href="/ax" className="text-text-subtle hover:text-text-muted transition-colors">AX 전환</Link>
+            <Link href="/privacy" className="inline-flex min-h-6 items-center text-text-subtle hover:text-text-muted transition-colors">개인정보처리방침</Link>
+            <Link href="/service" className="inline-flex min-h-6 items-center text-text-subtle hover:text-text-muted transition-colors">서비스 안내</Link>
+            <Link href="/standard/scope" className="inline-flex min-h-6 items-center text-text-subtle hover:text-text-muted transition-colors">용역 명세서</Link>
+            <Link href="/standard/guarantee" className="inline-flex min-h-6 items-center text-text-subtle hover:text-text-muted transition-colors">적립금 규정</Link>
+            <Link href="/ax" className="inline-flex min-h-6 items-center text-text-subtle hover:text-text-muted transition-colors">AX 전환</Link>
           </div>
           <hr className="border-border-light" />
           <p className="text-xs text-text-subtle">&copy; 2026 (주)지사네. All rights reserved.</p>
