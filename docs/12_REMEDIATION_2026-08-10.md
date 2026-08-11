@@ -74,11 +74,20 @@
 | E 공용모듈 | P2-14·P3-73/74/69 | ORDER_STATUS_LABELS·GRADE_LABEL 단일소스화, proxy 3앱 사본→createProxy() 팩토리(래퍼 pinning 테스트), expert 해석 6곳→resolveExpertFromAuth. 신규 테스트 14건 | `29fcbb8` |
 | D2 a11y | UX P2-25/29/38/39×2/43, P3-10/49 | 미라벨 textarea 5건 aria-label(기존 카피 차용) + 에러 표시 7곳 role="alert"(기존 정답 패턴 준용). 속성 추가만, 시각 델타 0. P3-50(칩그룹 fieldset)은 D3 이월 | `e604c49` |
 
+| E 잔여 | P2-40·P2-46(UX T17)·P3-41/79/101 | 카테고리 트리 2곳→CATEGORY_TREE(seed 대조 pinning), URL 폴백 13사이트→앱별 lib/urls.ts, 배지 색 15곳→status-badges.ts(색 변경 0, 의도적 드리프트는 로컬 오버라이드+주석), 점수계산 2경로→computeExpertScoreFields | `66ccf0b` |
+| D3 a11y | UX P2-4/24/37, P3-13/29/50/67/75 | FilterRadioGroup 프리미티브(APG radio·로빙 탭인덱스·selectOnArrow, 11소비처) + admin 탭바 인라인 APG tabs + 아코디언 aria-expanded + 칩그룹 fieldset/legend. 로빙 로직 순수함수 테스트 9건. "토글" 지적분은 실제론 아코디언/필터 — 스위치 부재 확인 | `cebd4f2` |
+| F 신뢰성 | P2-1/5/63, P3-16/22/60/81/103/111 + UX P1-1 | cancelPayment never-throw 계약화(red-green)·Toss 30s·adminClient 15s bounded fetch·결제버튼 35s, stale-response 시퀀스 토큰 2탭, 언바운드 쿼리 필터/limit, assign 버튼 in-flight. **정정**: Toss fetch 타임아웃은 기존재(P3-X의 실 갭은 계약·adminClient·클라이언트) | `8c62aba` |
+
 > 실행 방식: 정직 스윕은 **앱별 분리 병렬 에이전트 3개**(파일 무겹침)로 처리하고 독립 검증(tsc·eslint·
 > 테스트) 후 커밋. 마이그·토큰은 의사환경 정책동작·대비비 계산으로 검증. Batch B 코드전용분은
 > red-green(가드 stash→10 fail→복원→48 pass)·tsc 0(3앱)·eslint 0으로 검증.
-> E·D2·P2-15는 **파일 무겹침 병렬 에이전트 3개**로 실행 후 통합 fresh 게이트(vitest 70/70 ·
-> tsc 0(admin/owner/expert/shared) · eslint 0(변경 전건))로 재검증하고 배치별 커밋.
+> E·D2·P2-15와 D3·E잔여·F는 각각 **파일 무겹침 병렬 에이전트 3개** 라운드로 실행 후 통합 fresh
+> 게이트(라운드2 기준 vitest 114/114 · tsc 0(admin/owner/expert/shared/ui) · eslint 0)로 재검증하고
+> 배치별 커밋. 에이전트 이연 교차분(배지 3파일·URL 2파일)은 통합 시점에 직접 마감.
+>
+> F 라운드에서 설계 필요로 이관: P2-4·P2-62(SQL 집계 RPC), P3-35(후보 조회 조인),
+> P3-70/42/47(페이지네이션 UX 결정). 환경 메모: vitest는 소문자 드라이브 경로(Git Bash `c:/`)에서
+> runner 탐색 실패 — PowerShell(대문자 `C:/`)에서 실행할 것.
 
 ## 2. 감사 자체의 오류 (점검으로 발견)
 
