@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { getCandidatesForRequest, createMatching, generateAiCandidates, selectCandidate } from '@/lib/admin/actions'
 
 interface RequestItem {
@@ -71,19 +71,30 @@ export function MatchingTab({
   const [generating, setGenerating] = useState(false)
   const [actionError, setActionError] = useState<string | null>(null)
   const [assignedId, setAssignedId] = useState<string | null>(null)
+  const [assigningExpertId, setAssigningExpertId] = useState<string | null>(null)
+  // 후보 fetch 시퀀스 토큰 — 연타로 다른 의뢰를 펼쳤을 때 이전 요청의 늦은 응답이
+  // 최신 패널의 후보 목록을 덮어쓰지 않게 최신 요청만 반영한다(감사 docs/11 P2-1).
+  const candidateSeqRef = useRef(0)
+
+  async function loadCandidates(requestId: string) {
+    const seq = ++candidateSeqRef.current
+    const result = await getCandidatesForRequest(requestId)
+    if (seq !== candidateSeqRef.current) return // 이미 다른 의뢰로 전환됨 — stale 응답 폐기
+    setCandidates(result.candidates)
+    setHasAiCandidates(result.hasAiCandidates ?? false)
+    setAutoAssignAt((result as { autoAssignAt?: string }).autoAssignAt ?? null)
+    setLoading(false)
+  }
 
   async function handleShowCandidates(requestId: string) {
     if (expandedId === requestId) {
+      candidateSeqRef.current++ // 진행 중인 fetch가 있으면 무효화
       setExpandedId(null)
       return
     }
     setLoading(true)
     setExpandedId(requestId)
-    const result = await getCandidatesForRequest(requestId)
-    setCandidates(result.candidates)
-    setHasAiCandidates(result.hasAiCandidates ?? false)
-    setAutoAssignAt((result as { autoAssignAt?: string }).autoAssignAt ?? null)
-    setLoading(false)
+    await loadCandidates(requestId)
   }
 
   async function handleGenerateAi(requestId: string) {
@@ -94,23 +105,28 @@ export function MatchingTab({
       setActionError(result.error)
     } else {
       // 새로 생성된 후보 로드
-      const res = await getCandidatesForRequest(requestId)
-      setCandidates(res.candidates)
-      setHasAiCandidates(res.hasAiCandidates ?? false)
-      setAutoAssignAt((res as { autoAssignAt?: string }).autoAssignAt ?? null)
+      await loadCandidates(requestId)
     }
     setGenerating(false)
   }
 
   async function handleAssign(requestId: string, expertId: string) {
+    if (assigningExpertId) return // in-flight 중 재클릭 무시 (감사 docs/10 P1-1)
     setActionError(null)
-    const action = hasAiCandidates ? selectCandidate : createMatching
-    const result = await action(requestId, expertId)
-    if (result.error) {
-      setActionError(result.error)
-    } else {
-      setAssignedId(requestId)
-      setTimeout(() => setAssignedId(null), 3000)
+    setAssigningExpertId(expertId)
+    try {
+      const action = hasAiCandidates ? selectCandidate : createMatching
+      const result = await action(requestId, expertId)
+      if (result.error) {
+        setActionError(result.error)
+      } else {
+        setAssignedId(requestId)
+        setTimeout(() => setAssignedId(null), 3000)
+      }
+    } catch {
+      setActionError('배정 처리 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.')
+    } finally {
+      setAssigningExpertId(null)
     }
   }
 
@@ -264,9 +280,12 @@ export function MatchingTab({
                           <button
                             type="button"
                             onClick={() => handleAssign(req.id, c.expert_id)}
-                            className="rounded-lg bg-success px-3 py-1 text-xs font-medium text-white hover:bg-success/90"
+                            disabled={assigningExpertId !== null}
+                            className="rounded-lg bg-success px-3 py-1 text-xs font-medium text-white hover:bg-success/90 disabled:opacity-50"
                           >
-                            {hasAiCandidates ? '이 후보로 매칭' : '배정'}
+                            {assigningExpertId === c.expert_id
+                              ? '배정 중...'
+                              : hasAiCandidates ? '이 후보로 매칭' : '배정'}
                           </button>
                         )}
                         {c.status === 'selected' && (

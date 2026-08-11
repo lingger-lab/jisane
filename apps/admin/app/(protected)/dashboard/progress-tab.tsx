@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import Link from 'next/link'
 import { WorkflowChecklist } from '@jisane/ui/workflow-checklist'
 import { getMessagesForDeal } from '@/lib/admin/actions'
@@ -56,9 +56,13 @@ export function ProgressTab({
   const [replyText, setReplyText] = useState('')
   const [replyError, setReplyError] = useState<string | null>(null)
   const [sending, setSending] = useState(false)
+  // 메시지 fetch 시퀀스 토큰 — 느린 deal A → 빠른 deal B 순으로 열었을 때 A의 늦은 응답이
+  // B의 패널에 렌더되지 않게 최신 요청만 반영한다(감사 docs/11 P2-5).
+  const msgSeqRef = useRef(0)
 
   async function handleToggleMessages(dealId: string) {
     if (expandedMsgId === dealId) {
+      msgSeqRef.current++ // 진행 중인 fetch가 있으면 무효화
       setExpandedMsgId(null)
       return
     }
@@ -66,7 +70,9 @@ export function ProgressTab({
     setExpandedMsgId(dealId)
     setReplyText('')
     setReplyError(null)
+    const seq = ++msgSeqRef.current
     const result = await getMessagesForDeal(dealId)
+    if (seq !== msgSeqRef.current) return // 이미 다른 deal로 전환됨 — stale 응답 폐기
     setMessages(result.messages as Message[])
     setMsgLoading(false)
   }

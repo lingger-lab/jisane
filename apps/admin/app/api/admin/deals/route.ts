@@ -19,6 +19,9 @@ export async function GET(request: Request) {
     `)
     .eq('status', status)
     .order('created_at', { ascending: false })
+    // 명시 상한 — status 필터가 있어도 done 등 누적 상태는 무한 성장한다(감사 docs/11 P3-16).
+    // 최신순 100건이면 운영 조회 용도로 충분하고, 이상은 페이지네이션 파라미터 설계가 필요.
+    .limit(100)
 
   if (error) {
     console.error('[admin/deals] deal 조회 실패:', error)

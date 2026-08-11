@@ -96,7 +96,6 @@ export default async function AdminDashboardPage() {
   const [
     proposedMatchingsRes,
     openRequestsRes,
-    interestsDataRes,
     workingDealsRes,
     pendingSettlementsRes,
     ledgerEntriesRes,
@@ -121,10 +120,6 @@ export default async function AdminDashboardPage() {
       .eq('status', 'open')
       .order('created_at', { ascending: false })
       .returns<RequestWithOwner[]>(),
-    adminClient
-      .from('expert_interest')
-      .select('request_id, expert_id, note, created_at, expert:expert!inner(id, name, field)')
-      .order('created_at', { ascending: false }),
     adminClient
       .from('deal')
       .select(`
@@ -197,7 +192,10 @@ export default async function AdminDashboardPage() {
 
   // 주문 카드의 제공 내용/소요 표시용 — service_package를 slug 맵으로 (하드코딩 카탈로그 대체)
   // + 전문가회원 탭: 전체 provider 목록·검수 대기(draft) 서비스
-  const [{ data: packageRows }, { data: allProviders }, { data: draftPackages }] =
+  // + 의뢰별 관심 카운트: 전 테이블이 아니라 열린 의뢰의 관심만 조회(감사 docs/11 P2-3) —
+  //   openRequests 결과가 필요해 1차 배치가 아닌 여기서 병렬 실행. 카운트만 쓰므로 request_id만 선택.
+  const openRequestIds = (openRequests || []).map((r) => r.id)
+  const [{ data: packageRows }, { data: allProviders }, { data: draftPackages }, interestsDataRes] =
     await Promise.all([
       adminClient.from('service_package').select('slug, duration, deliverables'),
       adminClient
@@ -209,6 +207,10 @@ export default async function AdminDashboardPage() {
         .select('id, name, category, price, is_free, target_audience, status, created_at, provider:provider!inner(name)')
         .eq('status', 'draft')
         .order('created_at', { ascending: false }),
+      adminClient
+        .from('expert_interest')
+        .select('request_id')
+        .in('request_id', openRequestIds),
     ])
   const packagesBySlug = Object.fromEntries(
     (packageRows || []).map((p) => [

@@ -51,6 +51,10 @@ export function PaymentButton({ dealId, amount, enabled, onError }: PaymentButto
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ deal_id: dealId }),
+        // 서버의 Toss 호출 타임아웃(30초)보다 약간 길게 잡아 서버 에러 응답이 먼저 도착하게
+        // 한다. 브라우저 fetch는 기본 타임아웃이 없어, 이게 없으면 서버가 매달릴 때 버튼이
+        // '결제창 여는 중...'으로 영구 고착된다(감사 docs/11 P3-81).
+        signal: AbortSignal.timeout(35_000),
       })
 
       const data = await res.json().catch(() => ({}))
@@ -63,8 +67,12 @@ export function PaymentButton({ dealId, amount, enabled, onError }: PaymentButto
 
       // 토스 결제창으로 이동 (이후 success/fail 라우트로 리다이렉트되어 돌아온다)
       window.location.href = data.checkout_url
-    } catch {
-      onError('결제 요청 중 오류가 발생했습니다. 네트워크 상태를 확인해주세요.')
+    } catch (err) {
+      if (err instanceof DOMException && err.name === 'TimeoutError') {
+        onError('결제 요청이 시간을 초과했습니다. 잠시 후 다시 시도해주세요.')
+      } else {
+        onError('결제 요청 중 오류가 발생했습니다. 네트워크 상태를 확인해주세요.')
+      }
       setPending(false)
     }
   }

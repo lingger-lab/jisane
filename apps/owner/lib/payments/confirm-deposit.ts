@@ -93,7 +93,7 @@ export async function confirmAndRecordDeposit(
   }
 
   if (deal.status === 'quoted') {
-    // compare-and-set: 15초 Toss 승인 창 사이 deal.status가 바뀔 수 있으므로 quoted일 때만
+    // compare-and-set: Toss 승인 창(타임아웃 30초) 사이 deal.status가 바뀔 수 있으므로 quoted일 때만
     // 전이(lost update 방지, 감사 docs/11 P2-50).
     const { error: dealErr } = await adminClient
       .from('deal')

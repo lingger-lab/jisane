@@ -15,6 +15,9 @@ export async function GET(request: Request) {
     .select('id, title, detail, req_type, scope, budget_hope, status, created_at, owner_id')
     .eq('status', status)
     .order('created_at', { ascending: false })
+    // 명시 상한 — done/closed 등 누적 상태는 무한 성장한다(감사 docs/11 P3-22).
+    // 최신순 100건 초과가 필요해지면 페이지네이션 파라미터 설계가 필요.
+    .limit(100)
 
   if (error) {
     return NextResponse.json({ error: error.message }, { status: 500 })

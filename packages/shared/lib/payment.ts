@@ -4,7 +4,10 @@
  */
 
 const TOSS_BASE_URL = 'https://api.tosspayments.com/v1'
-const TOSS_TIMEOUT_MS = 15_000
+// 결제 승인·취소는 Toss가 카드사/은행을 경유하므로 평시 수 초, 지연 시 십수 초까지 걸릴 수 있다.
+// p95 여유를 두어 30초로 설정(감사 docs/11 P3-X). 너무 짧으면 실제로는 성공한 승인/취소를
+// 실패로 오판하는 재시도 위험이 커지고, 무한 대기는 라우트 전체를 매단다.
+const TOSS_TIMEOUT_MS = 30_000
 
 function getAuthHeader(): string {
   const secretKey = process.env.TOSS_SECRET_KEY
@@ -149,6 +152,11 @@ export async function confirmPayment(
 
 /**
  * 결제 취소 (환불 시 사용)
+ *
+ * 에러 계약: confirmPayment와 동일하게 **절대 throw하지 않는다.** 타임아웃/네트워크 장애도
+ * `{success:false}`로 반환한다. 호출자(refund 라우트)는 success만 검사하므로, 여기서 throw하면
+ * 처리되지 않은 예외가 라우트 밖으로 새어나간다(감사 docs/11 P2-63). 타임아웃 시점에 Toss에서
+ * 취소가 이미 실행됐을 수 있으므로, 재시도는 반드시 동일 idempotencyKey로 해야 한다.
  */
 export async function cancelPayment(
   paymentKey: string,
@@ -170,12 +178,22 @@ export async function cancelPayment(
     headers['Idempotency-Key'] = idempotencyKey
   }
 
-  const res = await fetch(`${TOSS_BASE_URL}/payments/${paymentKey}/cancel`, {
-    method: 'POST',
-    headers,
-    body: JSON.stringify(body),
-    signal: AbortSignal.timeout(TOSS_TIMEOUT_MS),
-  })
+  let res: Response
+  try {
+    res = await fetch(`${TOSS_BASE_URL}/payments/${paymentKey}/cancel`, {
+      method: 'POST',
+      headers,
+      body: JSON.stringify(body),
+      signal: AbortSignal.timeout(TOSS_TIMEOUT_MS),
+    })
+  } catch (err) {
+    // 타임아웃/네트워크 실패 — 취소 실행 여부 불명. 로컬 상태를 refunded로 만들지 않도록
+    // 실패로 반환하고, 호출자가 동일 멱등키로 재시도하게 한다.
+    return {
+      success: false,
+      error: err instanceof Error ? `Toss 취소 요청 실패: ${err.message}` : 'Toss 취소 요청 실패',
+    }
+  }
 
   if (!res.ok) {
     const err = await res.json().catch(() => ({}))
