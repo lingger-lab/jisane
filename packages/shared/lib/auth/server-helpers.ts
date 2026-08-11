@@ -1,5 +1,6 @@
 import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
+import type { User } from '@supabase/supabase-js'
 import { createClient } from '../supabase/server'
 import { adminClient } from '../supabase/admin'
 import type { DealWithOwnership } from '../query-types'
@@ -16,6 +17,30 @@ export async function getAuthUserId(): Promise<string> {
     redirect('/')
   }
   return user.id
+}
+
+/**
+ * 인증 사용자 → expert 행 해석 — 단일 소스 (감사 docs/11 P3-69, 6곳 중복 제거).
+ * 실패 정책(redirect vs 에러 반환)은 호출부 소관이므로 여기서는 null만 반환합니다.
+ * 미인증이면 expert 조회 없이 즉시 { user: null, expert: null }을 반환합니다.
+ * @param columns expert 테이블에서 select할 컬럼 (기본 'id')
+ */
+export async function resolveExpertFromAuth<T = { id: string }>(
+  columns = 'id'
+): Promise<{ user: User | null; expert: T | null }> {
+  const cookieStore = await cookies()
+  const supabase = createClient(cookieStore)
+  const { data: { user } } = await supabase.auth.getUser()
+
+  if (!user) return { user: null, expert: null }
+
+  const { data: expert } = await adminClient
+    .from('expert')
+    .select(columns)
+    .eq('auth_user_id', user.id)
+    .single()
+
+  return { user, expert: (expert as T | null) ?? null }
 }
 
 /**

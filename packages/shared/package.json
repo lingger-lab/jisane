@@ -19,6 +19,7 @@
     "./query-types": "./lib/query-types.ts",
     "./deal/deal-operations": "./lib/deal/deal-operations.ts",
     "./labels": "./lib/labels.ts",
+    "./proxy": "./lib/proxy.ts",
     "./landing-stats": "./lib/landing-stats.ts",
     "./expert-scoring": "./lib/expert-scoring.ts",
     "./cap-pricing": "./lib/cap-pricing.ts",
@@ -26,6 +27,7 @@
     "./automation/auto-settlement": "./lib/automation/auto-settlement.ts",
     "./automation/audit-sampling": "./lib/automation/audit-sampling.ts",
     "./service-package/queries": "./lib/service-package/queries.ts",
+    "./service-package/edit-review-gate": "./lib/service-package/edit-review-gate.ts",
     "./provider/auth": "./lib/provider/auth.ts"
   },
   "dependencies": {

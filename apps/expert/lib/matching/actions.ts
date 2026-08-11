@@ -1,28 +1,15 @@
 'use server'
 
-import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
-import { createClient } from '@jisane/shared/supabase/server'
 import { adminClient } from '@jisane/shared/supabase/admin'
+import { resolveExpertFromAuth } from '@jisane/shared/auth/server-helpers'
 import { calcMatchFee, calcGuaranteeFee } from '@jisane/shared/pricing'
 import type { WorkflowStep } from '@jisane/shared/types'
 
 async function getExpertIdFromAuth(): Promise<{ expertId: string; authUserId: string }> {
-  const cookieStore = await cookies()
-  const supabase = createClient(cookieStore)
-  const { data: { user } } = await supabase.auth.getUser()
+  const { user, expert } = await resolveExpertFromAuth()
 
-  if (!user) {
-    redirect('/')
-  }
-
-  const { data: expert } = await adminClient
-    .from('expert')
-    .select('id')
-    .eq('auth_user_id', user.id)
-    .single()
-
-  if (!expert) {
+  if (!user || !expert) {
     redirect('/')
   }
 

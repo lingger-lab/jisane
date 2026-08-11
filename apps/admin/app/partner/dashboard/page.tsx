@@ -4,7 +4,7 @@ import Link from 'next/link'
 import { createClient } from '@jisane/shared/supabase/server'
 import { adminClient } from '@jisane/shared/supabase/admin'
 import { getProviderByAuthUser } from '@jisane/shared/provider/auth'
-import { ORDER_STATUS_LABELS_FALLBACK } from './order-labels'
+import { ORDER_STATUS_LABELS } from '@jisane/shared/labels'
 
 export const metadata = { title: '전문가회원 대시보드 | 지사네' }
 
@@ -81,7 +81,7 @@ export default async function PartnerDashboardHome() {
                   </p>
                 </div>
                 <span className="rounded-full bg-surface px-2 py-0.5 text-xs text-text-muted">
-                  {ORDER_STATUS_LABELS_FALLBACK[o.status] || o.status}
+                  {ORDER_STATUS_LABELS[o.status] || o.status}
                 </span>
               </div>
             ))}

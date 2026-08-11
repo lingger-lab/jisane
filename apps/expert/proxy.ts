@@ -1,34 +1,9 @@
-import { createServerClient } from '@supabase/ssr'
-import { NextResponse } from 'next/server'
-import type { NextRequest } from 'next/server'
+import { createProxy } from '@jisane/shared/proxy'
 
-export async function proxy(request: NextRequest) {
-  const response = NextResponse.next({ request })
+// Supabase 세션 갱신 — 구현은 공용 팩토리 단일 소스 (감사 docs/11 P3-74).
+export const proxy = createProxy()
 
-  const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY!,
-    {
-      cookies: {
-        getAll: () => request.cookies.getAll(),
-        setAll: (cookiesToSet) => {
-          cookiesToSet.forEach(({ name, value, options }) => {
-            response.cookies.set(name, value, {
-              ...options,
-              domain: process.env.COOKIE_DOMAIN ||
-                (process.env.NODE_ENV === 'production' ? '.jisane.cloud' : undefined),
-            })
-          })
-        },
-      },
-    }
-  )
-
-  await supabase.auth.getUser()
-
-  return response
-}
-
+// matcher는 빌드 시 정적 분석 대상이라 리터럴로 유지 (동적 값은 무시됨).
 export const config = {
   matcher: [
     '/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico)$).*)',

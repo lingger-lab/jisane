@@ -1,9 +1,8 @@
 'use server'
 
-import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
-import { createClient } from '@jisane/shared/supabase/server'
 import { adminClient } from '@jisane/shared/supabase/admin'
+import { resolveExpertFromAuth } from '@jisane/shared/auth/server-helpers'
 import { computeCareerScore } from '@jisane/shared/expert-scoring'
 
 interface ProfileState {
@@ -14,9 +13,7 @@ export async function updateExpertProfile(
   _prev: ProfileState,
   formData: FormData
 ): Promise<ProfileState> {
-  const cookieStore = await cookies()
-  const supabase = createClient(cookieStore)
-  const { data: { user } } = await supabase.auth.getUser()
+  const { user, expert } = await resolveExpertFromAuth()
 
   if (!user) {
     redirect('/')
@@ -37,12 +34,6 @@ export async function updateExpertProfile(
   if (hourlyRate !== null && (hourlyRate < 10000 || hourlyRate > 100000)) {
     return { error: '시간당 단가는 10,000원 ~ 100,000원 범위여야 합니다.' }
   }
-
-  const { data: expert } = await adminClient
-    .from('expert')
-    .select('id')
-    .eq('auth_user_id', user.id)
-    .single()
 
   if (!expert) {
     return { error: '시니어지식인 계정 정보를 찾을 수 없습니다.' }

@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { ORDER_STATUS_LABELS_FALLBACK } from '../order-labels'
+import { ORDER_STATUS_LABELS } from '@jisane/shared/labels'
 import { CompleteOrderButton } from './complete-order-button'
 
 const STATUS_BADGE: Record<string, string> = {
@@ -67,7 +67,7 @@ export function OrdersList({ items }: { items: OrderItem[] }) {
                 </div>
                 <div className="flex shrink-0 flex-col items-end gap-2">
                   <span className={`rounded-full px-2 py-0.5 text-xs font-medium ${STATUS_BADGE[o.status] || ''}`}>
-                    {ORDER_STATUS_LABELS_FALLBACK[o.status] || o.status}
+                    {ORDER_STATUS_LABELS[o.status] || o.status}
                   </span>
                   {o.status === 'processing' && <CompleteOrderButton orderId={o.id} />}
                 </div>

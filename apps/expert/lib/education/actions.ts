@@ -1,9 +1,8 @@
 'use server'
 
-import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
-import { createClient } from '@jisane/shared/supabase/server'
 import { adminClient } from '@jisane/shared/supabase/admin'
+import { resolveExpertFromAuth } from '@jisane/shared/auth/server-helpers'
 import { getPackageBySlug } from '@jisane/shared/service-package/queries'
 
 interface CreateEducationOrderState {
@@ -14,9 +13,7 @@ export async function createEducationOrder(
   _prev: CreateEducationOrderState,
   formData: FormData
 ): Promise<CreateEducationOrderState> {
-  const cookieStore = await cookies()
-  const supabase = createClient(cookieStore)
-  const { data: { user } } = await supabase.auth.getUser()
+  const { user, expert } = await resolveExpertFromAuth()
 
   if (!user) {
     return { error: '로그인이 필요합니다. 상단의 로그인 버튼을 이용해주세요.' }
@@ -33,13 +30,6 @@ export async function createEducationOrder(
   if (!pkg || pkg.targetAudience !== 'expert') {
     return { error: '유효하지 않은 교육 과정입니다.' }
   }
-
-  // expert_id 조회
-  const { data: expert } = await adminClient
-    .from('expert')
-    .select('id')
-    .eq('auth_user_id', user.id)
-    .single()
 
   if (!expert) {
     redirect('/register')

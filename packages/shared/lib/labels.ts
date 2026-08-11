@@ -28,6 +28,12 @@ export const ORDER_STATUS_LABELS: Record<string, string> = {
   cancelled: '취소',
 }
 
+export const EXPERT_GRADE_LABELS: Record<string, string> = {
+  veteran: '베테랑',
+  standard: '시니어지식인',
+  new: '신규',
+}
+
 export const WORKFLOW_STEP_LABELS: Record<string, string> = {
   intake: '요건 파악',
   structure: '구조화',

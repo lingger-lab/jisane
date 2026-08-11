@@ -4,17 +4,12 @@ import { cookies } from 'next/headers'
 import { createClient } from '@jisane/shared/supabase/server'
 import { adminClient } from '@jisane/shared/supabase/admin'
 import { getCachedCategories } from '@jisane/shared/categories'
+import { EXPERT_GRADE_LABELS } from '@jisane/shared/labels'
 import { InviteButton } from '@/components/invite-button'
 import { PageHero } from '@jisane/ui/page-hero'
 
 interface PageProps {
   params: Promise<{ id: string }>
-}
-
-const GRADE_LABEL: Record<string, string> = {
-  veteran: '베테랑',
-  standard: '시니어지식인',
-  new: '신규',
 }
 
 export async function generateMetadata(props: PageProps) {
@@ -127,7 +122,7 @@ export default async function ExpertDetailPage(props: PageProps) {
                     : 'bg-primary/5 text-primary/80'
               }`}
             >
-              {GRADE_LABEL[expert.grade] ?? expert.grade}
+              {EXPERT_GRADE_LABELS[expert.grade] ?? expert.grade}
             </span>
           </div>
 

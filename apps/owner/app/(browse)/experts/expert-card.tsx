@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import { EXPERT_GRADE_LABELS } from '@jisane/shared/labels'
 
 export interface ExpertCardData {
   id: string
@@ -9,12 +10,6 @@ export interface ExpertCardData {
   totalScore: number | null
   activityPoints: number
   categories?: string[]
-}
-
-const GRADE_LABEL: Record<string, string> = {
-  veteran: '베테랑',
-  standard: '시니어지식인',
-  new: '신규',
 }
 
 /** 시니어지식인 카드 — 리스트·홈 추천·의뢰하기 미리보기 공용 */
@@ -38,7 +33,7 @@ export function ExpertCard({ expert }: { expert: ExpertCardData }) {
                 : 'bg-primary/5 text-primary/80'
           }`}
         >
-          {GRADE_LABEL[expert.grade] ?? expert.grade}
+          {EXPERT_GRADE_LABELS[expert.grade] ?? expert.grade}
         </span>
       </div>
 
