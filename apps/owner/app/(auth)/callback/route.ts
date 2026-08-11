@@ -34,10 +34,17 @@ export async function GET(request: Request) {
     .single()
 
   if (!existingOwner) {
+    // Kakao는 이메일 제공 동의가 선택일 수 있다 — email 없이 insert하면 NOT NULL 위반으로
+    // 매 로그인마다 같은 실패를 반복하는 dead-end가 된다(감사 docs/11 P3-72).
+    // 일반 profile_create가 아닌 구분된 에러로 원인을 표면화한다.
+    if (!user.email) {
+      console.warn(`[auth/callback] ${provider} 계정에 이메일 없음 — 가입 불가 (auth_user_id: ${user.id})`)
+      return NextResponse.redirect(`${origin}/?error=email_required`)
+    }
     const { error: insertErr } = await adminClient.from('owner').insert({
       auth_user_id: user.id,
       provider,
-      email: user.email!,
+      email: user.email,
     })
     if (insertErr) {
       console.error('[auth/callback] owner insert failed:', insertErr.message)
