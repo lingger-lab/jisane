@@ -4,6 +4,7 @@ import { useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { SearchBox } from '@jisane/ui/search-box'
+import { FilterRadioGroup } from '@jisane/ui/filter-radio-group'
 import { expressInterest, withdrawInterest } from '@/lib/interest/actions'
 
 interface RequestItem {
@@ -113,58 +114,46 @@ export function RequestList({
         />
       </div>
 
-      {/* 대분류 탭 */}
-      <div className="mt-4 flex flex-wrap gap-2">
-        <button
-          type="button"
-          onClick={() => handleCategoryChange(null)}
-          className={`rounded-lg px-3.5 py-2 text-sm font-medium transition-colors ${
-            !selectedCategory
+      {/* 대분류 탭 — 선택이 URL 내비게이션을 유발하므로 화살표는 포커스만 이동(수동 활성화) */}
+      <FilterRadioGroup
+        options={[
+          { value: '', label: '전체' },
+          ...categoryTree.map((major) => ({ value: major.id, label: major.label })),
+        ]}
+        value={
+          !selectedCategory ? '' : selectedMajorIdx >= 0 ? categoryTree[selectedMajorIdx].id : null
+        }
+        onChange={(id) => handleCategoryChange(id || null)}
+        label="대분류 필터"
+        className="mt-4 flex flex-wrap gap-2"
+        optionClassName={(selected) =>
+          `rounded-lg px-3.5 py-2 text-sm font-medium transition-colors ${
+            selected
               ? 'bg-accent text-white'
               : 'bg-surface text-text-muted hover:bg-surface-warm'
-          }`}
-        >
-          전체
-        </button>
-        {categoryTree.map((major) => {
-          const isActive =
-            major.id === selectedCategory ||
-            major.midCategories.some((m) => m.id === selectedCategory)
-          return (
-            <button
-              key={major.id}
-              type="button"
-              onClick={() => handleCategoryChange(major.id)}
-              className={`rounded-lg px-3.5 py-2 text-sm font-medium transition-colors ${
-                isActive
-                  ? 'bg-accent text-white'
-                  : 'bg-surface text-text-muted hover:bg-surface-warm'
-              }`}
-            >
-              {major.label}
-            </button>
-          )
-        })}
-      </div>
+          }`
+        }
+      />
 
       {/* 중분류 칩 (대분류 선택 시) */}
       {selectedMajorIdx >= 0 && (
-        <div className="mt-2 flex flex-wrap gap-1">
-          {categoryTree[selectedMajorIdx].midCategories.map((mid) => (
-            <button
-              key={mid.id}
-              type="button"
-              onClick={() => handleCategoryChange(mid.id)}
-              className={`rounded-full px-3 py-1.5 text-xs font-medium transition-colors ${
-                selectedCategory === mid.id
-                  ? 'bg-accent/15 text-accent border border-accent/30'
-                  : 'bg-surface text-text-subtle hover:bg-surface-warm'
-              }`}
-            >
-              {mid.label}
-            </button>
-          ))}
-        </div>
+        <FilterRadioGroup
+          options={categoryTree[selectedMajorIdx].midCategories.map((mid) => ({
+            value: mid.id,
+            label: mid.label,
+          }))}
+          value={selectedCategory}
+          onChange={handleCategoryChange}
+          label="중분류 필터"
+          className="mt-2 flex flex-wrap gap-1"
+          optionClassName={(selected) =>
+            `rounded-full px-3 py-1.5 text-xs font-medium transition-colors ${
+              selected
+                ? 'bg-accent/15 text-accent border border-accent/30'
+                : 'bg-surface text-text-subtle hover:bg-surface-warm'
+            }`
+          }
+        />
       )}
 
       {/* 에러 메시지 */}

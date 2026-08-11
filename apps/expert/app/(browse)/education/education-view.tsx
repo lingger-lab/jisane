@@ -4,6 +4,8 @@ import { useState } from 'react'
 import Link from 'next/link'
 import type { ServicePackage, ProviderInfo } from '@jisane/shared/service-catalog'
 import { PageHero } from '@jisane/ui/page-hero'
+import { FilterRadioGroup } from '@jisane/ui/filter-radio-group'
+import { ADMIN_URL } from '@/lib/urls'
 
 const PRICE_FILTERS = [
   { key: 'all' as const, label: '전체' },
@@ -43,6 +45,8 @@ export function EducationView({
           <button
             key={prov.id}
             type="button"
+            aria-expanded={expandedProvider === prov.id}
+            aria-controls={expandedProvider === prov.id ? 'education-packages-panel' : undefined}
             onClick={() => setExpandedProvider(expandedProvider === prov.id ? null : prov.id)}
             className={`flex items-center justify-between rounded-xl border p-3 text-left transition-colors ${
               expandedProvider === prov.id
@@ -61,33 +65,30 @@ export function EducationView({
                 )}
               </p>
             </div>
-            <span className="text-xs text-text-subtle">{expandedProvider === prov.id ? '▼' : '▶'}</span>
+            <span aria-hidden="true" className="text-xs text-text-subtle">{expandedProvider === prov.id ? '▼' : '▶'}</span>
           </button>
         ))}
       </div>
 
-      {/* 무료/유료 필터 */}
+      {/* 무료/유료 필터 + 교육 과정 목록 — 펼친 기관의 패널 */}
       {expandedProvider && (
-        <div className="mb-5 flex gap-1.5">
-          {PRICE_FILTERS.map((f) => (
-            <button
-              key={f.key}
-              type="button"
-              onClick={() => setPriceFilter(f.key)}
-              className={`rounded-full px-3 py-1.5 text-xs font-medium transition-colors ${
-                priceFilter === f.key
-                  ? 'bg-accent/10 text-accent'
-                  : 'bg-surface text-text-muted hover:text-text'
-              }`}
-            >
-              {f.label}
-            </button>
-          ))}
-        </div>
-      )}
+        <div id="education-packages-panel">
+        <FilterRadioGroup
+          options={PRICE_FILTERS.map((f) => ({ value: f.key, label: f.label }))}
+          value={priceFilter}
+          onChange={setPriceFilter}
+          label="가격 필터"
+          selectOnArrow
+          className="mb-5 flex gap-1.5"
+          optionClassName={(selected) =>
+            `rounded-full px-3 py-1.5 text-xs font-medium transition-colors ${
+              selected
+                ? 'bg-accent/10 text-accent'
+                : 'bg-surface text-text-muted hover:text-text'
+            }`
+          }
+        />
 
-      {/* 교육 과정 목록 */}
-      {expandedProvider && (
         <div className="flex flex-col gap-4">
           {filtered.map((pkg) => (
             <div
@@ -131,7 +132,7 @@ export function EducationView({
                 <div className="flex gap-2 ml-auto">
                   {pkg.axDashboardUrl && (
                     <a
-                      href={`${process.env.NEXT_PUBLIC_ADMIN_URL || 'https://jisane.cloud'}${pkg.axDashboardUrl}`}
+                      href={`${ADMIN_URL}${pkg.axDashboardUrl}`}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="rounded-lg border border-border-light px-3 py-1.5 text-xs font-medium text-text-muted transition-colors hover:border-accent/30 hover:text-accent"
@@ -149,6 +150,7 @@ export function EducationView({
               </div>
             </div>
           ))}
+        </div>
         </div>
       )}
       </div>

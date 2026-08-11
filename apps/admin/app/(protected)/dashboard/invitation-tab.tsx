@@ -1,7 +1,9 @@
 'use client'
 
 import { useState } from 'react'
+import { FilterRadioGroup } from '@jisane/ui/filter-radio-group'
 import { INVITATION_STATUS_LABELS } from '@jisane/shared/labels'
+import { INVITATION_STATUS_BADGE_CLASSES } from '@jisane/shared/status-badges'
 
 interface InvitationItem {
   id: string
@@ -15,11 +17,7 @@ interface InvitationItem {
   request: { id: string; title: string } | null
 }
 
-const STATUS_COLORS: Record<string, string> = {
-  invited: 'bg-info-light text-info',
-  accepted: 'bg-success-light text-success',
-  declined: 'bg-error-light text-error',
-}
+const STATUS_COLORS: Record<string, string> = INVITATION_STATUS_BADGE_CLASSES
 
 const FILTERS = [
   { key: 'all', label: '전체' },
@@ -29,7 +27,7 @@ const FILTERS = [
 ] as const
 
 export function InvitationTab({ invitations }: { invitations: InvitationItem[] }) {
-  const [filter, setFilter] = useState('all')
+  const [filter, setFilter] = useState<(typeof FILTERS)[number]['key']>('all')
 
   const filtered = filter === 'all'
     ? invitations
@@ -47,22 +45,21 @@ export function InvitationTab({ invitations }: { invitations: InvitationItem[] }
   return (
     <div className="flex flex-col gap-4">
       {/* 상태 필터 */}
-      <div className="flex gap-1 overflow-x-auto">
-        {FILTERS.map((f) => (
-          <button
-            key={f.key}
-            type="button"
-            onClick={() => setFilter(f.key)}
-            className={`shrink-0 rounded-full px-3 py-1.5 text-xs font-medium transition-colors ${
-              filter === f.key
-                ? 'bg-accent text-white'
-                : 'bg-surface text-text-muted hover:text-text'
-            }`}
-          >
-            {f.label}
-          </button>
-        ))}
-      </div>
+      <FilterRadioGroup
+        options={FILTERS.map((f) => ({ value: f.key, label: f.label }))}
+        value={filter}
+        onChange={setFilter}
+        label="초빙 상태 필터"
+        selectOnArrow
+        className="flex gap-1 overflow-x-auto"
+        optionClassName={(selected) =>
+          `shrink-0 rounded-full px-3 py-1.5 text-xs font-medium transition-colors ${
+            selected
+              ? 'bg-accent text-white'
+              : 'bg-surface text-text-muted hover:text-text'
+          }`
+        }
+      />
 
       {filtered.length === 0 ? (
         <p className="py-8 text-center text-sm text-text-muted">해당 상태의 초빙이 없습니다.</p>

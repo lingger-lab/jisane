@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import type { CategoryCount } from '@jisane/shared/landing-stats'
+import { FilterRadioGroup } from './filter-radio-group'
 
 interface CategoryBrowseProps {
   categoryCounts: CategoryCount[]
@@ -52,22 +53,23 @@ export function CategoryBrowse({
       )}
 
       {/* 대분류 탭 */}
-      <div className="mt-4 flex flex-wrap gap-2">
-        {categoryCounts.map((cat, idx) => (
-          <button
-            key={cat.majorId}
-            type="button"
-            onClick={() => setSelectedIdx(idx)}
-            className={`rounded-lg px-3.5 py-2 text-sm font-medium transition-colors ${
-              selectedIdx === idx
-                ? `${colors.bg} text-white`
-                : 'bg-surface text-text-muted hover:bg-surface-warm'
-            }`}
-          >
-            {cat.majorLabel}
-          </button>
-        ))}
-      </div>
+      <FilterRadioGroup
+        options={categoryCounts.map((cat) => ({ value: cat.majorId, label: cat.majorLabel }))}
+        value={current?.majorId ?? null}
+        onChange={(majorId) =>
+          setSelectedIdx(categoryCounts.findIndex((c) => c.majorId === majorId))
+        }
+        label={title}
+        selectOnArrow
+        className="mt-4 flex flex-wrap gap-2"
+        optionClassName={(selected) =>
+          `rounded-lg px-3.5 py-2 text-sm font-medium transition-colors ${
+            selected
+              ? `${colors.bg} text-white`
+              : 'bg-surface text-text-muted hover:bg-surface-warm'
+          }`
+        }
+      />
 
       {/* 중분류 카드 */}
       <div className="mt-3 grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-4">

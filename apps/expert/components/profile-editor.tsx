@@ -43,12 +43,12 @@ export function ProfileEditor({ profile }: { profile: ExpertProfile }) {
   return (
     <form action={formAction} className="flex flex-col gap-5">
       <input type="hidden" name="redirect_to" value="/mypage" />
-      {/* 전문 분야 */}
-      <div>
-        <label className="mb-2 block text-sm font-medium text-text">
+      {/* 전문 분야 — fieldset/legend로 칩그룹에 그룹 이름 부여 (감사 docs/10 P3-50) */}
+      <fieldset>
+        <legend className="mb-2 block text-sm font-medium text-text">
           전문 분야 <span className="text-error">*</span>
           <span className="ml-1 text-xs font-normal text-text-muted">(최대 5개)</span>
-        </label>
+        </legend>
         <div className="flex flex-col gap-3">
           {FIELD_GROUPS.map((group) => (
             <div key={group.label}>
@@ -74,7 +74,7 @@ export function ProfileEditor({ profile }: { profile: ExpertProfile }) {
           ))}
         </div>
         <input type="hidden" name="field" value={selectedFields.join(',')} />
-      </div>
+      </fieldset>
 
       {/* 경력 */}
       <div>

@@ -3,6 +3,7 @@
 import { useActionState, useState } from 'react'
 import { submitReview, generateAiReview } from '@/lib/admin/actions'
 import { SubmitButton } from '@jisane/ui/submit-button'
+import { FilterRadioGroup } from '@jisane/ui/filter-radio-group'
 
 type ReviewState = { error?: string; success?: boolean }
 
@@ -21,6 +22,7 @@ const AXIS_LABELS = [
   { key: 'response', label: '대응도', desc: '메시지 응답 속도, 커뮤니케이션 빈도' },
 ] as const
 
+// APG radio 패턴(화살표 이동·선택)은 FilterRadioGroup이 담당 — 감사 docs/10 P3-13
 function StarRating({
   value,
   onChange,
@@ -31,23 +33,23 @@ function StarRating({
   label: string
 }) {
   return (
-    <div className="flex gap-1" role="radiogroup" aria-label={label}>
-      {[1, 2, 3, 4, 5].map((star) => (
-        <button
-          key={star}
-          type="button"
-          role="radio"
-          aria-checked={value === star}
-          aria-label={`${star}점`}
-          onClick={() => onChange(star)}
-          className={`text-2xl transition-colors ${
-            star <= value ? 'text-yellow-400' : 'text-gray-300'
-          } hover:text-yellow-400`}
-        >
-          ★
-        </button>
-      ))}
-    </div>
+    <FilterRadioGroup
+      options={['1', '2', '3', '4', '5'].map((star) => ({
+        value: star,
+        label: '★',
+        ariaLabel: `${star}점`,
+      }))}
+      value={value > 0 ? String(value) : null}
+      onChange={(v) => onChange(Number(v))}
+      label={label}
+      selectOnArrow
+      className="flex gap-1"
+      optionClassName={(_selected, star) =>
+        `text-2xl transition-colors ${
+          Number(star) <= value ? 'text-yellow-400' : 'text-gray-300'
+        } hover:text-yellow-400`
+      }
+    />
   )
 }
 

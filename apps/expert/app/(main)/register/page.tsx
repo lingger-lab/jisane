@@ -53,12 +53,12 @@ export default function RegisterPage() {
         action={formAction}
         className="flex flex-col gap-5"
       >
-        {/* 전문 분야 */}
-        <div>
-          <label className="mb-2 block text-sm font-medium text-text">
+        {/* 전문 분야 — fieldset/legend로 칩그룹에 그룹 이름 부여 (감사 docs/10 P3-50과 동일 패턴) */}
+        <fieldset>
+          <legend className="mb-2 block text-sm font-medium text-text">
             전문 분야 <span className="text-error">*</span>
             <span className="ml-1 text-xs font-normal text-text-muted">(최대 5개)</span>
-          </label>
+          </legend>
           <div className="space-y-3">
             {FIELD_GROUPS.map((group) => (
               <div key={group.label}>
@@ -87,7 +87,7 @@ export default function RegisterPage() {
             선택: {selectedFields.length}/5개
           </p>
           <input type="hidden" name="field" value={selectedFields.join(',')} />
-        </div>
+        </fieldset>
 
         {/* 경력 */}
         <div>

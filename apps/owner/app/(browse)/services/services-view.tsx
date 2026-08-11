@@ -3,7 +3,9 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { PageHero } from '@jisane/ui/page-hero'
+import { FilterRadioGroup } from '@jisane/ui/filter-radio-group'
 import type { ServicePackage, ProviderInfo } from '@jisane/shared/service-catalog'
+import { ADMIN_URL } from '@/lib/urls'
 
 const CATEGORY_TABS = [
   { key: 'ax_consulting' as const, label: 'AX 컨설팅' },
@@ -21,8 +23,6 @@ const PRICE_FILTERS = [
   { key: 'free' as const, label: '무료' },
   { key: 'paid' as const, label: '유료' },
 ]
-
-const ADMIN_URL = process.env.NEXT_PUBLIC_ADMIN_URL || 'https://jisane.cloud'
 
 /** 전문서비스 카드 — 아코디언·검색결과 공용 */
 function PackageCard({ pkg }: { pkg: ServicePackage }) {
@@ -94,7 +94,7 @@ export function ServicesView({
   providers: ProviderInfo[]
 }) {
   const [search, setSearch] = useState('')
-  const [activeCategory, setActiveCategory] = useState<ServicePackage['category']>('ax_consulting')
+  const [activeCategory, setActiveCategory] = useState<(typeof CATEGORY_TABS)[number]['key']>('ax_consulting')
   const [priceFilter, setPriceFilter] = useState<'all' | 'free' | 'paid'>('all')
   const [expandedProvider, setExpandedProvider] = useState<string | null>(providers[0]?.id ?? null)
 
@@ -145,20 +145,19 @@ export function ServicesView({
       </div>
 
       {/* 무료/유료 필터 (검색·아코디언 공통) */}
-      <div className="mb-5 flex gap-1.5">
-        {PRICE_FILTERS.map((f) => (
-          <button
-            key={f.key}
-            type="button"
-            onClick={() => setPriceFilter(f.key)}
-            className={`rounded-full px-3 py-1.5 text-xs font-medium transition-colors ${
-              priceFilter === f.key ? 'bg-primary/10 text-primary' : 'bg-surface text-text-muted hover:text-text'
-            }`}
-          >
-            {f.label}
-          </button>
-        ))}
-      </div>
+      <FilterRadioGroup
+        options={PRICE_FILTERS.map((f) => ({ value: f.key, label: f.label }))}
+        value={priceFilter}
+        onChange={setPriceFilter}
+        label="가격 필터"
+        selectOnArrow
+        className="mb-5 flex gap-1.5"
+        optionClassName={(selected) =>
+          `rounded-full px-3 py-1.5 text-xs font-medium transition-colors ${
+            selected ? 'bg-primary/10 text-primary' : 'bg-surface text-text-muted hover:text-text'
+          }`
+        }
+      />
 
       {q ? (
         /* ── 검색 결과 (전 제공기관·분류) ── */
@@ -193,12 +192,14 @@ export function ServicesView({
             </p>
           </a>
 
-          {/* 제공기관 카드 */}
+          {/* 제공기관 카드 — 아코디언(aria-expanded), 펼친 기관의 패키지 패널을 제어 */}
           <div className="mb-5 flex flex-col gap-2">
             {providers.map((prov) => (
               <button
                 key={prov.id}
                 type="button"
+                aria-expanded={expandedProvider === prov.id}
+                aria-controls={expandedProvider === prov.id ? 'provider-packages-panel' : undefined}
                 onClick={() => setExpandedProvider(expandedProvider === prov.id ? null : prov.id)}
                 className={`flex items-center justify-between rounded-xl border p-3 text-left transition-colors ${
                   expandedProvider === prov.id ? 'border-primary bg-primary/5' : 'border-border-light hover:border-primary/30'
@@ -215,28 +216,27 @@ export function ServicesView({
                     )}
                   </p>
                 </div>
-                <span className="text-xs text-text-subtle">{expandedProvider === prov.id ? '▼' : '▶'}</span>
+                <span aria-hidden="true" className="text-xs text-text-subtle">{expandedProvider === prov.id ? '▼' : '▶'}</span>
               </button>
             ))}
           </div>
 
           {/* 카테고리 탭 + 패키지 목록 */}
           {expandedProvider && (
-            <>
-              <div className="mb-5 flex gap-1 rounded-lg bg-surface p-1">
-                {CATEGORY_TABS.map((tab) => (
-                  <button
-                    key={tab.key}
-                    type="button"
-                    onClick={() => setActiveCategory(tab.key)}
-                    className={`flex-1 rounded-md px-3 py-2 text-sm font-medium transition-colors ${
-                      activeCategory === tab.key ? 'bg-primary text-white' : 'text-text-muted hover:text-text'
-                    }`}
-                  >
-                    {tab.label}
-                  </button>
-                ))}
-              </div>
+            <div id="provider-packages-panel">
+              <FilterRadioGroup
+                options={CATEGORY_TABS.map((tab) => ({ value: tab.key, label: tab.label }))}
+                value={activeCategory}
+                onChange={setActiveCategory}
+                label="서비스 분류 필터"
+                selectOnArrow
+                className="mb-5 flex gap-1 rounded-lg bg-surface p-1"
+                optionClassName={(selected) =>
+                  `flex-1 rounded-md px-3 py-2 text-sm font-medium transition-colors ${
+                    selected ? 'bg-primary text-white' : 'text-text-muted hover:text-text'
+                  }`
+                }
+              />
 
               <div className="flex flex-col gap-4">
                 {filtered.length === 0 ? (
@@ -245,7 +245,7 @@ export function ServicesView({
                   filtered.map((pkg) => <PackageCard key={pkg.slug} pkg={pkg} />)
                 )}
               </div>
-            </>
+            </div>
           )}
         </>
       )}

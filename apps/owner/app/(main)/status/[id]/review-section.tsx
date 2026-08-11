@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { submitReview } from '@/lib/deal/actions'
 import { SubmitButton } from '@jisane/ui/submit-button'
+import { FilterRadioGroup } from '@jisane/ui/filter-radio-group'
 
 interface ReviewSectionProps {
   dealId: string
@@ -59,23 +60,25 @@ export function ReviewSection({ dealId, existingReview }: ReviewSectionProps) {
       <h3 className="mb-2 text-sm font-semibold text-text">작업은 어떠셨나요?</h3>
       <p className="mb-3 text-xs text-text-muted">시니어지식인의 작업에 대해 평가해주세요.</p>
 
-      {/* 별점 */}
-      <div className="mb-3 flex items-center gap-1" role="radiogroup" aria-label="작업 평점">
-        {[1, 2, 3, 4, 5].map((star) => (
-          <button
-            key={star}
-            type="button"
-            role="radio"
-            aria-checked={rating === star}
-            aria-label={`${star}점`}
-            onClick={() => setRating(star)}
-            className={`text-2xl transition-colors ${
-              star <= rating ? 'text-warning' : 'text-border hover:text-warning/50'
-            }`}
-          >
-            ★
-          </button>
-        ))}
+      {/* 별점 — APG radio 패턴(화살표 이동·선택)은 FilterRadioGroup이 담당 (감사 docs/10 P3-67) */}
+      <div className="mb-3 flex items-center gap-1">
+        <FilterRadioGroup
+          options={['1', '2', '3', '4', '5'].map((star) => ({
+            value: star,
+            label: '★',
+            ariaLabel: `${star}점`,
+          }))}
+          value={rating > 0 ? String(rating) : null}
+          onChange={(v) => setRating(Number(v))}
+          label="작업 평점"
+          selectOnArrow
+          className="flex items-center gap-1"
+          optionClassName={(_selected, star) =>
+            `text-2xl transition-colors ${
+              Number(star) <= rating ? 'text-warning' : 'text-border hover:text-warning/50'
+            }`
+          }
+        />
         {rating > 0 && (
           <span className="ml-2 text-sm text-text-muted">{rating}점</span>
         )}

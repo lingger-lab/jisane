@@ -1,14 +1,13 @@
 'use client'
 
 import { useState } from 'react'
+import { FilterRadioGroup } from '@jisane/ui/filter-radio-group'
 import type { DisputeItem } from '@jisane/shared/query-types'
 import { DISPUTE_STATUS_LABELS, DISPUTE_TARGET_LABELS, DISPUTE_RAISED_BY_LABELS } from '@jisane/shared/labels'
+import { DISPUTE_STATUS_BADGE_CLASSES } from '@jisane/shared/status-badges'
 import { resolveDispute } from '@/lib/admin/actions'
 
-const STATUS_COLORS: Record<string, string> = {
-  open: 'bg-error-light text-error',
-  resolved: 'bg-success-light text-success',
-}
+const STATUS_COLORS: Record<string, string> = DISPUTE_STATUS_BADGE_CLASSES
 
 interface DisputeTabProps {
   disputes: DisputeItem[]
@@ -22,20 +21,22 @@ export function DisputeTab({ disputes }: DisputeTabProps) {
   return (
     <div>
       {/* 필터 */}
-      <div className="mb-4 flex gap-2">
-        {(['all', 'open', 'resolved'] as const).map((f) => (
-          <button
-            key={f}
-            type="button"
-            onClick={() => setFilter(f)}
-            className={`rounded-full px-3 py-1 text-xs font-medium transition-colors ${
-              filter === f ? 'bg-accent text-white' : 'bg-surface text-text-muted hover:text-text'
-            }`}
-          >
-            {f === 'all' ? '전체' : f === 'open' ? '처리 중' : '해결'}
-          </button>
-        ))}
-      </div>
+      <FilterRadioGroup
+        options={(['all', 'open', 'resolved'] as const).map((f) => ({
+          value: f,
+          label: f === 'all' ? '전체' : f === 'open' ? '처리 중' : '해결',
+        }))}
+        value={filter}
+        onChange={setFilter}
+        label="이의제기 상태 필터"
+        selectOnArrow
+        className="mb-4 flex gap-2"
+        optionClassName={(selected) =>
+          `rounded-full px-3 py-1 text-xs font-medium transition-colors ${
+            selected ? 'bg-accent text-white' : 'bg-surface text-text-muted hover:text-text'
+          }`
+        }
+      />
 
       {filtered.length === 0 ? (
         <p className="py-8 text-center text-sm text-text-muted">이의제기가 없습니다.</p>
