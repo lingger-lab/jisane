@@ -19,13 +19,20 @@ export async function approveDealOp(dealId: string): Promise<{ error?: string; r
     return { error: '승인할 수 없는 상태입니다.' }
   }
 
-  const { error } = await adminClient
+  // CAS: SELECT 이후 상태가 바뀐 경쟁 전이(취소·중복 제출)를 덮어쓰지 않도록
+  // quoted일 때만 갱신하고, 0행이면 실패로 처리한다(감사 docs/11 P2-58)
+  const { data: updated, error } = await adminClient
     .from('deal')
     .update({ status: 'working' })
     .eq('id', dealId)
+    .eq('status', 'quoted')
+    .select('id')
 
   if (error) {
     return { error: '견적 승인에 실패했습니다.' }
+  }
+  if (!updated || updated.length === 0) {
+    return { error: '승인할 수 없는 상태입니다.' }
   }
 
   return { requestId }
@@ -61,13 +68,19 @@ export async function confirmDealOp(dealId: string): Promise<{ error?: string; r
     return { error: '입금 확인 전에는 검수를 완료할 수 없습니다. 입금이 확인되면 다시 시도해주세요.' }
   }
 
-  const { error: dealError } = await adminClient
+  // CAS: working일 때만 done으로 — 경쟁 전이(취소·분쟁)를 lost-update로 덮지 않는다(P2-58)
+  const { data: dealUpdated, error: dealError } = await adminClient
     .from('deal')
     .update({ status: 'done' })
     .eq('id', dealId)
+    .eq('status', 'working')
+    .select('id')
 
   if (dealError) {
     return { error: '검수 확인에 실패했습니다.' }
+  }
+  if (!dealUpdated || dealUpdated.length === 0) {
+    return { error: '검수할 수 없는 상태입니다.' }
   }
 
   const { error: settlementErr } = await adminClient

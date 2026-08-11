@@ -34,7 +34,8 @@ export async function POST(
   const body = await request.json()
   const { amount, reason } = body
 
-  if (!amount || amount <= 0) {
+  // 금액은 양의 정수만 — float는 Toss KRW 취소에서 거부되고, 문자열은 하류에서 문자열 연결로 오염된다
+  if (!Number.isSafeInteger(amount) || amount <= 0) {
     return NextResponse.json({ error: 'Invalid refund amount' }, { status: 400 })
   }
 
@@ -73,17 +74,27 @@ export async function POST(
     )
   }
 
-  // Toss 결제 취소 (payment_key가 있는 경우)
+  // payment_key 없이 refunded 기록 금지 — 실제 Toss 취소 없이 DB만 '환불됨'이 되는
+  // 가짜 성공을 차단한다(감사 docs/11 P3-84). PSP 밖 수동 환불은 별도 정산 경로로 처리.
+  if (!settlement.payment_key) {
+    console.error(
+      `[refund] settlement ${settlementId}: payment_key 없음 — Toss 취소 불가로 환불 거부 (수동 확인 필요)`
+    )
+    return NextResponse.json(
+      { error: '결제 키가 없어 PSP 취소를 실행할 수 없습니다. 수동 환불 확인이 필요합니다.' },
+      { status: 409 }
+    )
+  }
+
+  // Toss 결제 취소
   // 멱등키: 같은 settlement의 같은 누적환불액 요청이 재시도되어도 이중 취소되지 않음
-  if (settlement.payment_key) {
-    const idempotencyKey = `refund_${settlementId}_${newRefundedAmt}`
-    const cancelResult = await cancelPayment(settlement.payment_key, reason, amount, idempotencyKey)
-    if (!cancelResult.success) {
-      return NextResponse.json(
-        { error: `Payment cancel failed: ${cancelResult.error}` },
-        { status: 500 }
-      )
-    }
+  const idempotencyKey = `refund_${settlementId}_${newRefundedAmt}`
+  const cancelResult = await cancelPayment(settlement.payment_key, reason, amount, idempotencyKey)
+  if (!cancelResult.success) {
+    return NextResponse.json(
+      { error: `Payment cancel failed: ${cancelResult.error}` },
+      { status: 500 }
+    )
   }
   // 부분 환불은 기존 상태 유지 — 전액 환불됐을 때만 refunded로 전환
   const isFullyRefunded = newRefundedAmt >= totalPay

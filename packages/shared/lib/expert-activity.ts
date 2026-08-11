@@ -24,15 +24,23 @@ export function getDefaultPoints(type: string): number {
 /**
  * 전문가의 activity_points를 재계산하여 expert 테이블에 반영
  * SUM(points WHERE expires_at IS NULL OR expires_at > NOW()), 상한 2.0
+ *
+ * 실패 시 { error }를 반환하고 expert 행은 건드리지 않는다 — 실패한 read의
+ * 합산(0)으로 실제 포인트를 덮어쓰는 것을 금지(감사 docs/11 P2-11).
  */
 export async function recalcActivityPoints(
   adminClient: { from: (table: string) => any },
   expertId: string
-): Promise<number> {
-  const { data: activities } = await adminClient
+): Promise<{ points: number } | { error: string }> {
+  const { data: activities, error: selectError } = await adminClient
     .from('expert_activity')
     .select('points, expires_at')
     .eq('expert_id', expertId)
+
+  if (selectError) {
+    console.error(`[expert-activity] recalc select failed for expert ${expertId}:`, selectError.message)
+    return { error: '활동 조회에 실패해 포인트를 재계산하지 못했습니다.' }
+  }
 
   const now = new Date()
   const activePoints = (activities ?? [])
@@ -42,12 +50,17 @@ export async function recalcActivityPoints(
   const capped = Math.min(activePoints, MAX_ACTIVITY_POINTS)
   const rounded = Math.round(capped * 10) / 10
 
-  await adminClient
+  const { error: updateError } = await adminClient
     .from('expert')
     .update({ activity_points: rounded })
     .eq('id', expertId)
 
-  return rounded
+  if (updateError) {
+    console.error(`[expert-activity] recalc update failed for expert ${expertId}:`, updateError.message)
+    return { error: '포인트 반영에 실패했습니다.' }
+  }
+
+  return { points: rounded }
 }
 
 /**

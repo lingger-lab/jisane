@@ -53,7 +53,17 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: insertErr.message }, { status: 500 })
   }
 
-  const updatedPoints = await recalcActivityPoints(adminClient, expert_id)
+  const recalc = await recalcActivityPoints(adminClient, expert_id)
 
-  return NextResponse.json({ ok: true, activity_points: updatedPoints })
+  // 활동 행은 이미 저장됨 — 재계산 실패를 500으로 돌리면 관리자가 재시도해 활동이
+  // 중복 등록되므로(멱등키 없음, P2-11), ok + warning으로 정직하게 알린다.
+  if ('error' in recalc) {
+    return NextResponse.json({
+      ok: true,
+      activity_points: null,
+      warning: `활동은 등록됐으나 포인트 재계산에 실패했습니다: ${recalc.error} 같은 활동을 다시 등록하지 마세요 — 다음 활동 등록 시 함께 재계산됩니다.`,
+    })
+  }
+
+  return NextResponse.json({ ok: true, activity_points: recalc.points })
 }
