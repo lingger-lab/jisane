@@ -1,4 +1,4 @@
-# 감사 처리 현황 (Remediation Log) 2026-08-10
+﻿# 감사 처리 현황 (Remediation Log) 2026-08-10
 
 > docs/10(UX)·docs/11(코드) 감사의 **처리 기록**. 감사 스냅샷 원문은 진단 기록으로 보존하고,
 > 여기서 무엇을 고쳤는지·무엇을 왜 미뤘는지·감사 자체의 오류를 추적한다.
@@ -64,9 +64,15 @@
 | C | P3-13/20/21/57 (+workflow route) | unguarded `request.json()` → try/catch 400 | `0008460` |
 | C(부분) | P2-9/10/43/44/28, P3-65/75 | 삼켜 가짜 빈 결과로 렌더되던 쿼리 error → destructure+console.error(사용자 에러 UI 이연) | `0008460` |
 | C | P3-19 | admin reviews rating Number.isInteger 경계검증 | `0008460` |
+| B 금전정합 | P3-84 + 코드 P3-85 | refund: payment_key null이면 **409 거부**(Toss 취소 없는 가짜 refunded 차단) + 금액 `Number.isSafeInteger` 경계검증. red-green 라우트 테스트 | `c54a938` |
+| B | P2-58 | approveDealOp/confirmDealOp UPDATE에 기대상태 CAS(`.eq('status',…)`) + 0행=실패. red-green 테스트 | `c54a938` |
+| B | P2-8 (+P2-9 코드측) | matching insert 에러검사 + request 전이 CAS(open일 때만) + 실패 시 matching **보상 삭제**(고아 행 방지). UNIQUE 백스톱은 마이그 대기 | `c54a938` |
+| B(부분) | P2-11 | recalcActivityPoints: select/update 에러 시 `{error}` 반환·**미기록**(실패 read 합산 0으로 덮어쓰기 금지), 라우트는 ok+warning(재시도=중복 유도 방지). insert+recalc 원자성·멱등키는 마이그/RPC 잔여 | `c54a938` |
+| §2 (부분) | P3-34·72 | 콜백: email 없는 OAuth 계정 insert 전 가드 → 구분된 `error=email_required`+로그(매 로그인 opaque 실패 반복 제거). **완전 해소는 결정 필요**: Kakao 이메일 동의 필수화(콘솔 설정) 또는 email nullable 마이그 | `48bb494` |
 
 > 실행 방식: 정직 스윕은 **앱별 분리 병렬 에이전트 3개**(파일 무겹침)로 처리하고 독립 검증(tsc·eslint·
-> 테스트) 후 커밋. 마이그·토큰은 의사환경 정책동작·대비비 계산으로 검증.
+> 테스트) 후 커밋. 마이그·토큰은 의사환경 정책동작·대비비 계산으로 검증. Batch B 코드전용분은
+> red-green(가드 stash→10 fail→복원→48 pass)·tsc 0(3앱)·eslint 0으로 검증.
 
 ## 2. 감사 자체의 오류 (점검으로 발견)
 
