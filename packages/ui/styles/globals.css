@@ -1,5 +1,7 @@
 @import "tailwindcss";
 @source "../components/**/*.tsx";
+/* 상태 배지 클래스는 shared 모듈에 정의된다(UX P2-46) — 앱 소스 밖이므로 명시 스캔 필요 */
+@source "../../shared/lib/status-badges.ts";
 
 :root {
   /* 색상 — 딥그린 기반 팔레트 + 앰버 포인트 */

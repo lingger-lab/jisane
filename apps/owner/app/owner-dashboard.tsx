@@ -1,19 +1,16 @@
 import Link from 'next/link'
 import { adminClient } from '@jisane/shared/supabase/admin'
 import { REQUEST_STATUS_LABELS, DEAL_STATUS_LABELS } from '@jisane/shared/labels'
+import { REQUEST_STATUS_BADGE_CLASSES, DEAL_STATUS_BADGE_CLASSES } from '@jisane/shared/status-badges'
 import { fetchOwnerLandingStats } from '@jisane/shared/landing-stats'
 import { CategoryBrowse } from '@jisane/ui/category-browse'
 import { SearchBox } from '@jisane/ui/search-box'
 import { ExpertCard, type ExpertCardData } from './(browse)/experts/expert-card'
 
+/** request + deal 상태를 한 배지 맵으로 사용 — 값은 shared 단일 소스(UX P2-46) */
 const STATUS_COLORS: Record<string, string> = {
-  open: 'bg-info-light text-info',
-  matching: 'bg-warning-light text-warning',
-  dealt: 'bg-success-light text-success',
-  closed: 'bg-surface text-text-subtle',
-  quoted: 'bg-info-light text-info',
-  working: 'bg-warning-light text-warning',
-  done: 'bg-success-light text-success',
+  ...REQUEST_STATUS_BADGE_CLASSES,
+  ...DEAL_STATUS_BADGE_CLASSES,
 }
 
 /**

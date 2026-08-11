@@ -4,17 +4,7 @@ import { useActionState, useState } from 'react'
 import { createRequest } from '@/lib/request/actions'
 import { SubmitButton } from '@jisane/ui/submit-button'
 import { MoneyInput } from '@jisane/ui/money-input'
-
-/** 대분류 → 중분류 구조 (req_type 선택용) */
-const CATEGORY_TREE = [
-  { label: '경영·창업', children: ['창업코칭', '사업계획서', '정부자금·보조금', '경영진단'] },
-  { label: 'AI·디지털전환', children: ['AI진단', 'AEO최적화', '업무자동화', '데이터분석'] },
-  { label: '문서·행정', children: ['제안서·기획서', '보고서', '매뉴얼·가이드', '번역·통역'] },
-  { label: '생산·품질', children: ['품질관리', '생산관리', 'ISO·인증', '안전관리'] },
-  { label: '연구개발', children: ['R&D 기획', '기술개발', '특허·지식재산', '기술이전·사업화'] },
-  { label: '전문서비스', children: ['세무·회계', '법무', '노무', '마케팅'] },
-  { label: '크리에이티브', children: ['디자인', '웹개발', '영상제작', '콘텐츠제작'] },
-] as const
+import { CATEGORY_TREE } from '@jisane/shared/categories'
 
 export function RequestForm() {
   const [state, formAction] = useActionState(createRequest, {})

@@ -3,13 +3,10 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { PACKAGE_STATUS_LABELS } from '@jisane/shared/labels'
+import { PACKAGE_STATUS_BADGE_CLASSES } from '@jisane/shared/status-badges'
 import { ArchiveButton } from './archive-button'
 
-const STATUS_BADGE: Record<string, string> = {
-  draft: 'bg-warning-light text-warning',
-  published: 'bg-success-light text-success',
-  archived: 'bg-surface text-text-subtle',
-}
+const STATUS_BADGE = PACKAGE_STATUS_BADGE_CLASSES
 
 export interface ServiceItem {
   id: string

@@ -4,6 +4,7 @@ import { createClient } from '@jisane/shared/supabase/server'
 import { fetchHubLandingStats } from '@jisane/shared/landing-stats'
 import { SplashOverlay } from '@/components/splash-overlay'
 import { OwlIcon } from '@jisane/ui/icons/owl'
+import { OWNER_URL, EXPERT_URL } from '@/lib/urls'
 
 export default async function AdminHome() {
   const cookieStore = await cookies()
@@ -12,8 +13,8 @@ export default async function AdminHome() {
 
   const isAdmin = user && (process.env.ADMIN_EMAILS || '').split(',').map(e => e.trim().toLowerCase()).includes((user.email || '').toLowerCase())
 
-  const expertUrl = process.env.NEXT_PUBLIC_EXPERT_URL || 'https://expert.jisane.cloud'
-  const ownerUrl = process.env.NEXT_PUBLIC_OWNER_URL || 'https://owner.jisane.cloud'
+  const expertUrl = EXPERT_URL
+  const ownerUrl = OWNER_URL
 
   const stats = await fetchHubLandingStats()
 

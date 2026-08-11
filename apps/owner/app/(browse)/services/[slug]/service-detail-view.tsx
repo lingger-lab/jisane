@@ -6,11 +6,12 @@ import type { ServicePackage } from '@jisane/shared/service-catalog'
 import { SubmitButton } from '@jisane/ui/submit-button'
 import { PageHero } from '@jisane/ui/page-hero'
 import { createServiceOrder } from '@/lib/services/actions'
+import { ADMIN_URL } from '@/lib/urls'
 
 export function ServiceDetailView({ pkg }: { pkg: ServicePackage }) {
   const [state, formAction] = useActionState(createServiceOrder, {})
 
-  const axDashboardBase = process.env.NEXT_PUBLIC_ADMIN_URL || 'https://jisane.cloud'
+  const axDashboardBase = ADMIN_URL
 
   return (
     <div className="flex flex-1 flex-col animate-fade-in">

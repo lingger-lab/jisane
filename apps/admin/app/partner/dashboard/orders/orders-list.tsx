@@ -2,14 +2,13 @@
 
 import { useState } from 'react'
 import { ORDER_STATUS_LABELS } from '@jisane/shared/labels'
+import { ORDER_STATUS_BADGE_CLASSES } from '@jisane/shared/status-badges'
 import { CompleteOrderButton } from './complete-order-button'
 
 const STATUS_BADGE: Record<string, string> = {
-  pending: 'bg-info-light text-info',
-  paid: 'bg-warning-light text-warning',
-  processing: 'bg-success-light text-success',
+  ...ORDER_STATUS_BADGE_CLASSES,
+  // 이 화면만 completed에 text-text-muted를 써 온 기존 표시를 보존한다(의도 드리프트 — 색 변경 금지 원칙).
   completed: 'bg-surface text-text-muted',
-  cancelled: 'bg-error-light text-error',
 }
 
 export interface OrderItem {

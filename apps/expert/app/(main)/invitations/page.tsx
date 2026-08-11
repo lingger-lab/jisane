@@ -4,14 +4,9 @@ import Link from 'next/link'
 import { createClient } from '@jisane/shared/supabase/server'
 import { adminClient } from '@jisane/shared/supabase/admin'
 import { INVITATION_STATUS_LABELS } from '@jisane/shared/labels'
+import { INVITATION_STATUS_BADGE_CLASSES } from '@jisane/shared/status-badges'
 import type { InvitationWithOwner } from '@jisane/shared/query-types'
 import { PageHero } from '@jisane/ui/page-hero'
-
-const STATUS_COLORS: Record<string, string> = {
-  invited: 'bg-info-light text-info',
-  accepted: 'bg-success-light text-success',
-  declined: 'bg-error-light text-error',
-}
 
 export const metadata = {
   title: '초빙 현황 - 지사네 시니어지식인',
@@ -76,7 +71,7 @@ export default async function InvitationsPage() {
                       {inv.owner.completed_deals > 0 && ` · 거래 ${inv.owner.completed_deals}건`}
                     </p>
                   </div>
-                  <span className={`shrink-0 rounded-full px-2.5 py-1 text-xs font-medium ${STATUS_COLORS[inv.status] ?? 'bg-surface text-text-subtle'}`}>
+                  <span className={`shrink-0 rounded-full px-2.5 py-1 text-xs font-medium ${INVITATION_STATUS_BADGE_CLASSES[inv.status] ?? 'bg-surface text-text-subtle'}`}>
                     {INVITATION_STATUS_LABELS[inv.status] ?? inv.status}
                   </span>
                 </div>

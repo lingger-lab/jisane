@@ -7,6 +7,7 @@ import { createClient } from "@jisane/shared/supabase/server";
 import { signInWithGoogle, signInWithKakao, signOut } from "@jisane/shared/auth/actions";
 import { AppHeader } from "@jisane/ui/app-header";
 import { ExpertNav } from "@/components/expert-nav";
+import { ADMIN_URL } from "@/lib/urls";
 import Script from "next/script";
 
 
@@ -64,7 +65,7 @@ export default async function RootLayout({
         <AppHeader
           appName="지사네"
           hubUrl="/"
-          joinUrl={`${process.env.NEXT_PUBLIC_ADMIN_URL || 'https://jisane.cloud'}/join`}
+          joinUrl={`${ADMIN_URL}/join`}
           userEmail={user?.email}
           signOutAction={signOut}
           signInWithKakao={signInWithKakao}

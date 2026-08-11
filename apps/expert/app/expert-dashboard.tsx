@@ -3,21 +3,20 @@ import { adminClient } from '@jisane/shared/supabase/admin'
 import { SearchBox } from '@jisane/ui/search-box'
 import type { MatchingStatus, ServiceOrderRow } from '@jisane/shared/types'
 import { MATCHING_STATUS_LABELS, ORDER_STATUS_LABELS } from '@jisane/shared/labels'
+import {
+  MATCHING_STATUS_BADGE_CLASSES,
+  ORDER_STATUS_BADGE_CLASSES,
+} from '@jisane/shared/status-badges'
 import { OpportunitySection } from './(main)/matching/opportunity-section'
 
 const STATUS_COLORS: Record<MatchingStatus, string> = {
-  proposed: 'bg-info-light text-info',
-  accepted: 'bg-success-light text-success',
+  proposed: MATCHING_STATUS_BADGE_CLASSES.proposed,
+  accepted: MATCHING_STATUS_BADGE_CLASSES.accepted,
+  // 이 화면은 rejected를 에러색이 아닌 중립색으로 표시해 왔다 — 표시 보존 오버라이드
   rejected: 'bg-surface text-text-subtle',
 }
 
-const ORDER_STATUS_COLORS: Record<string, string> = {
-  pending: 'bg-info-light text-info',
-  paid: 'bg-warning-light text-warning',
-  processing: 'bg-success-light text-success',
-  completed: 'bg-surface text-text-subtle',
-  cancelled: 'bg-error-light text-error',
-}
+const ORDER_STATUS_COLORS: Record<string, string> = ORDER_STATUS_BADGE_CLASSES
 
 const ORDER_STRIPE: Record<string, string> = {
   pending: 'border-l-info',
@@ -50,12 +49,15 @@ export async function ExpertDashboard({
       .from('matching')
       .select('id, status, created_at, request:request!inner(id, title, req_type, budget_hope)')
       .eq('expert_id', expertId)
-      .order('created_at', { ascending: false }),
+      .order('created_at', { ascending: false })
+      // 명시 상한 — 오래 활동한 계정은 전체 이력이 무한 성장한다(감사 docs/11 P3-60).
+      .limit(50),
     adminClient
       .from('service_order')
       .select('*')
       .eq('expert_id', expertId)
-      .order('created_at', { ascending: false }),
+      .order('created_at', { ascending: false })
+      .limit(50),
     adminClient
       .from('request')
       .select('id, title, req_type, budget_hope, detail, created_at')

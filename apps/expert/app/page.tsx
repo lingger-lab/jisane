@@ -8,6 +8,7 @@ import { ExpertDashboard } from './expert-dashboard'
 import { GoogleIcon } from '@jisane/ui/icons/google'
 import { KakaoIcon } from '@jisane/ui/icons/kakao'
 import { fetchExpertLandingStats } from '@jisane/shared/landing-stats'
+import { ADMIN_URL, OWNER_URL } from '@/lib/urls'
 import { getPackagesByAudience } from '@jisane/shared/service-package/queries'
 import { CategoryBrowse } from '@jisane/ui/category-browse'
 import { CollapsibleSection } from '@jisane/ui/collapsible-section'
@@ -37,8 +38,8 @@ export default async function ExpertHome() {
 
   const stats = await fetchExpertLandingStats()
   const education = await getPackagesByAudience('expert')
-  const adminUrl = process.env.NEXT_PUBLIC_ADMIN_URL || 'https://jisane.cloud'
-  const ownerUrl = process.env.NEXT_PUBLIC_OWNER_URL || 'https://owner.jisane.cloud'
+  const adminUrl = ADMIN_URL
+  const ownerUrl = OWNER_URL
 
   // 핵심 수치 (완료거래 0이면 3칸)
   const metrics: { end: number; suffix: string; label: string }[] = [

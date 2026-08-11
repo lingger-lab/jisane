@@ -5,28 +5,14 @@ import { createClient } from '@jisane/shared/supabase/server'
 import { adminClient } from '@jisane/shared/supabase/admin'
 import type { RequestRow, ServiceOrderRow } from '@jisane/shared/types'
 import { REQUEST_STATUS_LABELS, ORDER_STATUS_LABELS } from '@jisane/shared/labels'
+import { REQUEST_STATUS_BADGE_CLASSES, ORDER_STATUS_BADGE_CLASSES } from '@jisane/shared/status-badges'
 import { PageHero } from '@jisane/ui/page-hero'
-
-const STATUS_COLORS: Record<string, string> = {
-  open: 'bg-info-light text-info',
-  matching: 'bg-warning-light text-warning',
-  dealt: 'bg-success-light text-success',
-  closed: 'bg-surface text-text-subtle',
-}
 
 const STRIPE_COLORS: Record<string, string> = {
   open: 'border-l-info',
   matching: 'border-l-warning',
   dealt: 'border-l-success',
   closed: 'border-l-border',
-}
-
-const ORDER_STATUS_COLORS: Record<string, string> = {
-  pending: 'bg-info-light text-info',
-  paid: 'bg-warning-light text-warning',
-  processing: 'bg-success-light text-success',
-  completed: 'bg-surface text-text-subtle',
-  cancelled: 'bg-error-light text-error',
 }
 
 const ORDER_STRIPE: Record<string, string> = {
@@ -138,7 +124,7 @@ export default async function StatusPage() {
                   </div>
                   <span
                     className={`shrink-0 rounded-full px-2.5 py-0.5 text-xs font-medium ${
-                      STATUS_COLORS[req.status] || 'bg-surface text-text-subtle'
+                      REQUEST_STATUS_BADGE_CLASSES[req.status] || 'bg-surface text-text-subtle'
                     }`}
                   >
                     {REQUEST_STATUS_LABELS[req.status] || req.status}
@@ -179,7 +165,7 @@ export default async function StatusPage() {
                   </div>
                   <span
                     className={`shrink-0 rounded-full px-2.5 py-0.5 text-xs font-medium ${
-                      ORDER_STATUS_COLORS[order.status] || 'bg-surface text-text-subtle'
+                      ORDER_STATUS_BADGE_CLASSES[order.status] || 'bg-surface text-text-subtle'
                     }`}
                   >
                     {ORDER_STATUS_LABELS[order.status] || order.status}

@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import { PageHero } from '@jisane/ui/page-hero'
+import { OWNER_URL } from '@/lib/urls'
 
 export const metadata = {
   title: 'AX 전환 | 지사네',
@@ -44,7 +45,7 @@ const LADDER = [
 ] as const
 
 export default function AXPage() {
-  const ownerUrl = process.env.NEXT_PUBLIC_OWNER_URL || 'https://owner.jisane.cloud'
+  const ownerUrl = OWNER_URL
 
   return (
     <div className="flex flex-1 flex-col">

@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { updateProviderStatus, updatePackageStatus } from '@/lib/admin/actions'
 import { PROVIDER_KIND_LABELS } from '@jisane/shared/labels'
+import { PROVIDER_STATUS_BADGE_CLASSES } from '@jisane/shared/status-badges'
 
 export interface ProviderItem {
   id: string
@@ -31,10 +32,10 @@ export interface DraftPackageItem {
 }
 
 const PROVIDER_STATUS_BADGE: Record<string, { label: string; color: string }> = {
-  pending: { label: '승인 대기', color: 'bg-warning-light text-warning' },
-  active: { label: '활동 중', color: 'bg-success-light text-success' },
-  rejected: { label: '반려', color: 'bg-error-light text-error' },
-  suspended: { label: '중지', color: 'bg-surface text-text-subtle' },
+  pending: { label: '승인 대기', color: PROVIDER_STATUS_BADGE_CLASSES.pending },
+  active: { label: '활동 중', color: PROVIDER_STATUS_BADGE_CLASSES.active },
+  rejected: { label: '반려', color: PROVIDER_STATUS_BADGE_CLASSES.rejected },
+  suspended: { label: '중지', color: PROVIDER_STATUS_BADGE_CLASSES.suspended },
 }
 
 const KIND_LABELS = PROVIDER_KIND_LABELS

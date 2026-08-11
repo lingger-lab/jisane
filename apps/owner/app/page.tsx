@@ -13,6 +13,7 @@ import { CollapsibleSection } from '@jisane/ui/collapsible-section'
 import { AnimatedCounter } from '@jisane/ui/animated-counter'
 import { OwlIcon } from '@jisane/ui/icons/owl'
 import { ScrollReveal } from '@jisane/ui/scroll-reveal'
+import { ADMIN_URL, EXPERT_URL } from '@/lib/urls'
 
 export default async function OwnerHome() {
   const cookieStore = await cookies()
@@ -33,8 +34,8 @@ export default async function OwnerHome() {
 
   const stats = await fetchOwnerLandingStats()
   const services = await getPackagesByAudience('owner')
-  const adminUrl = process.env.NEXT_PUBLIC_ADMIN_URL || 'https://jisane.cloud'
-  const expertUrl = process.env.NEXT_PUBLIC_EXPERT_URL || 'https://expert.jisane.cloud'
+  const adminUrl = ADMIN_URL
+  const expertUrl = EXPERT_URL
 
   // 핵심 수치 (만족도 없으면 3칸)
   const metrics: { end: number; suffix: string; label: string }[] = [

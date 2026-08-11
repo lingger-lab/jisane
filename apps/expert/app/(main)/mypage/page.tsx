@@ -5,29 +5,13 @@ import { createClient } from '@jisane/shared/supabase/server'
 import { adminClient } from '@jisane/shared/supabase/admin'
 import { signOut } from '@jisane/shared/auth/actions'
 import { DEAL_STATUS_LABELS, ORDER_STATUS_LABELS, MATCHING_STATUS_LABELS, ACTIVITY_TYPE_LABELS } from '@jisane/shared/labels'
+import {
+  DEAL_STATUS_BADGE_CLASSES,
+  ORDER_STATUS_BADGE_CLASSES,
+  MATCHING_STATUS_BADGE_CLASSES,
+} from '@jisane/shared/status-badges'
 import { PageHero } from '@jisane/ui/page-hero'
 import { ProfileEditor } from '@/components/profile-editor'
-
-const DEAL_STATUS_COLORS: Record<string, string> = {
-  quoted: 'bg-info-light text-info',
-  working: 'bg-warning-light text-warning',
-  done: 'bg-success-light text-success',
-  cancelled: 'bg-error-light text-error',
-}
-
-const ORDER_STATUS_COLORS: Record<string, string> = {
-  pending: 'bg-info-light text-info',
-  paid: 'bg-warning-light text-warning',
-  processing: 'bg-success-light text-success',
-  completed: 'bg-surface text-text-subtle',
-  cancelled: 'bg-error-light text-error',
-}
-
-const MATCHING_STATUS_COLORS: Record<string, string> = {
-  proposed: 'bg-info-light text-info',
-  accepted: 'bg-success-light text-success',
-  rejected: 'bg-error-light text-error',
-}
 
 export default async function MyPage() {
   const cookieStore = await cookies()
@@ -250,7 +234,7 @@ export default async function MyPage() {
                       {deal.work_fee != null && ` · ${deal.work_fee.toLocaleString('ko-KR')}원`}
                     </p>
                   </div>
-                  <span className={`shrink-0 rounded-full px-2 py-0.5 text-xs font-medium ${DEAL_STATUS_COLORS[deal.status] || 'bg-surface text-text-subtle'}`}>
+                  <span className={`shrink-0 rounded-full px-2 py-0.5 text-xs font-medium ${DEAL_STATUS_BADGE_CLASSES[deal.status] || 'bg-surface text-text-subtle'}`}>
                     {DEAL_STATUS_LABELS[deal.status] || deal.status}
                   </span>
                 </Link>
@@ -285,7 +269,7 @@ export default async function MyPage() {
                         {order.price === 0 ? '무료' : `${order.price.toLocaleString('ko-KR')}원`}
                       </p>
                     </div>
-                    <span className={`shrink-0 rounded-full px-2 py-0.5 text-xs font-medium ${ORDER_STATUS_COLORS[order.status] || 'bg-surface text-text-subtle'}`}>
+                    <span className={`shrink-0 rounded-full px-2 py-0.5 text-xs font-medium ${ORDER_STATUS_BADGE_CLASSES[order.status] || 'bg-surface text-text-subtle'}`}>
                       {ORDER_STATUS_LABELS[order.status] || order.status}
                     </span>
                   </div>
@@ -324,7 +308,7 @@ export default async function MyPage() {
                       {m.request?.req_type && ` · ${m.request.req_type}`}
                     </p>
                   </div>
-                  <span className={`shrink-0 rounded-full px-2 py-0.5 text-xs font-medium ${MATCHING_STATUS_COLORS[m.status] || 'bg-surface text-text-subtle'}`}>
+                  <span className={`shrink-0 rounded-full px-2 py-0.5 text-xs font-medium ${MATCHING_STATUS_BADGE_CLASSES[m.status] || 'bg-surface text-text-subtle'}`}>
                     {MATCHING_STATUS_LABELS[m.status] || m.status}
                   </span>
                 </Link>

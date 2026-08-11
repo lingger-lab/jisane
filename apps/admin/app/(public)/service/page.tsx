@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import { PageHero } from '@jisane/ui/page-hero'
+import { OWNER_URL, EXPERT_URL } from '@/lib/urls'
 
 export const metadata = {
   title: '서비스 안내 | 지사네',
@@ -15,8 +16,8 @@ const STEPS = [
 ] as const
 
 export default function ServicePage() {
-  const ownerUrl = process.env.NEXT_PUBLIC_OWNER_URL || 'https://owner.jisane.cloud'
-  const expertUrl = process.env.NEXT_PUBLIC_EXPERT_URL || 'https://expert.jisane.cloud'
+  const ownerUrl = OWNER_URL
+  const expertUrl = EXPERT_URL
 
   return (
     <div className="flex flex-1 flex-col">

@@ -5,13 +5,8 @@ import { createClient } from '@jisane/shared/supabase/server'
 import { adminClient } from '@jisane/shared/supabase/admin'
 import type { DealStatus } from '@jisane/shared/types'
 import { DEAL_STATUS_LABELS } from '@jisane/shared/labels'
+import { DEAL_STATUS_BADGE_CLASSES } from '@jisane/shared/status-badges'
 import { PageHero } from '@jisane/ui/page-hero'
-
-const STATUS_COLORS: Record<DealStatus, string> = {
-  quoted: 'bg-info-light text-info',
-  working: 'bg-warning-light text-warning',
-  done: 'bg-success-light text-success',
-}
 
 const STRIPE_COLORS: Record<DealStatus, string> = {
   quoted: 'border-l-info',
@@ -95,7 +90,7 @@ export default async function WorkListPage() {
                   </div>
                   <span
                     className={`shrink-0 rounded-full px-2.5 py-0.5 text-xs font-medium ${
-                      STATUS_COLORS[d.status]
+                      DEAL_STATUS_BADGE_CLASSES[d.status]
                     }`}
                   >
                     {DEAL_STATUS_LABELS[d.status]}

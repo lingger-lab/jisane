@@ -41,6 +41,24 @@ export function computeCompletionScore(
 }
 
 /**
+ * 리뷰·거래 이력에서 저장 대상 스코어 필드를 파생 — 단건/배치 재계산 경로가
+ * 공유하는 단일 소스(감사 docs/11 P3-101: 두 경로가 같은 식을 따로 들고 있던 중복 제거).
+ * - completion 분모: cancelled 제외 전체 거래, 분자: done
+ * - is_newbie: 확정 리뷰 3건 미만
+ */
+export function computeExpertScoreFields(
+  reviews: Array<{ rating: number }>,
+  deals: Array<{ status: string }>
+): { review_score: number; completion_score: number; is_newbie: boolean } {
+  const reviewScore = computeReviewScore(reviews)
+  const doneCount = deals.filter((d) => d.status === 'done').length
+  const totalCount = deals.filter((d) => d.status !== 'cancelled').length
+  const completionScore = computeCompletionScore(doneCount, totalCount)
+  const isNewbie = reviews.length < 3
+  return { review_score: reviewScore, completion_score: completionScore, is_newbie: isNewbie }
+}
+
+/**
  * Supabase adminClient로 전문가의 review_score + completion_score를 재계산하여 업데이트
  * (career_score는 프로필 등록/수정 시에만 변경)
  * total_score는 DB GENERATED column이므로 자동 반영됨
@@ -62,24 +80,17 @@ export async function recalcExpertScores(
     .select('status')
     .eq('expert_id', expertId)
 
-  const reviewScore = computeReviewScore(reviews ?? [])
-  const doneCount = (deals ?? []).filter((d: { status: string }) => d.status === 'done').length
-  const totalCount = (deals ?? []).filter(
-    (d: { status: string }) => d.status !== 'cancelled'
-  ).length
-  const completionScore = computeCompletionScore(doneCount, totalCount)
-
-  // 3. 신규자 판정 (리뷰 3건 미만 = 신규자)
-  const isNewbie = (reviews ?? []).length < 3
+  // 3. 스코어 필드 파생 (단건/배치 공용 단일 소스)
+  const fields = computeExpertScoreFields(reviews ?? [], deals ?? [])
 
   // 4. expert 테이블 업데이트
   const { error } = await adminClient
     .from('expert')
-    .update({ review_score: reviewScore, completion_score: completionScore, is_newbie: isNewbie })
+    .update(fields)
     .eq('id', expertId)
 
   if (error) return null
-  return { review_score: reviewScore, completion_score: completionScore }
+  return { review_score: fields.review_score, completion_score: fields.completion_score }
 }
 
 /**
@@ -124,15 +135,11 @@ export async function batchRecalcExpertScores(
   for (const id of expertIds) {
     const reviews = reviewsByExpert.get(id) ?? []
     const deals = dealsByExpert.get(id) ?? []
-    const reviewScore = computeReviewScore(reviews)
-    const doneCount = deals.filter((d) => d.status === 'done').length
-    const totalCount = deals.filter((d) => d.status !== 'cancelled').length
-    const completionScore = computeCompletionScore(doneCount, totalCount)
-    const isNewbie = reviews.length < 3
+    const fields = computeExpertScoreFields(reviews, deals)
 
     const { error } = await adminClient
       .from('expert')
-      .update({ review_score: reviewScore, completion_score: completionScore, is_newbie: isNewbie })
+      .update(fields)
       .eq('id', id)
 
     if (error) {
