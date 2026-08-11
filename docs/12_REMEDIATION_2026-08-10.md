@@ -89,6 +89,14 @@
 > P3-70/42/47(페이지네이션 UX 결정). 환경 메모: vitest는 소문자 드라이브 경로(Git Bash `c:/`)에서
 > runner 탐색 실패 — PowerShell(대문자 `C:/`)에서 실행할 것.
 
+라운드3 (파일 무겹침 병렬 3에이전트, 통합 게이트 vitest 134/134 · tsc 0×5 · eslint 0):
+
+| 배치 | 감사 항목 | 조치 | 커밋 |
+|---|---|---|---|
+| F 잔여 | P2-18/52, P2-6, UX P2-51, P3-40/43/118 | createProxy 세션쿠키 동기화(공식 패턴, red-green — 간헐 로그아웃 해소, 3앱 동시), useSeededState 훅으로 stale-prop 5사이트(SearchBox 입력 중 리셋 없음), interest revalidatePath 근본 보정 | `5bf4ea5` |
+| C 이연 마감 | P2-21/36/43/44, UX P2-6/9/10/28/31/34/35, P3-75 | ErrorState 공용 컴포넌트(20여 사이트) — 실패 섹션만 에러 상태, 검색 0건/조회 실패 카피 구분, PGRST116/인프라 실패 구분, 요약 카드 가짜 0→'—', admin 통계 API fail-loud 500(에러주입 red-green). **V1(랜딩 통계 가짜 0)은 디자인 결정 보류** | `d8c6a41` |
+| D4 조작성 | UX P2-17/45/49, P3-81, V4 | 스플래시 dialog+포커스트랩+Esc, 드롭다운 Esc+포커스 복귀, TextRotator pause+reduced-motion(소비처 0 데드코드 확인 — 삭제 결정 잔여), 터치 타깃 24px 22곳. 캐러셀 부재·모달 1곳뿐 판정 | `5c9fdef` |
+
 ## 2. 감사 자체의 오류 (점검으로 발견)
 
 - **코드 P1-3의 `UNIQUE(matching.request_id)` 권고는 틀림.** 한 request에 **복수 expert 제안이
