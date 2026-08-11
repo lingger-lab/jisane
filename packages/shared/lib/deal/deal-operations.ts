@@ -77,11 +77,20 @@ export async function confirmDealOp(dealId: string): Promise<{ error?: string; r
 
   if (settlementErr) {
     console.error('[confirmDeal] settlement update failed:', settlementErr.message)
-    // 보상: deal을 working으로 되돌려 deal/settlement 상태 괴리를 방지
-    await adminClient
+    // 보상: deal을 working으로 되돌려 deal/settlement 상태 괴리를 방지(done일 때만 되돌림).
+    // 이 보상마저 실패하면 deal=done·settlement=deposited로 괴리가 남으므로 반드시
+    // critical 로그로 가시화한다(감사 docs/11 P3-98). 원자성(단일 트랜잭션)은 RPC 이관 필요(P1-17 계열).
+    const { error: compErr } = await adminClient
       .from('deal')
       .update({ status: 'working' })
       .eq('id', dealId)
+      .eq('status', 'done')
+    if (compErr) {
+      console.error(
+        `[confirmDeal] CRITICAL: 보상 롤백 실패 — deal ${dealId}가 done인데 settlement는 reviewing 전환 실패. 수동 정합 필요:`,
+        compErr.message
+      )
+    }
     return { error: '검수 확인에 실패했습니다. 다시 시도해주세요.' }
   }
 
