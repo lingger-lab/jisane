@@ -13,15 +13,23 @@ export async function GET(request: Request) {
     adminClient.from('guarantee_fund_ledger').select('amount').eq('entry_type', 'payout'),
   ])
 
+  if (accrueRes.error || payoutRes.error) {
+    console.error('[admin/guarantee-fund] 잔액 집계 조회 실패:', accrueRes.error || payoutRes.error)
+  }
+
   const accrueTotal = (accrueRes.data || []).reduce((sum, r) => sum + (r.amount || 0), 0)
   const payoutTotal = (payoutRes.data || []).reduce((sum, r) => sum + (r.amount || 0), 0)
 
   // 최근 20건 원장
-  const { data: entries } = await adminClient
+  const { data: entries, error: entriesError } = await adminClient
     .from('guarantee_fund_ledger')
     .select('id, settlement_id, entry_type, amount, note, created_at')
     .order('created_at', { ascending: false })
     .limit(20)
+
+  if (entriesError) {
+    console.error('[admin/guarantee-fund] 원장 조회 실패:', entriesError)
+  }
 
   return NextResponse.json({
     balance: accrueTotal - payoutTotal,

@@ -15,6 +15,12 @@ export async function GET(request: Request) {
     adminClient.from('guarantee_fund_ledger').select('amount').eq('entry_type', 'payout'),
   ])
 
+  const queryError =
+    requestsRes.error || dealsRes.error || settlementsRes.error || accrueRes.error || payoutRes.error
+  if (queryError) {
+    console.error('[admin/summary] 요약 지표 조회 실패:', queryError)
+  }
+
   const accrueTotal = (accrueRes.data || []).reduce((sum, r) => sum + (r.amount || 0), 0)
   const payoutTotal = (payoutRes.data || []).reduce((sum, r) => sum + (r.amount || 0), 0)
 

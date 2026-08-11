@@ -16,7 +16,12 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 
-  const body = await request.json()
+  let body: { content?: unknown; category?: string }
+  try {
+    body = await request.json()
+  } catch {
+    return NextResponse.json({ error: '요청 형식이 올바르지 않습니다.' }, { status: 400 })
+  }
   const { content, category } = body
 
   if (!content || typeof content !== 'string') {

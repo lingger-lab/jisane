@@ -14,8 +14,8 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: 'deal_id is required' }, { status: 400 })
   }
 
-  if (!rating || rating < 1 || rating > 5) {
-    return NextResponse.json({ error: 'Rating must be 1-5' }, { status: 400 })
+  if (!Number.isInteger(rating) || rating < 1 || rating > 5) {
+    return NextResponse.json({ error: 'Rating must be an integer between 1 and 5' }, { status: 400 })
   }
 
   // 중복 확인
@@ -41,7 +41,8 @@ export async function POST(request: Request) {
     })
 
   if (error) {
-    return NextResponse.json({ error: error.message }, { status: 500 })
+    console.error('[reviews] review 등록 실패:', error)
+    return NextResponse.json({ error: '서버 오류가 발생했습니다.' }, { status: 500 })
   }
 
   return NextResponse.json({ success: true })

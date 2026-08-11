@@ -57,12 +57,16 @@ export default async function StatusDetailPage(props: PageProps) {
   // 관련 deal 조회.
   // request_id에 unique 제약이 없어 한 의뢰에 deal이 여러 건 존재할 수 있다(매칭 복수 수락·초빙).
   // ORDER BY 없이 첫 행을 쓰면 어떤 deal의 금액을 청구하는지가 비결정적이므로 최신 건으로 고정한다.
-  const { data: deals } = await adminClient
+  const { data: deals, error: dealsError } = await adminClient
     .from('deal')
     .select('*')
     .eq('request_id', id)
     .order('created_at', { ascending: false })
     .limit(1)
+
+  if (dealsError) {
+    console.error('[status/detail] deal 조회 실패:', dealsError)
+  }
 
   const deal = (deals && deals.length > 0 ? deals[0] : null) as DealRow | null
 
@@ -75,7 +79,7 @@ export default async function StatusDetailPage(props: PageProps) {
   let hasOpenDispute = false
 
   if (deal) {
-    const [{ data: wf }, { data: msgs }, { data: review }] = await Promise.all([
+    const [{ data: wf, error: wfError }, { data: msgs, error: msgsError }, { data: review }] = await Promise.all([
       adminClient
         .from('deal_workflow')
         .select('*')
@@ -93,6 +97,8 @@ export default async function StatusDetailPage(props: PageProps) {
         .eq('author_type', 'owner')
         .single(),
     ])
+    if (wfError) console.error('[status/detail] deal_workflow 조회 실패:', wfError)
+    if (msgsError) console.error('[status/detail] deal_message 조회 실패:', msgsError)
     workflows = (wf || []) as DealWorkflowRow[]
     messages = (msgs || []) as typeof messages
     existingReview = review as typeof existingReview

@@ -29,7 +29,8 @@ export async function GET() {
     .order('created_at', { ascending: false })
 
   if (error) {
-    return NextResponse.json({ error: error.message }, { status: 500 })
+    console.error('[api/requests] GET 의뢰 목록 조회 실패:', error)
+    return NextResponse.json({ error: '의뢰 목록을 불러오지 못했습니다.' }, { status: 500 })
   }
 
   return NextResponse.json({ requests })
@@ -54,8 +55,19 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: 'Owner not found' }, { status: 404 })
   }
 
-  const body = await request.json()
-  const { title, detail, req_type, scope, budget_hope } = body
+  let body: unknown
+  try {
+    body = await request.json()
+  } catch {
+    return NextResponse.json({ error: '요청 형식이 올바르지 않습니다.' }, { status: 400 })
+  }
+  const { title, detail, req_type, scope, budget_hope } = body as {
+    title?: string
+    detail?: string
+    req_type?: string
+    scope?: string
+    budget_hope?: string | number | null
+  }
 
   if (!title?.trim() || !detail?.trim()) {
     return NextResponse.json({ error: 'title and detail are required' }, { status: 400 })
@@ -86,7 +98,8 @@ export async function POST(request: Request) {
   }).select().single()
 
   if (error) {
-    return NextResponse.json({ error: error.message }, { status: 500 })
+    console.error('[api/requests] POST 의뢰 생성 실패:', error)
+    return NextResponse.json({ error: '의뢰 등록에 실패했습니다. 잠시 후 다시 시도해주세요.' }, { status: 500 })
   }
 
   return NextResponse.json({ request: data }, { status: 201 })

@@ -27,7 +27,12 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: '기업 정보를 찾을 수 없습니다.' }, { status: 403 })
   }
 
-  const body = await req.json()
+  let body: unknown
+  try {
+    body = await req.json()
+  } catch {
+    return NextResponse.json({ error: '요청 형식이 올바르지 않습니다.' }, { status: 400 })
+  }
   const { settlement_id, reason } = body as { settlement_id?: string; reason?: string }
 
   if (!settlement_id || !reason?.trim()) {
@@ -73,7 +78,8 @@ export async function POST(req: NextRequest) {
     })
 
   if (insertErr) {
-    return NextResponse.json({ error: insertErr.message }, { status: 500 })
+    console.error('[api/disputes] 이의제기 저장 실패:', insertErr)
+    return NextResponse.json({ error: '이의제기 저장에 실패했습니다. 잠시 후 다시 시도해주세요.' }, { status: 500 })
   }
 
   return NextResponse.json({ ok: true })

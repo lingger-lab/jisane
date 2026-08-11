@@ -61,7 +61,10 @@ export async function sendOwnerMessage(
       content: content.trim(),
     })
 
-  if (error) return { error: error.message }
+  if (error) {
+    console.error('[message/actions] sendOwnerMessage 저장 실패:', error)
+    return { error: '메시지 전송에 실패했습니다. 잠시 후 다시 시도해주세요.' }
+  }
 
   revalidatePath(`/status/${ownership.requestId}`)
   return {}
@@ -89,7 +92,10 @@ export async function sendDealInquiry(
       status: 'open',
     })
 
-  if (error) return { error: error.message }
+  if (error) {
+    console.error('[message/actions] sendDealInquiry 저장 실패:', error)
+    return { error: '문의 전송에 실패했습니다. 잠시 후 다시 시도해주세요.' }
+  }
 
   revalidatePath(`/status/${ownership.requestId}`)
   return {}

@@ -14,8 +14,13 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 
-  const body = await request.json()
-  const { deal_id } = body
+  let body: unknown
+  try {
+    body = await request.json()
+  } catch {
+    return NextResponse.json({ error: '요청 형식이 올바르지 않습니다.' }, { status: 400 })
+  }
+  const { deal_id } = body as { deal_id?: string }
 
   if (!deal_id) {
     return NextResponse.json({ error: 'deal_id is required' }, { status: 400 })
@@ -76,7 +81,7 @@ export async function POST(request: Request) {
       payment_key: result.paymentKey,
     })
   } catch (err) {
-    const message = err instanceof Error ? err.message : 'Payment session creation failed'
-    return NextResponse.json({ error: message }, { status: 500 })
+    console.error('[api/payments/checkout] 결제 세션 생성 실패:', err)
+    return NextResponse.json({ error: '결제 세션 생성에 실패했습니다. 잠시 후 다시 시도해주세요.' }, { status: 500 })
   }
 }

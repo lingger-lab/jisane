@@ -7,7 +7,12 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
   }
 
-  const body = await request.json()
+  let body: { request_id?: string; expert_id?: string }
+  try {
+    body = await request.json()
+  } catch {
+    return NextResponse.json({ error: '요청 형식이 올바르지 않습니다.' }, { status: 400 })
+  }
   const { request_id, expert_id } = body
 
   if (!request_id || !expert_id) {

@@ -27,8 +27,13 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: '시니어지식인 정보를 찾을 수 없습니다.' }, { status: 403 })
   }
 
-  const body = await req.json()
-  const { review_id, reason } = body as { review_id?: string; reason?: string }
+  let body: unknown
+  try {
+    body = await req.json()
+  } catch {
+    return NextResponse.json({ error: '잘못된 요청 형식입니다.' }, { status: 400 })
+  }
+  const { review_id, reason } = (body ?? {}) as { review_id?: string; reason?: string }
 
   if (!review_id || !reason?.trim()) {
     return NextResponse.json({ error: 'review_id와 reason은 필수입니다.' }, { status: 400 })
@@ -73,7 +78,8 @@ export async function POST(req: NextRequest) {
     })
 
   if (insertErr) {
-    return NextResponse.json({ error: insertErr.message }, { status: 500 })
+    console.error('[disputes] insert failed:', insertErr.message)
+    return NextResponse.json({ error: '이의제기 접수에 실패했습니다. 다시 시도해주세요.' }, { status: 500 })
   }
 
   return NextResponse.json({ ok: true })

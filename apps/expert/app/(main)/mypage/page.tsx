@@ -92,6 +92,13 @@ export default async function MyPage() {
       : Promise.resolve({ data: [], error: null }),
   ])
 
+  if (dealsRes.error) console.error('[mypage] deal query failed:', dealsRes.error.message)
+  if (ordersRes.error) console.error('[mypage] service_order query failed:', ordersRes.error.message)
+  if (matchingsRes.error) console.error('[mypage] matching_candidate query failed:', matchingsRes.error.message)
+  if (activitiesRes.error) console.error('[mypage] expert_activity query failed:', activitiesRes.error.message)
+  if (interestsRes.error) console.error('[mypage] expert_interest query failed:', interestsRes.error.message)
+  if (matchedRequestsRes.error) console.error('[mypage] matched requests query failed:', matchedRequestsRes.error.message)
+
   const deals = (dealsRes.data || []) as unknown as Array<{
     id: string; status: string; work_fee: number | null; created_at: string
     request: { title: string } | null

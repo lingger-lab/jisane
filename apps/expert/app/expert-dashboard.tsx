@@ -40,7 +40,12 @@ export async function ExpertDashboard({
   name: string | null
   field: string | null
 }) {
-  const [{ data: matchings }, { data: serviceOrdersData }, { data: openRequests }, { data: myInterests }] = await Promise.all([
+  const [
+    { data: matchings, error: matchingsError },
+    { data: serviceOrdersData, error: serviceOrdersError },
+    { data: openRequests, error: openRequestsError },
+    { data: myInterests, error: myInterestsError },
+  ] = await Promise.all([
     adminClient
       .from('matching')
       .select('id, status, created_at, request:request!inner(id, title, req_type, budget_hope)')
@@ -63,6 +68,11 @@ export async function ExpertDashboard({
       .eq('expert_id', expertId),
   ])
 
+  if (matchingsError) console.error('[ExpertDashboard] matchings query failed:', matchingsError.message)
+  if (serviceOrdersError) console.error('[ExpertDashboard] service_order query failed:', serviceOrdersError.message)
+  if (openRequestsError) console.error('[ExpertDashboard] open requests query failed:', openRequestsError.message)
+  if (myInterestsError) console.error('[ExpertDashboard] expert_interest query failed:', myInterestsError.message)
+
   const matchingList = ((matchings || []) as unknown) as Array<{
     id: string
     status: MatchingStatus
@@ -78,11 +88,13 @@ export async function ExpertDashboard({
 
   const proposedCount = matchingList.filter((m) => m.status === 'proposed').length
 
-  const { count: workingCount } = await adminClient
+  const { count: workingCount, error: workingCountError } = await adminClient
     .from('deal')
     .select('id', { count: 'exact', head: true })
     .eq('expert_id', expertId)
     .eq('status', 'working')
+
+  if (workingCountError) console.error('[ExpertDashboard] working deal count failed:', workingCountError.message)
 
   const profileIncomplete = !field
 

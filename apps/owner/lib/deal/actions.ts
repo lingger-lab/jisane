@@ -80,7 +80,10 @@ export async function submitReview(
       comment: comment.trim() || null,
     })
 
-  if (error) return { error: error.message }
+  if (error) {
+    console.error('[deal/actions] submitReview 저장 실패:', error)
+    return { error: '리뷰 저장에 실패했습니다. 잠시 후 다시 시도해주세요.' }
+  }
 
   // 리뷰 점수를 시니어지식인 스코어에 즉시 반영 — release 시점 재계산에만 의존하면
   // release 후 작성된 리뷰가 다음 관리자 이벤트까지 미반영으로 남는다

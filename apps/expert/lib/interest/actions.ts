@@ -70,7 +70,8 @@ export async function expressInterest(
     if (error.code === '23505') {
       return { error: '이미 관심을 표현한 의뢰입니다.' }
     }
-    return { error: error.message }
+    console.error('[expressInterest] insert failed:', error.message)
+    return { error: '관심 표현에 실패했습니다. 다시 시도해주세요.' }
   }
 
   revalidatePath('/matching')
@@ -89,7 +90,10 @@ export async function withdrawInterest(
     .eq('request_id', requestId)
     .eq('expert_id', expertId)
 
-  if (error) return { error: error.message }
+  if (error) {
+    console.error('[withdrawInterest] delete failed:', error.message)
+    return { error: '관심 표현 철회에 실패했습니다. 다시 시도해주세요.' }
+  }
 
   revalidatePath('/matching')
   revalidatePath('/requests')

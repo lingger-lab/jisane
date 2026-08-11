@@ -71,6 +71,13 @@ export default async function StatusPage() {
       .order('created_at', { ascending: false }),
   ])
 
+  if (requestsRes.error) {
+    console.error('[status] 의뢰 목록 조회 실패:', requestsRes.error)
+  }
+  if (serviceOrdersRes.error) {
+    console.error('[status] 전문서비스 주문 조회 실패:', serviceOrdersRes.error)
+  }
+
   const requestList = (requestsRes.data || []) as RequestRow[]
   const serviceOrders = (serviceOrdersRes.data || []) as ServiceOrderRow[]
 

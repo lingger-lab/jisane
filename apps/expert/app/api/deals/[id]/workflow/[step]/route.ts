@@ -45,8 +45,13 @@ export async function PATCH(
     return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
   }
 
-  const body = await request.json()
-  const { status: newStatus, note } = body
+  let body: unknown
+  try {
+    body = await request.json()
+  } catch {
+    return NextResponse.json({ error: '잘못된 요청 형식입니다.' }, { status: 400 })
+  }
+  const { status: newStatus, note } = (body ?? {}) as { status?: string; note?: string }
 
   if (newStatus !== 'pending' && newStatus !== 'in_progress' && newStatus !== 'done') {
     return NextResponse.json({ error: 'Invalid status' }, { status: 400 })
@@ -112,7 +117,8 @@ export async function PATCH(
     .eq('step', step)
 
   if (error) {
-    return NextResponse.json({ error: error.message }, { status: 500 })
+    console.error('[workflow] step update failed:', error.message)
+    return NextResponse.json({ error: '작업 단계 업데이트에 실패했습니다. 다시 시도해주세요.' }, { status: 500 })
   }
 
   return NextResponse.json({ success: true })

@@ -53,7 +53,10 @@ export async function sendDealMessage(
       content: content.trim(),
     })
 
-  if (error) return { error: error.message }
+  if (error) {
+    console.error('[sendDealMessage] insert failed:', error.message)
+    return { error: '메시지 전송에 실패했습니다. 다시 시도해주세요.' }
+  }
 
   revalidatePath(`/work/${dealId}`)
   return {}
@@ -89,7 +92,10 @@ export async function sendMatchingInquiry(
       status: 'open',
     })
 
-  if (error) return { error: error.message }
+  if (error) {
+    console.error('[sendMatchingInquiry] insert failed:', error.message)
+    return { error: '문의 전송에 실패했습니다. 다시 시도해주세요.' }
+  }
 
   revalidatePath(`/matching/${matchingId}`)
   return {}

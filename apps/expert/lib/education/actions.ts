@@ -58,6 +58,7 @@ export async function createEducationOrder(
   })
 
   if (error) {
+    console.error('[createEducationOrder] service_order insert failed:', error.message)
     return { error: '수강 신청에 실패했습니다. 다시 시도해주세요.' }
   }
 
