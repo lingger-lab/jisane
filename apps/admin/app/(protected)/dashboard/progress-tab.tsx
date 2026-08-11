@@ -53,6 +53,8 @@ export function ProgressTab({
   const [expandedMsgId, setExpandedMsgId] = useState<string | null>(null)
   const [messages, setMessages] = useState<Message[]>([])
   const [msgLoading, setMsgLoading] = useState(false)
+  // 스레드 조회 실패 — 빈 상태("아직 메시지가 없습니다")와 구분해 렌더한다(감사 docs/10 P2-6)
+  const [msgError, setMsgError] = useState<string | null>(null)
   const [replyText, setReplyText] = useState('')
   const [replyError, setReplyError] = useState<string | null>(null)
   const [sending, setSending] = useState(false)
@@ -60,21 +62,27 @@ export function ProgressTab({
   // B의 패널에 렌더되지 않게 최신 요청만 반영한다(감사 docs/11 P2-5).
   const msgSeqRef = useRef(0)
 
+  async function loadMessages(dealId: string) {
+    setMsgLoading(true)
+    setMsgError(null)
+    const seq = ++msgSeqRef.current
+    const result = await getMessagesForDeal(dealId)
+    if (seq !== msgSeqRef.current) return // 이미 다른 deal로 전환됨 — stale 응답 폐기
+    setMessages(result.messages as Message[])
+    setMsgError(result.error ?? null)
+    setMsgLoading(false)
+  }
+
   async function handleToggleMessages(dealId: string) {
     if (expandedMsgId === dealId) {
       msgSeqRef.current++ // 진행 중인 fetch가 있으면 무효화
       setExpandedMsgId(null)
       return
     }
-    setMsgLoading(true)
     setExpandedMsgId(dealId)
     setReplyText('')
     setReplyError(null)
-    const seq = ++msgSeqRef.current
-    const result = await getMessagesForDeal(dealId)
-    if (seq !== msgSeqRef.current) return // 이미 다른 deal로 전환됨 — stale 응답 폐기
-    setMessages(result.messages as Message[])
-    setMsgLoading(false)
+    await loadMessages(dealId)
   }
 
   async function handleSendReply(dealId: string) {
@@ -184,6 +192,17 @@ export function ProgressTab({
               <div className="mt-3 border-t border-border pt-3">
                 {msgLoading ? (
                   <p className="text-sm text-text-muted">메시지 로딩 중...</p>
+                ) : msgError ? (
+                  <div className="mb-2" role="alert">
+                    <p className="text-xs text-error">{msgError} 잠시 후 다시 시도해주세요.</p>
+                    <button
+                      type="button"
+                      onClick={() => loadMessages(deal.id)}
+                      className="mt-1 text-xs font-medium text-accent hover:underline"
+                    >
+                      다시 불러오기
+                    </button>
+                  </div>
                 ) : messages.length === 0 ? (
                   <p className="mb-2 text-xs text-text-subtle">아직 메시지가 없습니다.</p>
                 ) : (

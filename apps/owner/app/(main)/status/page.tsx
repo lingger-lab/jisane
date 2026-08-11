@@ -7,6 +7,7 @@ import type { RequestRow, ServiceOrderRow } from '@jisane/shared/types'
 import { REQUEST_STATUS_LABELS, ORDER_STATUS_LABELS } from '@jisane/shared/labels'
 import { REQUEST_STATUS_BADGE_CLASSES, ORDER_STATUS_BADGE_CLASSES } from '@jisane/shared/status-badges'
 import { PageHero } from '@jisane/ui/page-hero'
+import { ErrorState } from '@jisane/ui/error-state'
 
 const STRIPE_COLORS: Record<string, string> = {
   open: 'border-l-info',
@@ -57,12 +58,15 @@ export default async function StatusPage() {
       .order('created_at', { ascending: false }),
   ])
 
+  // 쿼리 실패는 빈 상태가 아니라 섹션별 에러 상태로 렌더한다(감사 docs/11 P2-43).
   if (requestsRes.error) {
     console.error('[status] 의뢰 목록 조회 실패:', requestsRes.error)
   }
   if (serviceOrdersRes.error) {
     console.error('[status] 전문서비스 주문 조회 실패:', serviceOrdersRes.error)
   }
+  const requestsFailed = Boolean(requestsRes.error)
+  const ordersFailed = Boolean(serviceOrdersRes.error)
 
   const requestList = (requestsRes.data || []) as RequestRow[]
   const serviceOrders = (serviceOrdersRes.data || []) as ServiceOrderRow[]
@@ -76,14 +80,14 @@ export default async function StatusPage() {
       <PageHero eyebrow="기업회원" title="의뢰 현황" subtitle="등록한 의뢰와 전문서비스 진행 상태를 한눈에 확인하세요." />
 
       <div className="responsive-container px-4 md:px-6 py-6">
-      {/* 요약 카드 */}
+      {/* 요약 카드 — 조회 실패 시 가짜 0 대신 미확인 표시 */}
       <div className="mb-4 grid grid-cols-2 gap-3">
         <div className="rounded-xl border border-border-light bg-surface-warm p-4 text-center">
-          <p className="text-2xl font-bold text-primary">{activeCount}</p>
+          <p className="text-2xl font-bold text-primary">{requestsFailed ? '—' : activeCount}</p>
           <p className="text-xs text-text-muted">진행 중 의뢰</p>
         </div>
         <div className="rounded-xl border border-border-light bg-surface-warm p-4 text-center">
-          <p className="text-2xl font-bold text-primary">{closedCount}</p>
+          <p className="text-2xl font-bold text-primary">{requestsFailed ? '—' : closedCount}</p>
           <p className="text-xs text-text-muted">완료된 의뢰</p>
         </div>
       </div>
@@ -99,7 +103,9 @@ export default async function StatusPage() {
       {/* 의뢰 리스트 */}
       <h2 className="mb-3 text-base font-bold text-text">의뢰 현황</h2>
 
-      {requestList.length === 0 ? (
+      {requestsFailed ? (
+        <ErrorState message="의뢰 목록을 불러오지 못했습니다." />
+      ) : requestList.length === 0 ? (
         <div className="flex flex-1 flex-col items-center justify-center gap-4 text-center py-12">
           <p className="text-text-muted">아직 등록한 의뢰가 없습니다.</p>
           <p className="text-xs text-text-subtle max-w-xs">
@@ -139,7 +145,9 @@ export default async function StatusPage() {
       {/* 전문서비스 현황 */}
       <h2 className="mb-3 mt-8 text-base font-bold text-text">전문서비스 현황</h2>
 
-      {serviceOrders.length === 0 ? (
+      {ordersFailed ? (
+        <ErrorState message="전문서비스 주문 목록을 불러오지 못했습니다." />
+      ) : serviceOrders.length === 0 ? (
         <div className="flex flex-col items-center gap-3 rounded-xl border border-dashed border-border-light py-8 text-center">
           <p className="text-sm text-text-muted">신청한 전문서비스가 없습니다.</p>
           <Link

@@ -39,8 +39,12 @@ export default async function RequestsPage(props: PageProps) {
     getCachedCategories(adminClient),
     expertId
       ? adminClient.from('expert_interest').select('request_id').eq('expert_id', expertId)
-      : Promise.resolve({ data: [] as { request_id: string }[] }),
+      : Promise.resolve({ data: [] as { request_id: string }[], error: null }),
   ])
+  // 관심 표현 조회 실패는 목록 자체를 막지 않는 보조 데이터 — 서버 기록만 남긴다.
+  if (interestsResult.error) {
+    console.error('[requests] expert_interest query failed:', interestsResult.error.message)
+  }
 
   // 카테고리 필터 적용하여 의뢰 조회
   let requestsQuery = adminClient
@@ -79,8 +83,8 @@ export default async function RequestsPage(props: PageProps) {
   }
 
   const { data: requests, error: requestsError } = await requestsQuery
-  // 쿼리 실패를 조용히 빈 결과로 렌더하지 않도록 서버에 기록(감사 docs/11 P2-21).
-  // 사용자 대상 에러 상태 UI는 정직 스윕(Batch C)에서 일괄 처리.
+  // 쿼리 실패를 조용히 빈 결과로 렌더하지 않도록 서버에 기록하고,
+  // 빈 상태 대신 에러 상태를 렌더한다(감사 docs/11 P2-21).
   if (requestsError) {
     console.error('[requests] search query failed:', requestsError.message)
   }
@@ -128,6 +132,7 @@ export default async function RequestsPage(props: PageProps) {
           interestedIds={interestedIds}
           isAuthenticated={!!user}
           isExpert={!!expertId}
+          loadFailed={Boolean(requestsError)}
         />
       </div>
     </div>

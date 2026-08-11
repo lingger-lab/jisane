@@ -12,6 +12,7 @@ import {
   INVITATION_STATUS_BADGE_CLASSES,
 } from '@jisane/shared/status-badges'
 import { PageHero } from '@jisane/ui/page-hero'
+import { ErrorState } from '@jisane/ui/error-state'
 import { OwnerProfileForm } from './owner-profile-form'
 
 export default async function OwnerMyPage() {
@@ -72,6 +73,14 @@ export default async function OwnerMyPage() {
       .order('created_at', { ascending: false })
       .limit(5),
   ])
+
+  // 쿼리 실패는 서버에 기록하고, 해당 섹션만 빈 상태 대신 에러 상태로 렌더한다(감사 docs/10 P2-35).
+  if (requestsRes.error) console.error('[owner/mypage] request query failed:', requestsRes.error.message)
+  if (ordersRes.error) console.error('[owner/mypage] service_order query failed:', ordersRes.error.message)
+  if (dealsRes.error) console.error('[owner/mypage] deal query failed:', dealsRes.error.message)
+  if (interestsRes.error) console.error('[owner/mypage] expert_interest query failed:', interestsRes.error.message)
+  if (invitationsRes.error) console.error('[owner/mypage] invitation query failed:', invitationsRes.error.message)
+  if (reviewsRes.error) console.error('[owner/mypage] review query failed:', reviewsRes.error.message)
 
   const requests = (requestsRes.data || []) as Array<{
     id: string; title: string; status: string; created_at: string
@@ -136,7 +145,9 @@ export default async function OwnerMyPage() {
           <h2 className="text-base font-bold text-text">의뢰 현황</h2>
           <Link href="/status" className="text-xs font-medium text-primary hover:underline">전체 보기</Link>
         </div>
-        {requests.length === 0 ? (
+        {requestsRes.error ? (
+          <ErrorState message="의뢰 현황을 불러오지 못했습니다." />
+        ) : requests.length === 0 ? (
           <div className="flex flex-col items-center gap-3 rounded-xl border border-dashed border-border-light py-8 text-center">
             <p className="text-sm text-text-muted">등록된 의뢰가 없습니다</p>
             <Link href="/request" className="text-sm font-medium text-primary hover:underline">의뢰하기</Link>
@@ -171,7 +182,9 @@ export default async function OwnerMyPage() {
           <h2 className="text-base font-bold text-text">전문서비스 현황</h2>
           <Link href="/status" className="text-xs font-medium text-primary hover:underline">전체 보기</Link>
         </div>
-        {orders.length === 0 ? (
+        {ordersRes.error ? (
+          <ErrorState message="전문서비스 현황을 불러오지 못했습니다." />
+        ) : orders.length === 0 ? (
           <div className="flex flex-col items-center gap-3 rounded-xl border border-dashed border-border-light py-8 text-center">
             <p className="text-sm text-text-muted">신청한 서비스가 없습니다</p>
             <Link href="/services" className="text-sm font-medium text-primary hover:underline">서비스 둘러보기</Link>
@@ -210,7 +223,9 @@ export default async function OwnerMyPage() {
           <h2 className="text-base font-bold text-text">매칭 현황</h2>
           <Link href="/status" className="text-xs font-medium text-primary hover:underline">전체 보기</Link>
         </div>
-        {deals.length === 0 ? (
+        {dealsRes.error ? (
+          <ErrorState message="매칭 현황을 불러오지 못했습니다." />
+        ) : deals.length === 0 ? (
           <div className="flex flex-col items-center gap-3 rounded-xl border border-dashed border-border-light py-8 text-center">
             <p className="text-sm text-text-muted">진행 중인 매칭이 없습니다</p>
           </div>
@@ -241,7 +256,9 @@ export default async function OwnerMyPage() {
       {/* 섹션 D — 받은 관심표현 */}
       <section className="mb-6">
         <h2 className="mb-3 text-base font-bold text-text">받은 관심표현</h2>
-        {interests.length === 0 ? (
+        {interestsRes.error ? (
+          <ErrorState message="받은 관심표현을 불러오지 못했습니다." />
+        ) : interests.length === 0 ? (
           <div className="flex flex-col items-center gap-3 rounded-xl border border-dashed border-border-light py-8 text-center">
             <p className="text-sm text-text-muted">시니어지식인의 관심 표현이 없습니다</p>
           </div>
@@ -275,7 +292,9 @@ export default async function OwnerMyPage() {
       {/* 섹션 E — 초빙 이력 */}
       <section className="mb-6">
         <h2 className="mb-3 text-base font-bold text-text">초빙 이력</h2>
-        {invitations.length === 0 ? (
+        {invitationsRes.error ? (
+          <ErrorState message="초빙 이력을 불러오지 못했습니다." />
+        ) : invitations.length === 0 ? (
           <div className="flex flex-col items-center gap-3 rounded-xl border border-dashed border-border-light py-8 text-center">
             <p className="text-sm text-text-muted">초빙 이력이 없습니다</p>
           </div>
@@ -307,7 +326,9 @@ export default async function OwnerMyPage() {
       {/* 섹션 F — 쓴 리뷰 */}
       <section className="mb-8">
         <h2 className="mb-3 text-base font-bold text-text">내가 쓴 리뷰</h2>
-        {reviews.length === 0 ? (
+        {reviewsRes.error ? (
+          <ErrorState message="작성한 리뷰를 불러오지 못했습니다." />
+        ) : reviews.length === 0 ? (
           <div className="flex flex-col items-center gap-3 rounded-xl border border-dashed border-border-light py-8 text-center">
             <p className="text-sm text-text-muted">작성한 리뷰가 없습니다</p>
           </div>

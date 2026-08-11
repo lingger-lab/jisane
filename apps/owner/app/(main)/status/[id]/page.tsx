@@ -8,6 +8,7 @@ import { ProgressBar } from '@jisane/ui/progress-bar'
 import type { RequestRow, DealRow, DealWorkflowRow, ExpertRow } from '@jisane/shared/types'
 import { WORKFLOW_STEP_LABELS, STEP_STATUS_LABELS } from '@jisane/shared/labels'
 import { PageHero } from '@jisane/ui/page-hero'
+import { ErrorState } from '@jisane/ui/error-state'
 import { QuoteSection } from './quote-section'
 import { InspectionSection } from './inspection-section'
 import { MessageThread } from './message-thread'
@@ -16,6 +17,29 @@ import { DisputeButton } from './dispute-button'
 
 interface PageProps {
   params: Promise<{ id: string }>
+}
+
+/**
+ * 기반 쿼리(owner·request·deal) 인프라 실패 시의 전면 에러 화면.
+ * 실패를 not-found처럼 redirect로 위장하지 않는다(감사 docs/11 P2-44).
+ */
+function DetailLoadError() {
+  return (
+    <div className="flex flex-1 flex-col animate-fade-in">
+      <PageHero
+        eyebrow="기업회원"
+        title="의뢰 상세"
+        back={
+          <Link href="/status" className="text-sm text-white/70 hover:text-white transition-colors">
+            &larr; 의뢰 목록
+          </Link>
+        }
+      />
+      <div className="responsive-container px-4 md:px-6 py-6">
+        <ErrorState message="의뢰 정보를 불러오지 못했습니다." />
+      </div>
+    </div>
+  )
 }
 
 export default async function StatusDetailPage(props: PageProps) {
@@ -29,25 +53,33 @@ export default async function StatusDetailPage(props: PageProps) {
     redirect('/')
   }
 
-  // owner_id 조회
-  const { data: owner } = await adminClient
+  // owner_id 조회 — 인프라 실패(PGRST116 외)는 미가입으로 위장하지 않고 에러 화면(감사 docs/11 P2-44)
+  const { data: owner, error: ownerError } = await adminClient
     .from('owner')
     .select('id')
     .eq('auth_user_id', user.id)
     .single()
 
+  if (ownerError && ownerError.code !== 'PGRST116') {
+    console.error('[status/detail] owner 조회 실패:', ownerError)
+    return <DetailLoadError />
+  }
   if (!owner) {
     redirect('/')
   }
 
-  // request 조회 (소유권 확인 포함)
-  const { data: request } = await adminClient
+  // request 조회 (소유권 확인 포함) — 조회 실패와 not-found(0행)를 구분한다
+  const { data: request, error: requestError } = await adminClient
     .from('request')
     .select('*')
     .eq('id', id)
     .eq('owner_id', owner.id)
     .single()
 
+  if (requestError && requestError.code !== 'PGRST116') {
+    console.error('[status/detail] request 조회 실패:', requestError)
+    return <DetailLoadError />
+  }
   if (!request) {
     redirect('/status')
   }
@@ -65,7 +97,9 @@ export default async function StatusDetailPage(props: PageProps) {
     .limit(1)
 
   if (dealsError) {
+    // deal 여부가 이하 모든 상태 분기의 기반 — 실패를 "진행 상황 확인 중"으로 위장하지 않는다.
     console.error('[status/detail] deal 조회 실패:', dealsError)
+    return <DetailLoadError />
   }
 
   const deal = (deals && deals.length > 0 ? deals[0] : null) as DealRow | null
@@ -77,9 +111,13 @@ export default async function StatusDetailPage(props: PageProps) {
   let existingReview: { id: string; rating: number | null; comment: string | null } | null = null
   let settlementId: string | null = null
   let hasOpenDispute = false
+  // 섹션 쿼리 실패 플래그 — 실패한 섹션만 에러 상태로 렌더한다(전체 페이지는 유지)
+  let workflowsFailed = false
+  let messagesFailed = false
+  let reviewFailed = false
 
   if (deal) {
-    const [{ data: wf, error: wfError }, { data: msgs, error: msgsError }, { data: review }] = await Promise.all([
+    const [{ data: wf, error: wfError }, { data: msgs, error: msgsError }, { data: review, error: reviewError }] = await Promise.all([
       adminClient
         .from('deal_workflow')
         .select('*')
@@ -99,35 +137,47 @@ export default async function StatusDetailPage(props: PageProps) {
     ])
     if (wfError) console.error('[status/detail] deal_workflow 조회 실패:', wfError)
     if (msgsError) console.error('[status/detail] deal_message 조회 실패:', msgsError)
+    // review는 .single() — 0행(PGRST116)은 "아직 리뷰 없음"이라는 정상 상태다
+    if (reviewError && reviewError.code !== 'PGRST116') {
+      console.error('[status/detail] review 조회 실패:', reviewError)
+      reviewFailed = true
+    }
+    workflowsFailed = Boolean(wfError)
+    messagesFailed = Boolean(msgsError)
     workflows = (wf || []) as DealWorkflowRow[]
     messages = (msgs || []) as typeof messages
     existingReview = review as typeof existingReview
 
     if (deal.expert_id) {
-      const { data: p } = await adminClient
+      const { data: p, error: expertError } = await adminClient
         .from('expert')
         .select('id, auth_user_id, name, field, career_years, grade')
         .eq('id', deal.expert_id)
         .single()
+      if (expertError) console.error('[status/detail] expert 조회 실패:', expertError)
       expert = p as ExpertRow | null
     }
 
     // 정산 + 이의제기 조회 (done 상태에서만 필요하지만 미리 조회)
     if (deal.status === 'done') {
-      const { data: settle } = await adminClient
+      const { data: settle, error: settleError } = await adminClient
         .from('settlement')
         .select('id')
         .eq('deal_id', deal.id)
         .single()
+      if (settleError && settleError.code !== 'PGRST116') {
+        console.error('[status/detail] settlement 조회 실패:', settleError)
+      }
       if (settle) {
         settlementId = settle.id
-        const { data: disputes } = await adminClient
+        const { data: disputes, error: disputesError } = await adminClient
           .from('dispute')
           .select('id')
           .eq('target_type', 'settlement')
           .eq('target_id', settle.id)
           .eq('status', 'open')
           .limit(1)
+        if (disputesError) console.error('[status/detail] dispute 조회 실패:', disputesError)
         hasOpenDispute = (disputes && disputes.length > 0) || false
       }
     }
@@ -207,8 +257,11 @@ export default async function StatusDetailPage(props: PageProps) {
             )}
           </div>
 
-          {/* 워크플로우 5단계 현황 */}
-          {workflows.length > 0 && (
+          {/* 워크플로우 5단계 현황 — 조회 실패 시 숨기지 않고 에러 상태 */}
+          {workflowsFailed && (
+            <ErrorState message="작업 진행 단계를 불러오지 못했습니다." />
+          )}
+          {!workflowsFailed && workflows.length > 0 && (
             <div className="rounded-xl border border-border-light p-4 shadow-xs">
               <h3 className="mb-3 text-sm font-semibold text-text">작업 진행 단계</h3>
               <div className="flex flex-col gap-2">
@@ -235,8 +288,12 @@ export default async function StatusDetailPage(props: PageProps) {
             </div>
           )}
 
-          {/* 메시지 스레드 */}
-          <MessageThread dealId={deal.id} messages={messages} />
+          {/* 메시지 스레드 — 조회 실패를 "메시지 없음"으로 위장하지 않는다 */}
+          {messagesFailed ? (
+            <ErrorState message="메시지를 불러오지 못했습니다." />
+          ) : (
+            <MessageThread dealId={deal.id} messages={messages} />
+          )}
 
           {/* 검수 섹션 */}
           <InspectionSection dealId={deal.id} />
@@ -253,17 +310,23 @@ export default async function StatusDetailPage(props: PageProps) {
             </p>
           </div>
 
-          {/* 리뷰 섹션 */}
-          <ReviewSection dealId={deal.id} existingReview={existingReview} />
+          {/* 리뷰 섹션 — 조회 실패 시 "리뷰 없음"으로 위장해 중복 작성을 유도하지 않는다 */}
+          {reviewFailed ? (
+            <ErrorState message="리뷰 정보를 불러오지 못했습니다." />
+          ) : (
+            <ReviewSection dealId={deal.id} existingReview={existingReview} />
+          )}
 
           {/* 정산 이의제기 */}
           {settlementId && (
             <DisputeButton settlementId={settlementId} hasOpenDispute={hasOpenDispute} />
           )}
 
-          {/* 완료 후에도 메시지 확인 가능 */}
-          {messages.length > 0 && (
-            <MessageThread dealId={deal.id} messages={messages} />
+          {/* 완료 후에도 메시지 확인 가능 — 조회 실패는 숨기지 않고 에러 상태 */}
+          {messagesFailed ? (
+            <ErrorState message="메시지를 불러오지 못했습니다." />
+          ) : (
+            messages.length > 0 && <MessageThread dealId={deal.id} messages={messages} />
           )}
         </div>
       )}

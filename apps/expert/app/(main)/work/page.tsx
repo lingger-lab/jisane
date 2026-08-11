@@ -7,6 +7,7 @@ import type { DealStatus } from '@jisane/shared/types'
 import { DEAL_STATUS_LABELS } from '@jisane/shared/labels'
 import { DEAL_STATUS_BADGE_CLASSES } from '@jisane/shared/status-badges'
 import { PageHero } from '@jisane/ui/page-hero'
+import { ErrorState } from '@jisane/ui/error-state'
 
 const STRIPE_COLORS: Record<DealStatus, string> = {
   quoted: 'border-l-info',
@@ -29,11 +30,16 @@ export default async function WorkListPage() {
 
   if (!expert) redirect('/register')
 
-  const { data: deals } = await adminClient
+  const { data: deals, error: dealsError } = await adminClient
     .from('deal')
     .select('id, status, work_fee, due_date, created_at, request:request!inner(id, title, req_type)')
     .eq('expert_id', expert.id)
     .order('created_at', { ascending: false })
+
+  // 쿼리 실패를 "작업 없음" 빈 상태로 위장하지 않는다(감사 docs/10 P2-28 동일 패턴).
+  if (dealsError) {
+    console.error('[work] deal query failed:', dealsError.message)
+  }
 
   const dealList = ((deals || []) as unknown) as Array<{
     id: string
@@ -52,7 +58,9 @@ export default async function WorkListPage() {
         subtitle="진행 중인 작업을 확인하고 단계를 관리하세요."
       />
       <div className="responsive-container px-4 md:px-6 py-6">
-      {dealList.length === 0 ? (
+      {dealsError ? (
+        <ErrorState message="작업 목록을 불러오지 못했습니다." />
+      ) : dealList.length === 0 ? (
         <div className="flex flex-1 flex-col items-center justify-center gap-4 text-center">
           <p className="text-text-muted">아직 진행 중인 작업이 없습니다.</p>
           <Link

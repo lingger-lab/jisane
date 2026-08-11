@@ -2,6 +2,7 @@
 
 import { useRouter } from 'next/navigation'
 import { SearchBox } from '@jisane/ui/search-box'
+import { ErrorState } from '@jisane/ui/error-state'
 import { ExpertCard } from './expert-card'
 
 interface ExpertItem {
@@ -28,9 +29,11 @@ interface ExpertListProps {
   categoryTree: MajorCategory[]
   selectedCategory: string | null
   query: string
+  /** 서버 쿼리 실패 — 빈 상태 대신 에러 상태를 렌더한다(검색 결과 없음과 구분, 감사 docs/11 P3-75). */
+  loadFailed?: boolean
 }
 
-export function ExpertList({ experts, categoryTree, selectedCategory, query }: ExpertListProps) {
+export function ExpertList({ experts, categoryTree, selectedCategory, query, loadFailed = false }: ExpertListProps) {
   const router = useRouter()
 
   const selectedMajorIdx = selectedCategory
@@ -52,11 +55,13 @@ export function ExpertList({ experts, categoryTree, selectedCategory, query }: E
   return (
     <div>
       <p className="mb-3 text-sm text-text-muted">
-        {query
-          ? `"${query}" 검색 결과 ${experts.length}명`
-          : experts.length > 0
-            ? `${experts.length}명의 활동 시니어지식인`
-            : '카테고리별로 시니어지식인을 찾아보세요'}
+        {loadFailed
+          ? '조회 중 문제가 발생했습니다'
+          : query
+            ? `"${query}" 검색 결과 ${experts.length}명`
+            : experts.length > 0
+              ? `${experts.length}명의 활동 시니어지식인`
+              : '카테고리별로 시니어지식인을 찾아보세요'}
       </p>
 
       {/* 검색 (이름·분야) — 카테고리 필터 보존 */}
@@ -123,9 +128,17 @@ export function ExpertList({ experts, categoryTree, selectedCategory, query }: E
         </div>
       )}
 
-      {/* 시니어지식인 리스트 */}
+      {/* 시니어지식인 리스트 — 조회 실패(에러)와 검색 결과 없음(빈)을 구분한다 */}
       <div className="mt-4 flex flex-col gap-3">
-        {experts.length === 0 ? (
+        {loadFailed ? (
+          <ErrorState
+            message={
+              query
+                ? '검색 결과를 불러오지 못했습니다.'
+                : '시니어지식인 목록을 불러오지 못했습니다.'
+            }
+          />
+        ) : experts.length === 0 ? (
           <div className="rounded-xl border border-dashed border-border-light py-8 text-center">
             <p className="text-sm text-text-muted">
               {query

@@ -4,7 +4,9 @@ import { useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { SearchBox } from '@jisane/ui/search-box'
+import { useSeededState } from '@jisane/ui/use-seeded-state'
 import { FilterRadioGroup } from '@jisane/ui/filter-radio-group'
+import { ErrorState } from '@jisane/ui/error-state'
 import { expressInterest, withdrawInterest } from '@/lib/interest/actions'
 
 interface RequestItem {
@@ -32,6 +34,8 @@ interface RequestListProps {
   interestedIds: string[]
   isAuthenticated: boolean
   isExpert: boolean
+  /** 서버 쿼리 실패 — 빈 상태 대신 에러 상태를 렌더한다(검색 결과 없음과 구분, 감사 docs/11 P2-21). */
+  loadFailed?: boolean
 }
 
 export function RequestList({
@@ -42,9 +46,11 @@ export function RequestList({
   interestedIds,
   isAuthenticated,
   isExpert,
+  loadFailed = false,
 }: RequestListProps) {
   const router = useRouter()
-  const [interested, setInterested] = useState<Set<string>>(new Set(interestedIds))
+  // 서버 prop이 진실원 — revalidatePath('/requests') 후 새 interestedIds로 재동기화 (감사 P3-40)
+  const [interested, setInterested] = useSeededState(interestedIds, (ids) => new Set(ids))
   const [loading, setLoading] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
 
@@ -96,11 +102,13 @@ export function RequestList({
     <div>
       {/* 결과 요약 */}
       <p className="text-sm text-text-muted">
-        {query
-          ? `"${query}" 검색 결과 ${requests.length}건`
-          : requests.length > 0
-            ? `${requests.length}건의 열린 의뢰`
-            : '카테고리별로 의뢰를 찾아보세요'}
+        {loadFailed
+          ? '조회 중 문제가 발생했습니다'
+          : query
+            ? `"${query}" 검색 결과 ${requests.length}건`
+            : requests.length > 0
+              ? `${requests.length}건의 열린 의뢰`
+              : '카테고리별로 의뢰를 찾아보세요'}
       </p>
 
       {/* 검색 (제목·내용) — 카테고리 필터 보존 */}
@@ -159,19 +167,27 @@ export function RequestList({
       {/* 에러 메시지 */}
       {error && <p className="mt-3 text-xs text-error" role="alert" aria-live="polite">{error}</p>}
 
-      {/* 의뢰 리스트 */}
+      {/* 의뢰 리스트 — 조회 실패(에러)와 검색 결과 없음(빈)을 구분한다 */}
       <div className="mt-4 flex flex-col gap-3">
-        {requests.length === 0 ? (
+        {loadFailed ? (
+          <ErrorState
+            message={
+              query ? '검색 결과를 불러오지 못했습니다.' : '의뢰 목록을 불러오지 못했습니다.'
+            }
+          />
+        ) : requests.length === 0 ? (
           <div className="rounded-xl border border-dashed border-border-light py-8 text-center">
             <p className="text-sm text-text-muted">
-              {selectedCategory
-                ? '현재 이 분야의 열린 의뢰가 없습니다.'
-                : '현재 열린 의뢰가 없습니다.'}
+              {query
+                ? `"${query}"에 맞는 열린 의뢰가 없습니다.`
+                : selectedCategory
+                  ? '현재 이 분야의 열린 의뢰가 없습니다.'
+                  : '현재 열린 의뢰가 없습니다.'}
             </p>
-            {selectedCategory && (
+            {(selectedCategory || query) && (
               <button
                 type="button"
-                onClick={() => handleCategoryChange(null)}
+                onClick={() => { router.push('/requests') }}
                 className="mt-2 text-xs text-accent hover:underline"
               >
                 전체 의뢰 보기

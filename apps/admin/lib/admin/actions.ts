@@ -740,13 +740,21 @@ export async function resolveDispute(
 export async function getMessagesForDeal(dealId: string) {
   await verifyAdmin()
 
-  const { data } = await adminClient
+  const { data, error } = await adminClient
     .from('deal_message')
     .select('id, sender_type, sender_id, content, created_at')
     .eq('deal_id', dealId)
     .order('created_at', { ascending: true })
 
-  return { messages: data || [] }
+  // 조회 실패를 빈 스레드로 위장하지 않는다 — 미읽음 배지와 모순되는 가짜 빈 상태(감사 docs/10 P2-6)
+  if (error) {
+    console.error('[admin] deal_message 조회 실패:', error)
+  }
+
+  return {
+    messages: data || [],
+    error: error ? '메시지를 불러오지 못했습니다.' : null,
+  }
 }
 
 /** 정산 자동 release (대시보드 로드 시 실행) */

@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import { adminClient } from '@jisane/shared/supabase/admin'
 import { SearchBox } from '@jisane/ui/search-box'
+import { ErrorState } from '@jisane/ui/error-state'
 import type { MatchingStatus, ServiceOrderRow } from '@jisane/shared/types'
 import { MATCHING_STATUS_LABELS, ORDER_STATUS_LABELS } from '@jisane/shared/labels'
 import {
@@ -70,6 +71,7 @@ export async function ExpertDashboard({
       .eq('expert_id', expertId),
   ])
 
+  // 쿼리 실패는 서버에 기록하고, 해당 섹션만 빈 상태 대신 에러 상태로 렌더한다(감사 docs/10 P2-31).
   if (matchingsError) console.error('[ExpertDashboard] matchings query failed:', matchingsError.message)
   if (serviceOrdersError) console.error('[ExpertDashboard] service_order query failed:', serviceOrdersError.message)
   if (openRequestsError) console.error('[ExpertDashboard] open requests query failed:', openRequestsError.message)
@@ -130,21 +132,23 @@ export async function ExpertDashboard({
           </Link>
         )}
 
-        {/* 요약 카드 */}
+        {/* 요약 카드 — 조회 실패 시 가짜 0 대신 미확인 표시 */}
         <div className="mb-6 grid grid-cols-2 gap-3">
           <div className="rounded-xl border border-border-light bg-surface-warm p-4 text-center">
-            <p className="text-2xl font-bold text-accent">{proposedCount}</p>
+            <p className="text-2xl font-bold text-accent">{matchingsError ? '—' : proposedCount}</p>
             <p className="text-xs text-text-muted">새 매칭 제안</p>
           </div>
           <Link href="/work" className="rounded-xl border border-border-light bg-surface-warm p-4 text-center transition-colors hover:bg-surface">
-            <p className="text-2xl font-bold text-accent">{workingCount || 0}</p>
+            <p className="text-2xl font-bold text-accent">{workingCountError ? '—' : workingCount || 0}</p>
             <p className="text-xs text-text-muted">진행 중 작업</p>
           </Link>
         </div>
 
-        {/* 매칭 리스트 */}
+        {/* 매칭 리스트 — 조회 실패(에러)와 제안 없음(빈)을 구분한다 */}
         <h2 className="mb-3 text-base font-bold text-text">매칭 제안</h2>
-        {matchingList.length === 0 ? (
+        {matchingsError ? (
+          <ErrorState message="매칭 제안을 불러오지 못했습니다." />
+        ) : matchingList.length === 0 ? (
           <div className="flex flex-col items-center justify-center gap-4 text-center py-10">
             <p className="text-text-muted">아직 매칭 제안이 없습니다.</p>
             <p className="text-xs text-text-subtle max-w-xs">
@@ -187,11 +191,17 @@ export async function ExpertDashboard({
         <div className="mb-4">
           <SearchBox target="/requests" placeholder="제목·내용으로 열린 의뢰 검색" colorToken="accent" />
         </div>
-        <OpportunitySection requests={opportunities} interestedIds={interestedIds} />
+        {openRequestsError ? (
+          <ErrorState message="열린 의뢰를 불러오지 못했습니다." />
+        ) : (
+          <OpportunitySection requests={opportunities} interestedIds={interestedIds} />
+        )}
 
-        {/* 교육·서비스 신청 현황 */}
+        {/* 교육·서비스 신청 현황 — 조회 실패(에러)와 신청 없음(빈)을 구분한다 */}
         <h2 className="mb-3 mt-8 text-base font-bold text-text">교육·서비스 신청 현황</h2>
-        {serviceOrders.length === 0 ? (
+        {serviceOrdersError ? (
+          <ErrorState message="교육·서비스 신청 현황을 불러오지 못했습니다." />
+        ) : serviceOrders.length === 0 ? (
           <div className="flex flex-col items-center gap-3 rounded-xl border border-dashed border-border-light py-8 text-center">
             <p className="text-sm text-text-muted">신청한 교육·서비스가 없습니다.</p>
             <Link href="/education" className="text-sm font-medium text-accent hover:underline">

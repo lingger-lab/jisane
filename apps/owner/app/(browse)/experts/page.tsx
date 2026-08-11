@@ -17,12 +17,15 @@ export default async function ExpertsPage(props: PageProps) {
   const query = (q ?? '').trim()
 
   // 카테고리 목록 + 시니어지식인 목록 병렬 조회
-  const [allCategories, { data: allExpertCats }] = await Promise.all([
+  const [allCategories, { data: allExpertCats, error: expertCatsError }] = await Promise.all([
     getCachedCategories(adminClient),
     adminClient
       .from('expert_category')
       .select('expert_id, category_id'),
   ])
+  if (expertCatsError) {
+    console.error('[experts] expert_category query failed:', expertCatsError.message)
+  }
   const expertCats = allExpertCats ?? []
 
   // 카테고리 필터로 대상 expert_id 추출
@@ -78,10 +81,13 @@ export default async function ExpertsPage(props: PageProps) {
 
   const { data: experts, error: expertsError } = await expertsQuery
   // 쿼리 실패를 조용히 빈 결과로 렌더하지 않도록 서버에 기록(감사 docs/11 P2-36).
-  // 사용자 대상 에러 상태 UI는 정직 스윕(Batch C)에서 일괄 처리.
   if (expertsError) {
     console.error('[experts] search query failed:', expertsError.message)
   }
+
+  // 실패를 빈 상태로 위장하지 않는다(감사 docs/11 P3-75·docs/10 P2-34).
+  // expert_category 실패는 카테고리 필터 중일 때만 목록을 가짜 빈 결과로 만들므로 그 경우에만 에러로 승격.
+  const loadFailed = Boolean(expertsError) || (Boolean(expertCatsError) && Boolean(category))
 
   // 시니어지식인별 카테고리 매핑 (표시용)
   const expertIdSet = new Set((experts ?? []).map((p) => p.id))
@@ -134,6 +140,7 @@ export default async function ExpertsPage(props: PageProps) {
           categoryTree={categoryTree}
           selectedCategory={category ?? null}
           query={query}
+          loadFailed={loadFailed}
         />
       </div>
     </div>

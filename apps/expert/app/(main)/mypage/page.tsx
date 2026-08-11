@@ -11,6 +11,7 @@ import {
   MATCHING_STATUS_BADGE_CLASSES,
 } from '@jisane/shared/status-badges'
 import { PageHero } from '@jisane/ui/page-hero'
+import { ErrorState } from '@jisane/ui/error-state'
 import { ProfileEditor } from '@/components/profile-editor'
 
 export default async function MyPage() {
@@ -76,6 +77,7 @@ export default async function MyPage() {
       : Promise.resolve({ data: [], error: null }),
   ])
 
+  // 쿼리 실패는 서버에 기록하고, 해당 섹션만 빈 상태 대신 에러 상태로 렌더한다(감사 docs/10 P2-28).
   if (dealsRes.error) console.error('[mypage] deal query failed:', dealsRes.error.message)
   if (ordersRes.error) console.error('[mypage] service_order query failed:', ordersRes.error.message)
   if (matchingsRes.error) console.error('[mypage] matching_candidate query failed:', matchingsRes.error.message)
@@ -177,8 +179,14 @@ export default async function MyPage() {
         </p>
       </div>
 
-      {/* 내 분야 공개 의뢰 */}
-      {matchedRequests.length > 0 && (
+      {/* 내 분야 공개 의뢰 — 조회 실패는 섹션을 숨기지 않고 에러 상태로 표시 */}
+      {matchedRequestsRes.error ? (
+        <section className="mb-6">
+          <h2 className="mb-3 text-base font-bold text-text">내 분야 공개 의뢰</h2>
+          <ErrorState message="내 분야 공개 의뢰를 불러오지 못했습니다." />
+        </section>
+      ) : null}
+      {!matchedRequestsRes.error && matchedRequests.length > 0 && (
         <section className="mb-6">
           <div className="mb-3 flex items-center justify-between">
             <h2 className="text-base font-bold text-text">내 분야 공개 의뢰</h2>
@@ -215,7 +223,9 @@ export default async function MyPage() {
           <h2 className="text-base font-bold text-text">작업 현황</h2>
           <Link href="/work" className="text-xs font-medium text-accent hover:underline">전체 보기</Link>
         </div>
-        {deals.length === 0 ? (
+        {dealsRes.error ? (
+          <ErrorState message="작업 현황을 불러오지 못했습니다." />
+        ) : deals.length === 0 ? (
           <div className="flex flex-col items-center gap-3 rounded-xl border border-dashed border-border-light py-8 text-center">
             <p className="text-sm text-text-muted">진행 중인 작업이 없습니다</p>
           </div>
@@ -250,7 +260,9 @@ export default async function MyPage() {
           <h2 className="text-base font-bold text-text">교육·서비스 현황</h2>
           <Link href="/matching" className="text-xs font-medium text-accent hover:underline">전체 보기</Link>
         </div>
-        {orders.length === 0 ? (
+        {ordersRes.error ? (
+          <ErrorState message="교육·서비스 현황을 불러오지 못했습니다." />
+        ) : orders.length === 0 ? (
           <div className="flex flex-col items-center gap-3 rounded-xl border border-dashed border-border-light py-8 text-center">
             <p className="text-sm text-text-muted">신청한 교육·서비스가 없습니다</p>
             <Link href="/education" className="text-sm font-medium text-accent hover:underline">교육 둘러보기</Link>
@@ -289,7 +301,9 @@ export default async function MyPage() {
           <h2 className="text-base font-bold text-text">매칭 현황</h2>
           <Link href="/matching" className="text-xs font-medium text-accent hover:underline">전체 보기</Link>
         </div>
-        {matchings.length === 0 ? (
+        {matchingsRes.error ? (
+          <ErrorState message="매칭 현황을 불러오지 못했습니다." />
+        ) : matchings.length === 0 ? (
           <div className="flex flex-col items-center gap-3 rounded-xl border border-dashed border-border-light py-8 text-center">
             <p className="text-sm text-text-muted">매칭 제안이 없습니다</p>
           </div>
@@ -318,8 +332,14 @@ export default async function MyPage() {
         )}
       </section>
 
-      {/* 섹션 D — 활동 이력 */}
-      {activities.length > 0 && (
+      {/* 섹션 D — 활동 이력 (조회 실패는 섹션을 숨기지 않고 에러 상태로 표시) */}
+      {activitiesRes.error ? (
+        <section className="mb-8">
+          <h2 className="mb-3 text-base font-bold text-text">활동 이력</h2>
+          <ErrorState message="활동 이력을 불러오지 못했습니다." />
+        </section>
+      ) : null}
+      {!activitiesRes.error && activities.length > 0 && (
         <section className="mb-8">
           <h2 className="mb-3 text-base font-bold text-text">활동 이력</h2>
           <ul className="flex flex-col gap-2">
@@ -354,10 +374,12 @@ export default async function MyPage() {
         <div className="mb-3 flex items-center justify-between">
           <h2 className="text-base font-bold text-text">관심 표현 이력</h2>
           <span className="text-xs font-medium text-text-muted">
-            활성 {activeInterestCount}/5개
+            활성 {interestsRes.error ? '—' : activeInterestCount}/5개
           </span>
         </div>
-        {interests.length === 0 ? (
+        {interestsRes.error ? (
+          <ErrorState message="관심 표현 이력을 불러오지 못했습니다." />
+        ) : interests.length === 0 ? (
           <div className="flex flex-col items-center gap-3 rounded-xl border border-dashed border-border-light py-8 text-center">
             <p className="text-sm text-text-muted">관심 표현 이력이 없습니다</p>
             <Link href="/requests" className="text-sm font-medium text-accent hover:underline">공개 의뢰 둘러보기</Link>

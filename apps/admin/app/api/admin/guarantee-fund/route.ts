@@ -13,8 +13,10 @@ export async function GET(request: Request) {
     adminClient.from('guarantee_fund_ledger').select('amount').eq('entry_type', 'payout'),
   ])
 
+  // 조회 실패 시 가짜 ₩0으로 격하하지 않고 실패를 그대로 알린다(감사 docs/10 P2-9 fail-loud).
   if (accrueRes.error || payoutRes.error) {
     console.error('[admin/guarantee-fund] 잔액 집계 조회 실패:', accrueRes.error || payoutRes.error)
+    return NextResponse.json({ error: '보증기금 잔액 조회에 실패했습니다.' }, { status: 500 })
   }
 
   const accrueTotal = (accrueRes.data || []).reduce((sum, r) => sum + (r.amount || 0), 0)
@@ -29,6 +31,7 @@ export async function GET(request: Request) {
 
   if (entriesError) {
     console.error('[admin/guarantee-fund] 원장 조회 실패:', entriesError)
+    return NextResponse.json({ error: '보증기금 원장 조회에 실패했습니다.' }, { status: 500 })
   }
 
   return NextResponse.json({
