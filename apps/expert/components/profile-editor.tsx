@@ -148,7 +148,7 @@ export function ProfileEditor({ profile }: { profile: ExpertProfile }) {
 
       {/* 에러 */}
       {state.error && (
-        <p className="text-sm text-error">{state.error}</p>
+        <p className="text-sm text-error" role="alert" aria-live="polite">{state.error}</p>
       )}
 
       {/* 제출 */}

@@ -75,6 +75,7 @@ export function InspectionSection({ dealId }: InspectionSectionProps) {
               name="reason"
               rows={3}
               required
+              aria-label="수정 사유"
               placeholder="수정이 필요한 부분을 적어주세요."
               className="w-full resize-none rounded-xl border border-border-light bg-background px-3 py-2 text-sm text-text placeholder:text-text-subtle focus:border-primary focus:ring-1 focus:ring-primary/20 focus:outline-none transition-colors"
             />
@@ -126,6 +127,7 @@ export function InspectionSection({ dealId }: InspectionSectionProps) {
               value={issueText}
               onChange={(e) => setIssueText(e.target.value)}
               rows={3}
+              aria-label="문제신고 내용"
               placeholder="문제 상황을 상세히 적어주세요."
               className="w-full resize-none rounded-xl border border-error/30 bg-background px-3 py-2 text-sm text-text placeholder:text-text-subtle focus:border-error focus:ring-1 focus:ring-error/20 focus:outline-none transition-colors"
             />

@@ -168,7 +168,7 @@ export function RequestList({
       )}
 
       {/* 에러 메시지 */}
-      {error && <p className="mt-3 text-xs text-error">{error}</p>}
+      {error && <p className="mt-3 text-xs text-error" role="alert" aria-live="polite">{error}</p>}
 
       {/* 의뢰 리스트 */}
       <div className="mt-4 flex flex-col gap-3">

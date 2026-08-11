@@ -209,7 +209,7 @@ export function ProgressTab({
                 )}
 
                 {/* 관리자 답변 입력 */}
-                {replyError && <p className="mb-2 text-xs text-error">{replyError}</p>}
+                {replyError && <p className="mb-2 text-xs text-error" role="alert" aria-live="polite">{replyError}</p>}
                 <div className="flex gap-2">
                   <input
                     type="text"

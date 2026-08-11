@@ -101,7 +101,7 @@ export function SettlementTab({
       </div>
 
       {/* 정산 대기 목록 */}
-      {error && <p className="text-xs text-error">{error}</p>}
+      {error && <p className="text-xs text-error" role="alert" aria-live="polite">{error}</p>}
 
       {settlements.length === 0 ? (
         <div className="flex flex-col items-center gap-1 py-12 text-center">

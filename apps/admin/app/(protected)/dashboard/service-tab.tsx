@@ -97,7 +97,7 @@ export function ServiceTab({
 
   return (
     <div className="flex flex-col gap-4">
-      {updateError && <p className="text-xs text-error">{updateError}</p>}
+      {updateError && <p className="text-xs text-error" role="alert" aria-live="polite">{updateError}</p>}
 
       {/* 카테고리 필터 */}
       <div className="flex gap-1 overflow-x-auto">

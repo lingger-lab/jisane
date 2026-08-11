@@ -67,6 +67,7 @@ export function DisputeButton({ settlementId, hasOpenDispute }: DisputeButtonPro
           <textarea
             value={reason}
             onChange={(e) => setReason(e.target.value)}
+            aria-label="이의제기 사유"
             placeholder="이의제기 사유를 입력해주세요"
             rows={3}
             className="w-full rounded-lg border border-border p-2.5 text-sm focus:border-accent focus:outline-none"

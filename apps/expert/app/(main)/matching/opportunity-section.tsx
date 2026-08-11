@@ -61,7 +61,7 @@ export function OpportunitySection({
 
   return (
     <div className="flex flex-col gap-3">
-      {error && <p className="text-xs text-error">{error}</p>}
+      {error && <p className="text-xs text-error" role="alert" aria-live="polite">{error}</p>}
       {requests.map((req) => {
         const isInterested = interested.has(req.id)
         const isLoading = loading === req.id
