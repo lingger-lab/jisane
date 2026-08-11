@@ -41,6 +41,33 @@
 
 미처리로 남은 UX(원래 착수 안 함): P1-1(assign 버튼 in-flight 상태 부재).
 
+### 1-c. 실행 배치 (작업계획 docs/13 착수분 — §0·A·C·D1 + 금전정합)
+
+계획(docs/13)에 따라 우선순위대로 실행. 각 배치는 DoD(§3.5) 게이트 통과.
+
+| 배치 | 감사 항목 | 조치 | 커밋 |
+|---|---|---|---|
+| §0 부분마감 | P2-50 | confirm-deposit 본경로 deal write `.eq('status','quoted')` CAS | `f79074d` |
+| §0 | P3-92 | settlements `select('*')`→명시 컬럼, payment_key(PSP 자격증명) expert/owner 양쪽 제거 | `f79074d` |
+| §0 | P2-33 | updateWorkflowStep `deal.status='done'` 게이트(정산·전달 후 재작성 차단) | `f79074d` |
+| §0 | P2-29 | expert_category delete/insert 에러 검사·로그 | `f79074d` |
+| §0(부분) | P2-21·36 | 검색 쿼리 error 서버 로그 표면화(사용자 에러 UI는 이연) | `f79074d` |
+| A 보안 | P1-1·P2-7 | admin dashboard·review-input **page에 verifyAdmin()** 재검증(layout은 authz 경계 아님) | `a8034db` |
+| A | P2-20·P3-44 | invitations generateMetadata 발주자 회사·대표명 인증없이 노출 → 일반 제목만 | `a8034db` |
+| A | P3-36·P3-71 | requests/experts generateMetadata에 status=open/active 필터 | `a8034db` |
+| A(RLS) | P2-68 | 마이그 0028 — owner_send_message에 sender_id 바인딩(발신자 위조 차단) | `464e7af` |
+| A(RLS) | P2-70 | 마이그 0028 — service_package.slug 불변 트리거 | `464e7af` |
+| D1 a11y | P2-47·48·P3-85 | 시맨틱 토큰(success/warning/error/text-subtle) 어둡게 → 배지·토스트 대비 AA(대비비 계산 7쌍 ≥4.5) | `03191a9` |
+| 금전정합 | P3-98 | confirmDeal 보상 롤백 실패 CRITICAL 로그 + CAS | `5f88547` |
+| 금전정합 | P3-104 | calcCapPricing estAmount `Math.round`(red-green 테스트 전환) | `d86c01c` |
+| C 정직(3앱 21파일) | P3-14/19/56/89/93/95, P2-41/42 (+expert message/interest) | raw DB error.message → 서버 로그 + 일반 한국어 메시지 | `0008460` |
+| C | P3-13/20/21/57 (+workflow route) | unguarded `request.json()` → try/catch 400 | `0008460` |
+| C(부분) | P2-9/10/43/44/28, P3-65/75 | 삼켜 가짜 빈 결과로 렌더되던 쿼리 error → destructure+console.error(사용자 에러 UI 이연) | `0008460` |
+| C | P3-19 | admin reviews rating Number.isInteger 경계검증 | `0008460` |
+
+> 실행 방식: 정직 스윕은 **앱별 분리 병렬 에이전트 3개**(파일 무겹침)로 처리하고 독립 검증(tsc·eslint·
+> 테스트) 후 커밋. 마이그·토큰은 의사환경 정책동작·대비비 계산으로 검증.
+
 ## 2. 감사 자체의 오류 (점검으로 발견)
 
 - **코드 P1-3의 `UNIQUE(matching.request_id)` 권고는 틀림.** 한 request에 **복수 expert 제안이
