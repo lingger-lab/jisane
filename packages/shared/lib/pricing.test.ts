@@ -4,6 +4,8 @@ import {
   calcGuaranteeFee,
   calcVat,
   calcPayableAmount,
+  calcDealPricing,
+  DEAL_PRICING_DEFAULT_RATES,
   VAT_RATE,
 } from './pricing'
 
@@ -93,6 +95,110 @@ describe('calcGuaranteeFee — matchFee의 10% 적립', () => {
   })
   it('반올림', () => {
     expect(calcGuaranteeFee(12345)).toBe(1235) // round(1234.5)
+  })
+})
+
+// 구독 전환 설계 docs/16 §1.1 — calcDealPricing 단일 소스.
+// §11.2 차감 유도 원칙: 독립 반올림(credit/pg/risk) 후 payout은 뺄셈 유도 →
+// 불변식 total_pay = payout + pg + risk + credit 이 구성상 항상 성립해야 한다.
+
+describe('calcDealPricing — docs/16 §1.1 구독 모델 거래 가격', () => {
+  it('예시 W=1,000,000 (§1.1 표 그대로)', () => {
+    expect(calcDealPricing(1_000_000)).toEqual({
+      creditHoldAmt: 50_000,
+      pgFeeAmt: 35_000,
+      riskReserveAmt: 10_000,
+      expertPayoutAmt: 955_000,
+      totalPay: 1_050_000,
+      matchFee: 0,
+    })
+  })
+
+  it('기본 요율 상수 = 설계값(5% / 3.5% / 1%)', () => {
+    expect(DEAL_PRICING_DEFAULT_RATES).toEqual({
+      markup: 0.05,
+      pgFee: 0.035,
+      riskReserve: 0.01,
+    })
+  })
+
+  it('소액 경계 W=30,000 (최소 작업비)', () => {
+    const r = calcDealPricing(30_000)
+    expect(r).toEqual({
+      creditHoldAmt: 1_500,
+      pgFeeAmt: 1_050,
+      riskReserveAmt: 300,
+      expertPayoutAmt: 28_650, // 잔여식: 30,000 − 1,050 − 300
+      totalPay: 31_500,
+      matchFee: 0,
+    })
+  })
+
+  it('반올림 비정수 유발값 W=33,333 — 불변식 유지', () => {
+    const r = calcDealPricing(33_333)
+    expect(r.creditHoldAmt).toBe(1_667) // round(1,666.65)
+    expect(r.pgFeeAmt).toBe(1_167) // round(1,166.655)
+    expect(r.riskReserveAmt).toBe(333) // round(333.33)
+    expect(r.expertPayoutAmt).toBe(33_333 - 1_167 - 333) // 31,833 (뺄셈 유도)
+    expect(r.totalPay).toBe(33_333 + 1_667) // 35,000
+    expect(r.totalPay).toBe(
+      r.expertPayoutAmt + r.pgFeeAmt + r.riskReserveAmt + r.creditHoldAmt,
+    )
+  })
+
+  it('match_fee는 항상 0 (컬럼 유지, 값만 0)', () => {
+    expect(calcDealPricing(30_000).matchFee).toBe(0)
+    expect(calcDealPricing(100_000_000).matchFee).toBe(0)
+  })
+
+  it('요율 오버라이드 (platform_config 값 주입 대비)', () => {
+    const r = calcDealPricing(1_000_000, { markup: 0.1, pgFee: 0.03, riskReserve: 0.02 })
+    expect(r.creditHoldAmt).toBe(100_000)
+    expect(r.pgFeeAmt).toBe(30_000)
+    expect(r.riskReserveAmt).toBe(20_000)
+    expect(r.expertPayoutAmt).toBe(950_000)
+    expect(r.totalPay).toBe(1_100_000)
+    // 부분 오버라이드: 나머지는 기본값 유지
+    const p = calcDealPricing(1_000_000, { pgFee: 0.03 })
+    expect(p.creditHoldAmt).toBe(50_000)
+    expect(p.pgFeeAmt).toBe(30_000)
+    expect(p.riskReserveAmt).toBe(10_000)
+  })
+
+  it('잘못된 입력은 명확히 throw (음수·비정수·NaN)', () => {
+    expect(() => calcDealPricing(-1)).toThrow()
+    expect(() => calcDealPricing(1000.5)).toThrow()
+    expect(() => calcDealPricing(NaN)).toThrow()
+    expect(() => calcDealPricing(Infinity)).toThrow()
+  })
+
+  describe('property: 불변식 스윕 (§11.2, W = 30,000 ~ 100,000,000)', () => {
+    // 결정적 스텝 스윕: 소수(prime) 스텝으로 반올림 잔여 케이스를 고르게 커버
+    const sweep: number[] = []
+    for (let w = 30_000; w <= 100_000_000; w += 12_347) sweep.push(w)
+    // 대표값·경계값 보강
+    sweep.push(
+      30_000, 30_001, 33_333, 99_999, 100_000, 100_001,
+      999_999, 1_000_000, 1_000_001, 49_999_999, 99_999_999, 100_000_000,
+    )
+
+    it(`총 ${sweep.length}개 샘플에서 total_pay === payout + pg + risk + credit`, () => {
+      for (const w of sweep) {
+        const r = calcDealPricing(w)
+        const sum = r.expertPayoutAmt + r.pgFeeAmt + r.riskReserveAmt + r.creditHoldAmt
+        expect(sum, `W=${w}: 불변식 위반 (total_pay=${r.totalPay}, sum=${sum})`).toBe(r.totalPay)
+      }
+    })
+
+    it('expert_payout_amt ≥ 0 이고 모든 금액은 원 단위 정수', () => {
+      for (const w of sweep) {
+        const r = calcDealPricing(w)
+        expect(r.expertPayoutAmt, `W=${w}: payout 음수`).toBeGreaterThanOrEqual(0)
+        for (const [k, v] of Object.entries(r)) {
+          expect(Number.isInteger(v), `W=${w}: ${k}=${v} 비정수`).toBe(true)
+        }
+      }
+    })
   })
 })
 

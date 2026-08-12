@@ -1,8 +1,10 @@
 /**
  * 지사네 7구간 매칭피 계산 (마스터문서 v3.3 §5.1)
  * VAT 별도 기준
+ *
+ * @deprecated 구독 전환(docs/16 §1.1) 이후 신규 거래는 match_fee=0 —
+ * `calcDealPricing` 사용. 기존(grandfather) 거래 경로 전용으로만 유지.
  */
-
 export function calcMatchFee(workFee: number): number {
   if (workFee < 30000) {
     throw new Error('최소 작업비는 30,000원입니다 (거래 불가 구간)')
@@ -31,6 +33,88 @@ export function calcMatchFee(workFee: number): number {
  */
 export function calcGuaranteeFee(matchFee: number, rate = 0.1): number {
   return Math.round(matchFee * rate)
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// 구독 모델 거래 가격 (docs/16_SUBSCRIPTION_DESIGN_2026-08-12.md §1.1)
+// ─────────────────────────────────────────────────────────────────────────────
+
+/**
+ * §1.1 기본 요율. platform_config 시드값(work_price_markup·expert_pg_fee·
+ * expert_risk_reserve)과 동일해야 한다.
+ */
+export const DEAL_PRICING_DEFAULT_RATES = {
+  /** 기업부담 크레딧 보류율 (5%) */
+  markup: 0.05,
+  /** 결제수수료 충당률 (3.5%, UI 비표시) */
+  pgFee: 0.035,
+  /** 위험적립률 (1%, UI 비표시) */
+  riskReserve: 0.01,
+} as const
+
+/** 요율 오버라이드 — 생략된 항목은 설계 기본값 사용 */
+export interface DealPricingRates {
+  markup?: number
+  pgFee?: number
+  riskReserve?: number
+}
+
+/**
+ * 거래 1건 가격 파생 결과 (docs/16 §1.1 표의 저장 컬럼과 1:1 대응).
+ * VAT는 포함하지 않는다 — 작업비 결제 VAT는 §10-2 미정 게이트,
+ * calcVat는 구독 invoice에서만 사용.
+ */
+export interface DealPricingResult {
+  /** 크레딧 보류분(기업부담 5%) → settlement.credit_hold_amt */
+  creditHoldAmt: number
+  /** 결제수수료 충당(3.5%, UI 비표시) → settlement.pg_fee_amt */
+  pgFeeAmt: number
+  /** 위험적립(1%, UI 비표시) → settlement.risk_reserve_amt */
+  riskReserveAmt: number
+  /** 시니어 수령액(잔여식) → settlement.expert_payout_amt */
+  expertPayoutAmt: number
+  /** 기업 결제액(작업가격, 단일 표시) → deal.total_pay */
+  totalPay: number
+  /** 매칭비 — 구독 모델에서 항상 0 (컬럼 유지) → deal.match_fee */
+  matchFee: 0
+}
+
+/**
+ * 구독 모델 거래 가격 단일 소스 (docs/16 §1.1·§8.2).
+ *
+ * §11.2 차감 유도 원칙: 독립 반올림은 credit/pg/risk 3개만 하고,
+ * 시니어 수령액은 `W − pg − risk` **뺄셈으로 유도**해 반올림 오차를 흡수한다.
+ * 따라서 불변식 `total_pay === payout + pg + risk + credit`이 구성상 항상 성립.
+ *
+ * @param workFee 시니어가 설정한 작업비 W (원 단위 정수)
+ * @param rates 요율 오버라이드 (platform_config 주입용) — 생략 시 설계 기본값
+ */
+export function calcDealPricing(
+  workFee: number,
+  rates: DealPricingRates = {},
+): DealPricingResult {
+  if (!Number.isInteger(workFee) || workFee < 0) {
+    throw new Error(`작업비는 0 이상의 원 단위 정수여야 합니다 (입력: ${workFee})`)
+  }
+  const markup = rates.markup ?? DEAL_PRICING_DEFAULT_RATES.markup
+  const pgFee = rates.pgFee ?? DEAL_PRICING_DEFAULT_RATES.pgFee
+  const riskReserve = rates.riskReserve ?? DEAL_PRICING_DEFAULT_RATES.riskReserve
+
+  const creditHoldAmt = Math.round(workFee * markup)
+  const pgFeeAmt = Math.round(workFee * pgFee)
+  const riskReserveAmt = Math.round(workFee * riskReserve)
+  // 잔여식(§11.2) — 반올림은 위 3개에서만, 수령액은 뺄셈 유도로 오차 흡수
+  const expertPayoutAmt = workFee - pgFeeAmt - riskReserveAmt
+  const totalPay = workFee + creditHoldAmt
+
+  // 금전 안전 가드: 비정상 요율(합계 >100%)로 수령액이 음수가 되면 fail-closed
+  if (expertPayoutAmt < 0) {
+    throw new Error(
+      `수령액이 음수입니다 (workFee=${workFee}, pgFee=${pgFeeAmt}, riskReserve=${riskReserveAmt}) — 요율 설정을 확인하세요`,
+    )
+  }
+
+  return { creditHoldAmt, pgFeeAmt, riskReserveAmt, expertPayoutAmt, totalPay, matchFee: 0 }
 }
 
 /** 부가가치세율 */
