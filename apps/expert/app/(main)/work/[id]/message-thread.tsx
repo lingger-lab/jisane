@@ -4,6 +4,10 @@ import { useState } from 'react'
 import { sendDealMessage } from '@/lib/message/actions'
 import { SubmitButton } from '@jisane/ui/submit-button'
 import { useSeededState } from '@jisane/ui/use-seeded-state'
+import { CharLimitNotice } from '@jisane/ui/char-limit-notice'
+
+// 입력 maxLength와 상한 안내가 함께 움직이도록 상수 하나로 (감사 docs/10 T22)
+const MESSAGE_MAX = 1000
 
 interface Message {
   id: string
@@ -89,6 +93,7 @@ export function MessageThread({
         </div>
       )}
 
+      <CharLimitNotice length={content.length} max={MESSAGE_MAX} />
       <form action={handleSubmit} className="flex gap-2">
         <input
           type="text"
@@ -96,7 +101,7 @@ export function MessageThread({
           onChange={(e) => setContent(e.target.value)}
           placeholder="메시지 입력..."
           aria-label="메시지 입력"
-          maxLength={1000}
+          maxLength={MESSAGE_MAX}
           className="flex-1 rounded-lg border border-border-light bg-background px-3 py-2 text-sm text-text placeholder:text-text-subtle focus:border-accent focus:outline-none"
         />
         <SubmitButton

@@ -2,41 +2,8 @@
 
 import { useRef, useState, type KeyboardEvent, type ReactNode } from 'react'
 import { nextRovingIndex, rovingTabIndex } from '@jisane/ui/roving-focus'
-
-const TAB_GROUPS = [
-  {
-    label: '거래',
-    tabs: [
-      { key: 'matching', label: '매칭 대기' },
-      { key: 'proposed', label: '매칭 진행' },
-      { key: 'progress', label: '진행 중' },
-      { key: 'invitation', label: '초빙' },
-    ],
-  },
-  {
-    label: '신뢰',
-    tabs: [{ key: 'settlement', label: '정산 관리' }],
-  },
-  {
-    label: '분쟁·보증',
-    tabs: [{ key: 'dispute', label: '이의제기' }],
-  },
-  {
-    label: '지원',
-    tabs: [
-      { key: 'service', label: '서비스 주문' },
-      { key: 'partner', label: '전문가회원' },
-      { key: 'inquiry', label: '문의' },
-    ],
-  },
-] as const
-
-type TabKey = (typeof TAB_GROUPS)[number]['tabs'][number]['key']
-
-// 화살표 로빙 이동용 평탄화 목록 (그룹 구분과 무관하게 좌우 이동)
-const FLAT_TABS: readonly { key: TabKey; label: string }[] = TAB_GROUPS.flatMap((g) => [
-  ...g.tabs,
-])
+// 탭 구성은 로딩 스켈레톤과 공유하는 단일 소스에서 가져온다(감사 docs/10 P3-5)
+import { TAB_GROUPS, FLAT_TABS, type TabKey } from './dashboard-tab-groups'
 
 interface DashboardTabsProps {
   matchingTab: ReactNode

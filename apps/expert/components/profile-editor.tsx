@@ -1,6 +1,6 @@
 'use client'
 
-import { useActionState, useState } from 'react'
+import { useActionState, useRef, useState } from 'react'
 import { updateExpertProfile } from '@/lib/expert/actions'
 import { SubmitButton } from '@jisane/ui/submit-button'
 // 등록 페이지와 동일한 단일 소스 — 축약 목록을 쓰면 저장값이 고아가 됨(감사 docs/11 P1-6)
@@ -29,22 +29,41 @@ export function ProfileEditor({ profile }: { profile: ExpertProfile }) {
   const [selectedFields, setSelectedFields] = useState<string[]>(
     profile.field ? profile.field.split(',') : []
   )
+  // 상한 도달·필수 미선택은 조작 지점에서 즉시 안내 — 무반응/서버 왕복 에러만 있던 문제(감사 docs/10 P3-48·P3-49)
+  const [capReached, setCapReached] = useState(false)
+  const [fieldError, setFieldError] = useState<string | null>(null)
+  const fieldsetRef = useRef<HTMLFieldSetElement>(null)
 
   function toggleField(chip: string) {
-    setSelectedFields((prev) =>
-      prev.includes(chip)
-        ? prev.filter((f) => f !== chip)
-        : prev.length < 5
-          ? [...prev, chip]
-          : prev
+    const isSelected = selectedFields.includes(chip)
+    if (!isSelected && selectedFields.length >= 5) {
+      // 6번째 칩 탭이 조용히 무시되지 않도록 상한 안내를 띄운다
+      setCapReached(true)
+      return
+    }
+    setCapReached(false)
+    setFieldError(null) // 수정이 시작되면 검증 에러 해제
+    setSelectedFields(
+      isSelected ? selectedFields.filter((f) => f !== chip) : [...selectedFields, chip]
     )
   }
 
   return (
-    <form action={formAction} className="flex flex-col gap-5">
+    <form
+      action={formAction}
+      onSubmit={(e) => {
+        // 필수 칩그룹은 제출 전에 클라이언트에서 검증 — 서버 왕복 후 하단 에러만 보이던 문제(감사 docs/10 P3-49)
+        if (selectedFields.length === 0) {
+          e.preventDefault()
+          setFieldError('전문 분야를 1개 이상 선택해주세요.')
+          fieldsetRef.current?.scrollIntoView({ block: 'center' })
+        }
+      }}
+      className="flex flex-col gap-5"
+    >
       <input type="hidden" name="redirect_to" value="/mypage" />
       {/* 전문 분야 — fieldset/legend로 칩그룹에 그룹 이름 부여 (감사 docs/10 P3-50) */}
-      <fieldset>
+      <fieldset ref={fieldsetRef}>
         <legend className="mb-2 block text-sm font-medium text-text">
           전문 분야 <span className="text-error">*</span>
           <span className="ml-1 text-xs font-normal text-text-muted">(최대 5개)</span>
@@ -73,6 +92,16 @@ export function ProfileEditor({ profile }: { profile: ExpertProfile }) {
             </div>
           ))}
         </div>
+        {capReached && (
+          <p role="status" aria-live="polite" className="mt-2 text-xs font-medium text-warning">
+            최대 5개까지 선택할 수 있어요. 다른 분야를 선택하려면 먼저 하나를 해제해주세요.
+          </p>
+        )}
+        {fieldError && (
+          <p role="alert" aria-live="polite" className="mt-2 text-sm text-error">
+            {fieldError}
+          </p>
+        )}
         <input type="hidden" name="field" value={selectedFields.join(',')} />
       </fieldset>
 

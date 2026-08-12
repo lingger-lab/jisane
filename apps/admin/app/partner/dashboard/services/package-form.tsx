@@ -100,6 +100,8 @@ export function PackageForm({ defaults = {} }: { defaults?: PackageFormDefaults 
             name="price"
             type="text"
             inputMode="numeric"
+            // 유료면 다른 필수 필드처럼 제출 전 인라인 검증 — 서버 왕복 후에야 알던 문제(감사 docs/10 P3-25)
+            required={!isFree}
             value={isFree ? '0' : priceDisplay}
             disabled={isFree}
             onChange={(e) => {
@@ -143,7 +145,7 @@ export function PackageForm({ defaults = {} }: { defaults?: PackageFormDefaults 
         />
       </div>
 
-      {state.error && <p className="text-sm text-error">{state.error}</p>}
+      {state.error && <p className="text-sm text-error" role="alert" aria-live="polite">{state.error}</p>}
 
       <div className="flex items-center gap-3">
         <SubmitButton className="rounded-xl bg-info px-6 py-3 font-semibold text-white shadow-sm transition-all hover:bg-info/90 hover:shadow-md disabled:opacity-50">

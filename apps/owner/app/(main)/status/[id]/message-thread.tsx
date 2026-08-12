@@ -3,6 +3,10 @@
 import { useState } from 'react'
 import { sendOwnerMessage } from '@/lib/message/actions'
 import { SubmitButton } from '@jisane/ui/submit-button'
+import { CharLimitNotice } from '@jisane/ui/char-limit-notice'
+
+// 입력 maxLength와 상한 안내가 함께 움직이도록 상수 하나로 (감사 docs/10 T22)
+const MESSAGE_MAX = 1000
 
 interface Message {
   id: string
@@ -59,7 +63,7 @@ export function MessageThread({
 
       {messages.length === 0 ? (
         <p className="mb-3 text-xs text-text-subtle">
-          시니어지식인나 매니저에게 질문이나 요청사항을 전달할 수 있습니다.
+          시니어지식인이나 매니저에게 질문이나 요청사항을 전달할 수 있습니다.
         </p>
       ) : (
         <div className="mb-3 flex max-h-64 flex-col gap-2 overflow-y-auto">
@@ -93,6 +97,7 @@ export function MessageThread({
         </div>
       )}
 
+      <CharLimitNotice length={content.length} max={MESSAGE_MAX} />
       <form action={handleSubmit} className="flex gap-2">
         <input
           type="text"
@@ -100,7 +105,7 @@ export function MessageThread({
           onChange={(e) => setContent(e.target.value)}
           placeholder="메시지 입력..."
           aria-label="메시지 입력"
-          maxLength={1000}
+          maxLength={MESSAGE_MAX}
           className="flex-1 rounded-lg border border-border-light bg-background px-3 py-2 text-sm text-text placeholder:text-text-subtle focus:border-primary focus:outline-none"
         />
         <SubmitButton

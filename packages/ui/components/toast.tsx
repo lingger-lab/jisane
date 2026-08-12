@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { useSearchParams, useRouter } from 'next/navigation'
+import { successDismissMs, errorDismissMs } from './toast-policy'
 
 /**
  * 토스트 코드 맵.
@@ -32,15 +33,16 @@ export type SuccessCode = keyof typeof SUCCESS_MESSAGES
 export function SuccessToast() {
   const searchParams = useSearchParams()
   const router = useRouter()
-  const [message, setMessage] = useState<string | null>(null)
+  // 지속 시간은 코드에 따라 다르다(결제류 연장 — 감사 docs/10 P2-50) — 문구와 함께 보관
+  const [toast, setToast] = useState<{ text: string; dismissMs: number } | null>(null)
 
   useEffect(() => {
     const key = searchParams.get('success')
     // 쿼리값은 임의 문자열이므로 맵에 있는 코드만 통과시킨다.
     const text = key ? (SUCCESS_MESSAGES as Record<string, string | undefined>)[key] : undefined
-    if (!text) return
+    if (!key || !text) return
 
-    setMessage(text)
+    setToast({ text, dismissMs: successDismissMs(key) })
 
     // URL에서 success 파라미터 제거
     const url = new URL(window.location.href)
@@ -48,16 +50,16 @@ export function SuccessToast() {
     router.replace(url.pathname + url.search, { scroll: false })
   }, [searchParams, router])
 
-  // 자동 소멸 타이머는 message에만 의존한다.
+  // 자동 소멸 타이머는 toast에만 의존한다.
   // 위 effect에 함께 두면 router.replace가 searchParams를 바꿔 effect가 재실행되고,
   // 그 cleanup이 방금 건 타이머를 취소해 토스트가 영구히 남는다.
   useEffect(() => {
-    if (!message) return
-    const timer = setTimeout(() => setMessage(null), 3000)
+    if (!toast) return
+    const timer = setTimeout(() => setToast(null), toast.dismissMs)
     return () => clearTimeout(timer)
-  }, [message])
+  }, [toast])
 
-  if (!message) return null
+  if (!toast) return null
 
   return (
     // pointer-events-none: 배너가 덮은 띠 영역의 클릭이 막히지 않도록 컨테이너는 투명하게 두고,
@@ -68,10 +70,10 @@ export function SuccessToast() {
       className="pointer-events-none fixed top-16 left-1/2 z-50 -translate-x-1/2 animate-fade-in"
     >
       <div className="pointer-events-auto flex items-center gap-3 rounded-xl bg-success px-5 py-3 text-sm font-medium text-white shadow-lg">
-        <span>{message}</span>
+        <span>{toast.text}</span>
         <button
           type="button"
-          onClick={() => setMessage(null)}
+          onClick={() => setToast(null)}
           aria-label="알림 닫기"
           // 24×24px 최소 타깃(WCAG 2.5.8) — -my-1로 토스트 높이는 종전과 동일하게 유지
           className="focus-ring -my-1 -mr-2 flex h-6 w-6 shrink-0 items-center justify-center rounded text-white/70 transition-colors hover:text-white"
@@ -108,7 +110,9 @@ export type ErrorCode = keyof typeof ERROR_MESSAGES
 export function ErrorToast() {
   const searchParams = useSearchParams()
   const router = useRouter()
-  const [message, setMessage] = useState<string | null>(null)
+  // dismissMs가 null이면 수동 닫기 전까지 유지 — 결제류 에러는 URL 파라미터가 이미
+  // 제거된 뒤라 자동 소멸을 놓치면 재확인이 불가능하다(감사 docs/10 P2-50).
+  const [toast, setToast] = useState<{ text: string; dismissMs: number | null } | null>(null)
 
   useEffect(() => {
     const key = searchParams.get('error')
@@ -116,23 +120,25 @@ export function ErrorToast() {
 
     // 화이트리스트만 렌더한다. 원본 쿼리값을 그대로 띄우면 임의 문장을
     // 사이트 알림 UI로 표시할 수 있어(피싱 문구 주입) 내부 코드도 노출된다.
-    setMessage(
-      (ERROR_MESSAGES as Record<string, string | undefined>)[key] || ERROR_MESSAGES.server_error
-    )
+    setToast({
+      text:
+        (ERROR_MESSAGES as Record<string, string | undefined>)[key] || ERROR_MESSAGES.server_error,
+      dismissMs: errorDismissMs(key),
+    })
 
     const url = new URL(window.location.href)
     url.searchParams.delete('error')
     router.replace(url.pathname + url.search, { scroll: false })
   }, [searchParams, router])
 
-  // 자동 소멸 타이머는 message에만 의존 (SuccessToast와 동일한 이유)
+  // 자동 소멸 타이머는 toast에만 의존 (SuccessToast와 동일한 이유)
   useEffect(() => {
-    if (!message) return
-    const timer = setTimeout(() => setMessage(null), 4000)
+    if (!toast || toast.dismissMs === null) return
+    const timer = setTimeout(() => setToast(null), toast.dismissMs)
     return () => clearTimeout(timer)
-  }, [message])
+  }, [toast])
 
-  if (!message) return null
+  if (!toast) return null
 
   return (
     <div
@@ -141,10 +147,10 @@ export function ErrorToast() {
       className="pointer-events-none fixed top-16 left-1/2 z-50 -translate-x-1/2 animate-fade-in"
     >
       <div className="pointer-events-auto flex items-center gap-3 rounded-xl bg-error px-5 py-3 text-sm font-medium text-white shadow-lg">
-        <span>{message}</span>
+        <span>{toast.text}</span>
         <button
           type="button"
-          onClick={() => setMessage(null)}
+          onClick={() => setToast(null)}
           aria-label="알림 닫기"
           // 24×24px 최소 타깃(WCAG 2.5.8) — -my-1로 토스트 높이는 종전과 동일하게 유지
           className="focus-ring -my-1 -mr-2 flex h-6 w-6 shrink-0 items-center justify-center rounded text-white/70 transition-colors hover:text-white"

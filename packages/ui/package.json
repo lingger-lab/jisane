@@ -26,6 +26,7 @@
     "./search-box": "./components/search-box.tsx",
     "./use-seeded-state": "./components/use-seeded-state.ts",
     "./page-hero": "./components/page-hero.tsx",
+    "./char-limit-notice": "./components/char-limit-notice.tsx",
     "./error-state": "./components/error-state.tsx",
     "./route-loading": "./components/route-loading.tsx"
   },

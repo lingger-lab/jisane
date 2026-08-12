@@ -1,6 +1,6 @@
 'use client'
 
-import { useActionState, useState } from 'react'
+import { useActionState, useRef, useState } from 'react'
 import { updateExpertProfile } from '@/lib/expert/actions'
 import { SubmitButton } from '@jisane/ui/submit-button'
 // 대분류별 중분류 그룹 (category 테이블과 동기) — 편집기와 공유하는 단일 소스
@@ -16,14 +16,22 @@ const CAREER_OPTIONS = [
 export default function RegisterPage() {
   const [state, formAction] = useActionState(updateExpertProfile, {})
   const [selectedFields, setSelectedFields] = useState<string[]>([])
+  // 상한 도달·필수 미선택은 조작 지점에서 즉시 안내 — 무반응/서버 왕복 에러만 있던 문제(감사 docs/10 P3-42·P3-43)
+  const [capReached, setCapReached] = useState(false)
+  const [fieldError, setFieldError] = useState<string | null>(null)
+  const fieldsetRef = useRef<HTMLFieldSetElement>(null)
 
   function toggleField(chip: string) {
-    setSelectedFields((prev) =>
-      prev.includes(chip)
-        ? prev.filter((f) => f !== chip)
-        : prev.length < 5
-          ? [...prev, chip]
-          : prev
+    const isSelected = selectedFields.includes(chip)
+    if (!isSelected && selectedFields.length >= 5) {
+      // 6번째 칩 탭이 조용히 무시되지 않도록 상한 안내를 띄운다
+      setCapReached(true)
+      return
+    }
+    setCapReached(false)
+    setFieldError(null) // 수정이 시작되면 검증 에러 해제
+    setSelectedFields(
+      isSelected ? selectedFields.filter((f) => f !== chip) : [...selectedFields, chip]
     )
   }
 
@@ -51,10 +59,18 @@ export default function RegisterPage() {
 
       <form
         action={formAction}
+        onSubmit={(e) => {
+          // 필수 칩그룹은 제출 전에 클라이언트에서 검증 — 서버 왕복 후 하단 에러만 보이던 문제(감사 docs/10 P3-43)
+          if (selectedFields.length === 0) {
+            e.preventDefault()
+            setFieldError('전문 분야를 1개 이상 선택해주세요.')
+            fieldsetRef.current?.scrollIntoView({ block: 'center' })
+          }
+        }}
         className="flex flex-col gap-5"
       >
         {/* 전문 분야 — fieldset/legend로 칩그룹에 그룹 이름 부여 (감사 docs/10 P3-50과 동일 패턴) */}
-        <fieldset>
+        <fieldset ref={fieldsetRef}>
           <legend className="mb-2 block text-sm font-medium text-text">
             전문 분야 <span className="text-error">*</span>
             <span className="ml-1 text-xs font-normal text-text-muted">(최대 5개)</span>
@@ -86,6 +102,16 @@ export default function RegisterPage() {
           <p className="mt-2 text-xs text-text-subtle">
             선택: {selectedFields.length}/5개
           </p>
+          {capReached && (
+            <p role="status" aria-live="polite" className="mt-1 text-xs font-medium text-warning">
+              최대 5개까지 선택할 수 있어요. 다른 분야를 선택하려면 먼저 하나를 해제해주세요.
+            </p>
+          )}
+          {fieldError && (
+            <p role="alert" aria-live="polite" className="mt-1 text-sm text-error">
+              {fieldError}
+            </p>
+          )}
           <input type="hidden" name="field" value={selectedFields.join(',')} />
         </fieldset>
 
@@ -156,9 +182,9 @@ export default function RegisterPage() {
           />
         </div>
 
-        {/* 에러 */}
+        {/* 에러 — role=alert로 낭독 (D2 패턴, 감사 docs/10 P3-49) */}
         {state.error && (
-          <p className="text-sm text-error">{state.error}</p>
+          <p className="text-sm text-error" role="alert" aria-live="polite">{state.error}</p>
         )}
 
         {/* 제출 */}
