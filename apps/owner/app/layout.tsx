@@ -9,7 +9,23 @@ import { AppHeader } from "@jisane/ui/app-header";
 import { ClientNav } from "@/components/client-nav";
 import { ADMIN_URL } from "@/lib/urls";
 import Script from "next/script";
+import localFont from "next/font/local";
+import { Gowun_Batang } from "next/font/google";
 
+// 폰트 셀프호스팅 (next/font, 설계 docs/16 §12.1) — CDN link 제거, CSS 변수로 노출.
+// Pretendard는 Google Fonts에 없어 vendor woff2를 local로, Gowun Batang은 google로.
+const pretendard = localFont({
+  src: "../../../packages/ui/fonts/PretendardVariable.woff2",
+  variable: "--font-pretendard",
+  display: "swap",
+  weight: "100 900",
+});
+const gowunBatang = Gowun_Batang({
+  subsets: ["latin"],
+  weight: ["400", "700"],
+  variable: "--font-gowun",
+  display: "swap",
+});
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://owner.jisane.cloud"),
@@ -47,19 +63,7 @@ export default async function RootLayout({
   const { data: { user } } = await supabase.auth.getUser();
 
   return (
-    <html lang="ko" className="h-full antialiased">
-      <head>
-        <link
-          rel="stylesheet"
-          as="style"
-          crossOrigin="anonymous"
-          href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css"
-        />
-        <link
-          rel="stylesheet"
-          href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&display=swap"
-        />
-      </head>
+    <html lang="ko" className={`h-full antialiased ${pretendard.variable} ${gowunBatang.variable}`}>
       <body className="min-h-full flex flex-col bg-background text-foreground font-sans pb-16" suppressHydrationWarning>
         <AppHeader
           appName="지사네"
