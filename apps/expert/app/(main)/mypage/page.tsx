@@ -4,15 +4,24 @@ import Link from 'next/link'
 import { createClient } from '@jisane/shared/supabase/server'
 import { adminClient } from '@jisane/shared/supabase/admin'
 import { signOut } from '@jisane/shared/auth/actions'
-import { DEAL_STATUS_LABELS, ORDER_STATUS_LABELS, MATCHING_STATUS_LABELS, ACTIVITY_TYPE_LABELS } from '@jisane/shared/labels'
-import {
-  DEAL_STATUS_BADGE_CLASSES,
-  ORDER_STATUS_BADGE_CLASSES,
-  MATCHING_STATUS_BADGE_CLASSES,
-} from '@jisane/shared/status-badges'
+import { ACTIVITY_TYPE_LABELS } from '@jisane/shared/labels'
 import { PageHero } from '@jisane/ui/page-hero'
 import { ErrorState } from '@jisane/ui/error-state'
+import { EmptyState } from '@jisane/ui/empty-state'
+import { StatusBadge } from '@jisane/ui/status-badge'
 import { ProfileEditor } from '@/components/profile-editor'
+
+// 목록 행 공통 스타일 — radius·보더·서피스·그림자를 한 곳에서 고정(정렬 일관).
+const ROW = 'rounded-xl border border-border-light bg-surface-warm p-4 shadow-xs'
+// 날짜/금액이 섞인 메타 줄 — 숫자 자릿수 정렬(tabular-nums).
+const META = 'mt-0.5 text-xs text-text-muted tabular-nums'
+
+function fmtDate(v: string) {
+  return new Date(v).toLocaleDateString('ko-KR')
+}
+function fmtWon(v: number) {
+  return `${v.toLocaleString('ko-KR')}원`
+}
 
 export default async function MyPage() {
   const cookieStore = await cookies()
@@ -126,299 +135,265 @@ export default async function MyPage() {
         title="마이페이지"
         subtitle="내 현황을 확인하고 프로필을 수정할 수 있습니다."
       />
-      <div className="responsive-container px-4 md:px-6 py-6">
+      <div className="responsive-container flex flex-col gap-8 px-4 md:px-6 py-6">
 
-      {/* 프로필 요약 카드 */}
-      <div className="mb-6 rounded-xl border border-border-light bg-surface-warm p-4 shadow-sm">
-        <div className="flex items-center gap-3">
-          <div className="flex h-12 w-12 items-center justify-center rounded-full bg-accent/10 text-lg font-bold text-accent">
-            {(expert.name || expert.email)[0].toUpperCase()}
+        {/* 프로필 요약 카드 */}
+        <div className="rounded-xl border border-border-light bg-surface-warm p-4 shadow-sm">
+          <div className="flex items-center gap-3">
+            <div className="flex h-12 w-12 items-center justify-center rounded-full bg-accent/10 text-lg font-bold text-accent">
+              {(expert.name || expert.email)[0].toUpperCase()}
+            </div>
+            <div className="min-w-0">
+              <p className="truncate font-medium text-text">{expert.name || '이름 미등록'}</p>
+              <p className="truncate text-xs text-text-muted">{expert.email}</p>
+            </div>
           </div>
-          <div>
-            <p className="font-medium text-text">{expert.name || '이름 미등록'}</p>
-            <p className="text-xs text-text-muted">{expert.email}</p>
+          <div className="mt-3 flex items-center gap-3 text-xs text-text-muted">
+            <span className="rounded-full bg-accent/15 px-2.5 py-0.5 font-medium text-accent">
+              {expert.grade === 'veteran' ? '베테랑' : expert.grade === 'new' ? '신규' : '스탠다드'}
+            </span>
+            <span className="tabular-nums">가입: {fmtDate(expert.created_at)}</span>
           </div>
         </div>
-        <div className="mt-3 flex gap-3 text-xs text-text-muted">
-          <span className="rounded-full bg-accent/15 px-2.5 py-0.5 font-medium text-accent">
-            {expert.grade === 'veteran' ? '베테랑' : expert.grade === 'new' ? '신규' : '스탠다드'}
-          </span>
-          <span>가입: {new Date(expert.created_at).toLocaleDateString('ko-KR')}</span>
-        </div>
-      </div>
 
-      {/* 프로필 편집 (개인정보 수정) — 상단 */}
-      <section className="mb-8">
-        <h2 className="mb-4 text-base font-bold text-text">프로필 편집</h2>
-        <ProfileEditor profile={profile} />
-      </section>
-
-      {/* 종합점수 카드 */}
-      <div className="mb-6 rounded-xl border border-border-light bg-background p-4 shadow-sm">
-        <div className="flex items-center justify-between mb-3">
-          <h2 className="text-base font-bold text-text">내 전문점수</h2>
-          <span className="text-2xl font-bold text-accent">{expert.total_score?.toFixed(1) ?? '—'}</span>
-        </div>
-        <div className="grid grid-cols-3 gap-3 text-center text-sm">
-          <div className="rounded-lg bg-surface p-2">
-            <p className="text-xs text-text-muted">경력</p>
-            <p className="font-bold text-text">{expert.career_score?.toFixed(1) ?? '—'}</p>
-          </div>
-          <div className="rounded-lg bg-surface p-2">
-            <p className="text-xs text-text-muted">리뷰</p>
-            <p className="font-bold text-text">{expert.review_score?.toFixed(1) ?? '—'}</p>
-          </div>
-          <div className="rounded-lg bg-surface p-2">
-            <p className="text-xs text-text-muted">완료율</p>
-            <p className="font-bold text-text">{expert.completion_score?.toFixed(1) ?? '—'}</p>
-          </div>
-        </div>
-        <p className="mt-2 text-xs text-text-subtle text-center">
-          (경력×1 + 리뷰×2 + 완료율×1) ÷ 4
-          {expert.activity_points > 0 && ` · 활동 +${expert.activity_points}`}
-        </p>
-      </div>
-
-      {/* 내 분야 공개 의뢰 — 조회 실패는 섹션을 숨기지 않고 에러 상태로 표시 */}
-      {matchedRequestsRes.error ? (
-        <section className="mb-6">
-          <h2 className="mb-3 text-base font-bold text-text">내 분야 공개 의뢰</h2>
-          <ErrorState message="내 분야 공개 의뢰를 불러오지 못했습니다." />
+        {/* 프로필 편집 (개인정보 수정) */}
+        <section>
+          <h2 className="mb-4 text-base font-bold text-text">프로필 편집</h2>
+          <ProfileEditor profile={profile} />
         </section>
-      ) : null}
-      {!matchedRequestsRes.error && matchedRequests.length > 0 && (
-        <section className="mb-6">
+
+        {/* 종합점수 카드 */}
+        <div className="rounded-xl border border-border-light bg-surface-warm p-4 shadow-sm">
           <div className="mb-3 flex items-center justify-between">
-            <h2 className="text-base font-bold text-text">내 분야 공개 의뢰</h2>
-            <Link href="/requests" className="text-xs font-medium text-accent hover:underline">전체 보기</Link>
+            <h2 className="text-base font-bold text-text">내 전문점수</h2>
+            <span className="text-2xl font-bold text-accent tabular-nums">{expert.total_score?.toFixed(1) ?? '—'}</span>
           </div>
-          <ul className="flex flex-col gap-2">
-            {matchedRequests.map((req) => (
-              <li key={req.id}>
-                <Link
-                  href={`/requests/${req.id}`}
-                  className="flex items-center justify-between rounded-lg border border-border-light p-3 shadow-xs card-hover"
-                >
-                  <div className="min-w-0 flex-1">
-                    <p className="truncate text-sm font-medium text-text">{req.title}</p>
-                    <p className="mt-0.5 text-xs text-text-muted">
-                      {new Date(req.created_at).toLocaleDateString('ko-KR')}
-                      {req.req_type && ` · ${req.req_type}`}
-                      {req.budget_hope != null && ` · ${req.budget_hope.toLocaleString('ko-KR')}원`}
-                    </p>
-                  </div>
-                  <span className="shrink-0 rounded-full bg-info-light px-2 py-0.5 text-xs font-medium text-info">
-                    공개
-                  </span>
-                </Link>
-              </li>
-            ))}
-          </ul>
-        </section>
-      )}
-
-      {/* 섹션 A — 작업 현황 */}
-      <section className="mb-6">
-        <div className="mb-3 flex items-center justify-between">
-          <h2 className="text-base font-bold text-text">작업 현황</h2>
-          <Link href="/work" className="text-xs font-medium text-accent hover:underline">전체 보기</Link>
+          <div className="grid grid-cols-3 gap-3 text-center text-sm">
+            <div className="rounded-lg bg-surface p-2">
+              <p className="text-xs text-text-muted">경력</p>
+              <p className="font-bold text-text tabular-nums">{expert.career_score?.toFixed(1) ?? '—'}</p>
+            </div>
+            <div className="rounded-lg bg-surface p-2">
+              <p className="text-xs text-text-muted">리뷰</p>
+              <p className="font-bold text-text tabular-nums">{expert.review_score?.toFixed(1) ?? '—'}</p>
+            </div>
+            <div className="rounded-lg bg-surface p-2">
+              <p className="text-xs text-text-muted">완료율</p>
+              <p className="font-bold text-text tabular-nums">{expert.completion_score?.toFixed(1) ?? '—'}</p>
+            </div>
+          </div>
+          <p className="mt-2 text-center text-xs text-text-subtle">
+            (경력×1 + 리뷰×2 + 완료율×1) ÷ 4
+            {expert.activity_points > 0 && ` · 활동 +${expert.activity_points}`}
+          </p>
         </div>
-        {dealsRes.error ? (
-          <ErrorState message="작업 현황을 불러오지 못했습니다." />
-        ) : deals.length === 0 ? (
-          <div className="flex flex-col items-center gap-3 rounded-xl border border-dashed border-border-light py-8 text-center">
-            <p className="text-sm text-text-muted">진행 중인 작업이 없습니다</p>
-          </div>
-        ) : (
-          <ul className="flex flex-col gap-2">
-            {deals.map((deal) => (
-              <li key={deal.id}>
-                <Link
-                  href={`/work/${deal.id}`}
-                  className="flex items-center justify-between rounded-lg border border-border-light p-3 shadow-xs card-hover"
-                >
-                  <div className="min-w-0 flex-1">
-                    <p className="truncate text-sm font-medium text-text">{deal.request?.title}</p>
-                    <p className="mt-0.5 text-xs text-text-muted">
-                      {new Date(deal.created_at).toLocaleDateString('ko-KR')}
-                      {deal.work_fee != null && ` · ${deal.work_fee.toLocaleString('ko-KR')}원`}
-                    </p>
-                  </div>
-                  <span className={`shrink-0 rounded-full px-2 py-0.5 text-xs font-medium ${DEAL_STATUS_BADGE_CLASSES[deal.status] || 'bg-surface text-text-subtle'}`}>
-                    {DEAL_STATUS_LABELS[deal.status] || deal.status}
-                  </span>
-                </Link>
-              </li>
-            ))}
-          </ul>
+
+        {/* 내 분야 공개 의뢰 — 조회 실패는 섹션을 숨기지 않고 에러 상태로 표시 */}
+        {matchedRequestsRes.error ? (
+          <section>
+            <h2 className="mb-3 text-base font-bold text-text">내 분야 공개 의뢰</h2>
+            <ErrorState message="내 분야 공개 의뢰를 불러오지 못했습니다." />
+          </section>
+        ) : null}
+        {!matchedRequestsRes.error && matchedRequests.length > 0 && (
+          <section>
+            <div className="mb-3 flex items-center justify-between">
+              <h2 className="text-base font-bold text-text">내 분야 공개 의뢰</h2>
+              <Link href="/requests" className="text-xs font-medium text-accent hover:underline">전체 보기</Link>
+            </div>
+            <ul className="flex flex-col gap-2">
+              {matchedRequests.map((req) => (
+                <li key={req.id}>
+                  <Link href={`/requests/${req.id}`} className={`${ROW} flex items-center justify-between gap-2 card-hover`}>
+                    <div className="min-w-0 flex-1">
+                      <p className="truncate text-sm font-medium text-text">{req.title}</p>
+                      <p className={META}>
+                        {fmtDate(req.created_at)}
+                        {req.req_type && ` · ${req.req_type}`}
+                        {req.budget_hope != null && ` · ${fmtWon(req.budget_hope)}`}
+                      </p>
+                    </div>
+                    <span className="inline-flex shrink-0 items-center rounded-full bg-info-light px-2 py-0.5 text-xs font-medium text-info">공개</span>
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </section>
         )}
-      </section>
 
-      {/* 섹션 B — 교육·서비스 신청 현황 */}
-      <section className="mb-6">
-        <div className="mb-3 flex items-center justify-between">
-          <h2 className="text-base font-bold text-text">교육·서비스 현황</h2>
-          <Link href="/matching" className="text-xs font-medium text-accent hover:underline">전체 보기</Link>
-        </div>
-        {ordersRes.error ? (
-          <ErrorState message="교육·서비스 현황을 불러오지 못했습니다." />
-        ) : orders.length === 0 ? (
-          <div className="flex flex-col items-center gap-3 rounded-xl border border-dashed border-border-light py-8 text-center">
-            <p className="text-sm text-text-muted">신청한 교육·서비스가 없습니다</p>
-            <Link href="/education" className="text-sm font-medium text-accent hover:underline">교육 둘러보기</Link>
+        {/* 섹션 A — 작업 현황 */}
+        <section>
+          <div className="mb-3 flex items-center justify-between">
+            <h2 className="text-base font-bold text-text">작업 현황</h2>
+            <Link href="/work" className="text-xs font-medium text-accent hover:underline">전체 보기</Link>
           </div>
-        ) : (
-          <ul className="flex flex-col gap-2">
-            {orders.map((order) => (
-              <li key={order.id}>
-                <div className="rounded-lg border border-border-light p-3 shadow-xs">
+          {dealsRes.error ? (
+            <ErrorState message="작업 현황을 불러오지 못했습니다." />
+          ) : deals.length === 0 ? (
+            <EmptyState message="진행 중인 작업이 없습니다" />
+          ) : (
+            <ul className="flex flex-col gap-2">
+              {deals.map((deal) => (
+                <li key={deal.id}>
+                  <Link href={`/work/${deal.id}`} className={`${ROW} flex items-center justify-between gap-2 card-hover`}>
+                    <div className="min-w-0 flex-1">
+                      <p className="truncate text-sm font-medium text-text">{deal.request?.title}</p>
+                      <p className={META}>
+                        {fmtDate(deal.created_at)}
+                        {deal.work_fee != null && ` · ${fmtWon(deal.work_fee)}`}
+                      </p>
+                    </div>
+                    <StatusBadge kind="deal" status={deal.status} />
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          )}
+        </section>
+
+        {/* 섹션 B — 교육·서비스 신청 현황 */}
+        <section>
+          <div className="mb-3 flex items-center justify-between">
+            <h2 className="text-base font-bold text-text">교육·서비스 현황</h2>
+            <Link href="/matching" className="text-xs font-medium text-accent hover:underline">전체 보기</Link>
+          </div>
+          {ordersRes.error ? (
+            <ErrorState message="교육·서비스 현황을 불러오지 못했습니다." />
+          ) : orders.length === 0 ? (
+            <EmptyState message="신청한 교육·서비스가 없습니다" action={{ href: '/education', label: '교육 둘러보기' }} />
+          ) : (
+            <ul className="flex flex-col gap-2">
+              {orders.map((order) => (
+                <li key={order.id} className={ROW}>
                   <div className="flex items-center justify-between gap-2">
                     <div className="min-w-0 flex-1">
                       <p className="truncate text-sm font-medium text-text">{order.package_name}</p>
-                      <p className="mt-0.5 text-xs text-text-muted">
-                        {new Date(order.created_at).toLocaleDateString('ko-KR')}
+                      <p className={META}>
+                        {fmtDate(order.created_at)}
                         {' · '}
-                        {order.price === 0 ? '무료' : `${order.price.toLocaleString('ko-KR')}원`}
+                        {order.price === 0 ? '무료' : fmtWon(order.price)}
                       </p>
                     </div>
-                    <span className={`shrink-0 rounded-full px-2 py-0.5 text-xs font-medium ${ORDER_STATUS_BADGE_CLASSES[order.status] || 'bg-surface text-text-subtle'}`}>
-                      {ORDER_STATUS_LABELS[order.status] || order.status}
-                    </span>
+                    <StatusBadge kind="order" status={order.status} />
                   </div>
                   {order.status === 'pending' && (
                     <p className="mt-2 text-xs text-info">접수 완료 — 매니저 연락 예정</p>
                   )}
-                </div>
-              </li>
-            ))}
-          </ul>
-        )}
-      </section>
-
-      {/* 섹션 C — 매칭 현황 */}
-      <section className="mb-8">
-        <div className="mb-3 flex items-center justify-between">
-          <h2 className="text-base font-bold text-text">매칭 현황</h2>
-          <Link href="/matching" className="text-xs font-medium text-accent hover:underline">전체 보기</Link>
-        </div>
-        {matchingsRes.error ? (
-          <ErrorState message="매칭 현황을 불러오지 못했습니다." />
-        ) : matchings.length === 0 ? (
-          <div className="flex flex-col items-center gap-3 rounded-xl border border-dashed border-border-light py-8 text-center">
-            <p className="text-sm text-text-muted">매칭 제안이 없습니다</p>
-          </div>
-        ) : (
-          <ul className="flex flex-col gap-2">
-            {matchings.map((m) => (
-              <li key={m.id}>
-                <Link
-                  href={`/matching/${m.id}`}
-                  className="flex items-center justify-between rounded-lg border border-border-light p-3 shadow-xs card-hover"
-                >
-                  <div className="min-w-0 flex-1">
-                    <p className="truncate text-sm font-medium text-text">{m.request?.title}</p>
-                    <p className="mt-0.5 text-xs text-text-muted">
-                      {new Date(m.created_at).toLocaleDateString('ko-KR')}
-                      {m.request?.req_type && ` · ${m.request.req_type}`}
-                    </p>
-                  </div>
-                  <span className={`shrink-0 rounded-full px-2 py-0.5 text-xs font-medium ${MATCHING_STATUS_BADGE_CLASSES[m.status] || 'bg-surface text-text-subtle'}`}>
-                    {MATCHING_STATUS_LABELS[m.status] || m.status}
-                  </span>
-                </Link>
-              </li>
-            ))}
-          </ul>
-        )}
-      </section>
-
-      {/* 섹션 D — 활동 이력 (조회 실패는 섹션을 숨기지 않고 에러 상태로 표시) */}
-      {activitiesRes.error ? (
-        <section className="mb-8">
-          <h2 className="mb-3 text-base font-bold text-text">활동 이력</h2>
-          <ErrorState message="활동 이력을 불러오지 못했습니다." />
+                </li>
+              ))}
+            </ul>
+          )}
         </section>
-      ) : null}
-      {!activitiesRes.error && activities.length > 0 && (
-        <section className="mb-8">
-          <h2 className="mb-3 text-base font-bold text-text">활동 이력</h2>
-          <ul className="flex flex-col gap-2">
-            {activities.map((a) => {
-              const isExpired = a.expires_at && new Date(a.expires_at) < new Date()
-              return (
-                <li key={a.id} className={`rounded-lg border border-border-light p-3 shadow-xs ${isExpired ? 'opacity-50' : ''}`}>
-                  <div className="flex items-center justify-between gap-2">
-                    <div>
-                      <p className="text-sm font-medium text-text">
-                        {ACTIVITY_TYPE_LABELS[a.type] || a.type}
-                        <span className="ml-2 text-xs font-bold text-accent">+{a.points}</span>
-                      </p>
-                      <p className="mt-0.5 text-xs text-text-muted">
-                        {new Date(a.created_at).toLocaleDateString('ko-KR')}
-                        {a.expires_at && ` ~ ${new Date(a.expires_at).toLocaleDateString('ko-KR')}`}
+
+        {/* 섹션 C — 매칭 현황 */}
+        <section>
+          <div className="mb-3 flex items-center justify-between">
+            <h2 className="text-base font-bold text-text">매칭 현황</h2>
+            <Link href="/matching" className="text-xs font-medium text-accent hover:underline">전체 보기</Link>
+          </div>
+          {matchingsRes.error ? (
+            <ErrorState message="매칭 현황을 불러오지 못했습니다." />
+          ) : matchings.length === 0 ? (
+            <EmptyState message="매칭 제안이 없습니다" />
+          ) : (
+            <ul className="flex flex-col gap-2">
+              {matchings.map((m) => (
+                <li key={m.id}>
+                  <Link href={`/matching/${m.id}`} className={`${ROW} flex items-center justify-between gap-2 card-hover`}>
+                    <div className="min-w-0 flex-1">
+                      <p className="truncate text-sm font-medium text-text">{m.request?.title}</p>
+                      <p className={META}>
+                        {fmtDate(m.created_at)}
+                        {m.request?.req_type && ` · ${m.request.req_type}`}
                       </p>
                     </div>
-                    {isExpired && (
-                      <span className="shrink-0 rounded-full bg-surface px-2 py-0.5 text-xs text-text-subtle">만료</span>
-                    )}
-                  </div>
+                    <StatusBadge kind="matching" status={m.status} />
+                  </Link>
                 </li>
-              )
-            })}
-          </ul>
+              ))}
+            </ul>
+          )}
         </section>
-      )}
 
-      {/* 섹션 E — 관심 표현 이력 */}
-      <section className="mb-8">
-        <div className="mb-3 flex items-center justify-between">
-          <h2 className="text-base font-bold text-text">관심 표현 이력</h2>
-          <span className="text-xs font-medium text-text-muted">
-            활성 {interestsRes.error ? '—' : activeInterestCount}/5개
-          </span>
-        </div>
-        {interestsRes.error ? (
-          <ErrorState message="관심 표현 이력을 불러오지 못했습니다." />
-        ) : interests.length === 0 ? (
-          <div className="flex flex-col items-center gap-3 rounded-xl border border-dashed border-border-light py-8 text-center">
-            <p className="text-sm text-text-muted">관심 표현 이력이 없습니다</p>
-            <Link href="/requests" className="text-sm font-medium text-accent hover:underline">공개 의뢰 둘러보기</Link>
-          </div>
-        ) : (
-          <ul className="flex flex-col gap-2">
-            {interests.map((interest) => (
-              <li key={interest.id}>
-                <Link
-                  href={`/requests/${interest.request.id}`}
-                  className="flex items-center justify-between rounded-lg border border-border-light p-3 shadow-xs card-hover"
-                >
-                  <div className="min-w-0 flex-1">
-                    <p className="truncate text-sm font-medium text-text">{interest.request.title}</p>
-                    <p className="mt-0.5 text-xs text-text-muted">
-                      {new Date(interest.created_at).toLocaleDateString('ko-KR')}
-                    </p>
-                  </div>
-                  <span className={`shrink-0 rounded-full px-2 py-0.5 text-xs font-medium ${
-                    interest.request.status === 'open' ? 'bg-info-light text-info' : 'bg-surface text-text-subtle'
-                  }`}>
-                    {interest.request.status === 'open' ? '활성' : '종료'}
-                  </span>
-                </Link>
-              </li>
-            ))}
-          </ul>
+        {/* 섹션 D — 활동 이력 (조회 실패는 섹션을 숨기지 않고 에러 상태로 표시) */}
+        {activitiesRes.error ? (
+          <section>
+            <h2 className="mb-3 text-base font-bold text-text">활동 이력</h2>
+            <ErrorState message="활동 이력을 불러오지 못했습니다." />
+          </section>
+        ) : null}
+        {!activitiesRes.error && activities.length > 0 && (
+          <section>
+            <h2 className="mb-3 text-base font-bold text-text">활동 이력</h2>
+            <ul className="flex flex-col gap-2">
+              {activities.map((a) => {
+                const isExpired = a.expires_at && new Date(a.expires_at) < new Date()
+                return (
+                  <li key={a.id} className={`${ROW} ${isExpired ? 'opacity-50' : ''}`}>
+                    <div className="flex items-center justify-between gap-2">
+                      <div className="min-w-0">
+                        <p className="text-sm font-medium text-text">
+                          {ACTIVITY_TYPE_LABELS[a.type] || a.type}
+                          <span className="ml-2 text-xs font-bold text-accent tabular-nums">+{a.points}</span>
+                        </p>
+                        <p className={META}>
+                          {fmtDate(a.created_at)}
+                          {a.expires_at && ` ~ ${fmtDate(a.expires_at)}`}
+                        </p>
+                      </div>
+                      {isExpired && (
+                        <span className="inline-flex shrink-0 items-center rounded-full bg-surface px-2 py-0.5 text-xs text-text-subtle">만료</span>
+                      )}
+                    </div>
+                  </li>
+                )
+              })}
+            </ul>
+          </section>
         )}
-      </section>
 
-      {/* 로그아웃 */}
-      <form action={signOut}>
-        <button
-          type="submit"
-          className="w-full rounded-xl border border-border-light px-6 py-3 text-sm font-medium text-text-muted transition-colors hover:bg-surface hover:text-text"
-        >
-          로그아웃
-        </button>
-      </form>
+        {/* 섹션 E — 관심 표현 이력 */}
+        <section>
+          <div className="mb-3 flex items-center justify-between">
+            <h2 className="text-base font-bold text-text">관심 표현 이력</h2>
+            <span className="text-xs font-medium text-text-muted tabular-nums">
+              활성 {interestsRes.error ? '—' : activeInterestCount}/5개
+            </span>
+          </div>
+          {interestsRes.error ? (
+            <ErrorState message="관심 표현 이력을 불러오지 못했습니다." />
+          ) : interests.length === 0 ? (
+            <EmptyState message="관심 표현 이력이 없습니다" action={{ href: '/requests', label: '공개 의뢰 둘러보기' }} />
+          ) : (
+            <ul className="flex flex-col gap-2">
+              {interests.map((interest) => (
+                <li key={interest.id}>
+                  <Link href={`/requests/${interest.request.id}`} className={`${ROW} flex items-center justify-between gap-2 card-hover`}>
+                    <div className="min-w-0 flex-1">
+                      <p className="truncate text-sm font-medium text-text">{interest.request.title}</p>
+                      <p className={META}>{fmtDate(interest.created_at)}</p>
+                    </div>
+                    <span className={`inline-flex shrink-0 items-center rounded-full px-2 py-0.5 text-xs font-medium ${
+                      interest.request.status === 'open' ? 'bg-info-light text-info' : 'bg-surface text-text-subtle'
+                    }`}>
+                      {interest.request.status === 'open' ? '활성' : '종료'}
+                    </span>
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          )}
+        </section>
+
+        {/* 로그아웃 */}
+        <form action={signOut}>
+          <button
+            type="submit"
+            className="w-full rounded-xl border border-border-light px-6 py-3 text-sm font-medium text-text-muted transition-colors hover:bg-surface hover:text-text"
+          >
+            로그아웃
+          </button>
+        </form>
       </div>
     </div>
   )
