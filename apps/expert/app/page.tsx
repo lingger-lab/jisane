@@ -11,10 +11,34 @@ import { fetchExpertLandingStats } from '@jisane/shared/landing-stats'
 import { ADMIN_URL, OWNER_URL } from '@/lib/urls'
 import { getPackagesByAudience } from '@jisane/shared/service-package/queries'
 import { CategoryBrowse } from '@jisane/ui/category-browse'
-import { CollapsibleSection } from '@jisane/ui/collapsible-section'
-import { AnimatedCounter } from '@jisane/ui/animated-counter'
 import { OwlIcon } from '@jisane/ui/icons/owl'
 import { ScrollReveal } from '@jisane/ui/scroll-reveal'
+
+// 시니어 작업에 필요한 전문 도구 — 무료 S/W를 미끼로, 고급 도구는 유료.
+const EXPERT_TOOLS = [
+  {
+    name: '지사네 업무 S/W',
+    badge: '무료',
+    desc: '의뢰 관리 · 문서 작성 · 정산까지 기본 도구 무료 제공',
+    icon: (
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round">
+        <rect x="3" y="3" width="7" height="7" rx="1" /><rect x="14" y="3" width="7" height="7" rx="1" />
+        <rect x="14" y="14" width="7" height="7" rx="1" /><rect x="3" y="14" width="7" height="7" rx="1" />
+      </svg>
+    ),
+  },
+  {
+    name: 'AI 작업 도구 (프로)',
+    badge: '유료',
+    desc: '제안서 · 보고서 AI 초안, 고급 분석 템플릿',
+    icon: (
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9z" />
+        <path d="M19 15l.7 1.9 1.8.7-1.8.7L19 20l-.7-1.7-1.8-.7 1.8-.7z" />
+      </svg>
+    ),
+  },
+] as const
 
 export default async function ExpertHome() {
   const cookieStore = await cookies()
@@ -41,244 +65,144 @@ export default async function ExpertHome() {
   const adminUrl = ADMIN_URL
   const ownerUrl = OWNER_URL
 
-  // 핵심 수치 (완료거래 0이면 3칸)
-  const metrics: { end: number; suffix: string; label: string }[] = [
-    { end: stats.totalOwners, suffix: '+', label: '참여 기업' },
-    { end: stats.totalOpenRequests, suffix: '건', label: '열린 의뢰' },
-    { end: 0, suffix: '%', label: '수수료' },
-  ]
-  if (stats.totalCompletedDeals > 0) {
-    metrics.push({ end: stats.totalCompletedDeals, suffix: '건', label: '완료 거래' })
-  }
-
   return (
     <div className="flex flex-1 flex-col items-center">
-      {/* [1] 히어로 — 브랜드 딥그린 다크 밴드 + 0% 배지 */}
+      {/* [1] 히어로 — 브랜드 딥그린 다크 밴드 */}
       <div className="hero-dark w-full">
         <section className="responsive-container flex flex-col items-center gap-4 px-4 md:px-6 pt-14 md:pt-20 pb-12 md:pb-16 text-center animate-fade-in">
-          <span className="hero-eyebrow">당신의 30년, AI로 증폭하다 · 시니어지식인회원</span>
+          <span className="hero-eyebrow">당신의 경험, 지역 기업의 힘</span>
           <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold font-serif text-white leading-snug">
             경험의 값어치,
             <br />
             <span className="text-accent-light">온전히</span> 받으세요.
           </h1>
-
-          {/* 0% 수수료 배지 — 다크 배경 위 버전 */}
-          <div className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-4 py-2">
-            <span className="text-2xl md:text-3xl font-bold text-accent-light">0%</span>
-            <span className="text-sm font-medium text-white/90">수수료 — 작업료 전액 직접 정산</span>
-          </div>
-
-          <div className="flex w-full flex-col gap-3 mt-2">
-          <form action={signInWithKakao}>
-            <button
-              type="submit"
-              className="flex h-14 w-full items-center justify-center gap-2 rounded-xl overflow-hidden bg-[#FEE500] text-base font-semibold text-[#191919] shadow-sm transition-all hover:bg-[#FDD800] hover:shadow-md btn-press"
-            >
-              <KakaoIcon className="h-5 w-5 shrink-0" />
-              카카오로 시작하기
-            </button>
-          </form>
-          <form action={signInWithGoogle}>
-            <button
-              type="submit"
-              className="flex h-14 w-full items-center justify-center gap-2 rounded-xl overflow-hidden border border-border bg-white text-base font-medium text-[#1f1f1f] shadow-sm transition-all hover:bg-surface hover:shadow-md btn-press"
-            >
-              <GoogleIcon className="h-5 w-5 shrink-0" />
-              Google로 시작하기
-            </button>
-          </form>
-          </div>
-        </section>
-      </div>
-
-      {/* [2] 핵심 수치 — 풀블리드 배경 */}
-      <ScrollReveal className="w-full">
-      <div className="w-full bg-surface-warm py-8 md:py-12">
-        <section className="responsive-container px-4 md:px-6">
-          <div className={`grid gap-3 md:gap-4 ${metrics.length === 4 ? 'grid-cols-2 md:grid-cols-4' : 'grid-cols-3'}`}>
-            {metrics.map((m) => (
-              <div key={m.label} className="flex flex-col items-center rounded-xl bg-white p-5 md:p-6 shadow-xs">
-                <AnimatedCounter end={m.end} suffix={m.suffix} className="text-3xl md:text-4xl font-bold text-accent" />
-                <span className="mt-1 text-sm text-text-muted">{m.label}</span>
-              </div>
-            ))}
-          </div>
-        </section>
-      </div>
-      </ScrollReveal>
-
-      {/* [2.5] 이런 경험, 있으셨나요? — 고통 언어화 */}
-      <ScrollReveal className="w-full">
-      <section className="responsive-container px-4 md:px-6 py-8 md:py-12">
-        <div className="rounded-xl border-t-4 border-t-warning bg-surface-warm p-5 md:p-6">
-          <p className="text-base font-bold text-text">이런 경험, 있으셨나요?</p>
-          <ul className="mt-3 flex flex-col gap-3 text-sm md:text-base text-text-muted">
-            <li className="flex items-start gap-2">
-              <span className="mt-0.5 text-text-subtle">&mdash;</span>
-              수수료 30%가 빠지고 나서야 정산 내역을 받았다
-            </li>
-            <li className="flex items-start gap-2">
-              <span className="mt-0.5 text-text-subtle">&mdash;</span>
-              작업을 끝냈는데 대금이 한 달째 입금되지 않았다
-            </li>
-            <li className="flex items-start gap-2">
-              <span className="mt-0.5 text-text-subtle">&mdash;</span>
-              프로필 한 장으로 30년 경험을 증명해야 했다
-            </li>
-          </ul>
-          <p className="mt-4 text-xs md:text-sm text-text-subtle">
-            플랫폼의 구조가 달라지면, 같은 실력도 다른 대우를 받습니다.
+          <p className="text-base md:text-lg text-white/75">
+            기업 의뢰 정보와 작업에 필요한 전문 도구를 한곳에서
           </p>
-        </div>
-      </section>
-      </ScrollReveal>
-
-      {/* [3] 카테고리별 의뢰 현황 */}
-      <ScrollReveal className="w-full">
-      <section className="responsive-container px-4 md:px-6 py-8 md:py-12">
-        <CategoryBrowse
-          categoryCounts={stats.categoryCounts}
-          newRequestsThisMonth={stats.newRequestsThisMonth}
-          title="어떤 분야의 의뢰가 있나요?"
-          countLabel="의뢰"
-          countUnit="건"
-          colorToken="accent"
-          baseHref="/requests"
-        />
-      </section>
-      </ScrollReveal>
-
-      {/* [3.5] 비교해보세요 — 풀블리드 배경 */}
-      <ScrollReveal className="w-full">
-      <div className="w-full bg-white py-8 md:py-12">
-        <section className="responsive-container px-4 md:px-6">
-          <h2 className="text-xl md:text-2xl font-bold text-text">비교해보세요</h2>
-          <div className="mt-4 flex flex-col gap-4">
-            {[
-              { old: '수수료 20~30%를 떼고 정산한다', jisane: '수수료 0% — 작업료 전액을 당신 통장으로' },
-              { old: '작업 완료 후에도 입금이 불확실하다', jisane: '에스크로 선입금 — 기업이 먼저 입금해야 작업 시작' },
-              { old: '매칭 기준이 불명확하다', jisane: '매칭 점수 6항목을 투명하게 공개' },
-            ].map((row) => (
-              <div key={row.old} className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                <div className="rounded-xl bg-error-light border border-error/10 p-4 md:p-5">
-                  <p className="text-xs md:text-sm font-medium text-error">감추는 관행</p>
-                  <p className="mt-1 text-sm text-text-muted">{row.old}</p>
-                </div>
-                <div className="rounded-xl bg-success-light border border-success/10 p-4 md:p-5">
-                  <p className="text-xs md:text-sm font-medium text-success">지사네</p>
-                  <p className="mt-1 text-sm text-text-muted">{row.jisane}</p>
-                </div>
-              </div>
-            ))}
-          </div>
         </section>
       </div>
+
+      {/* [2] ① 기업 의뢰 정보 */}
+      <ScrollReveal className="w-full">
+        <section className="responsive-container px-4 md:px-6 py-8 md:py-12">
+          <header className="mb-5 flex items-start gap-3">
+            <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-accent font-serif text-base font-bold text-white">1</span>
+            <div>
+              <h2 className="text-xl md:text-2xl font-bold text-text leading-tight">기업 의뢰 정보</h2>
+              <p className="mt-0.5 text-sm text-text-muted">지금 열린 기업의 협력 요청</p>
+            </div>
+          </header>
+          <CategoryBrowse
+            categoryCounts={stats.categoryCounts}
+            newRequestsThisMonth={stats.newRequestsThisMonth}
+            title="어떤 분야의 의뢰가 있나요?"
+            countLabel="의뢰"
+            countUnit="건"
+            colorToken="accent"
+            baseHref="/requests"
+          />
+        </section>
       </ScrollReveal>
 
-      {/* [4] 시니어지식인 역량 강화 프로그램 — 풀블리드 배경, 클릭 시 펼침 */}
+      {/* [3] ② 작업에 필요한 전문 도구 — 풀블리드 warm */}
       <ScrollReveal className="w-full">
-      <div className="w-full bg-accent/5 py-8 md:py-12">
-        <section className="responsive-container px-4 md:px-6">
-          <CollapsibleSection
-            title="당신의 30년, AI로 증폭하다"
-            subtitle="경험 × AI = 증폭 — 역량 강화 프로그램"
-          >
-            <div className="flex flex-col gap-4">
+        <div className="w-full bg-surface-warm py-8 md:py-12">
+          <section className="responsive-container px-4 md:px-6">
+            <header className="mb-5 flex items-start gap-3">
+              <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-primary font-serif text-base font-bold text-white">2</span>
+              <div>
+                <h2 className="text-xl md:text-2xl font-bold text-text leading-tight">작업에 필요한 전문 도구</h2>
+                <p className="mt-0.5 text-sm text-text-muted">시니어 작업을 돕는 S/W 도구</p>
+              </div>
+            </header>
+            <div className="flex flex-col gap-3">
+              {EXPERT_TOOLS.map((tool) => (
+                <div key={tool.name} className="flex items-start gap-3 rounded-xl border border-border-light bg-white p-4 shadow-xs">
+                  <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-accent/10 text-accent [&>svg]:h-[18px] [&>svg]:w-[18px]">
+                    {tool.icon}
+                  </span>
+                  <div className="min-w-0">
+                    <div className="flex items-center gap-2">
+                      <p className="font-semibold text-text">{tool.name}</p>
+                      <span
+                        className={`rounded-full px-2.5 py-0.5 text-xs font-semibold ${
+                          tool.badge === '무료' ? 'bg-primary/10 text-primary' : 'bg-accent/10 text-accent'
+                        }`}
+                      >
+                        {tool.badge}
+                      </span>
+                    </div>
+                    <p className="mt-0.5 text-sm text-text-muted">{tool.desc}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </section>
+        </div>
+      </ScrollReveal>
+
+      {/* [4] ③ 지사네가 제공하는 시니어 전문 서비스 — 역량 강화·교육 */}
+      <ScrollReveal className="w-full">
+        <section className="responsive-container px-4 md:px-6 py-8 md:py-12">
+          <header className="mb-5 flex items-start gap-3">
+            <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-accent font-serif text-base font-bold text-white">3</span>
+            <div>
+              <h2 className="text-xl md:text-2xl font-bold text-text leading-tight">지사네가 제공하는 시니어 전문 서비스</h2>
+              <p className="mt-0.5 text-sm text-text-muted">역량 강화 · 교육 프로그램</p>
+            </div>
+          </header>
+          <div className="flex flex-col gap-3">
             {education.map((pkg) => (
-              <div
+              <Link
                 key={pkg.slug}
-                className="rounded-xl border border-border-light border-t-4 border-t-accent bg-white p-5 md:p-6 shadow-xs"
+                href={`/education/${pkg.slug}`}
+                className="rounded-xl border border-border-light bg-white p-4 md:p-5 shadow-xs transition-colors hover:border-accent/30"
               >
                 <div className="flex items-start justify-between gap-2">
                   <div className="min-w-0 flex-1">
-                    <h3 className="font-medium text-text">{pkg.name}</h3>
-                    <p className="mt-1 text-sm text-text-muted leading-relaxed">
-                      {pkg.valueDesc}
-                    </p>
+                    <h3 className="font-semibold text-text">{pkg.name}</h3>
+                    <p className="mt-1 text-sm text-text-muted leading-relaxed">{pkg.valueDesc}</p>
                   </div>
-                  {pkg.duration && (
-                    <span className="shrink-0 text-xs text-text-subtle">{pkg.duration}</span>
-                  )}
+                  {pkg.duration && <span className="shrink-0 text-xs text-text-subtle">{pkg.duration}</span>}
                 </div>
-                <div className="mt-3 flex justify-end">
-                  <Link
-                    href={`/education/${pkg.slug}`}
-                    className="rounded-lg border border-border-light px-4 py-2 text-sm font-medium text-text-muted transition-colors hover:border-accent/30 hover:text-accent"
-                  >
-                    자세히 보기
-                  </Link>
-                </div>
-              </div>
+              </Link>
             ))}
-            </div>
-          </CollapsibleSection>
+          </div>
         </section>
-      </div>
       </ScrollReveal>
 
-      {/* [5] 신뢰 배지 — 풀블리드 배경 (교육 섹션과 연속 동일색 방지 위해 화이트) */}
+      {/* [5] 회원가입/로그인 CTA — 하단 */}
       <ScrollReveal className="w-full">
-      <div className="w-full bg-white py-8 md:py-12">
-        <section className="responsive-container px-4 md:px-6">
-          <div className="grid grid-cols-1 gap-3 sm:grid-cols-3 md:gap-4">
-            {([
-              { title: '수수료 0%', desc: '작업료 전액 · 당신 통장으로 직접 정산', href: '' },
-              { title: '에스크로 선입금', desc: '기업이 먼저 입금 · 작업 전 대금 확보', href: `${adminUrl}/standard/guarantee` },
-              { title: '매칭 점수 공개', desc: '카테고리·경력·실적 6항목 점수 투명 공개', href: '' },
-            ]).map((badge) => {
-              const card = (
-                <div
-                  className={`flex h-full flex-col items-center rounded-xl border border-border-light bg-white p-5 md:p-6 text-center shadow-sm${badge.href ? ' transition-colors hover:border-accent/30' : ''}`}
+        <section className="responsive-container px-4 md:px-6 py-8 md:py-12">
+          <div className="rounded-2xl bg-accent/10 p-6 md:p-8">
+            <p className="mb-5 text-center text-base md:text-lg font-semibold text-text leading-relaxed">
+              지금 등록하고 열린 의뢰 {stats.totalOpenRequests}건을 확인하세요
+            </p>
+            <div className="flex w-full flex-col gap-3">
+              <form action={signInWithKakao}>
+                <button
+                  type="submit"
+                  className="flex h-14 w-full items-center justify-center gap-2 rounded-xl overflow-hidden bg-[#FEE500] text-base font-semibold text-[#191919] shadow-sm transition-all hover:bg-[#FDD800] hover:shadow-md btn-press"
                 >
-                  <span className="text-base md:text-lg font-bold text-accent">{badge.title}</span>
-                  <span className="mt-1 text-xs md:text-sm text-text-muted">{badge.desc}</span>
-                </div>
-              )
-              return badge.href ? (
-                <a key={badge.title} href={badge.href} className="h-full">{card}</a>
-              ) : (
-                <div key={badge.title} className="h-full">{card}</div>
-              )
-            })}
+                  <KakaoIcon className="h-5 w-5 shrink-0" />
+                  카카오로 시작하기
+                </button>
+              </form>
+              <form action={signInWithGoogle}>
+                <button
+                  type="submit"
+                  className="flex h-14 w-full items-center justify-center gap-2 rounded-xl overflow-hidden border border-border bg-white text-base font-medium text-[#1f1f1f] shadow-sm transition-all hover:bg-surface hover:shadow-md btn-press"
+                >
+                  <GoogleIcon className="h-5 w-5 shrink-0" />
+                  Google로 시작하기
+                </button>
+              </form>
+            </div>
           </div>
         </section>
-      </div>
       </ScrollReveal>
 
-      {/* [6] CTA 반복 */}
-      <ScrollReveal className="w-full">
-      <section className="responsive-container px-4 md:px-6 py-8 md:py-12">
-        <div className="rounded-2xl bg-accent/10 p-6 md:p-8">
-          <p className="mb-4 text-center text-base md:text-lg font-semibold text-text leading-relaxed">
-            등록 후 열린 의뢰 {stats.totalOpenRequests}건을 확인하세요
-          </p>
-          <p className="mb-5 text-center text-sm text-text-muted">수수료 0% · 작업료 전액 직접 정산</p>
-          <div className="flex w-full flex-col gap-3">
-            <form action={signInWithKakao}>
-              <button
-                type="submit"
-                className="flex h-14 w-full items-center justify-center gap-2 rounded-xl overflow-hidden bg-[#FEE500] text-base font-semibold text-[#191919] shadow-sm transition-all hover:bg-[#FDD800] hover:shadow-md btn-press"
-              >
-                <KakaoIcon className="h-5 w-5 shrink-0" />
-                카카오로 시작하기
-              </button>
-            </form>
-            <form action={signInWithGoogle}>
-              <button
-                type="submit"
-                className="flex h-14 w-full items-center justify-center gap-2 rounded-xl overflow-hidden border border-border bg-white text-base font-medium text-[#1f1f1f] shadow-sm transition-all hover:bg-surface hover:shadow-md btn-press"
-              >
-                <GoogleIcon className="h-5 w-5 shrink-0" />
-                Google로 시작하기
-              </button>
-            </form>
-          </div>
-        </div>
-      </section>
-      </ScrollReveal>
-
-      {/* [7] 크로스링크 배너 */}
+      {/* [6] 크로스링크 배너 */}
       <section className="responsive-container px-4 md:px-6 py-6 md:py-8">
         <a
           href={ownerUrl}
@@ -286,13 +210,13 @@ export default async function ExpertHome() {
         >
           <div>
             <p className="text-base font-semibold text-text">기업을 운영하고 계신가요?</p>
-            <p className="mt-1 text-sm text-text-muted">매칭비 사전 공개 · 에스크로 직거래 · 수수료 구조 투명</p>
+            <p className="mt-1 text-sm text-text-muted">전문 서비스와 시니어 전문가 정보 보기</p>
           </div>
           <span className="text-sm font-medium text-primary shrink-0">&rarr;</span>
         </a>
       </section>
 
-      {/* [8] 푸터 */}
+      {/* [7] 푸터 */}
       <footer className="w-full border-t border-border-light py-6">
         <div className="responsive-container flex flex-col gap-4 px-4 md:px-6">
           <div className="flex items-center gap-2">
