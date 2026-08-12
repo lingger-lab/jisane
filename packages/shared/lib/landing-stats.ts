@@ -72,6 +72,23 @@ export async function fetchOwnerLandingStats(): Promise<OwnerLandingStats> {
     adminClient.from('expert_category').select('category_id'),
   ])
 
+  // 실패 쿼리 감지 — 0으로 위장된 통계를 10분 TTL 캐시에 굳히지 않는다(감사 docs/11 P2-61).
+  // 이번 렌더는 degraded 값으로 진행하되(표현 방식은 V1 디자인 결정 보류), 캐시는 건너뛰어
+  // 다음 요청이 재시도하게 한다.
+  const ownerStatsPairs: Array<[string, { message: string } | null]> = [
+    ['expert', expertsRes.error],
+    ['deal', dealsRes.error],
+    ['review', satisfactionRes.error],
+    ['request(new)', newReqRes.error],
+    ['expert_category', expertCatsRes.error],
+  ]
+  const ownerStatsErrors = ownerStatsPairs.filter(
+    (pair): pair is [string, { message: string }] => pair[1] !== null
+  )
+  for (const [table, err] of ownerStatsErrors) {
+    console.error(`[landing-stats] owner ${table} query failed:`, err.message)
+  }
+
   const totalExperts = expertsRes.count ?? 0
   const totalCompletedDeals = dealsRes.count ?? 0
   const newRequestsThisMonth = newReqRes.count ?? 0
@@ -124,7 +141,9 @@ export async function fetchOwnerLandingStats(): Promise<OwnerLandingStats> {
     categoryCounts,
   }
 
-  ownerStatsCache = { data: result, ts: Date.now() }
+  if (ownerStatsErrors.length === 0) {
+    ownerStatsCache = { data: result, ts: Date.now() }
+  }
   return result
 }
 
@@ -153,6 +172,22 @@ export async function fetchExpertLandingStats(): Promise<ExpertLandingStats> {
     getCachedCategories(adminClient),
     adminClient.from('request').select('category_id').eq('status', 'open').not('category_id', 'is', null),
   ])
+
+  // owner 통계와 동일: 실패 쿼리가 섞인 결과는 캐시하지 않는다(P2-61)
+  const expertStatsPairs: Array<[string, { message: string } | null]> = [
+    ['owner', ownersRes.error],
+    ['request(open)', openReqRes.error],
+    ['deal', dealsRes.error],
+    ['request(budget)', budgetRes.error],
+    ['request(new)', newReqRes.error],
+    ['request(category)', requestCatsRes.error],
+  ]
+  const expertStatsErrors = expertStatsPairs.filter(
+    (pair): pair is [string, { message: string }] => pair[1] !== null
+  )
+  for (const [table, err] of expertStatsErrors) {
+    console.error(`[landing-stats] expert ${table} query failed:`, err.message)
+  }
 
   const totalOwners = ownersRes.count ?? 0
   const totalOpenRequests = openReqRes.count ?? 0
@@ -210,7 +245,9 @@ export async function fetchExpertLandingStats(): Promise<ExpertLandingStats> {
     categoryCounts,
   }
 
-  expertStatsCache = { data: result, ts: Date.now() }
+  if (expertStatsErrors.length === 0) {
+    expertStatsCache = { data: result, ts: Date.now() }
+  }
   return result
 }
 
