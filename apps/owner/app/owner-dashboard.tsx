@@ -1,17 +1,11 @@
 import Link from 'next/link'
 import { adminClient } from '@jisane/shared/supabase/admin'
-import { REQUEST_STATUS_LABELS, DEAL_STATUS_LABELS } from '@jisane/shared/labels'
-import { REQUEST_STATUS_BADGE_CLASSES, DEAL_STATUS_BADGE_CLASSES } from '@jisane/shared/status-badges'
 import { fetchOwnerLandingStats } from '@jisane/shared/landing-stats'
 import { CategoryBrowse } from '@jisane/ui/category-browse'
 import { SearchBox } from '@jisane/ui/search-box'
+import { StatusBadge } from '@jisane/ui/status-badge'
+import { StatCard } from '@jisane/ui/stat-card'
 import { ExpertCard, type ExpertCardData } from './(browse)/experts/expert-card'
-
-/** request + deal 상태를 한 배지 맵으로 사용 — 값은 shared 단일 소스(UX P2-46) */
-const STATUS_COLORS: Record<string, string> = {
-  ...REQUEST_STATUS_BADGE_CLASSES,
-  ...DEAL_STATUS_BADGE_CLASSES,
-}
 
 /**
  * 로그인한 기업회원의 홈 대시보드 — 랜딩(redirect) 대신 홈에 렌더.
@@ -64,7 +58,7 @@ export async function OwnerDashboard({
     <div className="flex flex-1 flex-col items-center animate-fade-in">
       {/* 인사 히어로 — 로그인 상태 */}
       <div className="hero-dark w-full">
-        <section className="responsive-container flex flex-col gap-2 px-4 md:px-6 pt-10 md:pt-14 pb-8 md:pb-10">
+        <section className="container-app flex flex-col gap-2 px-4 md:px-6 pt-10 md:pt-14 pb-8 md:pb-10">
           <span className="hero-eyebrow self-start">기업회원</span>
           <h1 className="text-2xl md:text-3xl font-bold font-serif text-white leading-snug">
             {greeting}님, 반갑습니다
@@ -73,7 +67,7 @@ export async function OwnerDashboard({
         </section>
       </div>
 
-      <main className="responsive-container flex w-full flex-col gap-6 px-4 md:px-6 py-8">
+      <main className="container-app flex w-full flex-col gap-6 px-4 md:px-6 py-8">
         {/* 프로필 미완성 유도 */}
         {!company && (
           <Link
@@ -95,18 +89,9 @@ export async function OwnerDashboard({
             <Link href="/status" className="text-xs font-medium text-primary hover:underline">전체 보기</Link>
           </div>
           <div className="grid grid-cols-3 gap-3">
-            <Link href="/status" className="rounded-xl border border-border-light bg-white p-4 text-center shadow-xs transition-colors hover:border-primary/30">
-              <p className="text-2xl font-bold text-primary">{progressRequests}</p>
-              <p className="mt-1 text-xs text-text-muted">진행 의뢰</p>
-            </Link>
-            <Link href="/status" className="rounded-xl border border-border-light bg-white p-4 text-center shadow-xs transition-colors hover:border-primary/30">
-              <p className="text-2xl font-bold text-primary">{progressDeals}</p>
-              <p className="mt-1 text-xs text-text-muted">진행 거래</p>
-            </Link>
-            <Link href="/status" className="rounded-xl border border-border-light bg-white p-4 text-center shadow-xs transition-colors hover:border-primary/30">
-              <p className="text-2xl font-bold text-primary">{progressOrders}</p>
-              <p className="mt-1 text-xs text-text-muted">진행 서비스</p>
-            </Link>
+            <StatCard href="/status" value={progressRequests} label="진행 의뢰" />
+            <StatCard href="/status" value={progressDeals} label="진행 거래" />
+            <StatCard href="/status" value={progressOrders} label="진행 서비스" />
           </div>
         </section>
 
@@ -119,15 +104,13 @@ export async function OwnerDashboard({
                 <li key={req.id}>
                   <Link
                     href={`/status/${req.id}`}
-                    className="flex items-center justify-between rounded-lg border border-border-light p-3 shadow-xs card-hover"
+                    className="flex items-center justify-between rounded-xl border border-border-light bg-surface-warm p-4 shadow-xs card-hover"
                   >
                     <div className="min-w-0 flex-1">
                       <p className="truncate text-sm font-medium text-text">{req.title}</p>
-                      <p className="mt-0.5 text-xs text-text-muted">{new Date(req.created_at).toLocaleDateString('ko-KR')}</p>
+                      <p className="mt-0.5 text-xs text-text-muted tabular-nums">{new Date(req.created_at).toLocaleDateString('ko-KR')}</p>
                     </div>
-                    <span className={`shrink-0 rounded-full px-2 py-0.5 text-xs font-medium ${STATUS_COLORS[req.status] || 'bg-surface text-text-subtle'}`}>
-                      {REQUEST_STATUS_LABELS[req.status] || DEAL_STATUS_LABELS[req.status] || req.status}
-                    </span>
+                    <StatusBadge kind="request" status={req.status} />
                   </Link>
                 </li>
               ))}

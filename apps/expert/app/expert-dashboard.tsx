@@ -3,28 +3,18 @@ import { adminClient } from '@jisane/shared/supabase/admin'
 import { SearchBox } from '@jisane/ui/search-box'
 import { ErrorState } from '@jisane/ui/error-state'
 import type { MatchingStatus, ServiceOrderRow } from '@jisane/shared/types'
-import { MATCHING_STATUS_LABELS, ORDER_STATUS_LABELS } from '@jisane/shared/labels'
-import {
-  MATCHING_STATUS_BADGE_CLASSES,
-  ORDER_STATUS_BADGE_CLASSES,
-} from '@jisane/shared/status-badges'
+import { MATCHING_STATUS_LABELS } from '@jisane/shared/labels'
+import { MATCHING_STATUS_BADGE_CLASSES } from '@jisane/shared/status-badges'
+import { StatusBadge } from '@jisane/ui/status-badge'
+import { StatCard } from '@jisane/ui/stat-card'
 import { OpportunitySection } from './(main)/matching/opportunity-section'
 
+// 매칭 배지는 이 화면에서 rejected를 에러색이 아닌 중립색으로 표시해 온 의도적 오버라이드가 있어
+// StatusBadge(단일 소스)로 바꾸지 않고 인라인 유지한다(표시 보존).
 const STATUS_COLORS: Record<MatchingStatus, string> = {
   proposed: MATCHING_STATUS_BADGE_CLASSES.proposed,
   accepted: MATCHING_STATUS_BADGE_CLASSES.accepted,
-  // 이 화면은 rejected를 에러색이 아닌 중립색으로 표시해 왔다 — 표시 보존 오버라이드
   rejected: 'bg-surface text-text-subtle',
-}
-
-const ORDER_STATUS_COLORS: Record<string, string> = ORDER_STATUS_BADGE_CLASSES
-
-const ORDER_STRIPE: Record<string, string> = {
-  pending: 'border-l-info',
-  paid: 'border-l-warning',
-  processing: 'border-l-success',
-  completed: 'border-l-border',
-  cancelled: 'border-l-error',
 }
 
 /**
@@ -107,7 +97,7 @@ export async function ExpertDashboard({
 
       {/* 인사 히어로 */}
       <div className="hero-dark w-full">
-        <section className="responsive-container flex flex-col gap-1 px-4 md:px-6 pt-10 md:pt-14 pb-8 md:pb-10">
+        <section className="container-app flex flex-col gap-1 px-4 md:px-6 pt-10 md:pt-14 pb-8 md:pb-10">
           <span className="hero-eyebrow self-start">시니어지식인공간</span>
           <h1 className="text-2xl md:text-3xl font-bold font-serif text-white leading-snug">
             {name || '시니어지식인'}님, 반갑습니다
@@ -116,7 +106,7 @@ export async function ExpertDashboard({
         </section>
       </div>
 
-      <main className="responsive-container flex w-full flex-col px-4 md:px-6 py-6">
+      <main className="container-app flex w-full flex-col px-4 md:px-6 py-6">
         {/* 프로필 미완성 배너 */}
         {profileIncomplete && (
           <Link
@@ -134,14 +124,8 @@ export async function ExpertDashboard({
 
         {/* 요약 카드 — 조회 실패 시 가짜 0 대신 미확인 표시 */}
         <div className="mb-6 grid grid-cols-2 gap-3">
-          <div className="rounded-xl border border-border-light bg-surface-warm p-4 text-center">
-            <p className="text-2xl font-bold text-accent">{matchingsError ? '—' : proposedCount}</p>
-            <p className="text-xs text-text-muted">새 매칭 제안</p>
-          </div>
-          <Link href="/work" className="rounded-xl border border-border-light bg-surface-warm p-4 text-center transition-colors hover:bg-surface">
-            <p className="text-2xl font-bold text-accent">{workingCountError ? '—' : workingCount || 0}</p>
-            <p className="text-xs text-text-muted">진행 중 작업</p>
-          </Link>
+          <StatCard value={matchingsError ? '—' : proposedCount} label="새 매칭 제안" accent="accent" />
+          <StatCard href="/work" value={workingCountError ? '—' : workingCount || 0} label="진행 중 작업" accent="accent" />
         </div>
 
         {/* 매칭 리스트 — 조회 실패(에러)와 제안 없음(빈)을 구분한다 */}
@@ -165,12 +149,12 @@ export async function ExpertDashboard({
                   <div className="flex items-start justify-between gap-3">
                     <div className="min-w-0 flex-1">
                       <h3 className="truncate font-medium text-text">{m.request.title}</h3>
-                      <p className="mt-1 text-xs text-text-muted">
+                      <p className="mt-1 text-xs text-text-muted tabular-nums">
                         {new Date(m.created_at).toLocaleDateString('ko-KR')}
                         {m.request.req_type && ` · ${m.request.req_type}`}
                       </p>
                       {m.request.budget_hope && (
-                        <p className="mt-1 text-sm font-medium text-text">
+                        <p className="mt-1 text-sm font-medium text-text tabular-nums">
                           작업비: {m.request.budget_hope.toLocaleString('ko-KR')}원
                         </p>
                       )}
@@ -212,19 +196,17 @@ export async function ExpertDashboard({
           <ul className="flex flex-col gap-3">
             {serviceOrders.map((order) => (
               <li key={order.id}>
-                <div className={`rounded-xl border border-border-light border-l-4 ${ORDER_STRIPE[order.status] || 'border-l-border'} p-4 shadow-xs`}>
+                <div className="rounded-xl border border-border-light bg-surface-warm p-4 shadow-xs">
                   <div className="flex items-start justify-between gap-3">
                     <div className="min-w-0 flex-1">
                       <h3 className="truncate font-medium text-text">{order.package_name}</h3>
-                      <p className="mt-1 text-xs text-text-muted">
+                      <p className="mt-1 text-xs text-text-muted tabular-nums">
                         {new Date(order.created_at).toLocaleDateString('ko-KR')}
                         {' · '}
                         {order.price === 0 ? '무료' : `${order.price.toLocaleString('ko-KR')}원`}
                       </p>
                     </div>
-                    <span className={`shrink-0 rounded-full px-2.5 py-0.5 text-xs font-medium ${ORDER_STATUS_COLORS[order.status] || 'bg-surface text-text-subtle'}`}>
-                      {ORDER_STATUS_LABELS[order.status] || order.status}
-                    </span>
+                    <StatusBadge kind="order" status={order.status} className="px-2.5" />
                   </div>
                 </div>
               </li>
