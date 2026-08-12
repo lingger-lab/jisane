@@ -5,6 +5,7 @@ import { redirect } from 'next/navigation'
 import { createClient } from '@jisane/shared/supabase/server'
 import { adminClient } from '@jisane/shared/supabase/admin'
 import { getPackageBySlug } from '@jisane/shared/service-package/queries'
+import { notifyAdmin } from '@jisane/shared/notify/email'
 
 interface CreateServiceOrderState {
   error?: string
@@ -70,6 +71,15 @@ export async function createServiceOrder(
   if (error) {
     return { error: '서비스 신청에 실패했습니다. 다시 시도해주세요.' }
   }
+
+  // 관리자에게 새 상담 리드 통지 (fire-and-forget — 비활성/실패해도 신청 흐름 비차단, P1-2).
+  await notifyAdmin(
+    `새 상담 신청 · ${pkg.name}`,
+    `${pkg.isFree ? '무료' : `${pkg.price.toLocaleString('ko-KR')}원`} · ${pkg.name}\n` +
+      `신청자: ${user.email}\n` +
+      (detail?.trim() ? `요청사항: ${detail.trim()}\n` : '') +
+      `관리자 대시보드 주문 탭에서 확인하세요.`,
+  )
 
   redirect('/status?success=service_ordered')
 }

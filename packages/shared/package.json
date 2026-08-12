@@ -25,6 +25,7 @@
     "./expert-scoring": "./lib/expert-scoring.ts",
     "./cap-pricing": "./lib/cap-pricing.ts",
     "./expert-activity": "./lib/expert-activity.ts",
+    "./notify/email": "./lib/notify/email.ts",
     "./automation/auto-settlement": "./lib/automation/auto-settlement.ts",
     "./automation/audit-sampling": "./lib/automation/audit-sampling.ts",
     "./service-package/queries": "./lib/service-package/queries.ts",
