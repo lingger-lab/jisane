@@ -71,7 +71,7 @@ export function QuoteSection({ deal, expert, paymentEnabled, freeModeEnabled }: 
       {freeModeEnabled ? (
         <div className="mb-4 text-center">
           <p className="text-sm text-text-muted">작업비 (지사네 수수료 무료)</p>
-          <p className="text-3xl font-bold text-accent">
+          <p className="text-3xl font-bold text-accent tabular-nums">
             {deal.total_pay.toLocaleString('ko-KR')}
             <span className="text-base font-normal">원</span>
           </p>
@@ -80,11 +80,11 @@ export function QuoteSection({ deal, expert, paymentEnabled, freeModeEnabled }: 
       ) : (
         <div className="mb-4 text-center">
           <p className="text-sm text-text-muted">총 결제 금액</p>
-          <p className="text-3xl font-bold text-accent">
+          <p className="text-3xl font-bold text-accent tabular-nums">
             {calcPayableAmount(deal.total_pay).toLocaleString('ko-KR')}
             <span className="text-base font-normal">원</span>
           </p>
-          <p className="mt-1 text-xs text-text-subtle">
+          <p className="mt-1 text-xs text-text-subtle tabular-nums">
             공급가 {deal.total_pay.toLocaleString('ko-KR')}원 + 부가세{' '}
             {calcVat(deal.total_pay).toLocaleString('ko-KR')}원
           </p>
