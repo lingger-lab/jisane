@@ -4,16 +4,9 @@ import Link from 'next/link'
 import { createClient } from '@jisane/shared/supabase/server'
 import { adminClient } from '@jisane/shared/supabase/admin'
 import type { DealStatus } from '@jisane/shared/types'
-import { DEAL_STATUS_LABELS } from '@jisane/shared/labels'
-import { DEAL_STATUS_BADGE_CLASSES } from '@jisane/shared/status-badges'
 import { PageHero } from '@jisane/ui/page-hero'
 import { ErrorState } from '@jisane/ui/error-state'
-
-const STRIPE_COLORS: Record<DealStatus, string> = {
-  quoted: 'border-l-info',
-  working: 'border-l-warning',
-  done: 'border-l-success',
-}
+import { StatusBadge } from '@jisane/ui/status-badge'
 
 export default async function WorkListPage() {
   const cookieStore = await cookies()
@@ -76,33 +69,27 @@ export default async function WorkListPage() {
             <li key={d.id} className={`animate-fade-in stagger-${Math.min(i + 1, 5)}`}>
               <Link
                 href={`/work/${d.id}`}
-                className={`block rounded-xl border border-border-light border-l-4 ${STRIPE_COLORS[d.status]} p-4 shadow-xs card-hover`}
+                className="block rounded-xl border border-border-light bg-surface-warm p-4 shadow-xs card-hover"
               >
                 <div className="flex items-start justify-between gap-3">
                   <div className="min-w-0 flex-1">
                     <h3 className="truncate font-medium text-text">
                       {d.request.title}
                     </h3>
-                    <p className="mt-1 text-xs text-text-muted">
+                    <p className="mt-1 text-xs text-text-muted tabular-nums">
                       {new Date(d.created_at).toLocaleDateString('ko-KR')}
                       {d.request.req_type && ` · ${d.request.req_type}`}
                     </p>
-                    <p className="mt-1 text-sm font-medium text-text">
+                    <p className="mt-1 text-sm font-medium text-text tabular-nums">
                       작업비: {d.work_fee.toLocaleString('ko-KR')}원
                     </p>
                     {d.due_date && (
-                      <p className="text-xs text-text-muted">
+                      <p className="text-xs text-text-muted tabular-nums">
                         납기: {new Date(d.due_date).toLocaleDateString('ko-KR')}
                       </p>
                     )}
                   </div>
-                  <span
-                    className={`shrink-0 rounded-full px-2.5 py-0.5 text-xs font-medium ${
-                      DEAL_STATUS_BADGE_CLASSES[d.status]
-                    }`}
-                  >
-                    {DEAL_STATUS_LABELS[d.status]}
-                  </span>
+                  <StatusBadge kind="deal" status={d.status} className="px-2.5" />
                 </div>
               </Link>
             </li>

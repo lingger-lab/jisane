@@ -3,10 +3,9 @@ import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import { createClient } from '@jisane/shared/supabase/server'
 import { adminClient } from '@jisane/shared/supabase/admin'
-import { INVITATION_STATUS_LABELS } from '@jisane/shared/labels'
-import { INVITATION_STATUS_BADGE_CLASSES } from '@jisane/shared/status-badges'
 import type { InvitationWithOwner } from '@jisane/shared/query-types'
 import { PageHero } from '@jisane/ui/page-hero'
+import { StatusBadge } from '@jisane/ui/status-badge'
 
 export const metadata = {
   title: '초빙 현황 - 지사네 시니어지식인',
@@ -66,17 +65,15 @@ export default async function InvitationsPage() {
                     {inv.request && (
                       <p className="mt-0.5 text-xs text-text-muted truncate">{inv.request.title}</p>
                     )}
-                    <p className="mt-1 text-xs text-text-subtle">
+                    <p className="mt-1 text-xs text-text-subtle tabular-nums">
                       {new Date(inv.created_at).toLocaleDateString('ko-KR')}
                       {inv.owner.completed_deals > 0 && ` · 거래 ${inv.owner.completed_deals}건`}
                     </p>
                   </div>
-                  <span className={`shrink-0 rounded-full px-2.5 py-1 text-xs font-medium ${INVITATION_STATUS_BADGE_CLASSES[inv.status] ?? 'bg-surface text-text-subtle'}`}>
-                    {INVITATION_STATUS_LABELS[inv.status] ?? inv.status}
-                  </span>
+                  <StatusBadge kind="invitation" status={inv.status} className="px-2.5 py-1" />
                 </div>
                 {inv.cap_amount != null && (
-                  <p className="mt-2 text-xs text-accent font-medium">
+                  <p className="mt-2 text-xs text-accent font-medium tabular-nums">
                     예상 {inv.est_hours}시간 · {inv.cap_amount.toLocaleString('ko-KR')}원
                   </p>
                 )}

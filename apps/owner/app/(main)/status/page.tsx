@@ -4,25 +4,9 @@ import Link from 'next/link'
 import { createClient } from '@jisane/shared/supabase/server'
 import { adminClient } from '@jisane/shared/supabase/admin'
 import type { RequestRow, ServiceOrderRow } from '@jisane/shared/types'
-import { REQUEST_STATUS_LABELS, ORDER_STATUS_LABELS } from '@jisane/shared/labels'
-import { REQUEST_STATUS_BADGE_CLASSES, ORDER_STATUS_BADGE_CLASSES } from '@jisane/shared/status-badges'
 import { PageHero } from '@jisane/ui/page-hero'
 import { ErrorState } from '@jisane/ui/error-state'
-
-const STRIPE_COLORS: Record<string, string> = {
-  open: 'border-l-info',
-  matching: 'border-l-warning',
-  dealt: 'border-l-success',
-  closed: 'border-l-border',
-}
-
-const ORDER_STRIPE: Record<string, string> = {
-  pending: 'border-l-info',
-  paid: 'border-l-warning',
-  processing: 'border-l-success',
-  completed: 'border-l-border',
-  cancelled: 'border-l-error',
-}
+import { StatusBadge } from '@jisane/ui/status-badge'
 
 export default async function StatusPage() {
   const cookieStore = await cookies()
@@ -83,11 +67,11 @@ export default async function StatusPage() {
       {/* 요약 카드 — 조회 실패 시 가짜 0 대신 미확인 표시 */}
       <div className="mb-4 grid grid-cols-2 gap-3">
         <div className="rounded-xl border border-border-light bg-surface-warm p-4 text-center">
-          <p className="text-2xl font-bold text-primary">{requestsFailed ? '—' : activeCount}</p>
+          <p className="text-2xl font-bold text-primary tabular-nums">{requestsFailed ? '—' : activeCount}</p>
           <p className="text-xs text-text-muted">진행 중 의뢰</p>
         </div>
         <div className="rounded-xl border border-border-light bg-surface-warm p-4 text-center">
-          <p className="text-2xl font-bold text-primary">{requestsFailed ? '—' : closedCount}</p>
+          <p className="text-2xl font-bold text-primary tabular-nums">{requestsFailed ? '—' : closedCount}</p>
           <p className="text-xs text-text-muted">완료된 의뢰</p>
         </div>
       </div>
@@ -118,23 +102,17 @@ export default async function StatusPage() {
             <li key={req.id} className={`animate-fade-in stagger-${Math.min(i + 1, 5)}`}>
               <Link
                 href={`/status/${req.id}`}
-                className={`block rounded-xl border border-border-light border-l-4 ${STRIPE_COLORS[req.status] || 'border-l-border'} p-4 shadow-xs card-hover`}
+                className="block rounded-xl border border-border-light bg-surface-warm p-4 shadow-xs card-hover"
               >
                 <div className="flex items-start justify-between gap-3">
                   <div className="min-w-0 flex-1">
                     <h3 className="truncate font-medium text-text">{req.title}</h3>
-                    <p className="mt-1 text-xs text-text-muted">
+                    <p className="mt-1 text-xs text-text-muted tabular-nums">
                       {new Date(req.created_at).toLocaleDateString('ko-KR')}
                       {req.req_type && ` · ${req.req_type}`}
                     </p>
                   </div>
-                  <span
-                    className={`shrink-0 rounded-full px-2.5 py-0.5 text-xs font-medium ${
-                      REQUEST_STATUS_BADGE_CLASSES[req.status] || 'bg-surface text-text-subtle'
-                    }`}
-                  >
-                    {REQUEST_STATUS_LABELS[req.status] || req.status}
-                  </span>
+                  <StatusBadge kind="request" status={req.status} className="px-2.5" />
                 </div>
               </Link>
             </li>
@@ -161,23 +139,17 @@ export default async function StatusPage() {
         <ul className="flex flex-col gap-3">
           {serviceOrders.map((order, i) => (
             <li key={order.id} className={`animate-fade-in stagger-${Math.min(i + 1, 5)}`}>
-              <div className={`rounded-xl border border-border-light border-l-4 ${ORDER_STRIPE[order.status] || 'border-l-border'} p-4 shadow-xs`}>
+              <div className="rounded-xl border border-border-light bg-surface-warm p-4 shadow-xs">
                 <div className="flex items-start justify-between gap-3">
                   <div className="min-w-0 flex-1">
                     <h3 className="truncate font-medium text-text">{order.package_name}</h3>
-                    <p className="mt-1 text-xs text-text-muted">
+                    <p className="mt-1 text-xs text-text-muted tabular-nums">
                       {new Date(order.created_at).toLocaleDateString('ko-KR')}
                       {' · '}
                       {order.price === 0 ? '무료' : `${order.price.toLocaleString('ko-KR')}원`}
                     </p>
                   </div>
-                  <span
-                    className={`shrink-0 rounded-full px-2.5 py-0.5 text-xs font-medium ${
-                      ORDER_STATUS_BADGE_CLASSES[order.status] || 'bg-surface text-text-subtle'
-                    }`}
-                  >
-                    {ORDER_STATUS_LABELS[order.status] || order.status}
-                  </span>
+                  <StatusBadge kind="order" status={order.status} className="px-2.5" />
                 </div>
                 {order.status === 'pending' && (
                   <p className="mt-2 text-xs text-info">접수 완료 — 담당 매니저가 확인 후 연락드리겠습니다.</p>
