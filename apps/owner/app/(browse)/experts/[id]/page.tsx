@@ -194,10 +194,10 @@ export default async function ExpertDetailPage(props: PageProps) {
             href="/request"
             className="flex h-12 w-full items-center justify-center rounded-xl border border-primary text-sm font-semibold text-primary transition-all hover:bg-primary/5 btn-press"
           >
-            의뢰서 작성으로 매칭 받기
+            의뢰서 작성으로 전문가 추천 받기
           </Link>
           <p className="mt-1 text-center text-xs text-text-subtle">
-            초빙하기: 이 시니어지식인에게 직접 요청 · 의뢰서: AI가 최적의 시니어지식인을 매칭
+            초빙하기: 이 시니어지식인에게 직접 요청 · 의뢰서: AI가 최적의 시니어지식인을 추천
           </p>
         </section>
       </div>

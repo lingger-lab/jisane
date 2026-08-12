@@ -82,7 +82,7 @@ export async function OwnerDashboard({
           >
             <div>
               <p className="text-sm font-semibold text-text">회사 정보를 등록해주세요</p>
-              <p className="mt-0.5 text-xs text-text-muted">회사명·연락처를 채우면 매칭이 더 정확해집니다.</p>
+              <p className="mt-0.5 text-xs text-text-muted">회사명·연락처를 채우면 연결이 더 정확해집니다.</p>
             </div>
             <span className="text-sm font-semibold text-warning shrink-0">등록 &rarr;</span>
           </Link>

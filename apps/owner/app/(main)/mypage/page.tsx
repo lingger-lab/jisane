@@ -109,7 +109,7 @@ export default async function OwnerMyPage() {
 
   return (
     <div className="flex flex-1 flex-col animate-fade-in">
-      <PageHero eyebrow="기업회원" title="마이페이지" subtitle="회사 정보를 등록하면 의뢰·매칭이 더 정확해집니다." />
+      <PageHero eyebrow="기업회원" title="마이페이지" subtitle="회사 정보를 등록하면 의뢰·연결이 더 정확해집니다." />
 
       <div className="responsive-container px-4 md:px-6 py-6">
       {/* 계정 요약 */}
@@ -217,17 +217,17 @@ export default async function OwnerMyPage() {
         )}
       </section>
 
-      {/* 섹션 C — 매칭 현황 */}
+      {/* 섹션 C — 거래 현황 */}
       <section className="mb-8">
         <div className="mb-3 flex items-center justify-between">
-          <h2 className="text-base font-bold text-text">매칭 현황</h2>
+          <h2 className="text-base font-bold text-text">거래 현황</h2>
           <Link href="/status" className="text-xs font-medium text-primary hover:underline">전체 보기</Link>
         </div>
         {dealsRes.error ? (
-          <ErrorState message="매칭 현황을 불러오지 못했습니다." />
+          <ErrorState message="거래 현황을 불러오지 못했습니다." />
         ) : deals.length === 0 ? (
           <div className="flex flex-col items-center gap-3 rounded-xl border border-dashed border-border-light py-8 text-center">
-            <p className="text-sm text-text-muted">진행 중인 매칭이 없습니다</p>
+            <p className="text-sm text-text-muted">진행 중인 거래가 없습니다</p>
           </div>
         ) : (
           <ul className="flex flex-col gap-2">
