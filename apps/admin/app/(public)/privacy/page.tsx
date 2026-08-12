@@ -13,7 +13,7 @@ export default function PrivacyPage() {
         subtitle="시행일: 2025년 6월 15일"
         size="lg"
       />
-      <div className="responsive-container px-4 md:px-6 py-6">
+      <div className="container-read px-4 md:px-6 py-6">
       <div className="flex flex-col gap-8 text-sm leading-relaxed text-text-muted">
         <section>
           <h2 className="mb-3 text-base font-semibold text-text">1. 개인정보의 수집 및 이용 목적</h2>

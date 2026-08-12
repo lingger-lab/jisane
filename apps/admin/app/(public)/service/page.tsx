@@ -26,7 +26,7 @@ export default function ServicePage() {
         subtitle="부울경 중소기업에 필요한 전문 서비스와 경험·노하우를 갖춘 시니어 전문가 정보를 제공합니다. 지식나눔 사업협력 네트워크로 지역 기업의 성장을 함께합니다."
         size="lg"
       />
-      <div className="responsive-container px-4 md:px-6 py-6">
+      <div className="container-marketing px-4 md:px-6 py-6">
       {/* 서비스 소개 */}
       <section className="mb-12 animate-fade-in stagger-1">
         <h2 className="mb-4 text-lg font-bold text-text">지사네가 하는 일</h2>

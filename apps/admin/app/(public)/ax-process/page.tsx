@@ -94,7 +94,7 @@ export default function AXProcessPage() {
         }
         size="lg"
       />
-      <div className="responsive-container px-4 md:px-6 py-6">
+      <div className="container-marketing px-4 md:px-6 py-6">
       {/* 4단계 프로세스 */}
       <section className="mb-12 animate-fade-in stagger-1">
         <h2 className="mb-5 text-lg font-bold text-text">4단계 프로세스</h2>

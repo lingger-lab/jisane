@@ -114,7 +114,7 @@ export default async function RequestsPage(props: PageProps) {
         subtitle="시니어지식인을 찾는 기업의 의뢰를 카테고리별로 탐색하세요."
         back={<Link href="/" className="text-sm text-white/70 hover:text-white transition-colors">&larr; 홈</Link>}
       />
-      <div className="responsive-container w-full px-4 md:px-6 py-6 md:py-8">
+      <div className="container-app w-full px-4 md:px-6 py-6 md:py-8">
         <RequestList
           requests={(requests ?? []).map((r) => ({
             id: r.id,

@@ -14,7 +14,7 @@ export default function MyPageLoading() {
         subtitle="내 현황을 확인하고 프로필을 수정할 수 있습니다."
       />
 
-      <div className="responsive-container px-4 md:px-6 py-6">
+      <div className="container-app px-4 md:px-6 py-6">
         {/* 프로필 요약 카드 */}
         <div className="mb-6 rounded-xl border border-border-light bg-surface-warm p-4 shadow-sm">
           <div className="flex items-center gap-3">

@@ -117,7 +117,7 @@ export default async function WorkDetailPage(props: PageProps) {
         subtitle={request?.req_type ? `분야: ${request.req_type}` : undefined}
         back={<Link href="/work" className="text-sm text-white/70 hover:text-white transition-colors">&larr; 작업 목록</Link>}
       />
-      <div className="responsive-container px-4 md:px-6 py-6">
+      <div className="container-app px-4 md:px-6 py-6">
       {/* 작업비 — work_fee만 표시 */}
       <div className="mb-4 rounded-xl border border-accent/20 bg-surface-warm p-4 text-center shadow-sm">
         <p className="text-sm text-text-muted">작업비</p>

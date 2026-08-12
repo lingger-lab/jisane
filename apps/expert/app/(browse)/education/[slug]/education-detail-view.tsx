@@ -21,7 +21,7 @@ export function EducationDetailView({ pkg }: { pkg: ServicePackage }) {
         subtitle={`제공: ${pkg.provider}`}
         back={<Link href="/education" className="text-sm text-white/70 hover:text-white transition-colors">&larr; 교육 목록</Link>}
       />
-      <div className="responsive-container px-4 md:px-6 py-6">
+      <div className="container-app px-4 md:px-6 py-6">
       {/* 과정 정보 */}
       <div className="mb-6">
         <p className="text-sm text-text-muted leading-relaxed">{pkg.description}</p>

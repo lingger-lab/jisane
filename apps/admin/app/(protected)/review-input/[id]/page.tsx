@@ -73,7 +73,7 @@ export default async function ReviewInputPage(props: PageProps) {
           </Link>
         }
       />
-      <div className="responsive-container px-4 md:px-6 py-6">
+      <div className="container-form px-4 md:px-6 py-6">
       {/* 거래 요약 */}
       <div className="mb-6 rounded-xl border border-border-light p-4 shadow-xs">
         <div className="mt-2 grid grid-cols-2 gap-3 text-sm">

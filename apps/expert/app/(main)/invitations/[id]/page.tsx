@@ -64,7 +64,7 @@ export default async function InvitationDetailPage(props: PageProps) {
         subtitle={`${new Date(invitation.created_at).toLocaleDateString('ko-KR')} 초빙 요청`}
         back={<Link href="/invitations" className="text-sm text-white/70 hover:text-white transition-colors">&larr; 초빙 목록</Link>}
       />
-      <div className="responsive-container px-4 md:px-6 py-6">
+      <div className="container-app px-4 md:px-6 py-6">
       {/* 기업 정보 */}
       <section className="rounded-xl border border-border-light bg-surface-warm p-4 shadow-sm">
         <div className="flex items-center justify-between gap-2">

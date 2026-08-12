@@ -56,7 +56,7 @@ export default function AXPage() {
         subtitle="기존 업무 프로세스에 AI를 적용해 비용을 절감하고, 수익을 높이며, 새로운 비즈니스 모델을 만드는 전환 과정입니다. 작게 시작해 단계적으로 동행합니다."
         size="lg"
       />
-      <div className="responsive-container px-4 md:px-6 py-6">
+      <div className="container-marketing px-4 md:px-6 py-6">
       {/* AX 5가지 가치 */}
       <section className="mb-12 animate-fade-in stagger-1">
         <h2 className="mb-4 text-lg font-bold text-text">AX 5가지 가치</h2>

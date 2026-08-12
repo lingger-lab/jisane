@@ -55,7 +55,7 @@ export default async function MatchingDetailPage(props: PageProps) {
         subtitle={req?.req_type ? `분야: ${req.req_type}` : undefined}
         back={<Link href="/matching" className="text-sm text-white/70 hover:text-white transition-colors">&larr; 매칭 목록</Link>}
       />
-      <div className="responsive-container px-4 md:px-6 py-6">
+      <div className="container-app px-4 md:px-6 py-6">
       {req && (
         <>
           {/* 의뢰 정보 */}

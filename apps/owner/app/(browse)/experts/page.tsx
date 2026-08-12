@@ -123,7 +123,7 @@ export default async function ExpertsPage(props: PageProps) {
         title="분야별 시니어지식인"
         subtitle="분야·검색으로 필요한 시니어지식인을 찾아보세요."
       />
-      <div className="responsive-container w-full px-4 md:px-6 py-6 md:py-8">
+      <div className="container-app w-full px-4 md:px-6 py-6 md:py-8">
         <ExpertList
           experts={(experts ?? []).map((p) => ({
             id: p.id,

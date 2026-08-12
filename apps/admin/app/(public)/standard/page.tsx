@@ -62,7 +62,7 @@ export default function StandardIndexPage() {
         subtitle="감추는 것이 관행이 된 시장에서, 지사네는 먼저 꺼내놓는 것을 표준으로 삼습니다. 거래 전에 이 다섯 가지를 확인하실 수 있습니다."
         size="lg"
       />
-      <div className="responsive-container px-4 md:px-6 py-6">
+      <div className="container-read px-4 md:px-6 py-6">
       <FreePeriodBanner className="mb-4" />
       <div className="flex flex-col gap-4">
         {PRINCIPLES.map((p) => (

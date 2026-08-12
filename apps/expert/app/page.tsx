@@ -68,7 +68,7 @@ export default async function ExpertHome() {
     <div className="flex flex-1 flex-col items-center">
       {/* [1] 히어로 — 브랜드 딥그린 다크 밴드 */}
       <div className="hero-dark w-full">
-        <section className="responsive-container flex flex-col items-center gap-4 px-4 md:px-6 pt-14 md:pt-20 pb-12 md:pb-16 text-center animate-fade-in">
+        <section className="container-marketing flex flex-col items-center gap-4 px-4 md:px-6 pt-14 md:pt-20 pb-12 md:pb-16 text-center animate-fade-in">
           <span className="hero-eyebrow">당신의 경험, 지역 기업의 힘</span>
           <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold font-serif text-white leading-snug">
             경험의 값어치,
@@ -83,7 +83,7 @@ export default async function ExpertHome() {
 
       {/* [2] ① 기업 의뢰 정보 */}
       <ScrollReveal className="w-full">
-        <section className="responsive-container px-4 md:px-6 py-8 md:py-12">
+        <section className="container-marketing px-4 md:px-6 py-8 md:py-12">
           <header className="mb-5 flex items-start gap-3">
             <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-accent font-serif text-base font-bold text-white">1</span>
             <div>
@@ -106,7 +106,7 @@ export default async function ExpertHome() {
       {/* [3] ② 작업에 필요한 전문 도구 — 풀블리드 warm */}
       <ScrollReveal className="w-full">
         <div className="w-full bg-surface-warm py-8 md:py-12">
-          <section className="responsive-container px-4 md:px-6">
+          <section className="container-marketing px-4 md:px-6">
             <header className="mb-5 flex items-start gap-3">
               <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-primary font-serif text-base font-bold text-white">2</span>
               <div>
@@ -142,7 +142,7 @@ export default async function ExpertHome() {
 
       {/* [4] ③ 지사네가 제공하는 시니어 전문 서비스 — 역량 강화·교육 */}
       <ScrollReveal className="w-full">
-        <section className="responsive-container px-4 md:px-6 py-8 md:py-12">
+        <section className="container-marketing px-4 md:px-6 py-8 md:py-12">
           <header className="mb-5 flex items-start gap-3">
             <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-accent font-serif text-base font-bold text-white">3</span>
             <div>
@@ -172,7 +172,7 @@ export default async function ExpertHome() {
 
       {/* [5] 회원가입/로그인 CTA — 하단 */}
       <ScrollReveal className="w-full">
-        <section className="responsive-container px-4 md:px-6 py-8 md:py-12">
+        <section className="container-marketing px-4 md:px-6 py-8 md:py-12">
           <div className="rounded-2xl bg-accent/10 p-6 md:p-8">
             <p className="mb-5 text-center text-base md:text-lg font-semibold text-text leading-relaxed">
               지금 등록하고 열린 의뢰 {stats.totalOpenRequests}건을 확인하세요
@@ -183,7 +183,7 @@ export default async function ExpertHome() {
       </ScrollReveal>
 
       {/* [6] 크로스링크 배너 */}
-      <section className="responsive-container px-4 md:px-6 py-6 md:py-8">
+      <section className="container-marketing px-4 md:px-6 py-6 md:py-8">
         <a
           href={ownerUrl}
           className="flex items-center justify-between rounded-xl border border-primary/20 bg-primary/5 p-5 md:p-6 transition-colors hover:bg-primary/10"
@@ -198,7 +198,7 @@ export default async function ExpertHome() {
 
       {/* [7] 푸터 */}
       <footer className="w-full border-t border-border-light py-6">
-        <div className="responsive-container flex flex-col gap-4 px-4 md:px-6">
+        <div className="container-marketing flex flex-col gap-4 px-4 md:px-6">
           <div className="flex items-center gap-2">
             <OwlIcon className="h-6 w-6 text-primary" />
             <div>

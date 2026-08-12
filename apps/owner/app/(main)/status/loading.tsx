@@ -14,7 +14,7 @@ export default function StatusLoading() {
         subtitle="등록한 의뢰와 전문서비스 진행 상태를 한눈에 확인하세요."
       />
 
-      <div className="responsive-container px-4 md:px-6 py-6">
+      <div className="container-app px-4 md:px-6 py-6">
         {/* 요약 카드 2개 */}
         <div className="mb-4 grid grid-cols-2 gap-3">
           {Array.from({ length: 2 }).map((_, i) => (

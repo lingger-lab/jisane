@@ -118,7 +118,7 @@ export default async function OwnerMyPage() {
     <div className="flex flex-1 flex-col animate-fade-in">
       <PageHero eyebrow="기업회원" title="마이페이지" subtitle="회사 정보를 등록하면 의뢰·연결이 더 정확해집니다." />
 
-      <div className="responsive-container flex flex-col gap-8 px-4 md:px-6 py-6">
+      <div className="container-app flex flex-col gap-8 px-4 md:px-6 py-6">
         {/* 계정 요약 */}
         <div className="flex items-center gap-3 rounded-xl border border-border-light bg-surface-warm p-4 shadow-sm">
           <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10 text-lg font-bold text-primary">

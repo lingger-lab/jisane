@@ -50,7 +50,7 @@ export default async function WorkListPage() {
         title="작업 현황"
         subtitle="진행 중인 작업을 확인하고 단계를 관리하세요."
       />
-      <div className="responsive-container px-4 md:px-6 py-6">
+      <div className="container-app px-4 md:px-6 py-6">
       {dealsError ? (
         <ErrorState message="작업 목록을 불러오지 못했습니다." />
       ) : dealList.length === 0 ? (

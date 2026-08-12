@@ -102,7 +102,7 @@ export default async function RequestDetailPage(props: PageProps) {
           </Link>
         }
       />
-      <div className="responsive-container w-full px-4 md:px-6 py-6 md:py-8">
+      <div className="container-app w-full px-4 md:px-6 py-6 md:py-8">
         {/* 메타 정보 */}
         <div className="flex flex-wrap gap-2 text-xs text-text-muted">
           {request.req_type && (

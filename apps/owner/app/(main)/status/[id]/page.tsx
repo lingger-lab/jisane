@@ -35,7 +35,7 @@ function DetailLoadError() {
           </Link>
         }
       />
-      <div className="responsive-container px-4 md:px-6 py-6">
+      <div className="container-app px-4 md:px-6 py-6">
         <ErrorState message="의뢰 정보를 불러오지 못했습니다." />
       </div>
     </div>
@@ -204,7 +204,7 @@ export default async function StatusDetailPage(props: PageProps) {
         }
       />
 
-      <div className="responsive-container px-4 md:px-6 py-6">
+      <div className="container-app px-4 md:px-6 py-6">
       {/* 프로그레스 바 */}
       <div className="mb-6">
         <ProgressBar requestStatus={req.status} dealStatus={deal?.status} />

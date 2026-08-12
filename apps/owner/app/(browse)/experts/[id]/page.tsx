@@ -112,7 +112,7 @@ export default async function ExpertDetailPage(props: PageProps) {
           </div>
         }
       />
-      <div className="responsive-container w-full px-4 md:px-6 py-6 md:py-8">
+      <div className="container-app w-full px-4 md:px-6 py-6 md:py-8">
         {/* 시니어지식인 프로필 */}
         <section className="rounded-2xl border border-border-light bg-white p-5 md:p-6 lg:p-8 shadow-xs">
           <div className="flex items-center justify-end gap-3">

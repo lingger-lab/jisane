@@ -38,7 +38,7 @@ export function EducationView({
         title="전문 교육"
         subtitle="역량을 강화하는 교육 과정을 수강하세요."
       />
-      <div className="responsive-container px-4 md:px-6 py-6">
+      <div className="container-app px-4 md:px-6 py-6">
       {/* 제공기관 카드 */}
       <div className="mb-5 flex flex-col gap-2">
         {providers.map((prov) => (

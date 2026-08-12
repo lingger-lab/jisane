@@ -43,7 +43,7 @@ export default async function InvitationsPage() {
         title="초빙 현황"
         subtitle="기업으로부터 받은 초빙 요청을 확인하세요."
       />
-      <div className="responsive-container px-4 md:px-6 py-6">
+      <div className="container-app px-4 md:px-6 py-6">
       {items.length === 0 ? (
         <div className="flex flex-col items-center gap-3 rounded-xl border border-dashed border-border-light py-12 text-center">
           <p className="text-sm text-text-muted">아직 초빙 요청이 없습니다.</p>

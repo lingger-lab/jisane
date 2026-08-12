@@ -14,7 +14,7 @@ export default function WorkLoading() {
         subtitle="진행 중인 작업을 확인하고 단계를 관리하세요."
       />
 
-      <div className="responsive-container px-4 md:px-6 py-6">
+      <div className="container-app px-4 md:px-6 py-6">
         <div className="flex flex-col gap-3">
           {Array.from({ length: 3 }).map((_, i) => (
             <div

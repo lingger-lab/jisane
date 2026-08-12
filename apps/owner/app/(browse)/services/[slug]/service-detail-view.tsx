@@ -29,7 +29,7 @@ export function ServiceDetailView({ pkg }: { pkg: ServicePackage }) {
         }
       />
 
-      <div className="responsive-container px-4 md:px-6 py-6">
+      <div className="container-app px-4 md:px-6 py-6">
       {/* 패키지 정보 */}
       <div className="mb-6">
         <p className="text-sm text-text-muted leading-relaxed">{pkg.description}</p>

@@ -126,7 +126,7 @@ export function ServicesView({
     <div className="flex flex-1 flex-col animate-fade-in">
       <PageHero eyebrow="기업회원" title="전문서비스" subtitle="기업 맞춤 전문 서비스를 신청하세요." />
 
-      <div className="responsive-container px-4 md:px-6 py-6">
+      <div className="container-app px-4 md:px-6 py-6">
       {/* 검색 */}
       <div className="relative mb-5">
         <span className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-text-subtle">

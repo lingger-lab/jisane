@@ -67,7 +67,7 @@ export function ClientNav() {
 
   return (
     <nav className="fixed bottom-0 left-0 right-0 border-t border-border-light bg-background/80 backdrop-blur-lg pb-safe">
-      <div className="responsive-container flex items-center justify-around px-4 md:px-6">
+      <div className="container-app flex items-center justify-around px-4 md:px-6">
         {TABS.map((tab) => {
           const isActive = pathname === tab.href || pathname.startsWith(tab.href + '/')
           return (

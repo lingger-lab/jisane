@@ -11,7 +11,7 @@ export default async function RequestPage() {
     <div className="flex flex-1 flex-col animate-fade-in">
       <PageHero eyebrow="기업회원" title="일 맡기기" subtitle="먼저 시니어지식인을 찾아보거나, 바로 의뢰서를 작성하세요." />
 
-      <div className="responsive-container px-4 md:px-6 py-6">
+      <div className="container-form px-4 md:px-6 py-6">
       {/* 시니어지식인 먼저 찾기 — 검색 + 카테고리 (→ /experts) */}
       <section className="mb-8">
         <SearchBox target="/experts" placeholder="이름·분야로 시니어지식인 검색" />

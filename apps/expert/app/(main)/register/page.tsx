@@ -39,7 +39,7 @@ export default function RegisterPage() {
     <div className="flex flex-1 flex-col animate-fade-in">
       {/* 다크 히어로 — 브랜드 딥그린 밴드 (렐라랩 벤치마킹) */}
       <div className="hero-dark w-full">
-        <section className="responsive-container flex flex-col items-center gap-2 px-4 md:px-6 pt-10 md:pt-14 pb-8 md:pb-10 text-center">
+        <section className="container-form flex flex-col items-center gap-2 px-4 md:px-6 pt-10 md:pt-14 pb-8 md:pb-10 text-center">
           <span className="hero-eyebrow">시니어지식인공간 · 등록</span>
           <h1 className="text-2xl md:text-3xl font-bold font-serif text-white leading-snug">
             경험의 값어치, <span className="text-accent-light">온전히</span> 받으세요
@@ -48,7 +48,7 @@ export default function RegisterPage() {
         </section>
       </div>
 
-      <div className="responsive-container px-4 md:px-6 py-6">
+      <div className="container-form px-4 md:px-6 py-6">
       {/* 작업료 0% 수수료 강조 */}
       <div className="mb-6 rounded-xl border border-accent/20 bg-surface-warm p-4 text-center shadow-sm">
         <p className="text-lg font-bold text-accent">작업료 0% 수수료</p>

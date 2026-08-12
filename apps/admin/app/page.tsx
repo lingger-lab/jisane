@@ -41,7 +41,7 @@ export default async function AdminHome() {
   return (
     <div className="flex flex-1 flex-col">
       {/* 네비게이션 */}
-      <nav className="responsive-container flex items-center justify-end gap-3 px-4 md:px-6 py-2">
+      <nav className="container-marketing flex items-center justify-end gap-3 px-4 md:px-6 py-2">
         <Link href="/ax" className="text-xs text-text-muted hover:text-text transition-colors">AX 전환</Link>
         <Link href="/service" className="text-xs text-text-muted hover:text-text transition-colors">서비스 안내</Link>
         {isAdmin && (
@@ -53,7 +53,7 @@ export default async function AdminHome() {
 
       {/* 히어로 — 브랜드 딥그린 다크 밴드 (렐라랩 벤치마킹: 아이브로우→제목→서브→수치) */}
       <div className="hero-dark w-full">
-        <section className="responsive-container flex flex-col items-center gap-4 px-4 md:px-6 pt-14 md:pt-20 pb-12 md:pb-16 text-center animate-fade-in">
+        <section className="container-marketing flex flex-col items-center gap-4 px-4 md:px-6 pt-14 md:pt-20 pb-12 md:pb-16 text-center animate-fade-in">
           <span className="hero-eyebrow">기업의 곁에, 언제나 YourSide</span>
           <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold font-serif text-white leading-snug">
             맡기기 전에,
@@ -70,7 +70,7 @@ export default async function AdminHome() {
       </div>
 
       <div className="flex flex-1 flex-col items-center px-4 md:px-6 py-10 md:py-14">
-        <main className="responsive-container flex flex-col items-center gap-10 md:gap-14 lg:gap-16">
+        <main className="container-marketing flex flex-col items-center gap-10 md:gap-14 lg:gap-16">
           {/* 공간 선택 카드 */}
           <section className="w-full animate-fade-in stagger-1">
             <div className="flex flex-col gap-4 rounded-2xl bg-surface-warm p-4 md:p-6">
@@ -146,7 +146,7 @@ export default async function AdminHome() {
 
       {/* 푸터 */}
       <footer className="border-t border-border-light bg-surface py-6">
-        <div className="responsive-container flex flex-col gap-4 px-4 md:px-6">
+        <div className="container-marketing flex flex-col gap-4 px-4 md:px-6">
           <div className="flex items-start justify-between">
             <div className="flex items-center gap-2">
               <OwlIcon className="h-6 w-6 text-primary" />

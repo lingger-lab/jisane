@@ -14,7 +14,7 @@ export default function GuaranteePage() {
         subtitle="초안 v1.0 · 오해 제거 5대 메커니즘 ⑤ 복구 실물화"
         size="lg"
       />
-      <div className="responsive-container px-4 md:px-6 py-6">
+      <div className="container-read px-4 md:px-6 py-6">
       <div className="rounded-xl bg-surface-warm p-4 mb-8 text-sm text-text-muted leading-relaxed">
         <p className="font-semibold text-text mb-1">이 규정은 왜 존재하나요?</p>
         <p>
