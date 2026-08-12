@@ -20,7 +20,7 @@ export async function GET(request: NextRequest) {
 
   // orderId 해석은 공유 파서로 (생성 측과 단일 계약). 쿼리 dealId와도 일치해야 한다.
   const parsed = parseOrderId(orderId)
-  if (!parsed || parsed.dealId !== dealId) {
+  if (!parsed || parsed.id !== dealId) {
     return NextResponse.redirect(new URL('/?error=payment_invalid', request.url))
   }
 

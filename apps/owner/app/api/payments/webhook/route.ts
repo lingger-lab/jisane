@@ -59,7 +59,7 @@ export async function POST(request: Request) {
   if (!parsed) {
     return NextResponse.json({ error: 'Invalid orderId format' }, { status: 400 })
   }
-  const dealId = parsed.dealId
+  const dealId = parsed.id
 
   const result = await confirmAndRecordDeposit(dealId, paymentKey, orderId)
 

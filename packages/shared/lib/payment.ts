@@ -17,21 +17,49 @@ function getAuthHeader(): string {
 }
 
 const ORDER_ID_PREFIX = 'jisane'
+const DEAL_TOKEN = 'deal'
+const SUB_TOKEN = 'sub'
+const TIMESTAMP_RE = /^\d+$/
+
+/** orderId가 가리키는 대상 — 의뢰 결제(deal) 또는 구독 청구(subscription). (설계 docs/16 §3.2·§11.4) */
+export interface OrderRef {
+  kind: 'deal' | 'subscription'
+  id: string
+}
 
 /**
- * orderId 형식 계약: `jisane_{dealId}_{timestamp}`
+ * orderId 형식 계약 (설계 docs/16 §3.2·§11.4):
+ * - 신규: `jisane_deal_{id}_{timestamp}` / `jisane_sub_{id}_{timestamp}`
+ * - 레거시: `jisane_{uuid}_{timestamp}` (kind 토큰 없음) → parse 시 deal로 해석(하위호환)
  * 생성(여기)과 해석(success 라우트·웹훅)이 서로 다른 파일에 있어 손으로 split하면
  * 구분자 하나만 바뀌어도 콜백이 조용히 전부 거부된다. 반드시 이 쌍을 통해서만 다룰 것.
  */
-export function buildOrderId(dealId: string, timestamp: number): string {
-  return `${ORDER_ID_PREFIX}_${dealId}_${timestamp}`
+export function buildOrderId(ref: OrderRef, timestamp: number): string {
+  // 언더스코어가 섞인 id는 parseOrderId가 null을 돌려 결제 완료 콜백이 영구 거부된다
+  // (non-2xx → Toss 무한 재전송). 돈이 오간 뒤 터지느니 세션 생성 시점에 즉시 실패시킨다.
+  if (!ref.id || ref.id.includes('_')) {
+    throw new Error(`orderId에 쓸 수 없는 id입니다: ${ref.id}`)
+  }
+  const token = ref.kind === 'subscription' ? SUB_TOKEN : DEAL_TOKEN
+  return `${ORDER_ID_PREFIX}_${token}_${ref.id}_${timestamp}`
 }
 
-/** orderId에서 dealId를 복원한다. 형식이 어긋나면 null. */
-export function parseOrderId(orderId: string): { dealId: string } | null {
+/** orderId에서 대상(kind·id)을 복원한다. 형식이 어긋나면 null. */
+export function parseOrderId(orderId: string): OrderRef | null {
   const parts = orderId.split('_')
-  if (parts.length < 3 || parts[0] !== ORDER_ID_PREFIX || !parts[1]) return null
-  return { dealId: parts[1] }
+  if (parts[0] !== ORDER_ID_PREFIX) return null
+
+  // 신규 형식: kind 토큰이 있으면 반드시 이 분기에서 끝낸다(성공 또는 null).
+  // 형식이 어긋난 `jisane_sub_…`가 아래 레거시 분기로 흘러 kind 'deal'(id='sub')로 새면
+  // 후속 조회 404 → non-2xx → Toss 무한 재전송(§11.4)이 재발한다.
+  if (parts[1] === DEAL_TOKEN || parts[1] === SUB_TOKEN) {
+    if (parts.length !== 4 || !parts[2] || !TIMESTAMP_RE.test(parts[3])) return null
+    return { kind: parts[1] === SUB_TOKEN ? 'subscription' : 'deal', id: parts[2] }
+  }
+
+  // 레거시 형식: uuid에는 언더스코어가 없으므로 정확히 3조각, 마지막은 숫자 timestamp.
+  if (parts.length !== 3 || !parts[1] || !TIMESTAMP_RE.test(parts[2])) return null
+  return { kind: 'deal', id: parts[1] }
 }
 
 /**
@@ -66,7 +94,7 @@ export async function createCheckoutSession(
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL
   if (!siteUrl) throw new Error('NEXT_PUBLIC_SITE_URL is not configured')
 
-  const orderId = buildOrderId(dealId, Date.now())
+  const orderId = buildOrderId({ kind: 'deal', id: dealId }, Date.now())
 
   const res = await fetch(`${TOSS_BASE_URL}/payments`, {
     method: 'POST',
