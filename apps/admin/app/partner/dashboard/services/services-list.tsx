@@ -2,11 +2,8 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
-import { PACKAGE_STATUS_LABELS } from '@jisane/shared/labels'
-import { PACKAGE_STATUS_BADGE_CLASSES } from '@jisane/shared/status-badges'
+import { StatusBadge } from '@jisane/ui/status-badge'
 import { ArchiveButton } from './archive-button'
-
-const STATUS_BADGE = PACKAGE_STATUS_BADGE_CLASSES
 
 export interface ServiceItem {
   id: string
@@ -49,9 +46,7 @@ export function ServicesList({ items }: { items: ServiceItem[] }) {
               <div className="min-w-0 flex-1">
                 <div className="flex items-center gap-2">
                   <p className="truncate text-sm font-medium text-text">{pkg.name}</p>
-                  <span className={`shrink-0 rounded-full px-2 py-0.5 text-xs font-medium ${STATUS_BADGE[pkg.status] || ''}`}>
-                    {PACKAGE_STATUS_LABELS[pkg.status] || pkg.status}
-                  </span>
+                  <StatusBadge kind="package" status={pkg.status} />
                 </div>
                 <p className="mt-0.5 text-xs text-text-subtle">
                   {pkg.target_audience === 'owner' ? '기업 대상' : '시니어지식인 대상'} ·{' '}

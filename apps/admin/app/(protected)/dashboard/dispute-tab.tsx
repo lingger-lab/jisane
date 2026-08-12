@@ -3,11 +3,9 @@
 import { useState } from 'react'
 import { FilterRadioGroup } from '@jisane/ui/filter-radio-group'
 import type { DisputeItem } from '@jisane/shared/query-types'
-import { DISPUTE_STATUS_LABELS, DISPUTE_TARGET_LABELS, DISPUTE_RAISED_BY_LABELS } from '@jisane/shared/labels'
-import { DISPUTE_STATUS_BADGE_CLASSES } from '@jisane/shared/status-badges'
+import { DISPUTE_TARGET_LABELS, DISPUTE_RAISED_BY_LABELS } from '@jisane/shared/labels'
+import { StatusBadge } from '@jisane/ui/status-badge'
 import { resolveDispute } from '@/lib/admin/actions'
-
-const STATUS_COLORS: Record<string, string> = DISPUTE_STATUS_BADGE_CLASSES
 
 interface DisputeTabProps {
   disputes: DisputeItem[]
@@ -65,9 +63,7 @@ function DisputeCard({ dispute }: { dispute: DisputeItem }) {
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0 flex-1">
           <div className="mb-1.5 flex flex-wrap items-center gap-2">
-            <span className={`rounded-full px-2 py-0.5 text-xs font-medium ${STATUS_COLORS[dispute.status] || 'bg-surface text-text-subtle'}`}>
-              {DISPUTE_STATUS_LABELS[dispute.status] || dispute.status}
-            </span>
+            <StatusBadge kind="dispute" status={dispute.status} />
             <span className="rounded-full bg-surface px-2 py-0.5 text-xs text-text-muted">
               {DISPUTE_TARGET_LABELS[dispute.target_type] || dispute.target_type}
             </span>

@@ -2,8 +2,7 @@
 
 import { useState } from 'react'
 import { FilterRadioGroup } from '@jisane/ui/filter-radio-group'
-import { INVITATION_STATUS_LABELS } from '@jisane/shared/labels'
-import { INVITATION_STATUS_BADGE_CLASSES } from '@jisane/shared/status-badges'
+import { StatusBadge } from '@jisane/ui/status-badge'
 
 interface InvitationItem {
   id: string
@@ -16,8 +15,6 @@ interface InvitationItem {
   expert: { id: string; name: string | null; field: string | null }
   request: { id: string; title: string } | null
 }
-
-const STATUS_COLORS: Record<string, string> = INVITATION_STATUS_BADGE_CLASSES
 
 const FILTERS = [
   { key: 'all', label: '전체' },
@@ -94,9 +91,7 @@ export function InvitationTab({ invitations }: { invitations: InvitationItem[] }
                     )}
                   </div>
                 </div>
-                <span className={`shrink-0 rounded-full px-2.5 py-1 text-xs font-medium ${STATUS_COLORS[inv.status] ?? 'bg-surface text-text-subtle'}`}>
-                  {INVITATION_STATUS_LABELS[inv.status] ?? inv.status}
-                </span>
+                <StatusBadge kind="invitation" status={inv.status} className="px-2.5 py-1" />
               </div>
             </div>
           ))}
