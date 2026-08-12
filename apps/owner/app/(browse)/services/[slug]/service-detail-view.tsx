@@ -94,7 +94,7 @@ export function ServiceDetailView({ pkg }: { pkg: ServicePackage }) {
         )}
 
         <SubmitButton className="rounded-xl bg-primary px-6 py-3 font-semibold text-white shadow-sm transition-all hover:bg-primary-light hover:shadow-md disabled:opacity-50">
-          {pkg.price === 0 ? '무료 신청하기' : `${pkg.price.toLocaleString('ko-KR')}원 신청하기`}
+          {pkg.price === 0 ? '무료 신청하기' : '상담 신청'}
         </SubmitButton>
 
         <p className="text-center text-xs text-text-subtle">

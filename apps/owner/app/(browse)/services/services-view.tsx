@@ -78,7 +78,7 @@ function PackageCard({ pkg }: { pkg: ServicePackage }) {
             href={`/services/${pkg.slug}`}
             className="rounded-lg bg-primary px-3 py-1.5 text-xs font-medium text-white transition-colors hover:bg-primary-light"
           >
-            신청하기
+            {pkg.isFree ? '신청하기' : '상담 신청'}
           </Link>
         </div>
       </div>

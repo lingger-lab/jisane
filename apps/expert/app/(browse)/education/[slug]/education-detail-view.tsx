@@ -86,7 +86,7 @@ export function EducationDetailView({ pkg }: { pkg: ServicePackage }) {
         )}
 
         <SubmitButton className="rounded-xl bg-accent px-6 py-3 font-semibold text-white shadow-sm transition-all hover:bg-accent/90 hover:shadow-md disabled:opacity-50">
-          {pkg.price === 0 ? '무료 수강 신청' : `${pkg.price.toLocaleString('ko-KR')}원 수강 신청`}
+          {pkg.price === 0 ? '무료 수강 신청' : '상담 신청'}
         </SubmitButton>
 
         <p className="text-center text-xs text-text-subtle">

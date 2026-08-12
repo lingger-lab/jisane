@@ -144,7 +144,7 @@ export function EducationView({
                     href={`/education/${pkg.slug}`}
                     className="rounded-lg bg-accent px-3 py-1.5 text-xs font-medium text-white transition-colors hover:bg-accent/90"
                   >
-                    수강 신청
+                    {pkg.isFree ? '수강 신청' : '상담 신청'}
                   </Link>
                 </div>
               </div>
