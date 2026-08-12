@@ -248,6 +248,11 @@ open dispute면 credit-hold-release cron 스킵(auto-settlement eligible 필터 
 
 **11.10 조직·프로세스**: **Toss 자동결제 가맹 계약이 하드 의존**(계약 전 §4·5·6 착수 불가 → 계약무관 선행분[스키마·pricing 이원화·orderId·RLS]과 종속분 워크스트림 분리) · 세무(세금계산서 주기·크레딧 과세표준·파트너 원천징수 3.3%)가 스키마 선행 · **통신판매업 신고(P3-22 보류)는 과금 개시 전 필수로 승격** · SMS 부재+이메일 부재자(P3-34/72)로 dunning 통지 도달 이슈 → 유예기간은 절대일수+약관 명시 · 공개 요율 카피는 확정 문구 수령 후(표시광고법).
 
+**11.11 적대검증 결과(2026-08-12 선행분 착수 시 fable5 작성 + fable5 신선컨텍스트 적대검증, §9-A)**:
+- **수정 완료(커밋)**: pricing 요율 유한·비음수 검증 + isSafeInteger·totalPay 가드(NaN fail-open·2^53 불변식붕괴 차단) · orderId webhook kind 분기 + buildOrderId timestamp isSafeInteger 가드 · **F1** credit earn 소스 FK NOT NULL CHECK(멱등키 NULL 우회=이중적립 차단) · **F3** subscription→billing_key 복합 FK(교차소유 카드청구 차단) · **F4** holding→due_at CHECK(크레딧 유실 차단). 전부 npm test 161/161 + 의사환경 실측 발동 확인.
+- **false-positive**: F2(TRUNCATE 관통) — 0029가 anon에 TRUNCATE 미부여(SELECT/INSERT/UPDATE/DELETE만), 실측 `permission denied` 확인 → 무조치.
+- **설계 수용(구현 시 재검토)**: F5 `adjust` 경로는 음수 임의차감·만료없는 lot 가능(admin 전용 — 서버 authz+감사로그로 통제, DB 미차단 명시) · F6 교차롤(owner↔expert) 자기추천·롤별 1회 피추천 가능(§6 서버 email/contact 대조로 차단) · F7 다형 참조(subscriber_id·holder_id 등) DB FK 없음(서버 존재검증) · billing_key 봉쇄로 클라가 카드 마스킹메타도 못 봄 → 표시용 서버 API 필요(기능 이슈).
+
 ---
 
 ## 12. UI/UX 구조 개선 + 디자인 시스템 고급화 (fable5, 코드 실측)
