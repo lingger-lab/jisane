@@ -80,7 +80,7 @@ program_access_mode('free','trial','subscription','paid','credit')
 **program_run**(usage) — service_package_id·runner(type,id)·access_mode·service_order_id·billed_amount·status·result_url·시각. 인덱스(package,시각)/(runner,package,시각).
 
 ### 2.3 기존 테이블 변경(additive)
-- **deal**: `pricing_model text DEFAULT 'subscription_v2'`(기존 백필 'match_fee_v1' — grandfather 단일판별). work_fee=W 유지, match_fee=0, total_pay=W×1.05 의미 재정의.
+- **deal**: `pricing_model text DEFAULT 'match_fee_v1'`(§11.9 "기본값 영구 legacy"와 정합 — 구현 0032 확정. §2.3 초안의 'subscription_v2' DEFAULT는 Phase 0~3 사이 생성 거래가 v1 산식인데 v2로 라벨링되는 오분류창(§11.1 치명)을 낳아 폐기. 신 거래생성 코드가 항상 명시적으로 'subscription_v2' 세팅, 기존 행은 DEFAULT로 자동 백필). work_fee=W 유지, match_fee=0, total_pay=W×1.05 의미 재정의.
 - **settlement**: `expert_payout_amt·pg_fee_amt·risk_reserve_amt·credit_hold_amt`(NOT NULL DEFAULT 0)·`credit_state`·`credit_release_due_at`. guarantee_fee는 legacy 전용.
 - **guarantee_fund_ledger**: enum에 'risk_reserve'·'credit_recovery' 추가. auto-settlement 적립 소스 guarantee_fee→risk_reserve_amt.
 - **service_package**: `access_type service_access_type DEFAULT 'paid'`(is_free 행→'free'), `trial_scope jsonb`(provider가 정하는 체험범위), tool 메타. 계획 도구=access_type 'subscription'. 시니어 제공 도구=provider.kind='senior' → 20% 동일.
