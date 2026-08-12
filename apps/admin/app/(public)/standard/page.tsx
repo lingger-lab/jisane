@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import { PageHero } from '@jisane/ui/page-hero'
+import { FreePeriodBanner } from '@jisane/ui/free-period-banner'
 
 export const metadata = {
   title: '지사네 표준 | 먼저 꺼내놓는 다섯 가지',
@@ -62,6 +63,7 @@ export default function StandardIndexPage() {
         size="lg"
       />
       <div className="responsive-container px-4 md:px-6 py-6">
+      <FreePeriodBanner className="mb-4" />
       <div className="flex flex-col gap-4">
         {PRINCIPLES.map((p) => (
           <section key={p.item} className="rounded-xl border border-border-light bg-white p-5 md:p-6 shadow-xs">

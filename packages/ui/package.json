@@ -5,6 +5,7 @@
   "exports": {
     "./styles/globals.css": "./styles/globals.css",
     "./cn": "./lib/cn.ts",
+    "./free-period-banner": "./components/free-period-banner.tsx",
     "./button": "./components/primitives/button.tsx",
     "./card": "./components/primitives/card.tsx",
     "./badge": "./components/primitives/badge.tsx",
