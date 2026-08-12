@@ -4,8 +4,7 @@ import { createClient } from '@jisane/shared/supabase/server'
 import { adminClient } from '@jisane/shared/supabase/admin'
 import { signInWithGoogle, signInWithKakao } from '@jisane/shared/auth/actions'
 import { OwnerDashboard } from './owner-dashboard'
-import { GoogleIcon } from '@jisane/ui/icons/google'
-import { KakaoIcon } from '@jisane/ui/icons/kakao'
+import { OAuthButtons } from '@jisane/ui/oauth-buttons'
 import { fetchOwnerLandingStats } from '@jisane/shared/landing-stats'
 import { getPackagesByAudience } from '@jisane/shared/service-package/queries'
 import { CategoryBrowse } from '@jisane/ui/category-browse'
@@ -199,26 +198,7 @@ export default async function OwnerHome() {
             <p className="mb-5 text-center text-base md:text-lg font-semibold text-text leading-relaxed">
               전문 서비스와 전문가 정보, 지금 시작하세요
             </p>
-            <div className="flex w-full flex-col gap-3">
-              <form action={signInWithKakao}>
-                <button
-                  type="submit"
-                  className="flex h-14 w-full items-center justify-center gap-2 rounded-xl overflow-hidden bg-[#FEE500] text-base font-semibold text-[#191919] shadow-sm transition-all hover:bg-[#FDD800] hover:shadow-md btn-press"
-                >
-                  <KakaoIcon className="h-5 w-5 shrink-0" />
-                  카카오로 시작하기
-                </button>
-              </form>
-              <form action={signInWithGoogle}>
-                <button
-                  type="submit"
-                  className="flex h-14 w-full items-center justify-center gap-2 rounded-xl overflow-hidden border border-border bg-white text-base font-medium text-[#1f1f1f] shadow-sm transition-all hover:bg-surface hover:shadow-md btn-press"
-                >
-                  <GoogleIcon className="h-5 w-5 shrink-0" />
-                  Google로 시작하기
-                </button>
-              </form>
-            </div>
+            <OAuthButtons signInWithKakao={signInWithKakao} signInWithGoogle={signInWithGoogle} />
           </div>
         </section>
       </ScrollReveal>

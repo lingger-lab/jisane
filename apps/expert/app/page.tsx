@@ -5,8 +5,7 @@ import { createClient } from '@jisane/shared/supabase/server'
 import { adminClient } from '@jisane/shared/supabase/admin'
 import { signInWithGoogle, signInWithKakao } from '@jisane/shared/auth/actions'
 import { ExpertDashboard } from './expert-dashboard'
-import { GoogleIcon } from '@jisane/ui/icons/google'
-import { KakaoIcon } from '@jisane/ui/icons/kakao'
+import { OAuthButtons } from '@jisane/ui/oauth-buttons'
 import { fetchExpertLandingStats } from '@jisane/shared/landing-stats'
 import { ADMIN_URL, OWNER_URL } from '@/lib/urls'
 import { getPackagesByAudience } from '@jisane/shared/service-package/queries'
@@ -178,26 +177,7 @@ export default async function ExpertHome() {
             <p className="mb-5 text-center text-base md:text-lg font-semibold text-text leading-relaxed">
               지금 등록하고 열린 의뢰 {stats.totalOpenRequests}건을 확인하세요
             </p>
-            <div className="flex w-full flex-col gap-3">
-              <form action={signInWithKakao}>
-                <button
-                  type="submit"
-                  className="flex h-14 w-full items-center justify-center gap-2 rounded-xl overflow-hidden bg-[#FEE500] text-base font-semibold text-[#191919] shadow-sm transition-all hover:bg-[#FDD800] hover:shadow-md btn-press"
-                >
-                  <KakaoIcon className="h-5 w-5 shrink-0" />
-                  카카오로 시작하기
-                </button>
-              </form>
-              <form action={signInWithGoogle}>
-                <button
-                  type="submit"
-                  className="flex h-14 w-full items-center justify-center gap-2 rounded-xl overflow-hidden border border-border bg-white text-base font-medium text-[#1f1f1f] shadow-sm transition-all hover:bg-surface hover:shadow-md btn-press"
-                >
-                  <GoogleIcon className="h-5 w-5 shrink-0" />
-                  Google로 시작하기
-                </button>
-              </form>
-            </div>
+            <OAuthButtons signInWithKakao={signInWithKakao} signInWithGoogle={signInWithGoogle} />
           </div>
         </section>
       </ScrollReveal>

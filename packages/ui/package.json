@@ -35,7 +35,10 @@
     "./page-hero": "./components/page-hero.tsx",
     "./char-limit-notice": "./components/char-limit-notice.tsx",
     "./error-state": "./components/error-state.tsx",
-    "./route-loading": "./components/route-loading.tsx"
+    "./route-loading": "./components/route-loading.tsx",
+    "./status-badge": "./components/status-badge.tsx",
+    "./oauth-buttons": "./components/oauth-buttons.tsx",
+    "./empty-state": "./components/empty-state.tsx"
   },
   "dependencies": {
     "@radix-ui/react-slot": "^1.1.1",
