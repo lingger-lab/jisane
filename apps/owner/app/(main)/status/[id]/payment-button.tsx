@@ -8,6 +8,8 @@ interface PaymentButtonProps {
   amount: number
   /** 서버에서 판정한 결제 활성화 여부(토스 키 주입 전이면 false) */
   enabled: boolean
+  /** 무료 운영 기간 여부(§0) — enabled=false일 때 "결제 준비중" 대신 무료 안내를 노출 */
+  freeMode?: boolean
   onError: (message: string) => void
 }
 
@@ -16,10 +18,21 @@ interface PaymentButtonProps {
  * 체크아웃 세션을 서버에서 생성(금액은 서버의 deal.total_pay 사용)한 뒤 토스 결제창으로 이동한다.
  * 결제 성공 시 /api/payments/success 가 승인·예치를 기록하고 deal을 working으로 전이시킨다.
  */
-export function PaymentButton({ dealId, amount, enabled, onError }: PaymentButtonProps) {
+export function PaymentButton({ dealId, amount, enabled, freeMode, onError }: PaymentButtonProps) {
   const [pending, setPending] = useState(false)
 
   if (!enabled) {
+    // 무료 기간(§0): 온라인 결제 대신 관리자 오프라인 에스크로 안내(dead-end 방지).
+    if (freeMode) {
+      return (
+        <div className="flex-1 rounded-xl border border-border bg-surface-warm px-4 py-3 text-center">
+          <p className="text-sm font-semibold text-text">무료 기간 · 지사네 수수료 없음</p>
+          <p className="mt-1 text-xs text-text-muted">
+            작업비는 지사네 안내에 따라 입금해 주세요. 관리자 확인 후 작업이 시작됩니다.
+          </p>
+        </div>
+      )
+    }
     return (
       <div className="flex-1">
         <button

@@ -1,5 +1,29 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
-import { buildOrderId, cancelPayment, confirmPayment, parseOrderId } from './payment'
+import { buildOrderId, cancelPayment, confirmPayment, parseOrderId, isFreeModeEnabled } from './payment'
+
+describe('isFreeModeEnabled (무료 운영 기간 게이트, docs/16 §0.2)', () => {
+  const orig = process.env.FREE_MODE_UNTIL
+  afterEach(() => {
+    if (orig === undefined) delete process.env.FREE_MODE_UNTIL
+    else process.env.FREE_MODE_UNTIL = orig
+  })
+  it('FREE_MODE_UNTIL 미설정이면 false ("키 부재=무료" 추론 금지)', () => {
+    delete process.env.FREE_MODE_UNTIL
+    expect(isFreeModeEnabled()).toBe(false)
+  })
+  it('종료일이 미래면 true', () => {
+    process.env.FREE_MODE_UNTIL = '2099-12-31'
+    expect(isFreeModeEnabled()).toBe(true)
+  })
+  it('종료일이 과거면 false', () => {
+    process.env.FREE_MODE_UNTIL = '2000-01-01'
+    expect(isFreeModeEnabled()).toBe(false)
+  })
+  it('형식 오류면 false (fail-safe)', () => {
+    process.env.FREE_MODE_UNTIL = 'not-a-date'
+    expect(isFreeModeEnabled()).toBe(false)
+  })
+})
 
 // 회귀 가드(감사 docs/11 P2-63·P3-X): cancelPayment는 confirmPayment와 동일하게
 // 타임아웃/네트워크 장애에서 절대 throw하지 않고 {success:false}를 반환해야 한다.

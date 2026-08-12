@@ -17,9 +17,11 @@ interface QuoteSectionProps {
   expert: { field: string | null; career_years: number | null } | null
   /** 서버에서 판정한 결제 활성화 여부 (토스 키 주입 전이면 false) */
   paymentEnabled: boolean
+  /** 무료 운영 기간 여부 (§0) — 지사네 수수료 0, 작업비는 관리자 오프라인 에스크로 */
+  freeModeEnabled: boolean
 }
 
-export function QuoteSection({ deal, expert, paymentEnabled }: QuoteSectionProps) {
+export function QuoteSection({ deal, expert, paymentEnabled, freeModeEnabled }: QuoteSectionProps) {
   const [error, setError] = useState<string | null>(null)
   const [showInquiry, setShowInquiry] = useState(false)
   const [inquiryText, setInquiryText] = useState('')
@@ -65,24 +67,36 @@ export function QuoteSection({ deal, expert, paymentEnabled }: QuoteSectionProps
       </div>
 
       {/* 총 금액 — 내역(work_fee/match_fee)은 숨기고 합계만 표시 (직거래 방지).
-          결제액은 공급가+부가세이며 견적서·거래명세서의 총 결제 예정액과 같다. */}
-      <div className="mb-4 text-center">
-        <p className="text-sm text-text-muted">총 결제 금액</p>
-        <p className="text-3xl font-bold text-accent">
-          {calcPayableAmount(deal.total_pay).toLocaleString('ko-KR')}
-          <span className="text-base font-normal">원</span>
-        </p>
-        <p className="mt-1 text-xs text-text-subtle">
-          공급가 {deal.total_pay.toLocaleString('ko-KR')}원 + 부가세{' '}
-          {calcVat(deal.total_pay).toLocaleString('ko-KR')}원
-        </p>
-      </div>
+          무료 기간엔 지사네 수수료가 0이라 작업비만 표시(VAT 처리는 §10 게이트). */}
+      {freeModeEnabled ? (
+        <div className="mb-4 text-center">
+          <p className="text-sm text-text-muted">작업비 (지사네 수수료 무료)</p>
+          <p className="text-3xl font-bold text-accent">
+            {deal.total_pay.toLocaleString('ko-KR')}
+            <span className="text-base font-normal">원</span>
+          </p>
+          <p className="mt-1 text-xs text-text-subtle">시니어지식인에게 지급되는 작업비입니다.</p>
+        </div>
+      ) : (
+        <div className="mb-4 text-center">
+          <p className="text-sm text-text-muted">총 결제 금액</p>
+          <p className="text-3xl font-bold text-accent">
+            {calcPayableAmount(deal.total_pay).toLocaleString('ko-KR')}
+            <span className="text-base font-normal">원</span>
+          </p>
+          <p className="mt-1 text-xs text-text-subtle">
+            공급가 {deal.total_pay.toLocaleString('ko-KR')}원 + 부가세{' '}
+            {calcVat(deal.total_pay).toLocaleString('ko-KR')}원
+          </p>
+        </div>
+      )}
 
-      {/* 에스크로 안내 */}
+      {/* 진행 안내 */}
       <div className="mb-4 rounded-xl bg-background p-3">
         <p className="text-xs text-text-muted">
-          지사네 에스크로 안전결제로 진행됩니다. 결제 금액은 작업 완료 및 검수
-          확인 후 시니어지식인에게 정산됩니다.
+          {freeModeEnabled
+            ? '무료 기간 — 지사네 수수료 없이 진행됩니다. 작업비는 지사네 안내에 따라 입금하시면 관리자 확인 후 작업이 시작되고, 검수 완료 후 시니어지식인에게 지급됩니다.'
+            : '지사네 에스크로 안전결제로 진행됩니다. 결제 금액은 작업 완료 및 검수 확인 후 시니어지식인에게 정산됩니다.'}
         </p>
       </div>
 
@@ -102,6 +116,7 @@ export function QuoteSection({ deal, expert, paymentEnabled }: QuoteSectionProps
           dealId={deal.id}
           amount={calcPayableAmount(deal.total_pay)}
           enabled={paymentEnabled}
+          freeMode={freeModeEnabled}
           onError={setError}
         />
         {!showInquiry && !inquirySent && (

@@ -4,6 +4,7 @@ import { redirect } from 'next/navigation'
 import { adminClient } from '@jisane/shared/supabase/admin'
 import { resolveExpertFromAuth } from '@jisane/shared/auth/server-helpers'
 import { calcMatchFee, calcGuaranteeFee } from '@jisane/shared/pricing'
+import { isFreeModeEnabled } from '@jisane/shared/payment'
 import type { WorkflowStep } from '@jisane/shared/types'
 
 async function getExpertIdFromAuth(): Promise<{ expertId: string; authUserId: string }> {
@@ -51,11 +52,16 @@ export async function acceptMatching(matchingId: string): Promise<{ error?: stri
 
   // work_fee: budget_hope 기반 (없으면 기본값 100,000)
   const workFee = request.budget_hope || 100000
+  // 무료 기간(§0): 매칭비 0 — calcMatchFee(및 3만원 하한 throw) 스킵, 작업비만 부과.
   let matchFee: number
-  try {
-    matchFee = calcMatchFee(workFee)
-  } catch {
-    return { error: '최소 작업비(3만원) 미만의 의뢰입니다.' }
+  if (isFreeModeEnabled()) {
+    matchFee = 0
+  } else {
+    try {
+      matchFee = calcMatchFee(workFee)
+    } catch {
+      return { error: '최소 작업비(3만원) 미만의 의뢰입니다.' }
+    }
   }
   const totalPay = workFee + matchFee
 

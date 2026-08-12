@@ -79,6 +79,7 @@ export async function confirmAndRecordDeposit(
       escrow_status: 'deposited',
       payment_key: paymentKey,
       deposited_at: new Date().toISOString(),
+      deposit_method: 'toss',
     })
     .eq('id', settlement.id)
     .eq('escrow_status', 'pending')

@@ -4,6 +4,7 @@ import { redirect } from 'next/navigation'
 import { adminClient } from '@jisane/shared/supabase/admin'
 import { resolveExpertFromAuth } from '@jisane/shared/auth/server-helpers'
 import { calcCapPricing } from '@jisane/shared/cap-pricing'
+import { isFreeModeEnabled } from '@jisane/shared/payment'
 import type { WorkflowStep } from '@jisane/shared/types'
 
 async function getExpertFromAuth(): Promise<{ expertId: string; hourlyRate: number | null; name: string }> {
@@ -62,13 +63,26 @@ export async function acceptInvitation(
 
   // cap 계산
   const rate = hourlyRate ?? 25000
-  let cap: ReturnType<typeof calcCapPricing>
-  try {
-    cap = calcCapPricing(rate, estHours)
-  } catch {
-    return { error: '최소 작업비(3만원) 미만입니다. 예상 시간을 늘려주세요.' }
+  let estAmount: number, capAmount: number, workFee: number
+  let matchFee: number, totalPay: number, guaranteeFee: number
+  if (isFreeModeEnabled()) {
+    // 무료 기간(§0): 매칭비 0 — 작업비(cap)만 산출, calcCapPricing의 3만원 throw 스킵.
+    estAmount = Math.round(rate * estHours)
+    capAmount = estAmount
+    workFee = capAmount
+    matchFee = 0
+    totalPay = workFee
+    guaranteeFee = 0
+  } else {
+    let cap: ReturnType<typeof calcCapPricing>
+    try {
+      cap = calcCapPricing(rate, estHours)
+    } catch {
+      return { error: '최소 작업비(3만원) 미만입니다. 예상 시간을 늘려주세요.' }
+    }
+    ;({ estAmount, capAmount, workFee, matchFee, totalPay } = cap)
+    guaranteeFee = cap.guaranteeFee
   }
-  const { estAmount, capAmount, workFee, matchFee, totalPay } = cap
 
   // 1. request 확보 — 초빙에 연결된 request가 없으면 생성한다.
   //    deal.request_id가 null이면 owner 소유권 검증·화면 노출·관리자 정산이
@@ -159,7 +173,7 @@ export async function acceptInvitation(
     .insert({
       deal_id: deal.id,
       escrow_status: 'pending',
-      guarantee_fee: cap.guaranteeFee,
+      guarantee_fee: guaranteeFee,
     })
 
   if (settlementErr) {

@@ -3,7 +3,7 @@ import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import { createClient } from '@jisane/shared/supabase/server'
 import { adminClient } from '@jisane/shared/supabase/admin'
-import { isPaymentEnabled } from '@jisane/shared/payment'
+import { isPaymentEnabled, isFreeModeEnabled } from '@jisane/shared/payment'
 import { ProgressBar } from '@jisane/ui/progress-bar'
 import type { RequestRow, DealRow, DealWorkflowRow, ExpertRow } from '@jisane/shared/types'
 import { WORKFLOW_STEP_LABELS, STEP_STATUS_LABELS } from '@jisane/shared/labels'
@@ -242,6 +242,7 @@ export default async function StatusDetailPage(props: PageProps) {
           deal={{ id: deal.id, total_pay: deal.total_pay, due_date: deal.due_date }}
           expert={expert ? { field: expert.field, career_years: expert.career_years } : null}
           paymentEnabled={isPaymentEnabled()}
+          freeModeEnabled={isFreeModeEnabled()}
         />
       )}
 

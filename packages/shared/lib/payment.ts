@@ -83,6 +83,27 @@ export function isPaymentEnabled(): boolean {
   return Boolean(process.env.TOSS_SECRET_KEY)
 }
 
+/**
+ * 무료 운영 기간 여부 (**서버 전용** — 명시 env `FREE_MODE_UNTIL` 기반, 설계 docs/16 §0.2).
+ *
+ * 실 PG 개통 전 근시 무료 운영: 지사네 수수료(매칭비·PG·리스크) 0, 작업비는 관리자
+ * 오프라인 에스크로. `FREE_MODE_UNTIL`(예 `2026-12-31`, KST 종료일)이 설정돼 있고 오늘이
+ * 그 이전일 때만 true. **"키 부재=무료" 추론 금지** — 키를 실수로 지우면 조용히 전면 무료가
+ * 되는 사고를 명시 env로 차단한다. 무료 경로 액션은 `isFreeModeEnabled() && !isPaymentEnabled()`
+ * 로 상호배타 이중 게이트할 것(PG 키 주입 순간 무료 경로 fail-closed).
+ */
+export function isFreeModeEnabled(): boolean {
+  if (typeof window !== 'undefined') {
+    throw new Error('isFreeModeEnabled는 서버에서만 호출할 수 있습니다')
+  }
+  const until = process.env.FREE_MODE_UNTIL
+  if (!until) return false
+  // KST 종료일 자정(23:59:59)까지 포함. 형식 오류면 false(무료 미적용) — 운영자가 §10 확정.
+  const untilTime = Date.parse(`${until}T23:59:59+09:00`)
+  if (Number.isNaN(untilTime)) return false
+  return Date.now() <= untilTime
+}
+
 export interface CheckoutResult {
   paymentKey: string
   checkoutUrl: string

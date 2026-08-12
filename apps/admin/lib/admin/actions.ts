@@ -425,10 +425,22 @@ export async function updatePackageStatus(
   return {}
 }
 
+/** deal이 quoted면 working으로 CAS 전이(입금 확인=작업 시작). 이미 진행됐으면 멱등(no-op). */
+async function startWorkIfQuoted(dealId: string): Promise<string | undefined> {
+  const { error } = await adminClient
+    .from('deal')
+    .update({ status: 'working' })
+    .eq('id', dealId)
+    .eq('status', 'quoted')
+  return error?.message
+}
+
 /**
- * 수동 입금 확인 — 계좌이체 입금을 관리자가 확인하고 pending → deposited 전환.
- * 토스페이먼츠 연동 전 브리지: 결제 연동이 붙으면 웹훅(confirmAndRecordDeposit)이
- * 같은 전환을 자동으로 수행하며, 이 액션은 예외 처리용으로 남는다.
+ * 수동 입금 확인 — 작업비 입금(계좌이체)을 관리자가 확인하고 pending → deposited 전환 +
+ * **deal quoted → working(작업 시작)**. 근시 무료 운영(docs/16 §0)에서 지사네 관리자가
+ * 작업비를 오프라인 중개하는 에스크로 경로이며, `deposit_method='manual'`·payment_key NULL
+ * (환불 라우트가 자동 차단)로 온라인(toss) 건과 구분된다. 온라인 결제 연동 시 웹훅
+ * (confirmAndRecordDeposit)이 같은 전환을 자동 수행하므로 두 경로는 CAS로 상호배타.
  */
 export async function confirmDepositManual(
   settlementId: string
@@ -437,13 +449,20 @@ export async function confirmDepositManual(
 
   const { data: settlement } = await adminClient
     .from('settlement')
-    .select('id, escrow_status')
+    .select('id, escrow_status, deal_id')
     .eq('id', settlementId)
     .single()
 
   if (!settlement) return { error: '정산 정보를 찾을 수 없습니다.' }
 
+  // 재진입 보정: 직전 시도가 deposited까지 갔으나 deal 전이 전 실패했을 수 있다.
+  // deposited인데 deal이 아직 quoted면 마저 전이하고 성공 처리(멱등).
   if (settlement.escrow_status !== 'pending') {
+    if (settlement.escrow_status === 'deposited') {
+      await startWorkIfQuoted(settlement.deal_id)
+      revalidatePath('/dashboard')
+      return {}
+    }
     return { error: `현재 상태(${settlement.escrow_status})에서는 입금 확인이 불가합니다.` }
   }
 
@@ -452,11 +471,23 @@ export async function confirmDepositManual(
     .update({
       escrow_status: 'deposited',
       deposited_at: new Date().toISOString(),
+      deposit_method: 'manual',
     })
     .eq('id', settlementId)
     .eq('escrow_status', 'pending')
 
   if (error) return { error: error.message }
+
+  // 입금 확인 = 작업 시작. deal quoted→working (온라인 경로와 동일 전이, CAS로 멱등).
+  const transitionErr = await startWorkIfQuoted(settlement.deal_id)
+  if (transitionErr) {
+    // settlement는 deposited인데 deal 전이 실패 — 재진입 시 위 보정 분기가 마저 처리한다.
+    console.error(
+      `[confirmDepositManual] CRITICAL: settlement ${settlementId} deposited인데 deal ${settlement.deal_id} 전이 실패:`,
+      transitionErr,
+    )
+    return { error: '입금은 확인됐으나 작업 전환에 실패했습니다. 다시 시도하면 보정됩니다.' }
+  }
 
   revalidatePath('/dashboard')
   return {}
