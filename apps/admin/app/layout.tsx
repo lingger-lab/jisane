@@ -26,11 +26,11 @@ const gowunBatang = Gowun_Batang({
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://jisane.cloud"),
-  title: "지사네 - 부울경 로컬 인력매칭",
-  description: "일은 사람이 합니다 — 부울경 시니어지식인 직거래 플랫폼.",
+  title: "지사네 — 지역 기업의 든든한 성장 파트너",
+  description: "부울경 중소기업 전문 서비스와 시니어 전문가 정보 제공. 지식나눔 사업협력 네트워크, 지사네 YourSide.",
   openGraph: {
-    title: "지사네 — 부울경 시니어지식인 직거래",
-    description: "일은 사람이 합니다 — 부울경 시니어지식인 직거래 플랫폼.",
+    title: "지사네 — 지역 기업의 든든한 성장 파트너",
+    description: "부울경 중소기업 전문 서비스와 시니어 전문가 정보 제공. 지식나눔 사업협력 네트워크, 지사네 YourSide.",
     url: "https://jisane.cloud",
     siteName: "지사네",
     locale: "ko_KR",
@@ -38,8 +38,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "지사네 — 부울경 시니어지식인 직거래",
-    description: "일은 사람이 합니다 — 부울경 시니어지식인 직거래 플랫폼.",
+    title: "지사네 — 지역 기업의 든든한 성장 파트너",
+    description: "부울경 중소기업 전문 서비스와 시니어 전문가 정보 제공. 지식나눔 사업협력 네트워크.",
   },
 };
 

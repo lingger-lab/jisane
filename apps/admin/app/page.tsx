@@ -54,7 +54,7 @@ export default async function AdminHome() {
       {/* 히어로 — 브랜드 딥그린 다크 밴드 (렐라랩 벤치마킹: 아이브로우→제목→서브→수치) */}
       <div className="hero-dark w-full">
         <section className="responsive-container flex flex-col items-center gap-4 px-4 md:px-6 pt-14 md:pt-20 pb-12 md:pb-16 text-center animate-fade-in">
-          <span className="hero-eyebrow">부울경 시니어지식인 직거래 플랫폼</span>
+          <span className="hero-eyebrow">기업의 곁에, 언제나 YourSide</span>
           <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold font-serif text-white leading-snug">
             맡기기 전에,
             <br />
@@ -79,7 +79,7 @@ export default async function AdminHome() {
                 className="rounded-2xl border-t-4 border-t-primary border border-border-light bg-white p-6 md:p-8 text-left shadow-sm card-hover card-glow transition-all"
               >
                 <h2 className="text-2xl md:text-3xl font-bold text-primary">기업회원</h2>
-                <p className="mt-2 text-sm md:text-base text-text-muted">일은 사람이 합니다 — 시니어지식인에게 직접 의뢰</p>
+                <p className="mt-2 text-sm md:text-base text-text-muted">기업 운영에 필요한 전문 서비스와 시니어 전문가 정보</p>
                 <div className="mt-4 flex flex-wrap gap-2">
                   <span className="rounded-full bg-primary/10 px-3 py-1.5 text-xs font-medium text-primary">에스크로 선입금</span>
                   <span className="rounded-full bg-primary/10 px-3 py-1.5 text-xs font-medium text-primary">매칭비 사전 공개</span>
@@ -152,7 +152,7 @@ export default async function AdminHome() {
               <OwlIcon className="h-6 w-6 text-primary" />
               <div>
                 <p className="text-sm font-semibold text-brand-gradient">지사네</p>
-                <p className="text-xs text-text-subtle">일은 사람이 합니다</p>
+                <p className="text-xs text-text-subtle">지식나눔 사업협력 네트워크</p>
               </div>
             </div>
             <p className="text-xs text-text-subtle">운영: (주)지사네</p>

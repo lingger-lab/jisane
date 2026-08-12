@@ -283,7 +283,7 @@ export default async function OwnerHome() {
             <OwlIcon className="h-6 w-6 text-primary" />
             <div>
               <p className="text-sm font-semibold text-brand-gradient">지사네</p>
-              <p className="text-xs text-text-subtle">일은 사람이 합니다</p>
+              <p className="text-xs text-text-subtle">지식나눔 사업협력 네트워크</p>
             </div>
           </div>
           {/* min-h-6: 24×24px 최소 타깃(WCAG 2.5.8) */}

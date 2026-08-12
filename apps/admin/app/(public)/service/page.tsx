@@ -7,12 +7,11 @@ export const metadata = {
 }
 
 const STEPS = [
-  { num: '01', title: '의뢰 등록', desc: '기업이 필요한 작업을 자유롭게 등록합니다.' },
-  { num: '02', title: '지사네 매니저 검토', desc: '매니저가 의뢰를 확인하고 적합한 시니어지식인을 선정합니다.' },
-  { num: '03', title: '시니어지식인 매칭', desc: '6항목 점수 기반으로 후보 3명을 제안합니다.' },
-  { num: '04', title: '에스크로 결제', desc: '기업이 견적을 승인하면 에스크로로 안전하게 결제합니다.' },
-  { num: '05', title: '작업 진행·검수', desc: '5단계 워크플로우를 통해 체계적으로 작업을 진행합니다.' },
-  { num: '06', title: '정산', desc: '검수 완료 후 시니어지식인에게 작업료 전액이 지급됩니다.' },
+  { num: '01', title: '접수', desc: '기업이 필요한 전문 서비스를 등록합니다.' },
+  { num: '02', title: '합의', desc: '당사자가 메시지로 작업 범위와 조건을 서로 합의합니다.' },
+  { num: '03', title: '결제', desc: '지사네 매니저가 결제와 예치를 진행합니다.' },
+  { num: '04', title: '작업', desc: '5단계 워크플로우로 체계적으로 작업을 진행합니다.' },
+  { num: '05', title: '정산', desc: '검수 완료 후 전문가에게 작업료 전액이 지급됩니다.' },
 ] as const
 
 export default function ServicePage() {
@@ -24,7 +23,7 @@ export default function ServicePage() {
       <PageHero
         eyebrow="지사네 서비스"
         title="지사네 서비스 안내"
-        subtitle="시니어지식인 인력 매칭 시스템과 기업용 전문 서비스를 제공합니다. 부울경 시니어지식인과 기업을 에스크로 직거래로 연결합니다."
+        subtitle="부울경 중소기업에 필요한 전문 서비스와 경험·노하우를 갖춘 시니어 전문가 정보를 제공합니다. 지식나눔 사업협력 네트워크로 지역 기업의 성장을 함께합니다."
         size="lg"
       />
       <div className="responsive-container px-4 md:px-6 py-6">
@@ -33,23 +32,23 @@ export default function ServicePage() {
         <h2 className="mb-4 text-lg font-bold text-text">지사네가 하는 일</h2>
         <div className="grid gap-4 sm:grid-cols-2">
           <div className="rounded-2xl border border-border-light bg-surface-warm p-5 shadow-sm">
-            <p className="text-sm font-semibold text-primary">시니어지식인 인력 매칭 시스템</p>
+            <p className="text-sm font-semibold text-primary">기업 운영 전문 서비스 제공</p>
             <p className="mt-2 text-sm text-text-muted">
-              경력 있는 시니어지식인을 기업에 연결합니다. 매칭 점수 6항목을 공개하고, 후보 3명을 제안합니다.
+              경영·마케팅, 재무·세무·회계, 기술·생산, 온라인·홍보, AI·AX 등 기업 성장에 필요한 전문 서비스를 제공합니다.
             </p>
           </div>
           <div className="rounded-2xl border border-border-light bg-surface-warm p-5 shadow-sm">
-            <p className="text-sm font-semibold text-accent">기업용 전문 서비스 제공</p>
+            <p className="text-sm font-semibold text-accent">시니어 전문가 정보 제공</p>
             <p className="mt-2 text-sm text-text-muted">
-              디자인, 마케팅, 영상, 문서 작성, 창업코칭, 정부자금 등 다양한 분야의 전문 서비스를 제공합니다.
+              경험과 노하우를 갖춘 분야별 시니어 전문가 정보를 제공하고, 기업과 연결합니다.
             </p>
           </div>
         </div>
       </section>
 
-      {/* 매칭 프로세스 */}
+      {/* 진행 절차 */}
       <section className="mb-12 animate-fade-in stagger-2">
-        <h2 className="mb-4 text-lg font-bold text-text">매칭 프로세스</h2>
+        <h2 className="mb-4 text-lg font-bold text-text">진행 절차</h2>
         <div className="flex flex-col gap-3">
           {STEPS.map((step, i) => (
             <div
@@ -73,28 +72,28 @@ export default function ServicePage() {
         <div className="rounded-2xl border border-primary/20 bg-white p-6 shadow-sm">
           <h2 className="text-lg font-bold text-primary">기업회원</h2>
           <p className="mt-2 text-sm text-text-muted">
-            일은 사람이 합니다 — 시니어지식인에게 직접 의뢰하세요.
-            의뢰를 등록하면 지사네 매니저가 24시간 내에 적합한 시니어지식인을 연결해드립니다.
+            기업 운영에 필요한 전문 서비스를 신청하고, 시니어 전문가 정보를 확인하세요.
+            접수하면 지사네 매니저가 합의부터 정산까지 진행을 도와드립니다.
           </p>
           <ul className="mt-3 flex flex-col gap-1.5 text-sm text-text-muted">
             <li className="flex items-start gap-2">
               <span className="mt-0.5 h-1.5 w-1.5 shrink-0 rounded-full bg-primary" />
-              시니어지식인 인력 신청 — 필요한 작업을 자유롭게 등록
+              전문 서비스 신청 — 필요한 서비스를 자유롭게 등록
             </li>
             <li className="flex items-start gap-2">
               <span className="mt-0.5 h-1.5 w-1.5 shrink-0 rounded-full bg-primary" />
-              에스크로 안전결제 — 검수 후 정산
+              시니어 전문가 정보 열람 — 분야별 전문가 확인
             </li>
             <li className="flex items-start gap-2">
               <span className="mt-0.5 h-1.5 w-1.5 shrink-0 rounded-full bg-primary" />
-              기업 수수료 0% — 매칭비만 별도
+              지사네 매니저 지원 — 합의·결제·정산까지 안전하게
             </li>
           </ul>
           <a
             href={ownerUrl}
             className="mt-5 flex h-12 items-center justify-center rounded-xl bg-primary text-base font-semibold text-white shadow-sm transition-all hover:bg-primary-light hover:shadow-md btn-press"
           >
-            시니어지식인 인력 신청하기
+            기업회원 시작하기
           </a>
         </div>
       </section>
@@ -104,28 +103,28 @@ export default function ServicePage() {
         <div className="rounded-2xl border border-accent/20 bg-white p-6 shadow-sm">
           <h2 className="text-lg font-bold text-accent">시니어지식인회원</h2>
           <p className="mt-2 text-sm text-text-muted">
-            경험을 살려 일하고, 정당한 대가를 받으세요.
-            시니어지식인으로 등록하면 지사네 매니저가 적합한 의뢰를 매칭해드립니다.
+            경험과 노하우를 살려 기업과 협력하세요.
+            등록하면 기업 의뢰 정보와 작업에 필요한 전문 도구를 이용하실 수 있습니다.
           </p>
           <ul className="mt-3 flex flex-col gap-1.5 text-sm text-text-muted">
             <li className="flex items-start gap-2">
               <span className="mt-0.5 h-1.5 w-1.5 shrink-0 rounded-full bg-accent" />
-              기업 매칭 신청 — 경력과 전문 분야를 등록
+              전문 분야 등록 — 경력과 노하우를 등록
             </li>
             <li className="flex items-start gap-2">
               <span className="mt-0.5 h-1.5 w-1.5 shrink-0 rounded-full bg-accent" />
-              시니어지식인 수수료 0% — 작업료 전액 지급
+              기업 의뢰 정보 확인 — 협력 기회 열람
             </li>
             <li className="flex items-start gap-2">
               <span className="mt-0.5 h-1.5 w-1.5 shrink-0 rounded-full bg-accent" />
-              지사네 에스크로로 안전하게 보관
+              작업 전문 도구 제공 — S/W·교육 지원
             </li>
           </ul>
           <a
             href={expertUrl}
             className="mt-5 flex h-12 items-center justify-center rounded-xl border-2 border-accent text-base font-semibold text-accent transition-colors hover:bg-accent/5 btn-press"
           >
-            기업 매칭 신청하기
+            시니어 전문가 등록하기
           </a>
         </div>
       </section>
@@ -136,15 +135,15 @@ export default function ServicePage() {
         <ul className="flex flex-col gap-2 text-sm text-text-muted">
           <li className="flex items-start gap-2">
             <span className="mt-0.5 h-1.5 w-1.5 shrink-0 rounded-full bg-accent" />
-            매칭 점수 6항목을 투명하게 공개합니다
+            전문가 정보를 투명하게 제공합니다
           </li>
           <li className="flex items-start gap-2">
             <span className="mt-0.5 h-1.5 w-1.5 shrink-0 rounded-full bg-accent" />
-            에스크로 안전결제 · 검수 후 정산
+            지사네 매니저가 합의·결제·정산을 안전하게 진행합니다
           </li>
           <li className="flex items-start gap-2">
             <span className="mt-0.5 h-1.5 w-1.5 shrink-0 rounded-full bg-accent" />
-            지사네 책임 적립금으로 거래 안전 보장
+            검수 완료 후 작업료 전액을 지급합니다
           </li>
         </ul>
       </section>

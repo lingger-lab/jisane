@@ -34,7 +34,7 @@ export default function Image() {
           지사네
         </div>
         <div style={{ fontSize: 28, marginTop: 12, opacity: 0.85 }}>
-          시니어지식인회원 — 일은 사람이 합니다
+          시니어지식인회원 — 지식나눔 사업협력 네트워크
         </div>
       </div>
     ),
