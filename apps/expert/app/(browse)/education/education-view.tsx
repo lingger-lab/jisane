@@ -110,7 +110,7 @@ export function EducationView({
                   </p>
                 </div>
                 <p className="shrink-0 text-sm font-bold text-accent">
-                  {pkg.isFree ? '₩0' : `${pkg.price.toLocaleString('ko-KR')}원`}
+                  {pkg.isFree ? '무료' : `${pkg.price.toLocaleString('ko-KR')}원`}
                 </p>
               </div>
 

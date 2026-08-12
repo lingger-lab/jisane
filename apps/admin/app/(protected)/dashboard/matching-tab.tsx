@@ -248,13 +248,14 @@ export function MatchingTab({
                     >
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-2">
+                          {/* 금·은·동 → 토큰 계열(warning=앰버, surface=중립, accent=브론즈)로 통일 (감사 UX P3-2) */}
                           {hasAiCandidates && c.rank <= 3 && (
                             <span className={`shrink-0 rounded-full px-2 py-0.5 text-xs font-bold ${
                               c.rank === 1
-                                ? 'bg-yellow-100 text-yellow-700'
+                                ? 'bg-warning-light text-warning'
                                 : c.rank === 2
-                                  ? 'bg-gray-100 text-gray-600'
-                                  : 'bg-orange-100 text-orange-600'
+                                  ? 'bg-surface text-text-muted'
+                                  : 'bg-accent/10 text-accent'
                             }`}>
                               {RANK_BADGE[c.rank]}
                             </span>

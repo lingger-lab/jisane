@@ -29,7 +29,7 @@ export function OwnerProfileForm({
         <input id="company" name="company" type="text" required defaultValue={defaults.company} placeholder="예: ㈜지사네" className={INPUT_CLASS} />
       </div>
 
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
         <div>
           <label htmlFor="ceo_name" className="mb-1 block text-sm font-medium text-text">
             대표자명
@@ -44,7 +44,7 @@ export function OwnerProfileForm({
         </div>
       </div>
 
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
         <div>
           <label htmlFor="region" className="mb-1 block text-sm font-medium text-text">
             지역

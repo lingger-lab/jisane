@@ -46,7 +46,7 @@ export function ExpertCard({ expert }: { expert: ExpertCardData }) {
         {expert.careerYears != null && expert.careerYears > 0 && (
           <span className="font-medium text-primary">경력 {expert.careerYears}년</span>
         )}
-        {expert.activityPoints > 0 && <span className="text-warning">+{expert.activityPoints}</span>}
+        {expert.activityPoints > 0 && <span className="text-warning">활동 +{expert.activityPoints}</span>}
       </div>
       {expert.categories && expert.categories.length > 0 && (
         <p className="mt-1 text-xs text-text-subtle truncate">

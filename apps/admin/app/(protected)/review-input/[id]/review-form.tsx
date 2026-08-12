@@ -45,9 +45,10 @@ function StarRating({
       selectOnArrow
       className="flex gap-1"
       optionClassName={(_selected, star) =>
+        // owner review-section.tsx의 별점 토큰 관례와 통일 (감사 UX P3-14)
         `text-2xl transition-colors ${
-          Number(star) <= value ? 'text-yellow-400' : 'text-gray-300'
-        } hover:text-yellow-400`
+          Number(star) <= value ? 'text-warning' : 'text-border hover:text-warning/50'
+        }`
       }
     />
   )

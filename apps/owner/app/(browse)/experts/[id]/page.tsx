@@ -95,6 +95,9 @@ export default async function ExpertDetailPage(props: PageProps) {
       .filter(Boolean) as { id: string; label: string; parentLabel: string }[]
   }
 
+  // 경력 카드는 조건부 렌더 — 없을 때 grid-cols-2면 종합점수 카드 옆이 빈칸 (감사 UX P3-58)
+  const hasCareer = expert.career_years != null && expert.career_years > 0
+
   return (
     <div className="flex flex-1 flex-col">
       <PageHero
@@ -127,12 +130,12 @@ export default async function ExpertDetailPage(props: PageProps) {
           </div>
 
           {/* 종합점수 + 경력 */}
-          <div className="mt-4 grid grid-cols-2 gap-3">
+          <div className={`mt-4 grid gap-3 ${hasCareer ? 'grid-cols-2' : 'grid-cols-1'}`}>
             <div className="rounded-xl bg-accent/5 border border-accent/20 p-3 text-center">
               <span className="text-2xl font-bold text-accent">{expert.total_score?.toFixed(1) ?? '—'}</span>
               <p className="mt-0.5 text-xs text-text-muted">종합점수</p>
             </div>
-            {expert.career_years != null && expert.career_years > 0 && (
+            {hasCareer && (
               <div className="rounded-xl bg-surface-warm p-3 text-center">
                 <span className="text-2xl font-bold text-primary">{expert.career_years}년</span>
                 <p className="mt-0.5 text-xs text-text-muted">경력</p>

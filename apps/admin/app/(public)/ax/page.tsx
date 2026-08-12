@@ -82,7 +82,7 @@ export default function AXPage() {
           {AXES.map((axis, i) => (
             <div
               key={axis.num}
-              className={`flex gap-4 rounded-xl border border-border-light bg-white p-4 shadow-xs animate-fade-in stagger-${Math.min(i + 1, 5)}`}
+              className={`flex gap-4 rounded-xl border border-border-light bg-surface-warm p-4 shadow-xs animate-fade-in stagger-${Math.min(i + 1, 5)}`}
             >
               <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-accent/10 text-sm font-bold text-accent">
                 {axis.num}
@@ -106,7 +106,7 @@ export default function AXPage() {
           {LADDER.map((step) => (
             <div
               key={step.level}
-              className={`rounded-xl border-l-4 ${step.border} border border-border-light bg-white p-5 shadow-sm`}
+              className={`rounded-xl border-l-4 ${step.border} border border-border-light bg-surface-warm p-5 shadow-sm`}
             >
               <p className="text-xs font-bold text-accent tracking-wide">{step.level}</p>
               <p className="mt-1 font-semibold text-text">{step.title}</p>

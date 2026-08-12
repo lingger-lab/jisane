@@ -62,7 +62,7 @@ export function LoginDropdown({
           <form action={signInWithGoogle}>
             <button
               type="submit"
-              className="flex w-full items-center gap-2 rounded-lg px-3 py-2.5 text-sm font-medium text-text hover:bg-gray-100 transition-colors"
+              className="flex w-full items-center gap-2 rounded-lg px-3 py-2.5 text-sm font-medium text-text hover:bg-surface transition-colors"
             >
               <GoogleIcon className="h-4 w-4" />
               Google로 로그인

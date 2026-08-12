@@ -160,7 +160,7 @@ export default async function ExpertHome() {
               { old: '작업 완료 후에도 입금이 불확실하다', jisane: '에스크로 선입금 — 기업이 먼저 입금해야 작업 시작' },
               { old: '매칭 기준이 불명확하다', jisane: '매칭 점수 6항목을 투명하게 공개' },
             ].map((row) => (
-              <div key={row.old} className="grid grid-cols-2 gap-4">
+              <div key={row.old} className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                 <div className="rounded-xl bg-error-light border border-error/10 p-4 md:p-5">
                   <p className="text-xs md:text-sm font-medium text-error">감추는 관행</p>
                   <p className="mt-1 text-sm text-text-muted">{row.old}</p>
@@ -221,7 +221,7 @@ export default async function ExpertHome() {
       <ScrollReveal className="w-full">
       <div className="w-full bg-white py-8 md:py-12">
         <section className="responsive-container px-4 md:px-6">
-          <div className="grid grid-cols-3 gap-3 md:gap-4">
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-3 md:gap-4">
             {([
               { title: '수수료 0%', desc: '작업료 전액 · 당신 통장으로 직접 정산', href: '' },
               { title: '에스크로 선입금', desc: '기업이 먼저 입금 · 작업 전 대금 확보', href: `${adminUrl}/standard/guarantee` },

@@ -285,7 +285,8 @@ export default async function AdminDashboardPage() {
       <PageHero eyebrow="관리자" title="대시보드" />
       <div className="px-4 py-6 sm:px-6">
       {/* 요약 카드 */}
-      <div className="mb-6 grid grid-cols-3 gap-3 sm:grid-cols-3 md:grid-cols-5 lg:grid-cols-9">
+      {/* 9카드 = md+에서 5+4 배치 — lg:grid-cols-9는 카드폭 ~110px로 적립금 금액이 줄바꿈/오버플로 (감사 UX P3-8) */}
+      <div className="mb-6 grid grid-cols-3 gap-3 md:grid-cols-5">
         <SummaryCard label="매칭 대기" value={summary.matchingWaiting} unit="건" color="text-info" />
         <SummaryCard label="매칭 진행" value={summary.proposed} unit="건" color="text-warning" />
         <SummaryCard label="진행 중" value={summary.inProgress} unit="건" color="text-primary" />
