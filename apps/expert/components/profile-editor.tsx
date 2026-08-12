@@ -3,6 +3,8 @@
 import { useActionState, useRef, useState } from 'react'
 import { updateExpertProfile } from '@/lib/expert/actions'
 import { SubmitButton } from '@jisane/ui/submit-button'
+import { Input } from '@jisane/ui/input'
+import { Select } from '@jisane/ui/select'
 // 등록 페이지와 동일한 단일 소스 — 축약 목록을 쓰면 저장값이 고아가 됨(감사 docs/11 P1-6)
 import { FIELD_GROUPS } from '@/lib/fields'
 
@@ -110,18 +112,18 @@ export function ProfileEditor({ profile }: { profile: ExpertProfile }) {
         <label htmlFor="career_years" className="mb-1 block text-sm font-medium text-text">
           경력 <span className="text-xs text-text-subtle">(선택)</span>
         </label>
-        <select
+        <Select
           id="career_years"
           name="career_years"
           defaultValue={profile.career_years?.toString() || ''}
-          className="w-full rounded-xl border border-border-light bg-background px-4 py-3 text-sm text-text focus:border-accent focus:ring-1 focus:ring-accent/20 focus:outline-none transition-colors"
+          tone="accent"
         >
           {CAREER_OPTIONS.map((opt) => (
             <option key={opt.value} value={opt.value}>
               {opt.label}
             </option>
           ))}
-        </select>
+        </Select>
       </div>
 
       {/* 시간당 단가 */}
@@ -130,7 +132,7 @@ export function ProfileEditor({ profile }: { profile: ExpertProfile }) {
           시간당 단가 <span className="text-xs text-text-subtle">(선택)</span>
         </label>
         <div className="flex items-center gap-2">
-          <input
+          <Input
             id="hourly_rate"
             name="hourly_rate"
             type="number"
@@ -138,7 +140,7 @@ export function ProfileEditor({ profile }: { profile: ExpertProfile }) {
             max={100000}
             step={5000}
             defaultValue={profile.hourly_rate || 25000}
-            className="w-full rounded-xl border border-border-light bg-background px-4 py-3 text-sm text-text focus:border-accent focus:ring-1 focus:ring-accent/20 focus:outline-none transition-colors"
+            tone="accent"
           />
           <span className="shrink-0 text-sm text-text-muted">원/시간</span>
         </div>
@@ -150,13 +152,13 @@ export function ProfileEditor({ profile }: { profile: ExpertProfile }) {
         <label htmlFor="name" className="mb-1 block text-sm font-medium text-text">
           이름 <span className="text-xs text-text-subtle">(선택)</span>
         </label>
-        <input
+        <Input
           id="name"
           name="name"
           type="text"
           defaultValue={profile.name || ''}
           placeholder="본명 또는 활동명"
-          className="w-full rounded-xl border border-border-light bg-background px-4 py-3 text-sm text-text placeholder:text-text-subtle focus:border-accent focus:ring-1 focus:ring-accent/20 focus:outline-none transition-colors"
+          tone="accent"
         />
       </div>
 
@@ -165,13 +167,13 @@ export function ProfileEditor({ profile }: { profile: ExpertProfile }) {
         <label htmlFor="contact" className="mb-1 block text-sm font-medium text-text">
           연락처 <span className="text-xs text-text-subtle">(선택, 비공개)</span>
         </label>
-        <input
+        <Input
           id="contact"
           name="contact"
           type="tel"
           defaultValue={profile.contact || ''}
           placeholder="전화번호 또는 이메일"
-          className="w-full rounded-xl border border-border-light bg-background px-4 py-3 text-sm text-text placeholder:text-text-subtle focus:border-accent focus:ring-1 focus:ring-accent/20 focus:outline-none transition-colors"
+          tone="accent"
         />
       </div>
 

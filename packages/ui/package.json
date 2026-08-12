@@ -11,6 +11,8 @@
     "./badge": "./components/primitives/badge.tsx",
     "./skeleton": "./components/primitives/skeleton.tsx",
     "./input": "./components/primitives/input.tsx",
+    "./textarea": "./components/primitives/textarea.tsx",
+    "./select": "./components/primitives/select.tsx",
     "./submit-button": "./components/submit-button.tsx",
     "./progress-bar": "./components/progress-bar.tsx",
     "./workflow-checklist": "./components/workflow-checklist.tsx",

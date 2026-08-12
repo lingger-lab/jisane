@@ -3,6 +3,8 @@
 import { useActionState, useRef, useState } from 'react'
 import { updateExpertProfile } from '@/lib/expert/actions'
 import { SubmitButton } from '@jisane/ui/submit-button'
+import { Input } from '@jisane/ui/input'
+import { Select } from '@jisane/ui/select'
 // 대분류별 중분류 그룹 (category 테이블과 동기) — 편집기와 공유하는 단일 소스
 import { FIELD_GROUPS } from '@/lib/fields'
 
@@ -120,17 +122,13 @@ export default function RegisterPage() {
           <label htmlFor="career_years" className="mb-1 block text-sm font-medium text-text">
             경력 <span className="text-xs text-text-subtle">(선택)</span>
           </label>
-          <select
-            id="career_years"
-            name="career_years"
-            className="w-full rounded-xl border border-border-light bg-background px-4 py-3 text-sm text-text focus:border-accent focus:ring-1 focus:ring-accent/20 focus:outline-none transition-colors"
-          >
+          <Select id="career_years" name="career_years" tone="accent">
             {CAREER_OPTIONS.map((opt) => (
               <option key={opt.value} value={opt.value}>
                 {opt.label}
               </option>
             ))}
-          </select>
+          </Select>
         </div>
 
         {/* 시간당 단가 */}
@@ -139,7 +137,7 @@ export default function RegisterPage() {
             시간당 단가 <span className="text-xs text-text-subtle">(선택)</span>
           </label>
           <div className="flex items-center gap-2">
-            <input
+            <Input
               id="hourly_rate"
               name="hourly_rate"
               type="number"
@@ -147,7 +145,7 @@ export default function RegisterPage() {
               max={100000}
               step={5000}
               defaultValue={25000}
-              className="w-full rounded-xl border border-border-light bg-background px-4 py-3 text-sm text-text focus:border-accent focus:ring-1 focus:ring-accent/20 focus:outline-none transition-colors"
+              tone="accent"
             />
             <span className="shrink-0 text-sm text-text-muted">원/시간</span>
           </div>
@@ -159,12 +157,12 @@ export default function RegisterPage() {
           <label htmlFor="name" className="mb-1 block text-sm font-medium text-text">
             이름 <span className="text-xs text-text-subtle">(선택)</span>
           </label>
-          <input
+          <Input
             id="name"
             name="name"
             type="text"
             placeholder="본명 또는 활동명"
-            className="w-full rounded-xl border border-border-light bg-background px-4 py-3 text-sm text-text placeholder:text-text-subtle focus:border-accent focus:ring-1 focus:ring-accent/20 focus:outline-none transition-colors"
+            tone="accent"
           />
         </div>
 
@@ -173,12 +171,12 @@ export default function RegisterPage() {
           <label htmlFor="contact" className="mb-1 block text-sm font-medium text-text">
             연락처 <span className="text-xs text-text-subtle">(선택, 비공개)</span>
           </label>
-          <input
+          <Input
             id="contact"
             name="contact"
             type="tel"
             placeholder="전화번호 또는 이메일"
-            className="w-full rounded-xl border border-border-light bg-background px-4 py-3 text-sm text-text placeholder:text-text-subtle focus:border-accent focus:ring-1 focus:ring-accent/20 focus:outline-none transition-colors"
+            tone="accent"
           />
         </div>
 

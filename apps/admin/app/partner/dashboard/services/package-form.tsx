@@ -3,9 +3,9 @@
 import { useActionState, useState } from 'react'
 import { createServicePackage, updateServicePackage } from '@/lib/partner/actions'
 import { SubmitButton } from '@jisane/ui/submit-button'
-
-const INPUT_CLASS =
-  'w-full rounded-xl border border-border-light bg-background px-4 py-3 text-sm text-text placeholder:text-text-subtle focus:border-info focus:ring-1 focus:ring-info/20 focus:outline-none transition-colors'
+import { Input } from '@jisane/ui/input'
+import { Select } from '@jisane/ui/select'
+import { Textarea } from '@jisane/ui/textarea'
 
 export interface PackageFormDefaults {
   packageId?: string
@@ -39,7 +39,7 @@ export function PackageForm({ defaults = {} }: { defaults?: PackageFormDefaults 
         <label htmlFor="name" className="mb-1 block text-sm font-medium text-text">
           서비스명 <span className="text-error">*</span>
         </label>
-        <input id="name" name="name" type="text" required defaultValue={defaults.name} placeholder="예: AI 도입 진단" className={INPUT_CLASS} />
+        <Input id="name" name="name" type="text" required defaultValue={defaults.name} placeholder="예: AI 도입 진단" tone="info" />
       </div>
 
       {!isEdit && (
@@ -48,22 +48,22 @@ export function PackageForm({ defaults = {} }: { defaults?: PackageFormDefaults 
             <label htmlFor="category" className="mb-1 block text-sm font-medium text-text">
               카테고리 <span className="text-error">*</span>
             </label>
-            <select id="category" name="category" required defaultValue={defaults.category ?? ''} className={INPUT_CLASS}>
+            <Select id="category" name="category" required defaultValue={defaults.category ?? ''} tone="info">
               <option value="" disabled>선택</option>
               <option value="ax_consulting">AX 컨설팅</option>
               <option value="biz_consulting">경영 컨설팅</option>
               <option value="education">교육</option>
-            </select>
+            </Select>
           </div>
           <div>
             <label htmlFor="target_audience" className="mb-1 block text-sm font-medium text-text">
               제공 대상 <span className="text-error">*</span>
             </label>
-            <select id="target_audience" name="target_audience" required defaultValue={defaults.targetAudience ?? ''} className={INPUT_CLASS}>
+            <Select id="target_audience" name="target_audience" required defaultValue={defaults.targetAudience ?? ''} tone="info">
               <option value="" disabled>선택</option>
               <option value="owner">기업회원</option>
               <option value="expert">시니어지식인회원</option>
-            </select>
+            </Select>
           </div>
         </div>
       )}
@@ -72,14 +72,14 @@ export function PackageForm({ defaults = {} }: { defaults?: PackageFormDefaults 
         <label htmlFor="description" className="mb-1 block text-sm font-medium text-text">
           서비스 설명 <span className="text-error">*</span>
         </label>
-        <textarea
+        <Textarea
           id="description"
           name="description"
           rows={4}
           required
           defaultValue={defaults.description}
           placeholder="무엇을, 어떻게 제공하는지 구체적으로 적어주세요."
-          className={`${INPUT_CLASS} resize-none`}
+          tone="info"
         />
       </div>
 
@@ -87,7 +87,7 @@ export function PackageForm({ defaults = {} }: { defaults?: PackageFormDefaults 
         <label htmlFor="value_desc" className="mb-1 block text-sm font-medium text-text">
           한 줄 가치 설명 <span className="text-xs text-text-subtle">(목록 카드에 표시)</span>
         </label>
-        <input id="value_desc" name="value_desc" type="text" defaultValue={defaults.valueDesc} placeholder="예: 데이터 기반 의사결정 진단" className={INPUT_CLASS} />
+        <Input id="value_desc" name="value_desc" type="text" defaultValue={defaults.valueDesc} placeholder="예: 데이터 기반 의사결정 진단" tone="info" />
       </div>
 
       <div className="grid grid-cols-2 gap-3">
@@ -95,7 +95,7 @@ export function PackageForm({ defaults = {} }: { defaults?: PackageFormDefaults 
           <label htmlFor="price" className="mb-1 block text-sm font-medium text-text">
             가격 (원) {!isFree && <span className="text-error">*</span>}
           </label>
-          <input
+          <Input
             id="price"
             name="price"
             type="text"
@@ -109,14 +109,15 @@ export function PackageForm({ defaults = {} }: { defaults?: PackageFormDefaults 
               setPriceDisplay(digits ? Number(digits).toLocaleString('ko-KR') : '')
             }}
             placeholder="예: 300,000"
-            className={`${INPUT_CLASS} disabled:opacity-60`}
+            tone="info"
+            className="disabled:opacity-60"
           />
         </div>
         <div>
           <label htmlFor="duration" className="mb-1 block text-sm font-medium text-text">
             소요 기간 <span className="text-xs text-text-subtle">(선택)</span>
           </label>
-          <input id="duration" name="duration" type="text" defaultValue={defaults.duration} placeholder="예: 1주" className={INPUT_CLASS} />
+          <Input id="duration" name="duration" type="text" defaultValue={defaults.duration} placeholder="예: 1주" tone="info" />
         </div>
       </div>
 
@@ -135,13 +136,13 @@ export function PackageForm({ defaults = {} }: { defaults?: PackageFormDefaults 
         <label htmlFor="deliverables" className="mb-1 block text-sm font-medium text-text">
           제공 내용 <span className="text-xs text-text-subtle">(한 줄에 하나씩)</span>
         </label>
-        <textarea
+        <Textarea
           id="deliverables"
           name="deliverables"
           rows={4}
           defaultValue={(defaults.deliverables || []).join('\n')}
           placeholder={'진단 리포트\n실행 로드맵\n수료증'}
-          className={`${INPUT_CLASS} resize-none`}
+          tone="info"
         />
       </div>
 

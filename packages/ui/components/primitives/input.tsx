@@ -2,21 +2,27 @@ import * as React from 'react'
 import { cn } from '../../lib/cn'
 
 /**
- * 인풋 프리미티브 (설계 docs/16 §12.1). 기존 focus-ring 유틸과 일관, 터치 타겟 h-11(≥44px 근접).
- * placeholder는 AA 검증된 --text-subtle 사용.
+ * 폼 필드 프리미티브 (설계 docs/16 §12.1). 앱 전반의 손코딩 폼 필드 스타일을 단일 소스로.
+ * 포커스 색은 앱 테마별 tone(기업=primary · 시니어=accent · 파트너=info)로 선택. 서버 안전.
  */
-export const Input = React.forwardRef<HTMLInputElement, React.InputHTMLAttributes<HTMLInputElement>>(
-  ({ className, type, ...props }, ref) => (
-    <input
-      ref={ref}
-      type={type}
-      className={cn(
-        'focus-ring flex h-11 w-full rounded-[var(--radius-md)] border border-border bg-surface-warm px-3 text-sm text-text',
-        'placeholder:text-text-subtle disabled:cursor-not-allowed disabled:opacity-50',
-        className,
-      )}
-      {...props}
-    />
+export type FieldTone = 'primary' | 'accent' | 'info'
+
+export const fieldBase =
+  'w-full rounded-xl border border-border-light bg-background px-4 py-3 text-sm text-text placeholder:text-text-subtle transition-colors focus:outline-none focus:ring-1 disabled:cursor-not-allowed disabled:opacity-50'
+
+export const toneRing: Record<FieldTone, string> = {
+  primary: 'focus:border-primary focus:ring-primary/20',
+  accent: 'focus:border-accent focus:ring-accent/20',
+  info: 'focus:border-info focus:ring-info/20',
+}
+
+export interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
+  tone?: FieldTone
+}
+
+export const Input = React.forwardRef<HTMLInputElement, InputProps>(
+  ({ className, type, tone = 'primary', ...props }, ref) => (
+    <input ref={ref} type={type} className={cn(fieldBase, toneRing[tone], className)} {...props} />
   ),
 )
 Input.displayName = 'Input'

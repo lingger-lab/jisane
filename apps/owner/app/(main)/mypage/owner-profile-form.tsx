@@ -3,9 +3,7 @@
 import { useActionState } from 'react'
 import { updateOwnerProfile } from '@/lib/profile/actions'
 import { SubmitButton } from '@jisane/ui/submit-button'
-
-const INPUT_CLASS =
-  'w-full rounded-xl border border-border-light bg-background px-4 py-3 text-sm text-text placeholder:text-text-subtle focus:border-primary focus:ring-1 focus:ring-primary/20 focus:outline-none transition-colors'
+import { Input } from '@jisane/ui/input'
 
 export function OwnerProfileForm({
   defaults,
@@ -26,7 +24,7 @@ export function OwnerProfileForm({
         <label htmlFor="company" className="mb-1 block text-sm font-medium text-text">
           회사명 또는 상호 <span className="text-error">*</span>
         </label>
-        <input id="company" name="company" type="text" required defaultValue={defaults.company} placeholder="예: ㈜지사네" className={INPUT_CLASS} />
+        <Input id="company" name="company" type="text" required defaultValue={defaults.company} placeholder="예: ㈜지사네" />
       </div>
 
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
@@ -34,13 +32,13 @@ export function OwnerProfileForm({
           <label htmlFor="ceo_name" className="mb-1 block text-sm font-medium text-text">
             대표자명
           </label>
-          <input id="ceo_name" name="ceo_name" type="text" defaultValue={defaults.ceo_name} placeholder="예: 홍길동" className={INPUT_CLASS} />
+          <Input id="ceo_name" name="ceo_name" type="text" defaultValue={defaults.ceo_name} placeholder="예: 홍길동" />
         </div>
         <div>
           <label htmlFor="contact" className="mb-1 block text-sm font-medium text-text">
             연락처
           </label>
-          <input id="contact" name="contact" type="tel" defaultValue={defaults.contact} placeholder="예: 010-1234-5678" className={INPUT_CLASS} />
+          <Input id="contact" name="contact" type="tel" defaultValue={defaults.contact} placeholder="예: 010-1234-5678" />
         </div>
       </div>
 
@@ -49,13 +47,13 @@ export function OwnerProfileForm({
           <label htmlFor="region" className="mb-1 block text-sm font-medium text-text">
             지역
           </label>
-          <input id="region" name="region" type="text" defaultValue={defaults.region} placeholder="예: 부산 해운대" className={INPUT_CLASS} />
+          <Input id="region" name="region" type="text" defaultValue={defaults.region} placeholder="예: 부산 해운대" />
         </div>
         <div>
           <label htmlFor="industry" className="mb-1 block text-sm font-medium text-text">
             업종
           </label>
-          <input id="industry" name="industry" type="text" defaultValue={defaults.industry} placeholder="예: 외식업" className={INPUT_CLASS} />
+          <Input id="industry" name="industry" type="text" defaultValue={defaults.industry} placeholder="예: 외식업" />
         </div>
       </div>
 

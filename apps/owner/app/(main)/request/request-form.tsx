@@ -4,6 +4,8 @@ import { useActionState, useState } from 'react'
 import { createRequest } from '@/lib/request/actions'
 import { SubmitButton } from '@jisane/ui/submit-button'
 import { MoneyInput } from '@jisane/ui/money-input'
+import { Input } from '@jisane/ui/input'
+import { Textarea } from '@jisane/ui/textarea'
 import { CATEGORY_TREE } from '@jisane/shared/categories'
 
 export function RequestForm() {
@@ -63,13 +65,12 @@ export function RequestForm() {
         <label htmlFor="title" className="mb-1 block text-sm font-medium text-text">
           의뢰 제목 <span className="text-error">*</span>
         </label>
-        <input
+        <Input
           id="title"
           name="title"
           type="text"
           required
           placeholder="예: 카페 로고 디자인 의뢰"
-          className="w-full rounded-xl border border-border-light bg-background px-4 py-3 text-sm text-text placeholder:text-text-subtle focus:border-primary focus:ring-1 focus:ring-primary/20 focus:outline-none transition-colors"
         />
       </div>
 
@@ -78,13 +79,12 @@ export function RequestForm() {
         <label htmlFor="detail" className="mb-1 block text-sm font-medium text-text">
           상세 내용 <span className="text-error">*</span>
         </label>
-        <textarea
+        <Textarea
           id="detail"
           name="detail"
           required
           rows={6}
           placeholder="원하시는 작업 내용을 자유롭게 적어주세요. 지사네 매니저가 확인 후 적합한 시니어지식인을 연결해드립니다."
-          className="w-full resize-none rounded-xl border border-border-light bg-background px-4 py-3 text-sm text-text placeholder:text-text-subtle focus:border-primary focus:ring-1 focus:ring-primary/20 focus:outline-none transition-colors"
         />
       </div>
 
