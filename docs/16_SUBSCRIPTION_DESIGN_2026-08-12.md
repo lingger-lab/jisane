@@ -2,12 +2,50 @@
 
 > docs/15(수익모델 확정 방향)의 **후속 상세 설계**. 매칭비(거래 수수료) 폐지 → **구독(기업 월 18,000원 /
 > 시니어 월 9,000원, VAT 별도) + 파트너 유료 도구·서비스 매출 20% 커미션 + 추천/거래보증 크레딧** 모델로 전환.
-> **설계 문서만** — 구현은 결제관계(PG/빌링) 설정 확정 후, docs/14의 P1-9/P1-17과 **동일 배포 단위·선행 의존**(HARD-GATE).
-> 감사 P3-17·P2-11은 docs/15에서 "대체"로 이관. 상세 설계·리팩토링 리스크·UI/UX 고급화는 fable5가 코드베이스 순차 검증으로 작성.
+> **⚠️ 2026-08-12 방침 갱신**: 실 PG(결제창·빌링)를 **2026년 말까지 보류**. **§1~§9(구독·크레딧·PG)는 "연말 PG 개통 이후 목표"로 시점 재배치**(무효화 아님). 근시 무료 운영은 신규 **§0**(즉시 구현 대상), 근시 로드맵은 **§9-0**.
+> 감사 P3-17·P2-11은 docs/15에서 "대체"로 이관.
 >
-> **구현 모델 정책(하이브리드)**: 금전·동시성·보안·마이그레이션 크리티컬 + 적대적 검증은 **fable5**(최상위 추론), UI/카피/스캐폴딩은 **주력(Opus 4.8)**(§9-A).
+> **구현 모델 정책**: 의뢰인 지시(2026-08-12)로 **전 구현 주력 모델(Opus 4.8)**. 금전·동시성·보안·마이그레이션 크리티컬은 Opus 작성 + 적대적 검증(red-green·의사환경 e2e·경합 CAS·SET ROLE 회귀) 동일 강도(§9-A).
 
-기준 코드 상태: 최신 마이그레이션 `supabase/migrations/0029_public_schema_grants.sql`. 신규는 **0030부터 additive-only**.
+기준 코드 상태: 최신 마이그레이션 `supabase/migrations/0029_public_schema_grants.sql`. 구독 스키마는 0030~0033(커밋·dormant), 근시 신규는 **0034부터**.
+
+---
+
+## 0. 근시 무료 운영 방침 (2026년 말까지) — 즉시 구현
+
+> 실 PG 설정 전, **사이트 정상동작과 유입을 우선**하는 근시 운영. §1~§9는 이 기간 이후(연말 PG 개통 후) 목표. dormant 스키마(0030~0033)는 손대지 않는다.
+
+### 0.1 방침
+1. 실 PG(결제창·빌링) **2026년 말까지 보류**. `TOSS_SECRET_KEY` 미주입 유지 → `isPaymentEnabled()`(`packages/shared/lib/payment.ts:79`) false가 현 상태.
+2. 수익: **무료 S/W 미끼로 유입 → 기업 유료 S/W 판매 + 시니어 S/W·교육프로그램**. **판매는 상담 채널**(사이트=카탈로그+리드 수집, 대금 수취·계약은 관리자 수기).
+3. 고지: 구독료·PG비용·리스크비용은 **"2026년 말까지 무료" 배너만**(금액·원가 비노출).
+4. **거래 작업비 = 관리자 중개 오프라인 에스크로.** 의뢰→매칭→견적→(기업이 작업비를 지사네에 오프라인 입금)→**관리자 입금확인=작업 시작**→작업→검수→**관리자가 시니어에게 오프라인 전액 지급**. 지사네 수수료(매칭비·PG·리스크)=0.
+
+### 0.2 게이트 정의 (코드 계약)
+- **`isFreeModeEnabled()`** 신설(payment.ts): 명시 env `FREE_MODE_UNTIL`(예 `2026-12-31`) 기반, 서버 전용. **"키 부재=무료" 추론 금지**(키 실수 삭제가 조용히 전면 무료 되는 사고 차단).
+- **상호배타 이중 게이트**: 무료 경로 액션은 실행 시점 `isFreeModeEnabled() && !isPaymentEnabled()` 재검증 → PG 키 주입 순간 fail-closed(금전 가드 fail-closed 계승).
+- 표시용은 `NEXT_PUBLIC_FREE_UNTIL`(서버 판정 값을 prop으로 하달하는 기존 `paymentEnabled` 패턴 우선).
+
+### 0.3 dormant 스키마 원칙
+0030(subscription/billing)·0031(credit/referral/program_run)·0032(deal.pricing_model·settlement v2)·0033(guarantee enum v2)은 **유지·비활성**. DROP 금지, 신규 소비 배선 금지(부분 활성화가 §11 치명 실패모드를 반쪽으로 깨움). 근시 신규 deal은 `pricing_model='match_fee_v1'` 유지 + `match_fee=0`(무료). 근시 신규 마이그레이션은 **0034부터**(`settlement.deposit_method` 1건).
+
+### 0.4 가역성 계약 (연말 전환)
+- 켜기: `TOSS_SECRET_KEY` 주입 + `FREE_MODE_UNTIL` 제거 → PaymentButton 자동 활성·무료 안내 자동 비활성(코드 배포 없이 env만).
+- 무료 기간 오프라인 건은 `settlement.deposit_method='manual'`로 영구 식별. 관리자 수동 입금확인 경로는 연말 후에도 유지 가능.
+- 전환일 기준 **quoted 상태 거래만** 온라인 결제 경로로; 이미 deposited는 결제 UI 미노출(quote-section은 quoted에서만 PaymentButton).
+
+### 0.5 리스크·완화
+1. **온라인 결제 vs 관리자 수동 입금확인 경합** → settlement `pending→deposited` CAS(양쪽 `.eq('escrow_status','pending')`, 한쪽만 통과) + deal `quoted→working` CAS.
+2. **deposited 게이트 유지**(`confirmDealOp` deposited 선행) — manual deposited가 정상 충족, **게이트 삭제 금지** 명문화(연말 유료 재개 시 미입금 정산 사고 직결).
+3. **자금취급 규제**(관리자 오프라인 에스크로) → 전자금융/에스크로 규제 검토를 §10에 명시(수기·소액·연말 임시 전제), 오프라인 입출금은 admin 감사로그.
+4. **가짜 환불** → 기존 환불 라우트의 `payment_key NULL` 차단이 흡수(회귀 테스트만).
+5. **연말 가역성** → `deposit_method='manual'` 영구 식별 + 이미 deposited면 결제 UI 미노출.
+6. **멱등·보상** → `confirm-deposit.ts`의 "deposited+quoted" 보정 패턴, 수동 입금확인의 deal 전이 실패 시 재진입 멱등 + red-green.
+7. **표시 정직성** → confirm 문구·에스크로 박스 freeMode 분기(작업비 금액은 정보 유지, "지사네 수수료 무료·작업비 오프라인 중개" 명시).
+8. **무료 매칭비 0 누락 위험** → 거래 생성 2경로 freeMode 오버라이드 + `total_pay=work_fee` 단위 테스트.
+9. **dormant 부분 활성화** → §0.3 금지조항 + "0030~0033 컬럼 참조 diff는 연말 게이트" 리뷰 체크.
+
+→ 근시 구현 로드맵: **§9-0**.
 
 ---
 
@@ -171,7 +209,21 @@ open dispute면 credit-hold-release cron 스킵(auto-settlement eligible 필터 
 
 ---
 
-## 9. 단계적 구현 로드맵 (전제: PG/빌링 계약 확정 후, P1-9/17 RPC와 한 배포단위)
+## 9-0. 근시 로드맵 (즉시 — 사이트 정상동작 급선무, §0 방침)
+
+| Phase | 산출물 | 마이그 | DoD |
+|---|---|---|---|
+| **P0-1 작업비 무료경로** | `isFreeModeEnabled`·이중게이트(payment.ts) · `confirmDepositManual`에 deal `quoted→working` 전이 편입 + `deposit_method='manual'` · 거래생성 2경로 freeMode `match_fee=0`·`total_pay=work_fee` · payment-button/quote-section freeMode 안내 분기 · auto-settlement 무료건 적립 스킵 | 0034(settlement.deposit_method) | 의뢰→매칭(match_fee=0)→관리자 입금확인=작업시작→검수→released(시니어 전액) **전구간 e2e** · 온라인↔수동 경합 settlement/deal CAS red-green · manual 환불 차단 회귀 · `total_pay=work_fee` 단위 · SET ROLE 회귀 |
+| **P0-2 무료 배너** | `free-period-banner`(금액·요율 비노출, `NEXT_PUBLIC_FREE_UNTIL` 단일소스) · 3앱 랜딩·standard/guarantee/scope·quote·정산 소비 | – | 금액·요율 비노출 확인 |
+| **P1-1 상담 리드 판매** | 유료 CTA "구매"→"상담 신청" · 연락처 입력 · admin 주문탭=리드 큐(pending→processing→completed 수기) · `createServiceOrder` 재사용 | – | 상담신청→admin 큐 e2e · access_type 3티어 연말 유예 |
+| **P1-2 최소 이메일** | `notify/email.ts`(`isEmailEnabled` 게이트) · 4이벤트(견적·매칭/초빙·검수요청·주문접수) fire-and-forget | – | 게이트 off/on · 본 트랜잭션 비차단 |
+| **P2 UI 소비** | 컨테이너 4종·status/quote 정렬·`.tnum` 금액·배너 프리미티브화 | – | 빌드 · 기존 화면 무회귀 |
+
+> 모델: 전 항목 Opus. P0-1(금전 상태기계)은 적대적 검증(경합 CAS·e2e·회귀) 동일 강도.
+
+---
+
+## 9. 연말 이후 구현 로드맵 (PG 개통 후, P1-9/17 RPC와 한 배포단위)
 
 | Phase | 산출물 | 마이그 | DoD |
 |---|---|---|---|
@@ -186,11 +238,10 @@ open dispute면 credit-hold-release cron 스킵(auto-settlement eligible 필터 
 
 ---
 
-## 9-A. 구현 모델 정책 (하이브리드 — 2026-08-12 확정, 배정 정정)
-> **모델 위계(claude-api 레퍼런스 확인)**: Fable 5(`claude-fable-5`)가 "가장 유능한 광범위 출시 모델 — 가장 까다로운 추론·장기 에이전트 작업용"(가격 $10/$50), Opus 4.8은 "Opus 티어 최상위"($5/$25, Fable의 하위 티어). **어려운 추론일수록 Fable 5.** (초기안은 배정이 반대였음 — 정정)
-- **fable5 (최상위 추론) — 작성 + 적대적 검증**: 금전·동시성·보안·마이그레이션 크리티컬 — pricing 단일소스(§11.1), 크레딧 원장·RPC(§5·§11.5), 빌링 멱등·orderId(§3·§11.4), 정산 원자성(P1-17)·환불↔적립 clawback(§11.6), RLS·billing_key(§2.4·§11.7), 모든 0030+ 마이그레이션. → §11 실패모드가 치명이라 최강 추론력·red-green·의사환경 게이트를 여기 집중. **적대적 검증도 하드 추론이므로 fable5가 신선 컨텍스트로 재실행**(작성 세션과 분리; 모델 다양성보다 최강 추론력 우선 — 2026-08-12 확정).
-- **주력 모델(Opus 4.8, 이 세션 메인 루프)**: UI 프리미티브(shadcn 도입 §12.2)·화면 리디자인(§12.4)·공개 카피·스캐폴딩·테스트 보일러플레이트 등 저위험·기계적 부분. 크리티컬 산출물은 **통합·배선·게이트 실행**을 담당(적대적 검증 주체는 아님).
-> 실무 주의: fable5는 (1) 사고(thinking) 상시 on·단일 요청이 수 분 소요 → 타임아웃/스트리밍/진행 UX 대비, (2) 비용 2배 — 크리티컬 금전 로직에 한정 투입, (3) cyber/bio 세이프티 분류기 존재하나 본 결제·보안 코드는 방어 구현이라 refusal 리스크 낮음.
+## 9-A. 구현 모델 정책 (2026-08-12 의뢰인 지시로 갱신)
+- **전 구현 주력 모델(Opus 4.8).** 의뢰인 지시(2026-08-12)로 근시(§0/§9-0)·연말 이후(§1~§9) 모든 구현을 Opus로 진행한다.
+- **금전·동시성·보안·마이그레이션 크리티컬**(근시 P0-1 작업비 경로, pricing 단일소스 §11.1, 크레딧 원장·RPC §5·§11.5, 빌링 멱등·orderId §3·§11.4, 정산 원자성 P1-17, RLS·billing_key §2.4·§11.7, 0030+ 마이그레이션)도 **Opus가 작성 + 적대적 검증**(red-green·의사환경 e2e·경합 CAS·SET ROLE 회귀)을 동일 강도로 수행. §11 실패모드가 치명이므로 검증 게이트를 여기 집중.
+- 초기 하이브리드(크리티컬=fable5)안은 의뢰인 지시로 폐기. (선행분 pricing·orderId·마이그레이션은 fable5 작성+적대검증으로 이미 커밋됨 — §11.11; 이후는 전부 Opus.)
 
 ## 10. 열림/게이팅 (미정 — 구현 전 확정)
 1. **PG/빌링 계약**(최상위): Toss 정기결제 상품, 빌링키 방식(위젯 issue vs 카드직수취), 실수수료율(3.5% 검증, 건당 −1,750원 미세적자 포함).
@@ -200,6 +251,12 @@ open dispute면 credit-hold-release cron 스킵(auto-settlement eligible 필터 
 5. 추천 보상 액수, 최소작업비 3만원 하한 유지 여부, 시니어 '선택' 구독 부가혜택.
 6. 유료 도구 결제수단 통일(service_order Toss 연동 vs 크레딧 전용 시작).
 7. 공개 페이지 확정 문구(법적/영업, docs/15 방침).
+
+**근시(§0) 게이팅 — 구현 전/중 확정:**
+8. **FREE_MODE 종료일**(`FREE_MODE_UNTIL`=2026-12-31 가정) 확정·연장 여부.
+9. **관리자 오프라인 에스크로 운영**: 작업비 입출금 계좌·확인 SLA·전자금융/에스크로 **규제 검토**(수기·소액·연말 임시 전제)·오프라인 대장/감사로그.
+10. **상담 리드 운영 주체·SLA**(유료 S/W·교육 문의 처리), **이메일 벤더**(Resend/SMTP — 최소 통지).
+(위 1~7은 "연말 PG 개통 후" 게이트.)
 
 ---
 
@@ -277,7 +334,7 @@ open dispute면 credit-hold-release cron 스킵(auto-settlement eligible 필터 
 
 **12.4 핵심 화면 리디자인**: 랜딩(다크밴드+serif+부엉이+구독 가치제안, cta-pulse 제거, 요금은 docs/15 게이트) · **구독/요금제**(멤버십 카드 메타포, 다음 결제일·빌링키 마스킹, past_due=회색+경고) · **크레딧 지갑**(tnum 대형 잔액+만료임박 앰버경고, 원장 리스트, `CREDIT_LEDGER_BADGE_CLASSES` 신설) · **도구 카탈로그**(free/subscription/paid 3티어 배지, 비구독 잠금 오버레이+업셀) · **파트너 커미션**(매출·20%·실수령 3스탯 tnum+월추이+명세) · **admin 대시보드**(Sidebar+4열 스탯 그리드+shadcn Table) · **past_due 전역 규격**(헤더 경고 스트립·자물쇠·재시도 CTA, `SUBSCRIPTION_STATUS_BADGE_CLASSES` 신설).
 
-**12.5 단계 롤아웃(구독 피벗과 정렬)**: P0 파운데이션(토큰 확장·next/font·cn+CVA+W1·컨테이너 4종, 기존 화면 무변경) → P1 신규 구독 서피스 **그린필드 구축**(마이그레이션 리스크 0) → P2 owner → P3 expert → P4 admin+partner 쉘(탭→라우트) → P5 정리(위젯 소비처 0 확인 후 삭제·그라디언트 퇴역·다크모드 출시). 리스크: Tailwind v4는 `tw-animate-css`, `--accent` 의미충돌은 생성코드 치환, 토큰 리네임 금지(추가만·AA 동결), 다크모드는 신규작업(`bg-white` 토큰화 선행).
+**12.5 단계 롤아웃(구독 피벗과 정렬)**: **[근시 갱신]** P0 파운데이션(램프·프리미티브 W1·next/font·컨테이너 4종)은 **커밋 완료**(feat/subscription-foundation). 근시 P2 = **소비 배선**(컨테이너 4종 적용·status/quote 정렬·`.tnum`·무료 배너를 프리미티브로); §12.4 구독 서피스 리디자인은 연말 잔류. — 이하 원안: P0 파운데이션(토큰 확장·next/font·cn+CVA+W1·컨테이너 4종, 기존 화면 무변경) → P1 신규 구독 서피스 **그린필드 구축**(마이그레이션 리스크 0) → P2 owner → P3 expert → P4 admin+partner 쉘(탭→라우트) → P5 정리(위젯 소비처 0 확인 후 삭제·그라디언트 퇴역·다크모드 출시). 리스크: Tailwind v4는 `tw-animate-css`, `--accent` 의미충돌은 생성코드 치환, 토큰 리네임 금지(추가만·AA 동결), 다크모드는 신규작업(`bg-white` 토큰화 선행).
 
 **12.6 UI 관련 단일소스 확장**: `packages/shared/lib/status-badges.ts`에 구독/크레딧/커미션 상태 배지 추가 · `globals.css`가 토큰·브리지·모션 규정 단일지점 · `packages/ui/package.json` 프리미티브 export.
 
