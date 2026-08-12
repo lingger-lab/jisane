@@ -93,12 +93,26 @@ export function calcDealPricing(
   workFee: number,
   rates: DealPricingRates = {},
 ): DealPricingResult {
-  if (!Number.isInteger(workFee) || workFee < 0) {
-    throw new Error(`작업비는 0 이상의 원 단위 정수여야 합니다 (입력: ${workFee})`)
+  // 안전 정수(≤2^53-1)만 허용 — unsafe 정수는 아래 반올림·덧셈에서 배정밀도 오차로
+  // 불변식이 깨진다(적대검증 반례 2).
+  if (!Number.isSafeInteger(workFee) || workFee < 0) {
+    throw new Error(`작업비는 0 이상의 안전 정수여야 합니다 (입력: ${workFee})`)
   }
   const markup = rates.markup ?? DEAL_PRICING_DEFAULT_RATES.markup
   const pgFee = rates.pgFee ?? DEAL_PRICING_DEFAULT_RATES.pgFee
   const riskReserve = rates.riskReserve ?? DEAL_PRICING_DEFAULT_RATES.riskReserve
+  // 요율 검증 — platform_config(DB) 주입 경로라 Number('오염')=NaN이 현실 벡터.
+  // `??`는 null/undefined만 잡고 NaN/음수/Infinity는 통과시켜, 아래 payout<0 가드가
+  // NaN<0===false로 fail-open 된다(적대검증 반례 1). 명시적으로 fail-closed.
+  for (const [name, rate] of [
+    ['markup', markup],
+    ['pgFee', pgFee],
+    ['riskReserve', riskReserve],
+  ] as const) {
+    if (!Number.isFinite(rate) || rate < 0) {
+      throw new Error(`요율 ${name}는 0 이상의 유한수여야 합니다 (입력: ${rate})`)
+    }
+  }
 
   const creditHoldAmt = Math.round(workFee * markup)
   const pgFeeAmt = Math.round(workFee * pgFee)
@@ -106,6 +120,13 @@ export function calcDealPricing(
   // 잔여식(§11.2) — 반올림은 위 3개에서만, 수령액은 뺄셈 유도로 오차 흡수
   const expertPayoutAmt = workFee - pgFeeAmt - riskReserveAmt
   const totalPay = workFee + creditHoldAmt
+
+  // 결과 정합 가드: total_pay = W + credit_hold 가 안전 정수 범위를 넘으면
+  // 배정밀도 덧셈에서 불변식(total === payout+pg+risk+credit)이 1원 붕괴한다
+  // (적대검증 반례 2 — W가 안전 정수라도 W×1.05가 2^53을 넘을 수 있음). 차단.
+  if (!Number.isSafeInteger(totalPay)) {
+    throw new Error(`결과 금액이 안전 정수 범위를 초과했습니다 (workFee=${workFee})`)
+  }
 
   // 금전 안전 가드: 비정상 요율(합계 >100%)로 수령액이 음수가 되면 fail-closed
   if (expertPayoutAmt < 0) {

@@ -200,6 +200,29 @@ describe('calcDealPricing — docs/16 §1.1 구독 모델 거래 가격', () => 
       }
     })
   })
+
+  // ── 적대적 검증(REFUTE) 반례 회귀 가드 — 수정 반영 후 GREEN. 반증 리포트 참조.
+  describe('적대검증 반례 회귀 가드', () => {
+    it('반례 1: 비유한/음수 요율은 fail-closed throw (payout<0 가드는 NaN<0===false로 fail-open이었음)', () => {
+      // platform_config 오염(Number('bad')=NaN 등)이 현실 벡터 — NaN 금액이 하류(결제요청)로 유출되면 안 됨
+      expect(() => calcDealPricing(1_000_000, { pgFee: NaN })).toThrow()
+      expect(() => calcDealPricing(1_000_000, { markup: NaN })).toThrow()
+      expect(() => calcDealPricing(1_000_000, { riskReserve: -0.01 })).toThrow()
+      expect(() => calcDealPricing(1_000_000, { pgFee: Infinity })).toThrow()
+    })
+
+    it('반례 2: unsafe 정수 입력·안전정수 초과 결과는 throw — 불변식 붕괴 원천 차단', () => {
+      // 2^53+18: unsafe 정수 입력 → 입력 가드 throw
+      expect(() => calcDealPricing(9_007_199_254_741_010)).toThrow()
+      // W는 안전정수지만 total_pay = W×1.05 가 2^53 초과 → 결과 가드 throw
+      expect(() => calcDealPricing(Number.MAX_SAFE_INTEGER)).toThrow()
+      // 대형이지만 실무 범위(DB int4 이내, 2^53 훨씬 아래) W는 정상 + 불변식 유지
+      const r = calcDealPricing(2_000_000_000)
+      expect(r.totalPay).toBe(
+        r.expertPayoutAmt + r.pgFeeAmt + r.riskReserveAmt + r.creditHoldAmt,
+      )
+    })
+  })
 })
 
 describe('VAT — 공급가 별도 기준', () => {
