@@ -4,6 +4,7 @@
   "private": true,
   "exports": {
     "./styles/globals.css": "./styles/globals.css",
+    "./cn": "./lib/cn.ts",
     "./submit-button": "./components/submit-button.tsx",
     "./progress-bar": "./components/progress-bar.tsx",
     "./workflow-checklist": "./components/workflow-checklist.tsx",
@@ -29,6 +30,10 @@
     "./char-limit-notice": "./components/char-limit-notice.tsx",
     "./error-state": "./components/error-state.tsx",
     "./route-loading": "./components/route-loading.tsx"
+  },
+  "dependencies": {
+    "clsx": "^2.1.1",
+    "tailwind-merge": "^3.0.0"
   },
   "devDependencies": {
     "typescript": "^5"
