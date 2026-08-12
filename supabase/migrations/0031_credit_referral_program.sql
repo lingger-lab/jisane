@@ -134,6 +134,12 @@ CREATE TABLE IF NOT EXISTS credit_ledger (
   CONSTRAINT chk_credit_spend_link CHECK (
     entry_type <> 'spend'
     OR (service_order_id IS NOT NULL OR program_run_id IS NOT NULL)
+  ),
+  -- ★멱등키 NULL 우회 차단(적대검증 F1): earn 행에 소스 FK 강제. UNIQUE 인덱스는
+  --   NULL을 distinct로 보므로 settlement_id/referral_id가 NULL이면 이중적립을 못 막는다.
+  CONSTRAINT chk_credit_earn_source CHECK (
+    (entry_type <> 'earn_deal_hold' OR settlement_id IS NOT NULL)
+    AND (entry_type <> 'earn_referral' OR referral_id IS NOT NULL)
   )
 );
 

@@ -104,7 +104,9 @@ CREATE TABLE IF NOT EXISTS billing_key (
   status             billing_key_status NOT NULL DEFAULT 'active',
   removed_at         timestamptz,
   created_at         timestamptz NOT NULL DEFAULT now(),
-  updated_at         timestamptz NOT NULL DEFAULT now()
+  updated_at         timestamptz NOT NULL DEFAULT now(),
+  -- 복합 FK 대상(적대검증 F3): subscription이 같은 구독자의 billing_key만 참조하도록.
+  CONSTRAINT uq_billing_key_id_subscriber UNIQUE (id, subscriber_type, subscriber_id)
 );
 
 -- 구독자당 활성 빌링키 1개 (부분 UNIQUE)
@@ -129,7 +131,7 @@ CREATE TABLE IF NOT EXISTS subscription (
   plan_id              uuid NOT NULL REFERENCES subscription_plan(id),
   subscriber_type      subscriber_type NOT NULL,
   subscriber_id        uuid NOT NULL,                      -- owner.id | expert.id (다형)
-  billing_key_id       uuid REFERENCES billing_key(id),
+  billing_key_id       uuid,   -- 복합 FK로 소유자 정합 강제(아래 fk_subscription_billing_key)
   status               subscription_status NOT NULL DEFAULT 'active',
   current_period_start timestamptz NOT NULL,
   current_period_end   timestamptz NOT NULL,
@@ -139,7 +141,12 @@ CREATE TABLE IF NOT EXISTS subscription (
   canceled_at          timestamptz,
   created_at           timestamptz NOT NULL DEFAULT now(),
   updated_at           timestamptz NOT NULL DEFAULT now(),
-  CONSTRAINT chk_subscription_period CHECK (current_period_end > current_period_start)
+  CONSTRAINT chk_subscription_period CHECK (current_period_end > current_period_start),
+  -- 교차소유 카드청구 차단(적대검증 F3): billing_key가 같은 구독자 소속이어야 함.
+  -- billing_key_id NULL(가입 직후 등)이면 MATCH SIMPLE로 FK 미검사 → 허용.
+  CONSTRAINT fk_subscription_billing_key
+    FOREIGN KEY (billing_key_id, subscriber_type, subscriber_id)
+    REFERENCES billing_key (id, subscriber_type, subscriber_id)
 );
 
 -- 구독자당 살아있는(active|past_due) 구독 1개 (부분 UNIQUE, §2.2)

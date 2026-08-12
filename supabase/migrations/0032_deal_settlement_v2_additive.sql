@@ -47,6 +47,17 @@ BEGIN
   END IF;
 END $$;
 
+-- 크레딧 유실 방지(적대검증 F4): holding인데 만기 due_at가 NULL이면 cron이 영원히
+-- 못 잡아 보류분이 영구 미해제된다. holding은 반드시 due_at를 갖도록 강제.
+DO $$
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM pg_constraint WHERE conname = 'chk_settlement_credit_hold_due') THEN
+    ALTER TABLE settlement ADD CONSTRAINT chk_settlement_credit_hold_due CHECK (
+      credit_state <> 'holding' OR credit_release_due_at IS NOT NULL
+    );
+  END IF;
+END $$;
+
 -- credit-hold-release cron: 보류창 만기 도래분 스캔 (§5.1)
 CREATE INDEX IF NOT EXISTS idx_settlement_credit_release_due
   ON settlement (credit_release_due_at) WHERE credit_state = 'holding';
