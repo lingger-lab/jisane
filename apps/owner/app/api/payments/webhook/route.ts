@@ -59,6 +59,16 @@ export async function POST(request: Request) {
   if (!parsed) {
     return NextResponse.json({ error: 'Invalid orderId format' }, { status: 400 })
   }
+
+  // kind 분기(§3.2·§11.4): 구독 청구 웹훅을 deal 경로로 보내면 subId가 dealId로 조회돼
+  // 404→non-2xx→Toss 무한 재전송이 된다(파서가 막은 오파싱이 라우팅 층에서 재발). 구독 빌링은
+  // 아직 미구현(결제계약 게이트)이므로 수신만 확인(200)하고 처리는 빌링 단계에서 추가한다.
+  if (parsed.kind !== 'deal') {
+    console.warn(
+      `[payments/webhook] 미처리 kind=${parsed.kind} orderId=${orderId} — 빌링 단계에서 처리 예정`,
+    )
+    return NextResponse.json({ success: true, message: `Acknowledged ${parsed.kind} webhook` })
+  }
   const dealId = parsed.id
 
   const result = await confirmAndRecordDeposit(dealId, paymentKey, orderId)

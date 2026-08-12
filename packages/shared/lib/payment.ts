@@ -40,6 +40,12 @@ export function buildOrderId(ref: OrderRef, timestamp: number): string {
   if (!ref.id || ref.id.includes('_')) {
     throw new Error(`orderId에 쓸 수 없는 id입니다: ${ref.id}`)
   }
+  // timestamp가 안전 정수가 아니면(NaN/소수/음수/Infinity/2^53 초과) `..._NaN`·`..._1.18e+21`
+  // 류가 만들어지고 parseOrderId의 TIMESTAMP_RE(^\d+$)가 거부 → 돈이 오간 뒤 콜백 영구거부
+  // (적대검증 결함 2). 2^53 초과는 String()이 지수표기가 되므로 isInteger로는 부족 — isSafeInteger.
+  if (!Number.isSafeInteger(timestamp) || timestamp < 0) {
+    throw new Error(`orderId timestamp는 0 이상의 안전 정수여야 합니다: ${timestamp}`)
+  }
   const token = ref.kind === 'subscription' ? SUB_TOKEN : DEAL_TOKEN
   return `${ORDER_ID_PREFIX}_${token}_${ref.id}_${timestamp}`
 }

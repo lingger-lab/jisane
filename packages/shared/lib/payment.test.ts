@@ -73,6 +73,36 @@ describe('buildOrderId / parseOrderId (판별 유니온 스킴)', () => {
     expect(() => buildOrderId({ kind: 'deal', id: 'has_underscore' }, TS)).toThrow()
     expect(() => buildOrderId({ kind: 'subscription', id: '' }, TS)).toThrow()
   })
+
+  // REFUTE(적대적 검증) 발견 반례 — RED = 구현 결함 증명 (docs/16 §11.4 클래스).
+  // buildOrderId의 가드 계약: "파싱 불능 orderId는 세션 생성 시점에 즉시 throw"(payment.ts:38-42).
+  // 그런데 id만 검사하고 timestamp는 검사하지 않는다. 비정수 timestamp(NaN·소수·음수·
+  // Infinity·2^70급 지수표기)는 throw 없이 build되지만 문자열화가 TIMESTAMP_RE(^\d+$)를
+  // 통과하지 못해 parseOrderId가 null → 결제 완료 후 콜백 영구 거부 → Toss 무한 재전송.
+  // 현재 유일 호출자는 Date.now()라 잠복 상태지만, §3.2 chargeBillingKey 경로가 이 export를
+  // 직접 쓰는 순간 실사고 경로가 된다.
+  describe('적대검증 반례 회귀 가드 (timestamp 검증)', () => {
+    it('비정수/unsafe timestamp는 파싱 불능 orderId를 만들므로 build 시점에 throw', () => {
+      for (const badTs of [NaN, 1.5, -1, Infinity, 2 ** 70]) {
+        // 수정 전: throw 없이 jisane_deal_..._NaN / _1.5 / _-1 / _Infinity / _1.18e+21 생성됨.
+        // 2^70은 정수지만 String()이 지수표기라 isInteger로는 부족 → isSafeInteger로 차단.
+        expect(() => buildOrderId({ kind: 'deal', id: UUID }, badTs), `ts=${badTs}`).toThrow()
+      }
+    })
+
+    it('반례(왕복 불변식): build가 throw하지 않았다면 parse는 반드시 성공해야 한다', () => {
+      let orderId: string | null = null
+      try {
+        orderId = buildOrderId({ kind: 'subscription', id: UUID }, NaN)
+      } catch {
+        // throw했다면 계약 준수 — 왕복 검사 불필요
+      }
+      if (orderId !== null) {
+        // build가 성공시킨 orderId가 parse에서 null이면 §11.4(콜백 영구거부) 재발
+        expect(parseOrderId(orderId)).not.toBeNull()
+      }
+    })
+  })
 })
 
 describe('cancelPayment 에러 계약 (never-throw)', () => {

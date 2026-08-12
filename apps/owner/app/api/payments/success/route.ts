@@ -18,9 +18,10 @@ export async function GET(request: NextRequest) {
     return NextResponse.redirect(new URL('/?error=payment_invalid', request.url))
   }
 
-  // orderId 해석은 공유 파서로 (생성 측과 단일 계약). 쿼리 dealId와도 일치해야 한다.
+  // orderId 해석은 공유 파서로 (생성 측과 단일 계약). deal 결제 리다이렉트 종단이므로
+  // kind='deal'이어야 하고 쿼리 dealId와도 일치해야 한다(구독은 이 경로를 경유하지 않음).
   const parsed = parseOrderId(orderId)
-  if (!parsed || parsed.id !== dealId) {
+  if (!parsed || parsed.kind !== 'deal' || parsed.id !== dealId) {
     return NextResponse.redirect(new URL('/?error=payment_invalid', request.url))
   }
 
