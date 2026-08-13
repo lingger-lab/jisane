@@ -7,6 +7,7 @@ import { verifyAdmin } from '@jisane/shared/auth/server-helpers'
 import type { DealForReview } from '@jisane/shared/query-types'
 import { ReviewForm } from './review-form'
 import { PageHero } from '@jisane/ui/page-hero'
+import { StarRating } from '@jisane/ui/star-rating'
 
 interface PageProps {
   params: Promise<{ id: string }>
@@ -101,7 +102,7 @@ export default async function ReviewInputPage(props: PageProps) {
         <div className="rounded-xl border border-success/20 bg-success-light p-4">
           <p className="font-medium text-success">리뷰 작성 완료</p>
           <p className="mt-1 text-sm text-success/80">
-            별점: {'★'.repeat(existingReview.rating)}{'☆'.repeat(5 - existingReview.rating)}
+            별점: <StarRating value={existingReview.rating} className="ml-1" />
           </p>
           {existingReview.process_rating && (
             <p className="mt-1 text-xs text-success/70">

@@ -29,7 +29,7 @@ export default function ServicePage() {
       <div className="container-marketing px-4 md:px-6 py-6">
       {/* 서비스 소개 */}
       <section className="mb-12 animate-fade-in stagger-1">
-        <h2 className="mb-4 text-lg font-bold text-text">지사네가 하는 일</h2>
+        <h2 className="mb-4 text-lg font-serif font-bold text-text">지사네가 하는 일</h2>
         <div className="grid gap-4 sm:grid-cols-2">
           <div className="rounded-2xl border border-border-light bg-surface-warm p-5 shadow-sm">
             <p className="text-sm font-semibold text-primary">기업 운영 전문 서비스 제공</p>
@@ -48,7 +48,7 @@ export default function ServicePage() {
 
       {/* 진행 절차 */}
       <section className="mb-12 animate-fade-in stagger-2">
-        <h2 className="mb-4 text-lg font-bold text-text">진행 절차</h2>
+        <h2 className="mb-4 text-lg font-serif font-bold text-text">진행 절차</h2>
         <div className="flex flex-col gap-3">
           {STEPS.map((step, i) => (
             <div

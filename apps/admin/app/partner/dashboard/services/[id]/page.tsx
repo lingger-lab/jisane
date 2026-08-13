@@ -32,7 +32,7 @@ export default async function EditServicePackagePage(props: {
 
   return (
     <div className="animate-fade-in">
-      <h1 className="mb-1 text-lg font-bold text-text">서비스 수정</h1>
+      <h1 className="mb-1 text-lg font-serif font-bold text-text">서비스 수정</h1>
       <p className="mb-5 text-sm text-text-muted">
         상태: {PACKAGE_STATUS_LABELS[pkg.status] || pkg.status} — 카테고리·대상은 등록 후 변경할 수 없습니다.
         {pkg.status === 'published' &&

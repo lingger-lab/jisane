@@ -28,7 +28,7 @@ export default async function PartnerServicesPage() {
     <div className="animate-fade-in">
       <div className="mb-5 flex items-center justify-between">
         <div>
-          <h1 className="text-lg font-bold text-text">서비스 관리</h1>
+          <h1 className="text-lg font-serif font-bold text-text">서비스 관리</h1>
           <p className="mt-0.5 text-sm text-text-muted">
             등록한 서비스는 관리자 검수 후 공개됩니다.
           </p>

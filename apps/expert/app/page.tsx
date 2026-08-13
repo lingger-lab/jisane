@@ -10,6 +10,7 @@ import { fetchExpertLandingStats } from '@jisane/shared/landing-stats'
 import { ADMIN_URL, OWNER_URL } from '@/lib/urls'
 import { getPackagesByAudience } from '@jisane/shared/service-package/queries'
 import { CategoryBrowse } from '@jisane/ui/category-browse'
+import { Badge } from '@jisane/ui/badge'
 import { OwlIcon } from '@jisane/ui/icons/owl'
 import { ScrollReveal } from '@jisane/ui/scroll-reveal'
 import { HeroBackdrop } from '@jisane/ui/hero-backdrop'
@@ -130,13 +131,7 @@ export default async function ExpertHome() {
                   <div className="min-w-0">
                     <div className="flex items-center gap-2">
                       <p className="font-semibold text-text">{tool.name}</p>
-                      <span
-                        className={`rounded-full px-2.5 py-0.5 text-xs font-semibold ${
-                          tool.badge === '무료' ? 'bg-primary/10 text-primary' : 'bg-accent/10 text-accent'
-                        }`}
-                      >
-                        {tool.badge}
-                      </span>
+                      <Badge variant={tool.badge === '무료' ? 'primary' : 'accent'}>{tool.badge}</Badge>
                     </div>
                     <p className="mt-0.5 text-sm text-text-muted">{tool.desc}</p>
                   </div>
@@ -219,7 +214,7 @@ export default async function ExpertHome() {
             <a href={ownerUrl} className="inline-flex min-h-6 items-center hover:text-text-muted transition-colors">기업회원</a>
             <a href={`${adminUrl}/privacy`} className="inline-flex min-h-6 items-center hover:text-text-muted transition-colors">개인정보처리방침</a>
           </div>
-          <p className="text-xs text-text-subtle">&copy; 2026 (주)지사네. All rights reserved.</p>
+          <p className="text-xs text-text-subtle">&copy; {new Date().getFullYear()} (주)지사네. All rights reserved.</p>
         </div>
       </footer>
     </div>

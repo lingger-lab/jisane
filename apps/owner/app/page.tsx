@@ -8,6 +8,7 @@ import { OAuthButtons } from '@jisane/ui/oauth-buttons'
 import { fetchOwnerLandingStats } from '@jisane/shared/landing-stats'
 import { getPackagesByAudience } from '@jisane/shared/service-package/queries'
 import { CategoryBrowse } from '@jisane/ui/category-browse'
+import { Badge } from '@jisane/ui/badge'
 import { OwlIcon } from '@jisane/ui/icons/owl'
 import { ScrollReveal } from '@jisane/ui/scroll-reveal'
 import { HeroBackdrop } from '@jisane/ui/hero-backdrop'
@@ -138,7 +139,7 @@ export default async function OwnerHome() {
                     <div className="flex items-center gap-2">
                       <h3 className="font-semibold text-text">{pkg.name}</h3>
                       {pkg.isFree && (
-                        <span className="rounded-full bg-primary/10 px-2.5 py-0.5 text-xs font-semibold text-primary">무료</span>
+                        <Badge variant="primary">무료</Badge>
                       )}
                     </div>
                     <p className="mt-1 text-sm text-text-muted leading-relaxed">{pkg.valueDesc}</p>
@@ -247,7 +248,7 @@ export default async function OwnerHome() {
             <a href={expertUrl} className="inline-flex min-h-6 items-center hover:text-text-muted transition-colors">시니어지식인회원</a>
             <a href={`${adminUrl}/privacy`} className="inline-flex min-h-6 items-center hover:text-text-muted transition-colors">개인정보처리방침</a>
           </div>
-          <p className="text-xs text-text-subtle">&copy; 2026 (주)지사네. All rights reserved.</p>
+          <p className="text-xs text-text-subtle">&copy; {new Date().getFullYear()} (주)지사네. All rights reserved.</p>
         </div>
       </footer>
     </div>

@@ -56,7 +56,7 @@ export default function AXPage() {
       <div className="container-marketing px-4 md:px-6 py-6">
       {/* AX 5가지 가치 */}
       <section className="mb-12 animate-fade-in stagger-1">
-        <h2 className="mb-4 text-lg font-bold text-text">AX 5가지 가치</h2>
+        <h2 className="mb-4 text-lg font-serif font-bold text-text">AX 5가지 가치</h2>
         <p className="mb-5 text-sm text-text-muted">AI 전환을 통해 기업이 얻는 핵심 가치입니다.</p>
         <div className="grid gap-3 sm:grid-cols-2">
           {VALUES.map((v, i) => (
@@ -73,7 +73,7 @@ export default function AXPage() {
 
       {/* AX 5대 적용축 */}
       <section className="mb-12 animate-fade-in stagger-2">
-        <h2 className="mb-4 text-lg font-bold text-text">AX 5대 적용축</h2>
+        <h2 className="mb-4 text-lg font-serif font-bold text-text">AX 5대 적용축</h2>
         <p className="mb-5 text-sm text-text-muted">AI를 적용할 수 있는 5가지 핵심 영역입니다.</p>
         <div className="flex flex-col gap-3">
           {AXES.map((axis, i) => (
@@ -95,7 +95,7 @@ export default function AXPage() {
 
       {/* 구현의 사다리 */}
       <section className="mb-12 animate-fade-in stagger-3">
-        <h2 className="mb-4 text-lg font-bold text-text">구현의 사다리</h2>
+        <h2 className="mb-4 text-lg font-serif font-bold text-text">구현의 사다리</h2>
         <p className="mb-5 text-sm text-text-muted">
           작게 시작해 단계적으로 확장합니다. 각 단계에서 효과를 측정하고 다음 단계로 나아갑니다.
         </p>
@@ -115,7 +115,7 @@ export default function AXPage() {
 
       {/* 보안과 비용의 해법 */}
       <section className="mb-12 animate-fade-in stagger-4">
-        <h2 className="mb-4 text-lg font-bold text-text">보안과 비용의 해법</h2>
+        <h2 className="mb-4 text-lg font-serif font-bold text-text">보안과 비용의 해법</h2>
         <p className="mb-5 text-sm text-text-muted">
           기업 데이터 보안과 AI 운영 비용, 두 가지 과제를 동시에 해결합니다.
         </p>

@@ -94,7 +94,7 @@ export default function AXProcessPage() {
       <div className="container-marketing px-4 md:px-6 py-6">
       {/* 4단계 프로세스 */}
       <section className="mb-12 animate-fade-in stagger-1">
-        <h2 className="mb-5 text-lg font-bold text-text">4단계 프로세스</h2>
+        <h2 className="mb-5 text-lg font-serif font-bold text-text">4단계 프로세스</h2>
         <div className="flex flex-col gap-4">
           {PROCESS_STEPS.map((step, i) => (
             <div
@@ -125,7 +125,7 @@ export default function AXProcessPage() {
 
       {/* 구현 방식 */}
       <section className="mb-12 animate-fade-in stagger-2">
-        <h2 className="mb-4 text-lg font-bold text-text">구현 방식 — 구현의 사다리</h2>
+        <h2 className="mb-4 text-lg font-serif font-bold text-text">구현 방식 — 구현의 사다리</h2>
         <p className="mb-5 text-sm text-text-muted">
           각 단계에서 적합한 구현 수준을 선택합니다. 작은 성공을 쌓으며 점진적으로 올라갑니다.
         </p>
@@ -152,7 +152,7 @@ export default function AXProcessPage() {
 
       {/* 보안 인프라 */}
       <section className="mb-12 animate-fade-in stagger-3">
-        <h2 className="mb-4 text-lg font-bold text-text">보안 인프라</h2>
+        <h2 className="mb-4 text-lg font-serif font-bold text-text">보안 인프라</h2>
         <p className="mb-5 text-sm text-text-muted">
           기업 데이터가 외부로 유출되지 않으면서도 AI의 혜택을 누리는 방법입니다.
         </p>

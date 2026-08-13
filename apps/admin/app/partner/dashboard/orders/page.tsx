@@ -26,7 +26,7 @@ export default async function PartnerOrdersPage() {
 
   return (
     <div className="animate-fade-in">
-      <h1 className="mb-1 text-lg font-bold text-text">신청 확인</h1>
+      <h1 className="mb-1 text-lg font-serif font-bold text-text">신청 확인</h1>
       <p className="mb-5 text-sm text-text-muted">
         결제 확인·취소는 지사네 관리자가 처리하며, 전문가회원은 진행 중 건의 <strong className="text-text">완료 처리</strong>를 담당합니다.
       </p>

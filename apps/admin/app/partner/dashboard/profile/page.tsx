@@ -17,7 +17,7 @@ export default async function PartnerProfilePage() {
 
   return (
     <div className="animate-fade-in">
-      <h1 className="mb-1 text-lg font-bold text-text">전문가회원 정보</h1>
+      <h1 className="mb-1 text-lg font-serif font-bold text-text">전문가회원 정보</h1>
       <p className="mb-5 text-sm text-text-muted">
         {PROVIDER_KIND_LABELS[provider.kind]} · {PROVIDER_TYPE_LABELS[provider.type]} —
         유형·분야 변경은 관리자에게 문의해주세요.

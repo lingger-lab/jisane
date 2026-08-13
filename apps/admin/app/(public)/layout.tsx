@@ -32,7 +32,7 @@ export default function PublicLayout({ children }: { children: React.ReactNode }
             <Link href="/ax" className="inline-flex min-h-6 items-center text-text-subtle hover:text-text-muted transition-colors">AX 전환</Link>
           </div>
           <hr className="border-border-light" />
-          <p className="text-xs text-text-subtle">&copy; 2026 (주)지사네. All rights reserved.</p>
+          <p className="text-xs text-text-subtle">&copy; {new Date().getFullYear()} (주)지사네. All rights reserved.</p>
         </div>
       </footer>
     </div>

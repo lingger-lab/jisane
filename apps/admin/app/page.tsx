@@ -7,7 +7,7 @@ import { OwlIcon } from '@jisane/ui/icons/owl'
 import { HeroBackdrop } from '@jisane/ui/hero-backdrop'
 import { TextRotator } from '@jisane/ui/text-rotator'
 import { AnimatedCounter } from '@jisane/ui/animated-counter'
-import { ArrowRight } from 'lucide-react'
+import { ArrowRight, Building2, UserRound, Handshake } from 'lucide-react'
 import { OWNER_URL, EXPERT_URL } from '@/lib/urls'
 
 export default async function AdminHome() {
@@ -82,6 +82,7 @@ export default async function AdminHome() {
                 href={ownerUrl}
                 className="rounded-2xl border border-border-light bg-card p-6 md:p-8 text-left group shadow-sm card-hover card-glow transition-all"
               >
+                <span className="mb-3 inline-flex h-11 w-11 items-center justify-center rounded-xl bg-primary/10 text-primary"><Building2 className="h-6 w-6" strokeWidth={1.75} aria-hidden="true" /></span>
                 <h2 className="text-2xl md:text-3xl font-bold font-serif text-primary">기업회원</h2>
                 <p className="mt-2 text-sm md:text-base text-text-muted">기업 운영에 필요한 전문 서비스와 시니어 전문가 정보</p>
                 <div className="mt-4 flex flex-wrap gap-2">
@@ -100,6 +101,7 @@ export default async function AdminHome() {
                 href={expertUrl}
                 className="rounded-2xl border border-border-light bg-card p-6 md:p-8 text-left group shadow-sm card-hover card-glow transition-all"
               >
+                <span className="mb-3 inline-flex h-11 w-11 items-center justify-center rounded-xl bg-accent/10 text-accent"><UserRound className="h-6 w-6" strokeWidth={1.75} aria-hidden="true" /></span>
                 <h2 className="text-2xl md:text-3xl font-bold font-serif text-accent">시니어지식인회원</h2>
                 <p className="mt-2 text-sm md:text-base text-text-muted">경험과 노하우로 지역 기업과 협력</p>
                 <div className="mt-4 flex flex-wrap gap-2">
@@ -119,6 +121,7 @@ export default async function AdminHome() {
                 href="/partner"
                 className="rounded-2xl border border-border-light bg-card p-6 md:p-8 text-left group shadow-sm card-hover card-glow transition-all"
               >
+                <span className="mb-3 inline-flex h-11 w-11 items-center justify-center rounded-xl bg-partner/10 text-partner"><Handshake className="h-6 w-6" strokeWidth={1.75} aria-hidden="true" /></span>
                 <h2 className="text-2xl md:text-3xl font-bold font-serif text-partner">전문가회원(파트너)</h2>
                 <p className="mt-2 text-sm md:text-base text-text-muted">
                   전문서비스를 제공하는 특수관계 회원 — 기업 또는 시니어지식인 — 서비스 등록 · 신청 관리
@@ -156,7 +159,7 @@ export default async function AdminHome() {
             <Link href="/ax" className="inline-flex min-h-6 items-center text-text-subtle hover:text-text-muted transition-colors">AX 전환</Link>
           </div>
           <hr className="border-border-light" />
-          <p className="text-xs text-text-subtle">&copy; 2026 (주)지사네. All rights reserved.</p>
+          <p className="text-xs text-text-subtle">&copy; {new Date().getFullYear()} (주)지사네. All rights reserved.</p>
         </div>
       </footer>
     </div>

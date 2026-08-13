@@ -4,6 +4,7 @@ import { useActionState, useState } from 'react'
 import { submitReview, generateAiReview } from '@/lib/admin/actions'
 import { SubmitButton } from '@jisane/ui/submit-button'
 import { FilterRadioGroup } from '@jisane/ui/filter-radio-group'
+import { StarRating as StarDisplay } from '@jisane/ui/star-rating'
 
 type ReviewState = { error?: string; success?: boolean }
 
@@ -130,9 +131,7 @@ export function ReviewForm({
               return (
                 <div key={axis.key}>
                   <p className="text-xs text-text-muted">{axis.label}</p>
-                  <p className="text-lg font-bold text-info">
-                    {'★'.repeat(value)}{'☆'.repeat(5 - value)}
-                  </p>
+                  <StarDisplay value={value} className="mt-0.5" />
                   <p className="text-xs text-text-subtle">{value}점</p>
                 </div>
               )
@@ -140,9 +139,7 @@ export function ReviewForm({
           </div>
           <div className="mt-2 text-center">
             <p className="text-xs text-text-muted">종합</p>
-            <p className="text-lg font-bold text-info">
-              {'★'.repeat(aiSuggestion.overall_rating)}{'☆'.repeat(5 - aiSuggestion.overall_rating)}
-            </p>
+            <StarDisplay value={aiSuggestion.overall_rating} className="mt-0.5" />
           </div>
           {aiSuggestion.reasoning && (
             <p className="mt-2 text-xs text-text-muted">

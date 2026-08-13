@@ -13,7 +13,7 @@ export default function DashboardError({
     <div className="flex flex-col items-center gap-4 px-4 py-16 text-center">
       <AlertTriangle className="mx-auto h-9 w-9 text-text-subtle" strokeWidth={1.75} aria-hidden="true" />
       <div>
-        <h2 className="text-lg font-bold text-text">대시보드를 불러올 수 없습니다</h2>
+        <h2 className="text-lg font-serif font-bold text-text">대시보드를 불러올 수 없습니다</h2>
         <p className="mt-1 text-sm text-text-muted">
           {error.message || '알 수 없는 오류가 발생했습니다.'}
         </p>
