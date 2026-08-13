@@ -40,20 +40,20 @@ export function CategoryBrowse({
         </p>
       )}
 
-      <div className="mt-4 grid grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-2 md:gap-3">
+      <div className="mt-4 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-2.5 md:gap-3">
         {categoryCounts.map((cat, i) => (
           <Link
             key={cat.id}
             href={`${baseHref}?category=${cat.id}`}
-            className={`block rounded-xl border border-border-light bg-card p-3 text-center shadow-xs card-hover animate-appear stagger-${Math.min(i + 1, 5)}`}
+            className={`block rounded-xl border border-border-light bg-card p-4 sm:p-3.5 text-center shadow-xs card-hover animate-appear stagger-${Math.min(i + 1, 5)}`}
           >
-            <p className="text-xs font-medium leading-tight break-keep text-text sm:text-sm">{cat.label}</p>
+            <p className="text-base font-semibold leading-tight break-keep text-text lg:text-sm">{cat.label}</p>
             {cat.count > 0 ? (
-              <p className={`mt-1 text-[11px] font-medium tabular-nums ${accentText}`}>
+              <p className={`mt-1 text-sm font-medium tabular-nums lg:text-xs ${accentText}`}>
                 {countLabel} {cat.count}{countUnit}
               </p>
             ) : (
-              <p className="mt-1 text-[11px] text-text-subtle">모집 중</p>
+              <p className="mt-1 text-sm text-text-subtle lg:text-xs">모집 중</p>
             )}
           </Link>
         ))}
