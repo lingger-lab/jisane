@@ -43,13 +43,14 @@ export function ThemeToggle({ className }: { className?: string }) {
       type="button"
       onClick={() => apply(nextTheme)}
       aria-label={`화면 테마: ${LABELS[theme]} · 클릭하면 ${LABELS[nextTheme]}로 전환`}
-      title={`테마: ${LABELS[theme]}`}
+      title={`화면 테마: ${LABELS[theme]} · 클릭하면 ${LABELS[nextTheme]}로 전환`}
       className={cn(
-        'inline-flex h-8 w-8 items-center justify-center rounded-lg text-text-muted transition-colors hover:bg-surface hover:text-text focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring',
+        'inline-flex h-8 items-center gap-1.5 rounded-lg border border-border-light px-2 text-text-muted transition-colors hover:bg-surface hover:text-text focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring',
         className
       )}
     >
-      <Icon className="h-[18px] w-[18px]" strokeWidth={1.75} aria-hidden="true" />
+      <Icon className="h-[16px] w-[16px] shrink-0" strokeWidth={1.75} aria-hidden="true" />
+      <span className="text-xs font-medium">{LABELS[theme]}</span>
     </button>
   )
 }

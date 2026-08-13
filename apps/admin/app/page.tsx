@@ -65,7 +65,9 @@ export default async function AdminHome() {
         <main className="container-marketing flex flex-col items-center gap-10 md:gap-14 lg:gap-16">
           {/* 공간 선택 카드 */}
           <section className="w-full animate-fade-in stagger-1">
-            <div className="flex flex-col gap-4 rounded-2xl bg-surface-warm p-4 md:p-6">
+            {/* 외곽 패널(bg-surface-warm) 제거 — 패널 테두리+카드 테두리 2중 프레임/회색 화면 원인.
+                카드들은 페이지 배경 위에 각자 단일 테두리로. */}
+            <div className="flex flex-col gap-4">
               <a
                 href={ownerUrl}
                 className="rounded-2xl border border-border-light bg-card p-6 md:p-8 text-left shadow-sm card-hover transition-all"
