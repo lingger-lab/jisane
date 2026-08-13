@@ -54,7 +54,7 @@ export default async function AdminHome() {
       {/* 히어로 — 브랜드 딥그린 다크 밴드 (렐라랩 벤치마킹: 아이브로우→제목→서브→수치) */}
       <div className="hero-dark w-full">
         <section className="container-marketing flex flex-col items-center gap-4 px-4 md:px-6 pt-14 md:pt-20 pb-12 md:pb-16 text-center animate-fade-in">
-          <span className="hero-eyebrow">기업의 곁에, 언제나 YourSide</span>
+          <span className="hero-eyebrow">기업의 곁에, 언제나 당신곁에</span>
           <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold font-serif text-white leading-snug">
             지역 기업의 든든한
             <br />
@@ -76,7 +76,7 @@ export default async function AdminHome() {
             <div className="flex flex-col gap-4 rounded-2xl bg-surface-warm p-4 md:p-6">
               <a
                 href={ownerUrl}
-                className="rounded-2xl border-t-4 border-t-primary border border-border-light bg-white p-6 md:p-8 text-left shadow-sm card-hover transition-all"
+                className="rounded-2xl border border-border-light bg-white p-6 md:p-8 text-left shadow-sm card-hover transition-all"
               >
                 <h2 className="text-2xl md:text-3xl font-bold text-primary">기업회원</h2>
                 <p className="mt-2 text-sm md:text-base text-text-muted">기업 운영에 필요한 전문 서비스와 시니어 전문가 정보</p>
@@ -95,7 +95,7 @@ export default async function AdminHome() {
 
               <a
                 href={expertUrl}
-                className="rounded-2xl border-t-4 border-t-accent border border-border-light bg-white p-6 md:p-8 text-left shadow-sm card-hover transition-all"
+                className="rounded-2xl border border-border-light bg-white p-6 md:p-8 text-left shadow-sm card-hover transition-all"
               >
                 <h2 className="text-2xl md:text-3xl font-bold text-accent">시니어지식인회원</h2>
                 <p className="mt-2 text-sm md:text-base text-text-muted">경험과 노하우로 지역 기업과 협력</p>
@@ -115,7 +115,7 @@ export default async function AdminHome() {
               {/* 전문가회원(파트너) — 특수관계 제공기관용 슬림 카드 */}
               <Link
                 href="/partner"
-                className="flex items-center justify-between rounded-2xl border-t-4 border-t-info border border-border-light bg-white p-4 md:p-5 shadow-sm card-hover transition-all"
+                className="flex items-center justify-between rounded-2xl border border-border-light bg-white p-4 md:p-5 shadow-sm card-hover transition-all"
               >
                 <div className="min-w-0">
                   <p className="text-base md:text-lg font-bold text-info">전문가회원(파트너)</p>
@@ -128,19 +128,6 @@ export default async function AdminHome() {
             </div>
           </section>
 
-          {/* 지사네 표준 — 정책 페이지 링크 */}
-          <section className="w-full animate-fade-in stagger-2">
-            <Link
-              href="/standard"
-              className="flex items-center justify-between gap-4 rounded-2xl border border-border-light bg-white p-5 md:p-6 shadow-sm transition-colors hover:border-primary/30 card-hover"
-            >
-              <div className="min-w-0">
-                <p className="text-base md:text-lg font-bold font-serif text-text">먼저 꺼내놓는 다섯 가지</p>
-                <p className="mt-1 text-sm text-text-muted">값 · 범위 · 약속 · 몫 · 복구 — 지사네 표준 보기</p>
-              </div>
-              <span className="text-sm font-semibold text-primary shrink-0">&rarr;</span>
-            </Link>
-          </section>
         </main>
       </div>
 

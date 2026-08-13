@@ -27,10 +27,10 @@ const gowunBatang = Gowun_Batang({
 export const metadata: Metadata = {
   metadataBase: new URL("https://jisane.cloud"),
   title: "지사네 — 지역 기업의 든든한 성장 파트너",
-  description: "부울경 중소기업 전문 서비스와 시니어 전문가 정보 제공. 지식나눔 사업협력 네트워크, 지사네 YourSide.",
+  description: "부울경 중소기업 전문 서비스와 시니어 전문가 정보 제공. 지식나눔 사업협력 네트워크, 지사네 당신곁에.",
   openGraph: {
     title: "지사네 — 지역 기업의 든든한 성장 파트너",
-    description: "부울경 중소기업 전문 서비스와 시니어 전문가 정보 제공. 지식나눔 사업협력 네트워크, 지사네 YourSide.",
+    description: "부울경 중소기업 전문 서비스와 시니어 전문가 정보 제공. 지식나눔 사업협력 네트워크, 지사네 당신곁에.",
     url: "https://jisane.cloud",
     siteName: "지사네",
     locale: "ko_KR",

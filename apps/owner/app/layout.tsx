@@ -30,7 +30,7 @@ const gowunBatang = Gowun_Batang({
 export const metadata: Metadata = {
   metadataBase: new URL("https://owner.jisane.cloud"),
   title: "지사네 기업회원",
-  description: "기업 운영에 필요한 전문 서비스와 시니어 전문가 정보 — 지사네 YourSide.",
+  description: "기업 운영에 필요한 전문 서비스와 시니어 전문가 정보 — 지사네 당신곁에.",
   openGraph: {
     title: "지사네 기업회원",
     description: "조건을 먼저 볼 수 있는 곳에 맡깁니다 — 에스크로 직거래.",

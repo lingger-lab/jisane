@@ -91,7 +91,7 @@ export default async function OwnerHome() {
       {/* [1] 히어로 — 브랜드 딥그린 다크 밴드 */}
       <div className="hero-dark w-full">
         <section className="container-marketing flex flex-col items-center gap-4 px-4 md:px-6 pt-14 md:pt-20 pb-12 md:pb-16 text-center animate-fade-in">
-          <span className="hero-eyebrow">기업의 곁에, 언제나 YourSide</span>
+          <span className="hero-eyebrow">기업의 곁에, 언제나 당신곁에</span>
           <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold font-serif text-white leading-snug">
             지역 기업의
             <br />
