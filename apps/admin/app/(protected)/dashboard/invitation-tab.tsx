@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { Bell } from 'lucide-react'
 import { FilterRadioGroup } from '@jisane/ui/filter-radio-group'
 import { StatusBadge } from '@jisane/ui/status-badge'
 
@@ -33,7 +34,7 @@ export function InvitationTab({ invitations }: { invitations: InvitationItem[] }
   if (invitations.length === 0) {
     return (
       <div className="flex flex-col items-center gap-1 py-12 text-center">
-        <span className="text-2xl">&#128276;</span>
+        <Bell className="mx-auto h-8 w-8 text-text-subtle" strokeWidth={1.75} aria-hidden="true" />
         <p className="text-sm text-text-muted">초빙 기록이 없습니다.</p>
       </div>
     )

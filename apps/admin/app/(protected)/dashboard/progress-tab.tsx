@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useRef } from 'react'
+import { Wrench } from 'lucide-react'
 import Link from 'next/link'
 import { WorkflowChecklist } from '@jisane/ui/workflow-checklist'
 import { CharLimitNotice } from '@jisane/ui/char-limit-notice'
@@ -114,7 +115,7 @@ export function ProgressTab({
   if (deals.length === 0) {
     return (
       <div className="flex flex-col items-center gap-1 py-12 text-center">
-        <span className="text-2xl">&#128736;</span>
+        <Wrench className="mx-auto h-8 w-8 text-text-subtle" strokeWidth={1.75} aria-hidden="true" />
         <p className="text-sm text-text-muted">진행 중인 거래가 없습니다.</p>
       </div>
     )

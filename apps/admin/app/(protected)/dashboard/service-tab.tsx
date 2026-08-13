@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { Package } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { useSeededState } from '@jisane/ui/use-seeded-state'
 
@@ -95,7 +96,7 @@ export function ServiceTab({
   if (items.length === 0) {
     return (
       <div className="flex flex-col items-center gap-1 py-12 text-center">
-        <span className="text-2xl">&#128230;</span>
+        <Package className="mx-auto h-8 w-8 text-text-subtle" strokeWidth={1.75} aria-hidden="true" />
         <p className="text-sm text-text-muted">서비스 주문이 없습니다.</p>
       </div>
     )
@@ -125,7 +126,7 @@ export function ServiceTab({
 
       {filtered.length === 0 ? (
         <div className="flex flex-col items-center gap-1 py-12 text-center">
-          <span className="text-2xl">&#128230;</span>
+          <Package className="mx-auto h-8 w-8 text-text-subtle" strokeWidth={1.75} aria-hidden="true" />
           <p className="text-sm text-text-muted">해당 카테고리의 주문이 없습니다.</p>
         </div>
       ) : (

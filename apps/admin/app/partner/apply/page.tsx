@@ -1,4 +1,5 @@
 import { cookies } from 'next/headers'
+import { Clock, XCircle, AlertTriangle } from 'lucide-react'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import { createClient } from '@jisane/shared/supabase/server'
@@ -30,7 +31,7 @@ export default async function PartnerApplyPage(props: {
       <div className="mx-auto max-w-md px-6 py-16 text-center animate-fade-in">
         {provider.status === 'pending' ? (
           <>
-            <p className="text-3xl">&#9203;</p>
+            <Clock className="mx-auto h-9 w-9 text-text-subtle" strokeWidth={1.75} aria-hidden="true" />
             <h1 className="mt-3 text-xl font-bold text-text">등록 신청 심사 중입니다</h1>
             <p className="mt-2 text-sm text-text-muted leading-relaxed">
               {submitted ? '신청이 접수되었습니다. ' : ''}
@@ -40,13 +41,13 @@ export default async function PartnerApplyPage(props: {
           </>
         ) : provider.status === 'rejected' ? (
           <>
-            <p className="text-3xl">&#10060;</p>
+            <XCircle className="mx-auto h-9 w-9 text-text-subtle" strokeWidth={1.75} aria-hidden="true" />
             <h1 className="mt-3 text-xl font-bold text-text">등록 신청이 반려되었습니다</h1>
             <p className="mt-2 text-sm text-text-muted">자세한 사유는 문의해주세요: iamblackwhite86@gmail.com</p>
           </>
         ) : (
           <>
-            <p className="text-3xl">&#9888;&#65039;</p>
+            <AlertTriangle className="mx-auto h-9 w-9 text-text-subtle" strokeWidth={1.75} aria-hidden="true" />
             <h1 className="mt-3 text-xl font-bold text-text">전문가회원 활동이 중지되었습니다</h1>
             <p className="mt-2 text-sm text-text-muted">문의: iamblackwhite86@gmail.com</p>
           </>

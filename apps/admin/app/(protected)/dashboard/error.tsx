@@ -1,5 +1,7 @@
 'use client'
 
+import { AlertTriangle } from 'lucide-react'
+
 export default function DashboardError({
   error,
   reset,
@@ -9,7 +11,7 @@ export default function DashboardError({
 }) {
   return (
     <div className="flex flex-col items-center gap-4 px-4 py-16 text-center">
-      <span className="text-3xl">&#9888;</span>
+      <AlertTriangle className="mx-auto h-9 w-9 text-text-subtle" strokeWidth={1.75} aria-hidden="true" />
       <div>
         <h2 className="text-lg font-bold text-text">대시보드를 불러올 수 없습니다</h2>
         <p className="mt-1 text-sm text-text-muted">

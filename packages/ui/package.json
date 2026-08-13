@@ -43,7 +43,8 @@
     "./status-badge": "./components/status-badge.tsx",
     "./oauth-buttons": "./components/oauth-buttons.tsx",
     "./empty-state": "./components/empty-state.tsx",
-    "./stat-card": "./components/stat-card.tsx"
+    "./stat-card": "./components/stat-card.tsx",
+    "./star-rating": "./components/star-rating.tsx"
   },
   "dependencies": {
     "@radix-ui/react-slot": "^1.1.1",

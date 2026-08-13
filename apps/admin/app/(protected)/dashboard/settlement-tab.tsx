@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { Wallet } from 'lucide-react'
 import { confirmDepositManual, releaseSettlement } from '@/lib/admin/actions'
 
 interface SettlementItem {
@@ -105,7 +106,7 @@ export function SettlementTab({
 
       {settlements.length === 0 ? (
         <div className="flex flex-col items-center gap-1 py-12 text-center">
-          <span className="text-2xl">&#128176;</span>
+          <Wallet className="mx-auto h-8 w-8 text-text-subtle" strokeWidth={1.75} aria-hidden="true" />
           <p className="text-sm text-text-muted">정산 대기 중인 건이 없습니다.</p>
         </div>
       ) : (

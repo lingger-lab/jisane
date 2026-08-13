@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { MessageCircle } from 'lucide-react'
 import { closeInquiry } from '@/lib/admin/actions'
 
 interface InquiryItem {
@@ -45,7 +46,7 @@ export function InquiryTab({ inquiries }: { inquiries: InquiryItem[] }) {
   if (inquiries.length === 0) {
     return (
       <div className="flex flex-col items-center gap-1 py-12 text-center">
-        <span className="text-2xl">&#128172;</span>
+        <MessageCircle className="mx-auto h-8 w-8 text-text-subtle" strokeWidth={1.75} aria-hidden="true" />
         <p className="text-sm text-text-muted">문의가 없습니다.</p>
       </div>
     )

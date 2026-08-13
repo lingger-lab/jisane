@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { ChevronDown } from 'lucide-react'
 import Link from 'next/link'
 import { PageHero } from '@jisane/ui/page-hero'
 import { FilterRadioGroup } from '@jisane/ui/filter-radio-group'
@@ -216,7 +217,7 @@ export function ServicesView({
                     )}
                   </p>
                 </div>
-                <span aria-hidden="true" className="text-xs text-text-subtle">{expandedProvider === prov.id ? '▼' : '▶'}</span>
+                <ChevronDown aria-hidden="true" className={`h-4 w-4 shrink-0 text-text-subtle transition-transform ${expandedProvider === prov.id ? 'rotate-180' : ''}`} />
               </button>
             ))}
           </div>

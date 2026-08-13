@@ -8,6 +8,7 @@ import { PageHero } from '@jisane/ui/page-hero'
 import { ErrorState } from '@jisane/ui/error-state'
 import { EmptyState } from '@jisane/ui/empty-state'
 import { StatusBadge } from '@jisane/ui/status-badge'
+import { StarRating } from '@jisane/ui/star-rating'
 import { OwnerProfileForm } from './owner-profile-form'
 
 // 목록 행 공통 스타일 — radius·보더·서피스·그림자를 한 곳에서 고정(정렬 일관).
@@ -309,10 +310,7 @@ export default async function OwnerMyPage() {
                       <p className="truncate text-sm font-medium text-text">{review.deal.request.title}</p>
                       <p className={META}>{fmtDate(review.created_at)}</p>
                     </div>
-                    <span className="shrink-0 text-sm font-bold text-warning">
-                      {'★'.repeat(review.rating || 0)}
-                      <span className="text-border-light">{'★'.repeat(5 - (review.rating || 0))}</span>
-                    </span>
+                    <StarRating value={review.rating || 0} className="shrink-0" />
                   </div>
                   {review.comment && <p className="mt-2 text-xs text-text-muted">{review.comment}</p>}
                 </li>

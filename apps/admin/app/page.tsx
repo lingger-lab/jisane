@@ -7,6 +7,7 @@ import { OwlIcon } from '@jisane/ui/icons/owl'
 import { HeroBackdrop } from '@jisane/ui/hero-backdrop'
 import { TextRotator } from '@jisane/ui/text-rotator'
 import { AnimatedCounter } from '@jisane/ui/animated-counter'
+import { ArrowRight } from 'lucide-react'
 import { OWNER_URL, EXPERT_URL } from '@/lib/urls'
 
 export default async function AdminHome() {
@@ -79,7 +80,7 @@ export default async function AdminHome() {
             <div className="flex flex-col gap-4">
               <a
                 href={ownerUrl}
-                className="rounded-2xl border border-border-light bg-card p-6 md:p-8 text-left shadow-sm card-hover card-glow transition-all"
+                className="rounded-2xl border border-border-light bg-card p-6 md:p-8 text-left group shadow-sm card-hover card-glow transition-all"
               >
                 <h2 className="text-2xl md:text-3xl font-bold font-serif text-primary">기업회원</h2>
                 <p className="mt-2 text-sm md:text-base text-text-muted">기업 운영에 필요한 전문 서비스와 시니어 전문가 정보</p>
@@ -92,12 +93,12 @@ export default async function AdminHome() {
                     인기 분야: {topExpertMajors.join(' / ')}
                   </p>
                 )}
-                <div className="mt-4 text-sm font-semibold text-primary">기업회원 바로가기 &rarr;</div>
+                <div className="mt-4 flex items-center text-sm font-semibold text-primary">기업회원 바로가기<ArrowRight className="ml-1 h-4 w-4 transition-transform group-hover:translate-x-1" aria-hidden="true" /></div>
               </a>
 
               <a
                 href={expertUrl}
-                className="rounded-2xl border border-border-light bg-card p-6 md:p-8 text-left shadow-sm card-hover card-glow transition-all"
+                className="rounded-2xl border border-border-light bg-card p-6 md:p-8 text-left group shadow-sm card-hover card-glow transition-all"
               >
                 <h2 className="text-2xl md:text-3xl font-bold font-serif text-accent">시니어지식인회원</h2>
                 <p className="mt-2 text-sm md:text-base text-text-muted">경험과 노하우로 지역 기업과 협력</p>
@@ -110,19 +111,19 @@ export default async function AdminHome() {
                     의뢰 많은 분야: {topRequestMajors.join(' / ')}
                   </p>
                 )}
-                <div className="mt-4 text-sm font-semibold text-accent">시니어지식인회원 바로가기 &rarr;</div>
+                <div className="mt-4 flex items-center text-sm font-semibold text-accent">시니어지식인회원 바로가기<ArrowRight className="ml-1 h-4 w-4 transition-transform group-hover:translate-x-1" aria-hidden="true" /></div>
               </a>
 
               {/* 전문가회원(파트너) — 특수관계 제공기관용 (기업·시니어와 동일 구조) */}
               <Link
                 href="/partner"
-                className="rounded-2xl border border-border-light bg-card p-6 md:p-8 text-left shadow-sm card-hover card-glow transition-all"
+                className="rounded-2xl border border-border-light bg-card p-6 md:p-8 text-left group shadow-sm card-hover card-glow transition-all"
               >
                 <h2 className="text-2xl md:text-3xl font-bold font-serif text-partner">전문가회원(파트너)</h2>
                 <p className="mt-2 text-sm md:text-base text-text-muted">
                   전문서비스를 제공하는 특수관계 회원 — 기업 또는 시니어지식인 — 서비스 등록 · 신청 관리
                 </p>
-                <div className="mt-4 text-sm font-semibold text-partner">전문가회원(파트너) 바로가기 &rarr;</div>
+                <div className="mt-4 flex items-center text-sm font-semibold text-partner">전문가회원(파트너) 바로가기<ArrowRight className="ml-1 h-4 w-4 transition-transform group-hover:translate-x-1" aria-hidden="true" /></div>
               </Link>
             </div>
           </section>
