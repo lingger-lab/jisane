@@ -47,13 +47,15 @@ export function CategoryBrowse({
             href={`${baseHref}?category=${cat.id}`}
             className={`block rounded-xl border border-border-light bg-card p-4 sm:p-3.5 text-center shadow-xs card-hover animate-appear stagger-${Math.min(i + 1, 5)}`}
           >
-            <p className="text-base font-semibold leading-tight break-keep text-text lg:text-sm">{cat.label}</p>
+            {/* 옆 섹션 툴 카드와 동일 텍스트 규격 — 제목 text-base(16) semibold · 보조 text-sm(14).
+                6칸에서도 다운스텝하지 않아 페이지 내 카드 간 위계가 일치한다. */}
+            <p className="text-base font-semibold leading-tight break-keep text-text">{cat.label}</p>
             {cat.count > 0 ? (
-              <p className={`mt-1 text-sm font-medium tabular-nums lg:text-xs ${accentText}`}>
+              <p className={`mt-1 text-sm font-medium tabular-nums ${accentText}`}>
                 {countLabel} {cat.count}{countUnit}
               </p>
             ) : (
-              <p className="mt-1 text-sm text-text-subtle lg:text-xs">모집 중</p>
+              <p className="mt-1 text-sm text-text-subtle">모집 중</p>
             )}
           </Link>
         ))}
