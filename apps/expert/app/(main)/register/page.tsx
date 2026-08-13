@@ -77,14 +77,14 @@ export default function RegisterPage() {
             전문 분야 <span className="text-error">*</span>
             <span className="ml-1 text-xs font-normal text-text-muted">(최대 5개)</span>
           </legend>
-          <div className="flex flex-wrap gap-2">
+          <div className="grid grid-cols-3 gap-2 sm:grid-cols-4">
             {FIELD_LIST.map((chip) => (
               <button
                 key={chip}
                 type="button"
                 onClick={() => toggleField(chip)}
                 aria-pressed={selectedFields.includes(chip)}
-                className={`rounded-full border px-3 py-1.5 text-sm transition-colors ${
+                className={`rounded-lg border px-2 py-2 text-xs text-center leading-tight break-keep transition-colors ${
                   selectedFields.includes(chip)
                     ? 'border-accent bg-accent/10 font-semibold text-accent'
                     : 'border-border-light text-text-muted hover:border-accent/30'

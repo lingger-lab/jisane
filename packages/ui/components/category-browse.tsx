@@ -40,22 +40,20 @@ export function CategoryBrowse({
         </p>
       )}
 
-      <div className="mt-4 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+      <div className="mt-4 grid grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-2 md:gap-3">
         {categoryCounts.map((cat) => (
           <Link
             key={cat.id}
             href={`${baseHref}?category=${cat.id}`}
-            className="block rounded-xl border border-border-light bg-white p-4 shadow-xs card-hover"
+            className="block rounded-xl border border-border-light bg-white p-3 text-center shadow-xs card-hover"
           >
-            <p className="text-sm font-medium text-text">{cat.label}</p>
+            <p className="text-xs font-medium leading-tight break-keep text-text sm:text-sm">{cat.label}</p>
             {cat.count > 0 ? (
-              <p className={`mt-1 text-xs font-medium tabular-nums ${accentText}`}>
+              <p className={`mt-1 text-[11px] font-medium tabular-nums ${accentText}`}>
                 {countLabel} {cat.count}{countUnit}
               </p>
             ) : (
-              <span className="mt-1 inline-block rounded-full bg-surface px-2.5 py-1 text-xs text-text-subtle">
-                모집 중
-              </span>
+              <p className="mt-1 text-[11px] text-text-subtle">모집 중</p>
             )}
           </Link>
         ))}

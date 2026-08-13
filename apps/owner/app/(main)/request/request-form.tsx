@@ -19,14 +19,14 @@ export function RequestForm() {
         <label className="mb-2 block text-sm font-medium text-text">
           어떤 분야의 일을 맡기시나요?
         </label>
-        <div className="flex flex-wrap gap-2">
+        <div className="grid grid-cols-3 gap-2 sm:grid-cols-4">
           {CATEGORY_LABELS.map((chip) => (
             <button
               key={chip}
               type="button"
               onClick={() => setSelectedChip(selectedChip === chip ? null : chip)}
               aria-pressed={selectedChip === chip}
-              className={`rounded-full border px-3 py-1.5 text-sm transition-colors ${
+              className={`rounded-lg border px-2 py-2 text-xs text-center leading-tight break-keep transition-colors ${
                 selectedChip === chip
                   ? 'border-accent bg-accent/10 font-medium text-accent'
                   : 'border-border-light text-text-muted hover:border-accent/30'

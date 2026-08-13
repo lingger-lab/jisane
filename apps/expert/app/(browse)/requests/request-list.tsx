@@ -121,9 +121,9 @@ export function RequestList({
         value={selectedCategory ?? ''}
         onChange={(id) => handleCategoryChange(id || null)}
         label="분류 필터"
-        className="mt-4 flex flex-wrap gap-2"
+        className="mt-4 grid grid-cols-3 gap-2 sm:grid-cols-4 md:grid-cols-6"
         optionClassName={(selected) =>
-          `rounded-lg px-3.5 py-2 text-sm font-medium transition-colors ${
+          `rounded-lg px-2 py-2 text-xs font-medium text-center leading-tight break-keep transition-colors ${
             selected
               ? 'bg-accent text-white'
               : 'bg-surface text-text-muted hover:bg-surface-warm'
