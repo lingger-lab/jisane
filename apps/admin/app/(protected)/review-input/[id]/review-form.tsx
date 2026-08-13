@@ -5,6 +5,7 @@ import { submitReview, generateAiReview } from '@/lib/admin/actions'
 import { SubmitButton } from '@jisane/ui/submit-button'
 import { FilterRadioGroup } from '@jisane/ui/filter-radio-group'
 import { StarRating as StarDisplay } from '@jisane/ui/star-rating'
+import { Star } from 'lucide-react'
 
 type ReviewState = { error?: string; success?: boolean }
 
@@ -37,7 +38,7 @@ function StarRating({
     <FilterRadioGroup
       options={['1', '2', '3', '4', '5'].map((star) => ({
         value: star,
-        label: '★',
+        label: <Star className="h-6 w-6" fill="currentColor" strokeWidth={0} aria-hidden="true" />,
         ariaLabel: `${star}점`,
       }))}
       value={value > 0 ? String(value) : null}
@@ -46,9 +47,9 @@ function StarRating({
       selectOnArrow
       className="flex gap-1"
       optionClassName={(_selected, star) =>
-        // owner review-section.tsx의 별점 토큰 관례와 통일 (감사 UX P3-14)
-        `text-2xl transition-colors ${
-          Number(star) <= value ? 'text-warning' : 'text-border hover:text-warning/50'
+        // 채움=accent(앰버)·빈=border-light — StarRating 표시 컴포넌트와 통일
+        `transition-colors ${
+          Number(star) <= value ? 'text-accent' : 'text-border-light hover:text-accent/40'
         }`
       }
     />

@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { Wallet } from 'lucide-react'
+import { useConfirmDialog } from '@jisane/ui/confirm-dialog'
 import { confirmDepositManual, releaseSettlement } from '@/lib/admin/actions'
 
 interface SettlementItem {
@@ -45,9 +46,10 @@ export function SettlementTab({
 }) {
   const [releasing, setReleasing] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
+  const [ask, confirmDialog] = useConfirmDialog()
 
   async function handleRelease(settlementId: string) {
-    if (!confirm('정산을 실행하시겠습니까? 에스크로가 해제되고 시니어지식인에게 지급됩니다.')) return
+    if (!(await ask({ title: '정산 실행', message: '에스크로가 해제되고 시니어지식인에게 지급됩니다. 실행하시겠습니까?', confirmText: '정산 실행', danger: true }))) return
 
     setReleasing(settlementId)
     setError(null)
@@ -59,7 +61,7 @@ export function SettlementTab({
   }
 
   async function handleConfirmDeposit(settlementId: string, totalPay: number) {
-    if (!confirm(`입금 확인 처리하시겠습니까?\n총 결제액 ${totalPay.toLocaleString('ko-KR')}원이 실제 입금되었는지 계좌를 먼저 확인해주세요.`)) return
+    if (!(await ask({ title: '입금 확인 처리', message: `총 결제액 ${totalPay.toLocaleString('ko-KR')}원이 실제 입금되었는지 계좌를 먼저 확인해주세요.`, confirmText: '입금 확인' }))) return
 
     setReleasing(settlementId)
     setError(null)
@@ -190,6 +192,7 @@ export function SettlementTab({
           ))}
         </div>
       )}
+      {confirmDialog}
     </div>
   )
 }

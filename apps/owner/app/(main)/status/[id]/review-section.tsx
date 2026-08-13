@@ -4,6 +4,8 @@ import { useState } from 'react'
 import { submitReview } from '@/lib/deal/actions'
 import { SubmitButton } from '@jisane/ui/submit-button'
 import { FilterRadioGroup } from '@jisane/ui/filter-radio-group'
+import { StarRating } from '@jisane/ui/star-rating'
+import { Star } from 'lucide-react'
 
 interface ReviewSectionProps {
   dealId: string
@@ -23,16 +25,7 @@ export function ReviewSection({ dealId, existingReview }: ReviewSectionProps) {
     return (
       <div className="rounded-xl border border-border-light p-4 shadow-xs">
         <h3 className="mb-2 text-sm font-semibold text-text">리뷰 완료</h3>
-        <div className="flex items-center gap-1">
-          {[1, 2, 3, 4, 5].map((star) => (
-            <span
-              key={star}
-              className={`text-lg ${star <= (displayRating || 0) ? 'text-warning' : 'text-border'}`}
-            >
-              ★
-            </span>
-          ))}
-        </div>
+        <StarRating value={displayRating || 0} />
         {displayComment && (
           <p className="mt-2 text-sm text-text-muted">{displayComment}</p>
         )}
@@ -65,7 +58,7 @@ export function ReviewSection({ dealId, existingReview }: ReviewSectionProps) {
         <FilterRadioGroup
           options={['1', '2', '3', '4', '5'].map((star) => ({
             value: star,
-            label: '★',
+            label: <Star className="h-6 w-6" fill="currentColor" strokeWidth={0} aria-hidden="true" />,
             ariaLabel: `${star}점`,
           }))}
           value={rating > 0 ? String(rating) : null}
@@ -74,8 +67,8 @@ export function ReviewSection({ dealId, existingReview }: ReviewSectionProps) {
           selectOnArrow
           className="flex items-center gap-1"
           optionClassName={(_selected, star) =>
-            `text-2xl transition-colors ${
-              Number(star) <= rating ? 'text-warning' : 'text-border hover:text-warning/50'
+            `transition-colors ${
+              Number(star) <= rating ? 'text-accent' : 'text-border-light hover:text-accent/40'
             }`
           }
         />

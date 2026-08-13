@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { useConfirmDialog } from '@jisane/ui/confirm-dialog'
 import { updateProviderStatus, updatePackageStatus } from '@/lib/admin/actions'
 import { PROVIDER_KIND_LABELS } from '@jisane/shared/labels'
 import { PROVIDER_STATUS_BADGE_CLASSES } from '@jisane/shared/status-badges'
@@ -55,9 +56,11 @@ export function PartnerTab({
 }) {
   const [busy, setBusy] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
+  const [ask, confirmDialog] = useConfirmDialog()
 
   async function handleProviderStatus(id: string, status: 'active' | 'rejected' | 'suspended', confirmMsg: string) {
-    if (!confirm(confirmMsg)) return
+    const title = status === 'active' ? '전문가회원 승인' : status === 'rejected' ? '신청 반려' : '활동 중지'
+    if (!(await ask({ title, message: confirmMsg, danger: status !== 'active' }))) return
     setBusy(id)
     setError(null)
     const result = await updateProviderStatus(id, status)
@@ -66,7 +69,7 @@ export function PartnerTab({
   }
 
   async function handlePackageStatus(id: string, status: 'published' | 'archived', confirmMsg: string) {
-    if (!confirm(confirmMsg)) return
+    if (!(await ask({ title: status === 'published' ? '서비스 게시' : '서비스 보관', message: confirmMsg, danger: status === 'archived' }))) return
     setBusy(id)
     setError(null)
     const result = await updatePackageStatus(id, status)
@@ -231,6 +234,7 @@ export function PartnerTab({
           </div>
         )}
       </section>
+      {confirmDialog}
     </div>
   )
 }
