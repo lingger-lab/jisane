@@ -3,6 +3,7 @@
 import { useRouter } from 'next/navigation'
 import { SearchBox } from '@jisane/ui/search-box'
 import { ErrorState } from '@jisane/ui/error-state'
+import { FilterRadioGroup } from '@jisane/ui/filter-radio-group'
 import { ExpertCard } from './expert-card'
 
 interface ExpertItem {
@@ -65,34 +66,24 @@ export function ExpertList({ experts, categoryTree, selectedCategory, query, loa
         />
       </div>
 
-      {/* 대분류 탭 */}
-      <div className="mt-4 flex flex-wrap gap-2">
-        <button
-          type="button"
-          onClick={() => handleCategoryChange(null)}
-          className={`rounded-lg px-3.5 py-2 text-sm font-medium transition-colors ${
-            !selectedCategory
+      {/* 분류 필터 (평면 12) — expert 의뢰 탐색과 동일 패턴(FilterRadioGroup) */}
+      <FilterRadioGroup
+        options={[
+          { value: '', label: '전체' },
+          ...categoryTree.map((cat) => ({ value: cat.id, label: cat.label })),
+        ]}
+        value={selectedCategory ?? ''}
+        onChange={(id) => handleCategoryChange(id || null)}
+        label="분류 필터"
+        className="mt-4 flex flex-wrap gap-2"
+        optionClassName={(selected) =>
+          `rounded-lg px-3.5 py-2 text-sm font-medium transition-colors ${
+            selected
               ? 'bg-primary text-white'
               : 'bg-surface text-text-muted hover:bg-surface-warm'
-          }`}
-        >
-          전체
-        </button>
-        {categoryTree.map((cat) => (
-          <button
-            key={cat.id}
-            type="button"
-            onClick={() => handleCategoryChange(cat.id)}
-            className={`rounded-lg px-3.5 py-2 text-sm font-medium transition-colors ${
-              cat.id === selectedCategory
-                ? 'bg-primary text-white'
-                : 'bg-surface text-text-muted hover:bg-surface-warm'
-            }`}
-          >
-            {cat.label}
-          </button>
-        ))}
-      </div>
+          }`
+        }
+      />
 
       {/* 시니어지식인 리스트 — 조회 실패(에러)와 검색 결과 없음(빈)을 구분한다 */}
       <div className="mt-4 flex flex-col gap-3">

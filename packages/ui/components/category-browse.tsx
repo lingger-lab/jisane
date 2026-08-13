@@ -33,7 +33,7 @@ export function CategoryBrowse({
 
   return (
     <section className="w-full">
-      <h2 className="text-lg md:text-xl font-bold text-text">{title}</h2>
+      <h2 className="text-lg md:text-xl font-bold font-serif text-text">{title}</h2>
       {newRequestsThisMonth > 0 && (
         <p className="mt-1 text-sm text-text-muted">
           이번 달 새 의뢰 <span className={`font-semibold ${accentText}`}>{newRequestsThisMonth}건</span>

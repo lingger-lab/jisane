@@ -87,7 +87,7 @@ export default async function ExpertHome() {
           <header className="mb-5 flex items-start gap-3">
             <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-accent font-serif text-base font-bold text-white">1</span>
             <div>
-              <h2 className="text-xl md:text-2xl font-bold text-text leading-tight">기업 의뢰 정보</h2>
+              <h2 className="text-xl md:text-2xl font-bold font-serif text-text leading-tight">기업 의뢰 정보</h2>
               <p className="mt-0.5 text-sm text-text-muted">지금 열린 기업의 협력 요청</p>
             </div>
           </header>
@@ -110,7 +110,7 @@ export default async function ExpertHome() {
             <header className="mb-5 flex items-start gap-3">
               <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-primary font-serif text-base font-bold text-white">2</span>
               <div>
-                <h2 className="text-xl md:text-2xl font-bold text-text leading-tight">작업에 필요한 전문 도구</h2>
+                <h2 className="text-xl md:text-2xl font-bold font-serif text-text leading-tight">작업에 필요한 전문 도구</h2>
                 <p className="mt-0.5 text-sm text-text-muted">시니어 작업을 돕는 S/W 도구</p>
               </div>
             </header>
@@ -146,7 +146,7 @@ export default async function ExpertHome() {
           <header className="mb-5 flex items-start gap-3">
             <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-accent font-serif text-base font-bold text-white">3</span>
             <div>
-              <h2 className="text-xl md:text-2xl font-bold text-text leading-tight">지사네가 제공하는 시니어 전문 서비스</h2>
+              <h2 className="text-xl md:text-2xl font-bold font-serif text-text leading-tight">지사네가 제공하는 시니어 전문 서비스</h2>
               <p className="mt-0.5 text-sm text-text-muted">역량 강화 · 교육 프로그램</p>
             </div>
           </header>

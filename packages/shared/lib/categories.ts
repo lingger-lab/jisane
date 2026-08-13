@@ -50,26 +50,3 @@ export interface CategoryRow {
   slug: string
   sort_order: number
 }
-
-/** category_id로부터 "대분류 > 중분류" 라벨 생성 */
-export function getCategoryBreadcrumb(
-  rows: CategoryRow[],
-  categoryId: string
-): string {
-  const map = new Map(rows.map((r) => [r.id, r]))
-  const cat = map.get(categoryId)
-  if (!cat) return ''
-
-  if (cat.depth === 0) return cat.label
-  if (cat.depth === 1) {
-    const parent = cat.parent_id ? map.get(cat.parent_id) : null
-    return parent ? `${parent.label} > ${cat.label}` : cat.label
-  }
-  // depth === 2
-  const mid = cat.parent_id ? map.get(cat.parent_id) : null
-  if (!mid) return cat.label
-  const major = mid.parent_id ? map.get(mid.parent_id) : null
-  return major
-    ? `${major.label} > ${mid.label} > ${cat.label}`
-    : `${mid.label} > ${cat.label}`
-}

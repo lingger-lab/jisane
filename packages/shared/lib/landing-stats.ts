@@ -19,8 +19,6 @@ export interface CategoryCount {
 export interface OwnerLandingStats {
   totalExperts: number
   totalMajorFields: number
-  totalCategories: number
-  totalServices: number
   totalCompletedDeals: number
   avgSatisfaction: number | null
   newRequestsThisMonth: number
@@ -96,8 +94,6 @@ export async function fetchOwnerLandingStats(): Promise<OwnerLandingStats> {
 
   // depth별 카운트 (캐싱된 카테고리 데이터 재활용)
   const totalMajorFields = allCats.filter((d) => d.depth === 0).length
-  const totalCategories = allCats.filter((d) => d.depth === 1).length
-  const totalServices = allCats.filter((d) => d.depth === 2).length
 
   // 만족도 평균
   const ratings = satisfactionRes.data ?? []
@@ -120,8 +116,6 @@ export async function fetchOwnerLandingStats(): Promise<OwnerLandingStats> {
   const result: OwnerLandingStats = {
     totalExperts,
     totalMajorFields,
-    totalCategories,
-    totalServices,
     totalCompletedDeals,
     avgSatisfaction,
     newRequestsThisMonth,

@@ -5,7 +5,7 @@ import { updateExpertProfile } from '@/lib/expert/actions'
 import { SubmitButton } from '@jisane/ui/submit-button'
 import { Input } from '@jisane/ui/input'
 import { Select } from '@jisane/ui/select'
-// 대분류별 중분류 그룹 (category 테이블과 동기) — 편집기와 공유하는 단일 소스
+// 전문 분야 = 평면 12분류 (category 테이블과 동기) — 편집기와 공유하는 단일 소스
 import { FIELD_LIST } from '@/lib/fields'
 
 const CAREER_OPTIONS = [

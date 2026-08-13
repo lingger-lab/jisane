@@ -70,12 +70,11 @@ export default async function AdminHome() {
                 href={ownerUrl}
                 className="rounded-2xl border border-border-light bg-white p-6 md:p-8 text-left shadow-sm card-hover transition-all"
               >
-                <h2 className="text-2xl md:text-3xl font-bold text-primary">기업회원</h2>
+                <h2 className="text-2xl md:text-3xl font-bold font-serif text-primary">기업회원</h2>
                 <p className="mt-2 text-sm md:text-base text-text-muted">기업 운영에 필요한 전문 서비스와 시니어 전문가 정보</p>
                 <div className="mt-4 flex flex-wrap gap-2">
                   <span className="rounded-full bg-primary/10 px-3 py-1.5 text-xs font-medium text-primary">전문 서비스</span>
                   <span className="rounded-full bg-primary/10 px-3 py-1.5 text-xs font-medium text-primary">전문가 정보</span>
-                  <span className="rounded-full bg-primary/10 px-3 py-1.5 text-xs font-medium text-primary">매니저 지원</span>
                 </div>
                 {topExpertMajors.length > 0 && (
                   <p className="mt-3 text-xs text-text-subtle">
@@ -89,12 +88,11 @@ export default async function AdminHome() {
                 href={expertUrl}
                 className="rounded-2xl border border-border-light bg-white p-6 md:p-8 text-left shadow-sm card-hover transition-all"
               >
-                <h2 className="text-2xl md:text-3xl font-bold text-accent">시니어지식인회원</h2>
+                <h2 className="text-2xl md:text-3xl font-bold font-serif text-accent">시니어지식인회원</h2>
                 <p className="mt-2 text-sm md:text-base text-text-muted">경험과 노하우로 지역 기업과 협력</p>
                 <div className="mt-4 flex flex-wrap gap-2">
                   <span className="rounded-full bg-accent/10 px-3 py-1.5 text-xs font-medium text-accent">열린 의뢰 {stats.expert.totalOpenRequests}건</span>
                   <span className="rounded-full bg-accent/10 px-3 py-1.5 text-xs font-medium text-accent">전문 도구</span>
-                  <span className="rounded-full bg-accent/10 px-3 py-1.5 text-xs font-medium text-accent">교육 지원</span>
                 </div>
                 {topRequestMajors.length > 0 && (
                   <p className="mt-3 text-xs text-text-subtle">
@@ -104,18 +102,16 @@ export default async function AdminHome() {
                 <div className="mt-4 text-sm font-semibold text-accent">시니어지식인회원 바로가기 &rarr;</div>
               </a>
 
-              {/* 전문가회원(파트너) — 특수관계 제공기관용 슬림 카드 */}
+              {/* 전문가회원(파트너) — 특수관계 제공기관용 (기업·시니어와 동일 구조) */}
               <Link
                 href="/partner"
-                className="flex items-center justify-between rounded-2xl border border-border-light bg-white p-4 md:p-5 shadow-sm card-hover transition-all"
+                className="rounded-2xl border border-border-light bg-white p-6 md:p-8 text-left shadow-sm card-hover transition-all"
               >
-                <div className="min-w-0">
-                  <p className="text-base md:text-lg font-bold text-info">전문가회원(파트너)</p>
-                  <p className="mt-1 text-xs md:text-sm text-text-muted">
-                    전문서비스를 제공하는 특수관계 회원 — 기업 또는 시니어지식인 — 서비스 등록 · 신청 관리
-                  </p>
-                </div>
-                <span className="text-sm font-semibold text-info shrink-0">&rarr;</span>
+                <h2 className="text-2xl md:text-3xl font-bold font-serif text-info">전문가회원(파트너)</h2>
+                <p className="mt-2 text-sm md:text-base text-text-muted">
+                  전문서비스를 제공하는 특수관계 회원 — 기업 또는 시니어지식인 — 서비스 등록 · 신청 관리
+                </p>
+                <div className="mt-4 text-sm font-semibold text-info">전문가회원(파트너) 바로가기 &rarr;</div>
               </Link>
             </div>
           </section>

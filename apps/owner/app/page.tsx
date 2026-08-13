@@ -86,6 +86,11 @@ export default async function OwnerHome() {
   const adminUrl = ADMIN_URL
   const expertUrl = EXPERT_URL
 
+  // 랜딩 ①은 featured(추천) 서비스만 노출 — 나머지는 "전체 전문 서비스 둘러보기"(/services)에서.
+  // featured 0건이면 섹션이 비지 않게 상위 3개로 폴백.
+  const featuredServices = services.filter((s) => s.featured)
+  const landingServices = featuredServices.length > 0 ? featuredServices : services.slice(0, 3)
+
   return (
     <div className="flex flex-1 flex-col items-center">
       {/* [1] 히어로 — 브랜드 딥그린 다크 밴드 */}
@@ -109,12 +114,12 @@ export default async function OwnerHome() {
           <header className="mb-5 flex items-start gap-3">
             <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-primary font-serif text-base font-bold text-white">1</span>
             <div>
-              <h2 className="text-xl md:text-2xl font-bold text-text leading-tight">기업 운영 전문 서비스</h2>
+              <h2 className="text-xl md:text-2xl font-bold font-serif text-text leading-tight">기업 운영 전문 서비스</h2>
               <p className="mt-0.5 text-sm text-text-muted">기업 운영에 필요한 전문 서비스 신청</p>
             </div>
           </header>
           <div className="flex flex-col gap-3">
-            {services.map((pkg) => (
+            {landingServices.map((pkg) => (
               <Link
                 key={pkg.slug}
                 href={`/services/${pkg.slug}`}
@@ -148,7 +153,7 @@ export default async function OwnerHome() {
             <header className="mb-5 flex items-start gap-3">
               <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-accent font-serif text-base font-bold text-white">2</span>
               <div>
-                <h2 className="text-xl md:text-2xl font-bold text-text leading-tight">시니어 전문가 정보</h2>
+                <h2 className="text-xl md:text-2xl font-bold font-serif text-text leading-tight">시니어 전문가 정보</h2>
                 <p className="mt-0.5 text-sm text-text-muted">경험과 노하우를 갖춘 분야별 전문가</p>
               </div>
             </header>
@@ -171,7 +176,7 @@ export default async function OwnerHome() {
           <header className="mb-5 flex items-start gap-3">
             <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-primary font-serif text-base font-bold text-white">3</span>
             <div>
-              <h2 className="text-xl md:text-2xl font-bold text-text leading-tight">지사네가 제공하는 기업 전문 서비스</h2>
+              <h2 className="text-xl md:text-2xl font-bold font-serif text-text leading-tight">지사네가 제공하는 기업 전문 서비스</h2>
               <p className="mt-0.5 text-sm text-text-muted">지역 기업 성장을 위한 5대 지원</p>
             </div>
           </header>
