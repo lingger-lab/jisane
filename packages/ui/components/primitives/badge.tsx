@@ -12,7 +12,9 @@ const badgeVariants = cva(
     variants: {
       variant: {
         neutral: 'bg-surface text-text-muted',
-        primary: 'bg-primary-50 text-primary-800',
+        primary: 'bg-primary/10 text-primary',
+        accent: 'bg-accent/10 text-accent',
+        partner: 'bg-partner/10 text-partner',
         success: 'bg-success-light text-success',
         warning: 'bg-warning-light text-warning',
         error: 'bg-error-light text-error',

@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { ChevronDown } from 'lucide-react'
 import Link from 'next/link'
+import { Badge } from '@jisane/ui/badge'
 import { PageHero } from '@jisane/ui/page-hero'
 import { FilterRadioGroup } from '@jisane/ui/filter-radio-group'
 import type { ServicePackage, ProviderInfo } from '@jisane/shared/service-catalog'
@@ -33,15 +34,9 @@ function PackageCard({ pkg, className = '' }: { pkg: ServicePackage; className?:
         <div className="min-w-0 flex-1">
           <div className="flex flex-wrap items-center gap-2">
             <h3 className="font-medium text-text">{pkg.name}</h3>
-            <span className="rounded-full bg-surface px-2 py-0.5 text-xs text-text-muted">
-              {CATEGORY_LABELS[pkg.category] || pkg.category}
-            </span>
-            {pkg.featured && (
-              <span className="rounded-full bg-primary/10 px-2.5 py-1 text-xs font-medium text-primary">추천</span>
-            )}
-            {pkg.isFree && (
-              <span className="rounded-full bg-primary/10 px-2 py-0.5 text-xs font-bold text-primary">무료</span>
-            )}
+            <Badge variant="neutral">{CATEGORY_LABELS[pkg.category] || pkg.category}</Badge>
+            {pkg.featured && <Badge variant="accent">추천</Badge>}
+            {pkg.isFree && <Badge variant="primary">무료</Badge>}
           </div>
           <p className="mt-1 text-xs text-text-muted leading-relaxed">{pkg.description}</p>
         </div>

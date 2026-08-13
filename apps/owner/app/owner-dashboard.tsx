@@ -91,7 +91,7 @@ export async function OwnerDashboard({
             <Link href="/status" className="text-xs font-medium text-primary hover:underline">전체 보기</Link>
           </div>
           <div className="grid grid-cols-3 gap-3">
-            <StatCard href="/status" countTo={progressRequests} label="진행 의뢰" />
+            <StatCard href="/status" countTo={progressRequests} label="진행 의뢰" emphasis />
             <StatCard href="/status" countTo={progressDeals} label="진행 거래" />
             <StatCard href="/status" countTo={progressOrders} label="진행 서비스" />
           </div>

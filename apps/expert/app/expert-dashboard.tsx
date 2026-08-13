@@ -126,7 +126,7 @@ export async function ExpertDashboard({
 
         {/* 요약 카드 — 조회 실패 시 가짜 0 대신 미확인 표시 */}
         <div className="mb-6 grid grid-cols-2 gap-3">
-          <StatCard countTo={matchingsError ? undefined : proposedCount} value={matchingsError ? '—' : undefined} label="새 매칭 제안" accent="accent" />
+          <StatCard countTo={matchingsError ? undefined : proposedCount} value={matchingsError ? '—' : undefined} label="새 매칭 제안" accent="accent" emphasis />
           <StatCard href="/work" countTo={workingCountError ? undefined : (workingCount || 0)} value={workingCountError ? '—' : undefined} label="진행 중 작업" accent="accent" />
         </div>
 
