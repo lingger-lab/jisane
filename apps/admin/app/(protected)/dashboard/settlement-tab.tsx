@@ -171,7 +171,7 @@ export function SettlementTab({
                   type="button"
                   onClick={() => handleConfirmDeposit(s.id, s.deal.total_pay)}
                   disabled={releasing === s.id}
-                  className="mt-3 w-full rounded-lg bg-info py-2 text-sm font-medium text-white hover:bg-info/90 disabled:opacity-50"
+                  className="mt-3 w-full rounded-lg bg-info-solid py-2 text-sm font-medium text-white hover:bg-info-solid/90 disabled:opacity-50"
                 >
                   {releasing === s.id ? '처리 중...' : `입금 확인 (${s.deal.total_pay.toLocaleString('ko-KR')}원)`}
                 </button>
@@ -180,7 +180,7 @@ export function SettlementTab({
                   type="button"
                   onClick={() => handleRelease(s.id)}
                   disabled={releasing === s.id}
-                  className="mt-3 w-full rounded-lg bg-success py-2 text-sm font-medium text-white hover:bg-success/90 disabled:opacity-50"
+                  className="mt-3 w-full rounded-lg bg-success-solid py-2 text-sm font-medium text-white hover:bg-success-solid/90 disabled:opacity-50"
                 >
                   {releasing === s.id ? '처리 중...' : '정산 실행'}
                 </button>

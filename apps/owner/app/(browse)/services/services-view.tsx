@@ -39,7 +39,7 @@ function PackageCard({ pkg }: { pkg: ServicePackage }) {
               <span className="rounded-full bg-primary/10 px-2.5 py-1 text-xs font-medium text-primary">추천</span>
             )}
             {pkg.isFree && (
-              <span className="rounded-full bg-success-light px-2 py-0.5 text-xs font-bold text-success">무료</span>
+              <span className="rounded-full bg-primary/10 px-2 py-0.5 text-xs font-bold text-primary">무료</span>
             )}
           </div>
           <p className="mt-1 text-xs text-text-muted leading-relaxed">{pkg.description}</p>
@@ -210,7 +210,7 @@ export function ServicesView({
                   <p className="mt-0.5 text-xs text-text-muted">
                     서비스 {prov.packageCount}개
                     {prov.freeCount > 0 && (
-                      <span className="ml-1.5 rounded-full bg-success-light px-1.5 py-0.5 text-xs font-medium text-success">
+                      <span className="ml-1.5 rounded-full bg-primary/10 px-1.5 py-0.5 text-xs font-medium text-primary">
                         무료 {prov.freeCount}
                       </span>
                     )}

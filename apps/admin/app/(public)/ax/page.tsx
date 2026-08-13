@@ -28,19 +28,16 @@ const LADDER = [
     level: 'Level 1',
     title: 'AI 챗봇',
     desc: '고객 문의 응대, FAQ 자동 답변, 내부 직원 질의응답 등 대화형 AI를 도입합니다.',
-    border: 'border-accent/30',
   },
   {
     level: 'Level 2',
     title: '업무 자동화',
     desc: '문서 생성, 데이터 정리, 보고서 작성 등 반복 업무를 AI 워크플로우로 전환합니다.',
-    border: 'border-accent/60',
   },
   {
     level: 'Level 3',
     title: 'AI Agent',
     desc: '스스로 판단하고 실행하는 자율 에이전트. 복잡한 의사결정과 작업을 AI가 수행합니다.',
-    border: 'border-accent',
   },
 ] as const
 
@@ -106,7 +103,7 @@ export default function AXPage() {
           {LADDER.map((step) => (
             <div
               key={step.level}
-              className={`rounded-xl border-l-4 ${step.border} border border-border-light bg-surface-warm p-5 shadow-sm`}
+              className="rounded-xl border border-border-light bg-surface-warm p-5 shadow-sm"
             >
               <p className="text-xs font-bold text-accent tracking-wide">{step.level}</p>
               <p className="mt-1 font-semibold text-text">{step.title}</p>

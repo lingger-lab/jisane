@@ -52,7 +52,7 @@ export function OrdersList({ items }: { items: OrderItem[] }) {
       ) : (
         <div className="flex flex-col gap-3">
           {filtered.map((o) => (
-            <div key={o.id} className="rounded-xl border border-border-light bg-white p-4 shadow-xs">
+            <div key={o.id} className="rounded-xl border border-border-light bg-card p-4 shadow-xs">
               <div className="flex items-start justify-between gap-3">
                 <div className="min-w-0 flex-1">
                   <p className="text-sm font-medium text-text">{o.packageName}</p>

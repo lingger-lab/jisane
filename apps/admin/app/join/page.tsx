@@ -62,10 +62,10 @@ const ROLES = [
   },
 ] as const
 
-const ACCENT: Record<string, { bar: string; text: string; chip: string }> = {
-  primary: { bar: 'border-t-primary', text: 'text-primary', chip: 'bg-primary/10 text-primary' },
-  accent: { bar: 'border-t-accent', text: 'text-accent', chip: 'bg-accent/10 text-accent' },
-  info: { bar: 'border-t-info', text: 'text-info', chip: 'bg-info/10 text-info' },
+const ACCENT: Record<string, { text: string; chip: string }> = {
+  primary: { text: 'text-primary', chip: 'bg-primary/10 text-primary' },
+  accent: { text: 'text-accent', chip: 'bg-accent/10 text-accent' },
+  info: { text: 'text-info', chip: 'bg-info/10 text-info' },
 }
 
 export default async function JoinPage() {
@@ -98,7 +98,7 @@ export default async function JoinPage() {
           return (
             <div
               key={role.key}
-              className={`flex flex-col rounded-2xl border border-border-light border-t-4 ${c.bar} bg-white p-5 shadow-sm`}
+              className="flex flex-col rounded-2xl border border-border-light bg-card p-5 shadow-sm"
             >
               <h2 className={`text-lg font-bold ${c.text}`}>{role.name}</h2>
               <p className="mt-1 text-xs text-text-muted leading-relaxed">{role.tagline}</p>

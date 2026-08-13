@@ -154,7 +154,7 @@ export async function OwnerDashboard({
             <p className="text-base font-bold">일 맡기기</p>
             <p className="mt-1 text-xs text-white/80">새 의뢰를 등록합니다</p>
           </Link>
-          <Link href="/services" className="rounded-2xl border border-border-light bg-white p-5 shadow-sm transition-colors hover:border-primary/30">
+          <Link href="/services" className="rounded-2xl border border-border-light bg-card p-5 shadow-sm transition-colors hover:border-primary/30">
             <p className="text-base font-bold text-text">전문서비스</p>
             <p className="mt-1 text-xs text-text-muted">S/W·P/G·컨설팅 둘러보기</p>
           </Link>

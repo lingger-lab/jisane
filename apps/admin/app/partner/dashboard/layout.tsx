@@ -44,7 +44,7 @@ export default async function PartnerDashboardLayout({
           <Link
             key={t.href}
             href={t.href}
-            className="shrink-0 rounded-md px-4 py-2 text-sm font-medium text-text-muted transition-colors hover:bg-white hover:text-text"
+            className="shrink-0 rounded-md px-4 py-2 text-sm font-medium text-text-muted transition-colors hover:bg-card hover:text-text"
           >
             {t.label}
           </Link>

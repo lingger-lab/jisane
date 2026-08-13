@@ -69,7 +69,7 @@ export function SuccessToast() {
       aria-live="polite"
       className="pointer-events-none fixed top-16 left-1/2 z-50 -translate-x-1/2 animate-fade-in"
     >
-      <div className="pointer-events-auto flex items-center gap-3 rounded-xl bg-success px-5 py-3 text-sm font-medium text-white shadow-lg">
+      <div className="pointer-events-auto flex items-center gap-3 rounded-xl bg-success-solid px-5 py-3 text-sm font-medium text-white shadow-lg">
         <span>{toast.text}</span>
         <button
           type="button"
@@ -146,7 +146,7 @@ export function ErrorToast() {
       aria-live="assertive"
       className="pointer-events-none fixed top-16 left-1/2 z-50 -translate-x-1/2 animate-fade-in"
     >
-      <div className="pointer-events-auto flex items-center gap-3 rounded-xl bg-error px-5 py-3 text-sm font-medium text-white shadow-lg">
+      <div className="pointer-events-auto flex items-center gap-3 rounded-xl bg-error-solid px-5 py-3 text-sm font-medium text-white shadow-lg">
         <span>{toast.text}</span>
         <button
           type="button"

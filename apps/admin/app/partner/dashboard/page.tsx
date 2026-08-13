@@ -44,15 +44,15 @@ export default async function PartnerDashboardHome() {
     <div className="flex flex-col gap-6 animate-fade-in">
       {/* 요약 카드 */}
       <div className="grid grid-cols-3 gap-3">
-        <Link href="/partner/dashboard/orders" className="rounded-xl border border-border-light bg-white p-4 text-center shadow-xs transition-colors hover:border-info/30">
+        <Link href="/partner/dashboard/orders" className="rounded-xl border border-border-light bg-card p-4 text-center shadow-xs transition-colors hover:border-info/30">
           <p className="text-2xl font-bold text-info">{newOrderCount}</p>
           <p className="mt-1 text-xs text-text-muted">신규 신청</p>
         </Link>
-        <Link href="/partner/dashboard/services" className="rounded-xl border border-border-light bg-white p-4 text-center shadow-xs transition-colors hover:border-info/30">
+        <Link href="/partner/dashboard/services" className="rounded-xl border border-border-light bg-card p-4 text-center shadow-xs transition-colors hover:border-info/30">
           <p className="text-2xl font-bold text-text">{publishedCount}</p>
           <p className="mt-1 text-xs text-text-muted">공개 서비스</p>
         </Link>
-        <Link href="/partner/dashboard/services" className="rounded-xl border border-border-light bg-white p-4 text-center shadow-xs transition-colors hover:border-info/30">
+        <Link href="/partner/dashboard/services" className="rounded-xl border border-border-light bg-card p-4 text-center shadow-xs transition-colors hover:border-info/30">
           <p className="text-2xl font-bold text-text-muted">{draftCount}</p>
           <p className="mt-1 text-xs text-text-muted">검수 대기</p>
         </Link>
@@ -65,14 +65,14 @@ export default async function PartnerDashboardHome() {
           <Link href="/partner/dashboard/orders" className="text-xs text-info hover:underline">전체 보기</Link>
         </div>
         {recentOrders.length === 0 ? (
-          <div className="rounded-xl border border-border-light bg-white p-8 text-center">
+          <div className="rounded-xl border border-border-light bg-card p-8 text-center">
             <p className="text-sm text-text-muted">아직 신청이 없습니다.</p>
             <p className="mt-1 text-xs text-text-subtle">서비스가 공개되면 신청이 이곳에 표시됩니다.</p>
           </div>
         ) : (
           <div className="flex flex-col gap-2">
             {recentOrders.map((o) => (
-              <div key={o.id} className="flex items-center justify-between rounded-xl border border-border-light bg-white p-3">
+              <div key={o.id} className="flex items-center justify-between rounded-xl border border-border-light bg-card p-3">
                 <div>
                   <p className="text-sm font-medium text-text">{o.package_name}</p>
                   <p className="text-xs text-text-subtle">

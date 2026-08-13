@@ -157,7 +157,7 @@ export default function GuaranteePage() {
         </section>
 
         {/* 원칙 요약 */}
-        <section className="rounded-xl border border-border-light bg-white p-4 shadow-xs">
+        <section className="rounded-xl border border-border-light bg-card p-4 shadow-xs">
           <p className="text-sm font-semibold text-text text-center">
             범위는 착수 전에 못 박고, 복구는 항의 전에 먼저 움직인다.
           </p>

@@ -116,7 +116,7 @@ export default async function ExpertHome() {
             </header>
             <div className="flex flex-col gap-3">
               {EXPERT_TOOLS.map((tool) => (
-                <div key={tool.name} className="flex items-start gap-3 rounded-xl border border-border-light bg-white p-4 shadow-xs">
+                <div key={tool.name} className="flex items-start gap-3 rounded-xl border border-border-light bg-card p-4 shadow-xs">
                   <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-accent/10 text-accent [&>svg]:h-[18px] [&>svg]:w-[18px]">
                     {tool.icon}
                   </span>
@@ -155,7 +155,7 @@ export default async function ExpertHome() {
               <Link
                 key={pkg.slug}
                 href={`/education/${pkg.slug}`}
-                className="rounded-xl border border-border-light bg-white p-4 md:p-5 shadow-xs transition-colors hover:border-accent/30"
+                className="rounded-xl border border-border-light bg-card p-4 md:p-5 shadow-xs transition-colors hover:border-accent/30"
               >
                 <div className="flex items-start justify-between gap-2">
                   <div className="min-w-0 flex-1">

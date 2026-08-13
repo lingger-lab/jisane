@@ -80,7 +80,7 @@ export function ReviewDisputeButton({ reviewId, hasOpenDispute }: ReviewDisputeB
               type="button"
               onClick={handleSubmit}
               disabled={submitting || !reason.trim()}
-              className="rounded-lg bg-error px-4 py-2 text-sm font-medium text-white disabled:opacity-50"
+              className="rounded-lg bg-error-solid px-4 py-2 text-sm font-medium text-white disabled:opacity-50"
             >
               {submitting ? '접수 중...' : '이의제기 접수'}
             </button>

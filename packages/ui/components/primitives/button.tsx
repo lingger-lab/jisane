@@ -18,7 +18,7 @@ const buttonVariants = cva(
         primary: 'bg-primary text-white hover:bg-primary-600 active:bg-primary-800',
         outline: 'border border-border bg-surface-warm text-text hover:bg-surface',
         ghost: 'text-text hover:bg-surface',
-        danger: 'bg-error text-white hover:brightness-95 active:brightness-90',
+        danger: 'bg-error-solid text-white hover:brightness-95 active:brightness-90',
       },
       size: {
         sm: 'h-9 px-3',

@@ -149,7 +149,7 @@ export function PackageForm({ defaults = {} }: { defaults?: PackageFormDefaults 
       {state.error && <p className="text-sm text-error" role="alert" aria-live="polite">{state.error}</p>}
 
       <div className="flex items-center gap-3">
-        <SubmitButton className="rounded-xl bg-info px-6 py-3 font-semibold text-white shadow-sm transition-all hover:bg-info/90 hover:shadow-md disabled:opacity-50">
+        <SubmitButton className="rounded-xl bg-info-solid px-6 py-3 font-semibold text-white shadow-sm transition-all hover:bg-info-solid/90 hover:shadow-md disabled:opacity-50">
           {isEdit ? '저장하기' : '등록하기 (검수 후 공개)'}
         </SubmitButton>
       </div>

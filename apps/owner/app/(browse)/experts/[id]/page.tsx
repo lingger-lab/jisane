@@ -114,7 +114,7 @@ export default async function ExpertDetailPage(props: PageProps) {
       />
       <div className="container-app w-full px-4 md:px-6 py-6 md:py-8">
         {/* 시니어지식인 프로필 */}
-        <section className="rounded-2xl border border-border-light bg-white p-5 md:p-6 lg:p-8 shadow-xs">
+        <section className="rounded-2xl border border-border-light bg-card p-5 md:p-6 lg:p-8 shadow-xs">
           <div className="flex items-center justify-end gap-3">
             <span
               className={`shrink-0 rounded-full px-2.5 py-1 text-xs font-semibold ${
@@ -172,7 +172,7 @@ export default async function ExpertDetailPage(props: PageProps) {
                 <Link
                   key={cat.id}
                   href={`/experts?category=${cat.id}`}
-                  className="rounded-lg border border-border-light bg-white px-3 py-1.5 text-xs text-text-muted hover:border-primary/30 hover:text-primary transition-colors"
+                  className="rounded-lg border border-border-light bg-card px-3 py-1.5 text-xs text-text-muted hover:border-primary/30 hover:text-primary transition-colors"
                 >
                   <span className="text-text-subtle">{cat.parentLabel}</span>
                   {cat.parentLabel && ' · '}

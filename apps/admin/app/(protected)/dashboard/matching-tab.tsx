@@ -206,7 +206,7 @@ export function MatchingTab({
                     type="button"
                     onClick={() => handleGenerateAi(req.id)}
                     disabled={generating}
-                    className="rounded-lg bg-info px-4 py-2 text-xs font-medium text-white hover:bg-info/90 disabled:opacity-50"
+                    className="rounded-lg bg-info-solid px-4 py-2 text-xs font-medium text-white hover:bg-info-solid/90 disabled:opacity-50"
                   >
                     {generating ? 'AI 분석 중...' : 'AI 후보 추천'}
                   </button>
@@ -282,7 +282,7 @@ export function MatchingTab({
                             type="button"
                             onClick={() => handleAssign(req.id, c.expert_id)}
                             disabled={assigningExpertId !== null}
-                            className="rounded-lg bg-success px-3 py-1 text-xs font-medium text-white hover:bg-success/90 disabled:opacity-50"
+                            className="rounded-lg bg-success-solid px-3 py-1 text-xs font-medium text-white hover:bg-success-solid/90 disabled:opacity-50"
                           >
                             {assigningExpertId === c.expert_id
                               ? '배정 중...'

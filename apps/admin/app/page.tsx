@@ -68,7 +68,7 @@ export default async function AdminHome() {
             <div className="flex flex-col gap-4 rounded-2xl bg-surface-warm p-4 md:p-6">
               <a
                 href={ownerUrl}
-                className="rounded-2xl border border-border-light bg-white p-6 md:p-8 text-left shadow-sm card-hover transition-all"
+                className="rounded-2xl border border-border-light bg-card p-6 md:p-8 text-left shadow-sm card-hover transition-all"
               >
                 <h2 className="text-2xl md:text-3xl font-bold font-serif text-primary">기업회원</h2>
                 <p className="mt-2 text-sm md:text-base text-text-muted">기업 운영에 필요한 전문 서비스와 시니어 전문가 정보</p>
@@ -86,7 +86,7 @@ export default async function AdminHome() {
 
               <a
                 href={expertUrl}
-                className="rounded-2xl border border-border-light bg-white p-6 md:p-8 text-left shadow-sm card-hover transition-all"
+                className="rounded-2xl border border-border-light bg-card p-6 md:p-8 text-left shadow-sm card-hover transition-all"
               >
                 <h2 className="text-2xl md:text-3xl font-bold font-serif text-accent">시니어지식인회원</h2>
                 <p className="mt-2 text-sm md:text-base text-text-muted">경험과 노하우로 지역 기업과 협력</p>
@@ -105,7 +105,7 @@ export default async function AdminHome() {
               {/* 전문가회원(파트너) — 특수관계 제공기관용 (기업·시니어와 동일 구조) */}
               <Link
                 href="/partner"
-                className="rounded-2xl border border-border-light bg-white p-6 md:p-8 text-left shadow-sm card-hover transition-all"
+                className="rounded-2xl border border-border-light bg-card p-6 md:p-8 text-left shadow-sm card-hover transition-all"
               >
                 <h2 className="text-2xl md:text-3xl font-bold font-serif text-info">전문가회원(파트너)</h2>
                 <p className="mt-2 text-sm md:text-base text-text-muted">

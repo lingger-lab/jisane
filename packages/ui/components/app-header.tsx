@@ -1,5 +1,6 @@
 import { LoginDropdown } from './login-dropdown'
 import { OwlIcon } from './icons/owl'
+import { ThemeToggle } from './theme-toggle'
 
 export function AppHeader({
   appName,
@@ -9,15 +10,19 @@ export function AppHeader({
   signOutAction,
   signInWithKakao,
   signInWithGoogle,
+  showThemeToggle = false,
   children,
 }: {
   appName: string
   hubUrl?: string
   joinUrl?: string
+  /** 로그인 상태 판별용(표시하지 않음) — 값이 있으면 로그아웃, 없으면 로그인 UI */
   userEmail?: string | null
   signOutAction?: () => Promise<void>
   signInWithKakao?: () => Promise<void>
   signInWithGoogle?: () => Promise<void>
+  /** 테마 토글 노출 여부(다크모드 지원 앱만 true). admin은 다크 미지원이라 기본 false */
+  showThemeToggle?: boolean
   children?: React.ReactNode
 }) {
   return (
@@ -35,23 +40,20 @@ export function AppHeader({
           </span>
         )}
 
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2 md:gap-3">
           {children}
 
+          {showThemeToggle && <ThemeToggle />}
+
           {userEmail && signOutAction ? (
-            <>
-              <span className="text-xs text-text-muted truncate max-w-[140px]">
-                {userEmail}
-              </span>
-              <form action={signOutAction}>
-                <button
-                  type="submit"
-                  className="inline-flex min-h-6 items-center text-xs text-text-subtle hover:text-text transition-colors"
-                >
-                  로그아웃
-                </button>
-              </form>
-            </>
+            <form action={signOutAction}>
+              <button
+                type="submit"
+                className="inline-flex min-h-6 items-center text-xs text-text-subtle hover:text-text transition-colors"
+              >
+                로그아웃
+              </button>
+            </form>
           ) : signInWithKakao && signInWithGoogle ? (
             <>
               {joinUrl && (

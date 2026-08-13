@@ -59,7 +59,7 @@ export function EducationView({
               <p className="mt-0.5 text-xs text-text-muted">
                 교육 {prov.packageCount}개
                 {prov.freeCount > 0 && (
-                  <span className="ml-1.5 rounded-full bg-success-light px-1.5 py-0.5 text-xs font-medium text-success">
+                  <span className="ml-1.5 rounded-full bg-primary/10 px-1.5 py-0.5 text-xs font-medium text-primary">
                     무료 {prov.freeCount}
                   </span>
                 )}
@@ -100,7 +100,7 @@ export function EducationView({
                   <div className="flex items-center gap-2">
                     <h3 className="font-medium text-text">{pkg.name}</h3>
                     {pkg.isFree ? (
-                      <span className="rounded-full bg-success-light px-2 py-0.5 text-xs font-bold text-success">
+                      <span className="rounded-full bg-primary/10 px-2 py-0.5 text-xs font-bold text-primary">
                         무료
                       </span>
                     ) : null}

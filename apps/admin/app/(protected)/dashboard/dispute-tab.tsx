@@ -83,7 +83,7 @@ function DisputeCard({ dispute }: { dispute: DisputeItem }) {
             type="button"
             onClick={handleResolve}
             disabled={resolving}
-            className="shrink-0 rounded-lg bg-success px-3 py-1.5 text-xs font-medium text-white transition-colors hover:bg-success/90 disabled:opacity-50"
+            className="shrink-0 rounded-lg bg-success-solid px-3 py-1.5 text-xs font-medium text-white transition-colors hover:bg-success-solid/90 disabled:opacity-50"
           >
             {resolving ? '처리 중...' : '해결'}
           </button>

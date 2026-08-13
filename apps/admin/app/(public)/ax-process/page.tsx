@@ -60,21 +60,18 @@ const IMPL_LEVELS = [
     title: 'AI 챗봇',
     desc: '가장 빠르게 도입할 수 있는 AI 형태입니다.',
     examples: ['고객 문의 자동 응대', 'FAQ 봇', '내부 직원 질의응답', '문서 검색 도우미'],
-    border: 'border-accent/30',
   },
   {
     level: 'Level 2',
     title: '업무 자동화',
     desc: '반복 업무를 AI 워크플로우로 전환합니다.',
     examples: ['보고서 자동 생성', '데이터 정리·분류', '이메일·알림 자동화', '문서 요약·번역'],
-    border: 'border-accent/60',
   },
   {
     level: 'Level 3',
     title: 'AI Agent',
     desc: '스스로 판단하고 실행하는 자율 에이전트입니다.',
     examples: ['멀티 스텝 의사결정', '영업·마케팅 자동화', '고객 맞춤 추천 시스템', '이상 탐지·대응'],
-    border: 'border-accent',
   },
 ] as const
 
@@ -102,7 +99,7 @@ export default function AXProcessPage() {
           {PROCESS_STEPS.map((step, i) => (
             <div
               key={step.num}
-              className={`rounded-xl border border-border-light bg-white p-5 shadow-sm animate-fade-in stagger-${Math.min(i + 1, 5)}`}
+              className={`rounded-xl border border-border-light bg-card p-5 shadow-sm animate-fade-in stagger-${Math.min(i + 1, 5)}`}
             >
               <div className="flex items-center gap-3 mb-3">
                 <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-accent/10 text-sm font-bold text-accent">
@@ -136,7 +133,7 @@ export default function AXProcessPage() {
           {IMPL_LEVELS.map((lvl) => (
             <div
               key={lvl.level}
-              className={`rounded-xl border-l-4 ${lvl.border} border border-border-light bg-white p-5 shadow-sm`}
+              className="rounded-xl border border-border-light bg-card p-5 shadow-sm"
             >
               <p className="text-xs font-bold text-accent tracking-wide">{lvl.level}</p>
               <p className="mt-1 font-semibold text-text">{lvl.title}</p>

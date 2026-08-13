@@ -53,7 +53,7 @@ export default function ServicePage() {
           {STEPS.map((step, i) => (
             <div
               key={step.num}
-              className={`flex gap-4 rounded-xl border border-border-light bg-white p-4 shadow-xs animate-fade-in stagger-${Math.min(i + 1, 5)}`}
+              className={`flex gap-4 rounded-xl border border-border-light bg-card p-4 shadow-xs animate-fade-in stagger-${Math.min(i + 1, 5)}`}
             >
               <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-accent/10 text-sm font-bold text-accent">
                 {step.num}
@@ -69,7 +69,7 @@ export default function ServicePage() {
 
       {/* 기업회원 */}
       <section className="mb-8 animate-fade-in stagger-3">
-        <div className="rounded-2xl border border-primary/20 bg-white p-6 shadow-sm">
+        <div className="rounded-2xl border border-primary/20 bg-card p-6 shadow-sm">
           <h2 className="text-lg font-bold text-primary">기업회원</h2>
           <p className="mt-2 text-sm text-text-muted">
             기업 운영에 필요한 전문 서비스를 신청하고, 시니어 전문가 정보를 확인하세요.
@@ -100,7 +100,7 @@ export default function ServicePage() {
 
       {/* 시니어지식인회원 */}
       <section className="mb-12 animate-fade-in stagger-4">
-        <div className="rounded-2xl border border-accent/20 bg-white p-6 shadow-sm">
+        <div className="rounded-2xl border border-accent/20 bg-card p-6 shadow-sm">
           <h2 className="text-lg font-bold text-accent">시니어지식인회원</h2>
           <p className="mt-2 text-sm text-text-muted">
             경험과 노하우를 살려 기업과 협력하세요.
@@ -152,7 +152,7 @@ export default function ServicePage() {
       <section className="mt-8 animate-fade-in stagger-5">
         <Link
           href="/ax"
-          className="block rounded-2xl border border-accent/20 bg-white p-6 shadow-sm transition-all hover:border-accent/40 hover:shadow-md"
+          className="block rounded-2xl border border-accent/20 bg-card p-6 shadow-sm transition-all hover:border-accent/40 hover:shadow-md"
         >
           <p className="text-xs font-semibold text-accent tracking-wide mb-1">AI Transformation</p>
           <p className="font-bold text-text">AI로 비즈니스를 바꾸고 싶으신가요?</p>

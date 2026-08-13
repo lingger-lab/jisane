@@ -66,7 +66,7 @@ export default function StandardIndexPage() {
       <FreePeriodBanner className="mb-4" />
       <div className="flex flex-col gap-4">
         {PRINCIPLES.map((p) => (
-          <section key={p.item} className="rounded-xl border border-border-light bg-white p-5 md:p-6 shadow-xs">
+          <section key={p.item} className="rounded-xl border border-border-light bg-card p-5 md:p-6 shadow-xs">
             <div className="flex items-center gap-4">
               <span className="text-xl md:text-2xl font-bold text-primary shrink-0 w-7 text-center">{p.num}</span>
               <div>

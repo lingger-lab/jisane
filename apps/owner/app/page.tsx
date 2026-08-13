@@ -123,7 +123,7 @@ export default async function OwnerHome() {
               <Link
                 key={pkg.slug}
                 href={`/services/${pkg.slug}`}
-                className="rounded-xl border border-border-light bg-white p-4 md:p-5 shadow-xs transition-colors hover:border-primary/30"
+                className="rounded-xl border border-border-light bg-card p-4 md:p-5 shadow-xs transition-colors hover:border-primary/30"
               >
                 <div className="flex items-start justify-between gap-2">
                   <div className="min-w-0 flex-1">
@@ -182,7 +182,7 @@ export default async function OwnerHome() {
           </header>
           <div className="flex flex-col gap-2.5">
             {ENTERPRISE_PILLARS.map((p) => (
-              <div key={p.title} className="flex items-start gap-3 rounded-xl border border-border-light bg-white p-4 shadow-xs">
+              <div key={p.title} className="flex items-start gap-3 rounded-xl border border-border-light bg-card p-4 shadow-xs">
                 <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary [&>svg]:h-[18px] [&>svg]:w-[18px]">
                   {p.icon}
                 </span>

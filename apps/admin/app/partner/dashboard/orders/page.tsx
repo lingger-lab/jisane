@@ -32,7 +32,7 @@ export default async function PartnerOrdersPage() {
       </p>
 
       {items.length === 0 ? (
-        <div className="rounded-xl border border-border-light bg-white p-10 text-center">
+        <div className="rounded-xl border border-border-light bg-card p-10 text-center">
           <p className="text-sm text-text-muted">아직 신청이 없습니다.</p>
           <p className="mt-1 text-xs text-text-subtle">서비스가 공개되면 기업회원·시니어지식인회원의 신청이 여기에 표시됩니다.</p>
         </div>

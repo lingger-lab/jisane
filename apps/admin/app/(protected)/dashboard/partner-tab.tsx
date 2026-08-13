@@ -114,7 +114,7 @@ export function PartnerTab({
                       type="button"
                       disabled={busy === p.id}
                       onClick={() => handleProviderStatus(p.id, 'active', `${p.name} 전문가회원을 승인할까요?`)}
-                      className="rounded-lg bg-success px-3 py-1.5 text-xs font-medium text-white hover:bg-success/90 disabled:opacity-50"
+                      className="rounded-lg bg-success-solid px-3 py-1.5 text-xs font-medium text-white hover:bg-success-solid/90 disabled:opacity-50"
                     >
                       승인
                     </button>
@@ -161,7 +161,7 @@ export function PartnerTab({
                       type="button"
                       disabled={busy === pkg.id}
                       onClick={() => handlePackageStatus(pkg.id, 'published', `"${pkg.name}" 서비스를 공개할까요?`)}
-                      className="rounded-lg bg-success px-3 py-1.5 text-xs font-medium text-white hover:bg-success/90 disabled:opacity-50"
+                      className="rounded-lg bg-success-solid px-3 py-1.5 text-xs font-medium text-white hover:bg-success-solid/90 disabled:opacity-50"
                     >
                       공개 승인
                     </button>

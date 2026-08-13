@@ -55,7 +55,7 @@ export function InspectionSection({ dealId }: InspectionSectionProps) {
         )}
         {/* 검수완료 */}
         <form action={handleConfirm}>
-          <SubmitButton className="w-full rounded-xl bg-success px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-success/90 disabled:opacity-50">
+          <SubmitButton className="w-full rounded-xl bg-success-solid px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-success-solid/90 disabled:opacity-50">
             검수완료
           </SubmitButton>
         </form>
@@ -83,7 +83,7 @@ export function InspectionSection({ dealId }: InspectionSectionProps) {
               <p className="text-xs text-error">{revisionError}</p>
             )}
             <div className="flex gap-2">
-              <SubmitButton className="flex-1 rounded-xl bg-warning px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-warning/90 disabled:opacity-50">
+              <SubmitButton className="flex-1 rounded-xl bg-warning-solid px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-warning-solid/90 disabled:opacity-50">
                 수정 요청 전송
               </SubmitButton>
               <button
@@ -133,7 +133,7 @@ export function InspectionSection({ dealId }: InspectionSectionProps) {
             />
             {issueError && <p className="text-xs text-error">{issueError}</p>}
             <div className="flex gap-2">
-              <SubmitButton className="flex-1 rounded-xl bg-error px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-error/90 disabled:opacity-50">
+              <SubmitButton className="flex-1 rounded-xl bg-error-solid px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-error-solid/90 disabled:opacity-50">
                 문제신고 전송
               </SubmitButton>
               <button

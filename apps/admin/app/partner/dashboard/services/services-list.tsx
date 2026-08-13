@@ -42,7 +42,7 @@ export function ServicesList({ items }: { items: ServiceItem[] }) {
       ) : (
         <div className="flex flex-col gap-3">
           {filtered.map((pkg) => (
-            <div key={pkg.id} className="flex items-center justify-between gap-3 rounded-xl border border-border-light bg-white p-4 shadow-xs">
+            <div key={pkg.id} className="flex items-center justify-between gap-3 rounded-xl border border-border-light bg-card p-4 shadow-xs">
               <div className="min-w-0 flex-1">
                 <div className="flex items-center gap-2">
                   <p className="truncate text-sm font-medium text-text">{pkg.name}</p>

@@ -273,7 +273,7 @@ export function ProgressTab({
                 <span className="text-xs font-medium text-success">모든 단계 완료</span>
                 <Link
                   href={`/review-input/${deal.id}`}
-                  className="rounded bg-success px-3 py-1 text-xs font-medium text-white hover:bg-success/90"
+                  className="rounded bg-success-solid px-3 py-1 text-xs font-medium text-white hover:bg-success-solid/90"
                 >
                   리뷰 입력
                 </Link>

@@ -26,7 +26,7 @@ export function CollapsibleSection({
         aria-expanded={open}
         aria-controls={contentId}
         onClick={() => setOpen((v) => !v)}
-        className="flex w-full items-center justify-between gap-3 rounded-xl border border-border-light bg-white p-4 md:p-5 text-left shadow-xs transition-all hover:border-primary/30 hover:shadow-sm focus-ring"
+        className="flex w-full items-center justify-between gap-3 rounded-xl border border-border-light bg-card p-4 md:p-5 text-left shadow-xs transition-all hover:border-primary/30 hover:shadow-sm focus-ring"
       >
         <div className="min-w-0">
           <span className="block text-xl md:text-2xl font-bold text-text">{title}</span>

@@ -22,7 +22,7 @@ export function CompleteOrderButton({ orderId }: { orderId: string }) {
         type="button"
         onClick={handleComplete}
         disabled={busy}
-        className="rounded-lg bg-success px-3 py-1.5 text-xs font-medium text-white transition-colors hover:bg-success/90 disabled:opacity-50"
+        className="rounded-lg bg-success-solid px-3 py-1.5 text-xs font-medium text-white transition-colors hover:bg-success-solid/90 disabled:opacity-50"
       >
         {busy ? '처리 중…' : '완료 처리'}
       </button>

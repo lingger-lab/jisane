@@ -49,7 +49,7 @@ export default async function PartnerHome() {
       {/* 기능 3가지 */}
       <section className="grid gap-3 md:grid-cols-3">
         {FEATURES.map((f) => (
-          <div key={f.title} className="rounded-xl border border-border-light border-t-4 border-t-info bg-white p-4 shadow-xs">
+          <div key={f.title} className="rounded-xl border border-border-light bg-card p-4 shadow-xs">
             <p className="text-sm font-bold text-text">{f.title}</p>
             <p className="mt-1 text-xs text-text-muted leading-relaxed">{f.desc}</p>
           </div>
@@ -90,7 +90,7 @@ export default async function PartnerHome() {
             <p className="mt-1 text-xs text-text-muted">등록 신청 후 관리자 승인을 거쳐 활동할 수 있습니다.</p>
             <Link
               href="/partner/apply"
-              className="mt-4 inline-block rounded-xl bg-info px-6 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-info/90"
+              className="mt-4 inline-block rounded-xl bg-info-solid px-6 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-info-solid/90"
             >
               전문가회원 등록 신청하기
             </Link>
@@ -100,7 +100,7 @@ export default async function PartnerHome() {
             <p className="text-sm font-semibold text-text">{provider.name} 전문가회원님, 환영합니다</p>
             <Link
               href="/partner/dashboard"
-              className="mt-4 inline-block rounded-xl bg-info px-6 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-info/90"
+              className="mt-4 inline-block rounded-xl bg-info-solid px-6 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-info-solid/90"
             >
               전문가회원 대시보드 열기
             </Link>

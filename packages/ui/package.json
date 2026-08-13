@@ -22,6 +22,7 @@
     "./icons/kakao": "./components/icons/kakao.tsx",
     "./icons/owl": "./components/icons/owl.tsx",
     "./app-header": "./components/app-header.tsx",
+    "./theme-toggle": "./components/theme-toggle.tsx",
     "./category-browse": "./components/category-browse.tsx",
     "./filter-radio-group": "./components/filter-radio-group.tsx",
     "./roving-focus": "./components/roving-focus.ts",

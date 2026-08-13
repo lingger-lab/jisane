@@ -65,6 +65,13 @@ export default async function RootLayout({
   return (
     <html lang="ko" className={`h-full antialiased ${pretendard.variable} ${gowunBatang.variable}`}>
       <body className="min-h-full flex flex-col bg-background text-foreground font-sans pb-16" suppressHydrationWarning>
+        {/* 다크모드 플래시 방지 — 페인트 전 저장된 테마를 <html>에 스탬프(첫 body 자식으로 동기 실행).
+            'system'은 속성 미설정 → prefers-color-scheme 추종. ThemeToggle과 동일 계약. */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(function(){try{var t=localStorage.getItem('theme');if(t==='light'||t==='dark')document.documentElement.setAttribute('data-theme',t);}catch(e){}})();`,
+          }}
+        />
         <AppHeader
           appName="지사네"
           hubUrl="/"
@@ -73,6 +80,7 @@ export default async function RootLayout({
           signOutAction={signOut}
           signInWithKakao={signInWithKakao}
           signInWithGoogle={signInWithGoogle}
+          showThemeToggle
         />
         {children}
         {/* 토스트는 루트에 한 번만 마운트한다 — 페이지별로 달면 마운트되지 않은 화면

@@ -1,24 +1,11 @@
 import Link from 'next/link'
-import { OwlIcon } from '@jisane/ui/icons/owl'
 
 export default function PublicLayout({ children }: { children: React.ReactNode }) {
   return (
     <div className="flex flex-1 flex-col">
-      <header className="sticky top-0 z-40 border-b border-border-light bg-background/80 backdrop-blur-lg">
-        <div className="mx-auto flex h-14 max-w-2xl items-center justify-between px-6">
-          <Link href="/" className="flex items-center gap-1.5 text-xl font-bold text-primary tracking-tight hover:opacity-80 transition-opacity">
-            <OwlIcon className="h-7 w-7 text-primary" />
-            지사네
-          </Link>
-          {/* min-h-6: 24×24px 최소 타깃(WCAG 2.5.8) — 헤더 h-14 안이라 레이아웃 불변 */}
-          <nav className="flex items-center gap-3">
-            <Link href="/standard/scope" className="inline-flex min-h-6 items-center text-xs text-text-muted hover:text-text transition-colors">거래 표준</Link>
-            <Link href="/ax" className="inline-flex min-h-6 items-center text-xs text-text-muted hover:text-text transition-colors">AX 전환</Link>
-            <Link href="/service" className="inline-flex min-h-6 items-center text-xs text-text-muted hover:text-text transition-colors">서비스 안내</Link>
-          </nav>
-        </div>
-      </header>
-
+      {/* 전역 헤더(루트 layout의 AppHeader)가 이미 sticky로 상단을 담당한다.
+          과거 이 레이아웃도 자체 sticky 헤더를 렌더해 헤더가 2개로 겹쳤다 →
+          중복 제거. 마케팅 링크(거래표준·서비스안내·AX전환)는 하단 푸터에 유지된다. */}
       <main className="flex-1">{children}</main>
 
       <footer className="border-t border-border-light bg-surface py-6">

@@ -49,7 +49,7 @@ export function LoginDropdown({
       </button>
 
       {open && (
-        <div className="absolute right-0 top-full mt-2 w-48 rounded-xl border border-border-light bg-white p-2 shadow-lg animate-fade-in">
+        <div className="absolute right-0 top-full mt-2 w-48 rounded-xl border border-border-light bg-card p-2 shadow-lg animate-fade-in">
           <form action={signInWithKakao}>
             <button
               type="submit"
