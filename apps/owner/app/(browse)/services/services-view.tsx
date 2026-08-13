@@ -123,8 +123,9 @@ export function ServicesView({
       <PageHero eyebrow="기업회원" title="전문서비스" subtitle="기업 맞춤 전문 서비스를 신청하세요." />
 
       <div className="container-app px-4 md:px-6 py-6">
-      {/* 검색 */}
-      <div className="relative mb-5">
+      {/* 검색 — 입력 즉시 필터(라이브). 공용 SearchBox와 동일한 돋보기+검색버튼으로 일관.
+          라이브라 제출은 새로고침만 막고(필터는 onChange로 이미 적용), 버튼은 검색 affordance. */}
+      <form role="search" onSubmit={(e) => e.preventDefault()} className="relative mb-5">
         <span className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-text-subtle">
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.8} stroke="currentColor" className="h-4 w-4">
             <path strokeLinecap="round" strokeLinejoin="round" d="m21 21-4.34-4.34m0 0A7 7 0 1 0 6.71 6.71a7 7 0 0 0 9.95 9.95Z" />
@@ -136,9 +137,15 @@ export function ServicesView({
           onChange={(e) => setSearch(e.target.value)}
           placeholder="서비스명·업체·분류로 검색"
           aria-label="전문서비스 검색"
-          className="w-full rounded-xl border border-border-light bg-background py-3 pl-10 pr-4 text-sm text-text placeholder:text-text-subtle focus:border-primary focus:ring-1 focus:ring-primary/20 focus:outline-none transition-colors"
+          className="w-full rounded-xl border border-border-light bg-background py-3 pl-10 pr-20 text-sm text-text placeholder:text-text-subtle focus:border-primary focus:ring-1 focus:ring-primary/20 focus:outline-none transition-colors"
         />
-      </div>
+        <button
+          type="submit"
+          className="absolute right-1.5 top-1/2 -translate-y-1/2 rounded-lg bg-primary px-3.5 py-1.5 text-sm font-medium text-white transition-colors hover:bg-primary-light"
+        >
+          검색
+        </button>
+      </form>
 
       {/* 무료/유료 필터 (검색·아코디언 공통) */}
       <FilterRadioGroup
