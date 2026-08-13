@@ -16,6 +16,10 @@ const buttonVariants = cva(
     variants: {
       variant: {
         primary: 'bg-primary text-white hover:bg-primary-600 active:bg-primary-800',
+        accent: 'bg-accent text-white hover:bg-accent/90 active:brightness-95',
+        partner: 'bg-partner-solid text-white hover:brightness-95 active:brightness-90',
+        success: 'bg-success-solid text-white hover:brightness-95 active:brightness-90',
+        warning: 'bg-warning-solid text-white hover:brightness-95 active:brightness-90',
         outline: 'border border-border bg-surface-warm text-text hover:bg-surface',
         ghost: 'text-text hover:bg-surface',
         danger: 'bg-error-solid text-white hover:brightness-95 active:brightness-90',

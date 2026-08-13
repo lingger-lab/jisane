@@ -47,7 +47,7 @@ export function MatchingActions({ matchingId }: MatchingActionsProps) {
       {error && <p className="text-sm text-error" role="alert" aria-live="polite">{error}</p>}
 
       <form action={handleAccept}>
-        <SubmitButton className="w-full rounded-xl bg-accent px-4 py-3 font-semibold text-white shadow-sm transition-all hover:bg-accent/90 hover:shadow-md disabled:opacity-50">
+        <SubmitButton variant="accent" className="w-full rounded-xl px-4 py-3 font-semibold shadow-sm hover:shadow-md">
           수락
         </SubmitButton>
       </form>

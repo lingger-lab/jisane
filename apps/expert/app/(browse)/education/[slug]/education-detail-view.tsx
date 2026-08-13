@@ -85,7 +85,7 @@ export function EducationDetailView({ pkg }: { pkg: ServicePackage }) {
           <p className="text-sm text-error">{state.error}</p>
         )}
 
-        <SubmitButton className="rounded-xl bg-accent px-6 py-3 font-semibold text-white shadow-sm transition-all hover:bg-accent/90 hover:shadow-md disabled:opacity-50">
+        <SubmitButton variant="accent" className="rounded-xl px-6 py-3 font-semibold shadow-sm hover:shadow-md">
           {pkg.price === 0 ? '무료 수강 신청' : '상담 신청'}
         </SubmitButton>
 

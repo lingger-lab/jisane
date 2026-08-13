@@ -59,7 +59,7 @@ export function OwnerProfileForm({
 
       {state.error && <p className="text-sm text-error">{state.error}</p>}
 
-      <SubmitButton className="self-start rounded-xl bg-primary px-6 py-3 font-semibold text-white shadow-sm transition-all hover:bg-primary-light hover:shadow-md disabled:opacity-50">
+      <SubmitButton variant="primary" className="self-start rounded-xl px-6 py-3 font-semibold shadow-sm hover:shadow-md">
         저장하기
       </SubmitButton>
     </form>

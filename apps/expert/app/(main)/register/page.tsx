@@ -1,13 +1,13 @@
 'use client'
 
-import { useActionState, useRef, useState } from 'react'
+import { useActionState } from 'react'
 import { updateExpertProfile } from '@/lib/expert/actions'
 import { SubmitButton } from '@jisane/ui/submit-button'
 import { Input } from '@jisane/ui/input'
 import { Select } from '@jisane/ui/select'
 import { HeroBackdrop } from '@jisane/ui/hero-backdrop'
-// 전문 분야 = 평면 12분류 (category 테이블과 동기) — 편집기와 공유하는 단일 소스
-import { FIELD_LIST } from '@/lib/fields'
+// 전문 분야 칩 로직·UI는 편집기와 공유하는 단일 소스로 추출
+import { useFieldChips, FieldChips } from '@/components/field-chips'
 
 const CAREER_OPTIONS = [
   { value: '', label: '선택 안함' },
@@ -18,25 +18,7 @@ const CAREER_OPTIONS = [
 
 export default function RegisterPage() {
   const [state, formAction] = useActionState(updateExpertProfile, {})
-  const [selectedFields, setSelectedFields] = useState<string[]>([])
-  // 상한 도달·필수 미선택은 조작 지점에서 즉시 안내 — 무반응/서버 왕복 에러만 있던 문제(감사 docs/10 P3-42·P3-43)
-  const [capReached, setCapReached] = useState(false)
-  const [fieldError, setFieldError] = useState<string | null>(null)
-  const fieldsetRef = useRef<HTMLFieldSetElement>(null)
-
-  function toggleField(chip: string) {
-    const isSelected = selectedFields.includes(chip)
-    if (!isSelected && selectedFields.length >= 5) {
-      // 6번째 칩 탭이 조용히 무시되지 않도록 상한 안내를 띄운다
-      setCapReached(true)
-      return
-    }
-    setCapReached(false)
-    setFieldError(null) // 수정이 시작되면 검증 에러 해제
-    setSelectedFields(
-      isSelected ? selectedFields.filter((f) => f !== chip) : [...selectedFields, chip]
-    )
-  }
+  const chips = useFieldChips([])
 
   return (
     <div className="flex flex-1 flex-col animate-fade-in">
@@ -63,54 +45,11 @@ export default function RegisterPage() {
 
       <form
         action={formAction}
-        onSubmit={(e) => {
-          // 필수 칩그룹은 제출 전에 클라이언트에서 검증 — 서버 왕복 후 하단 에러만 보이던 문제(감사 docs/10 P3-43)
-          if (selectedFields.length === 0) {
-            e.preventDefault()
-            setFieldError('전문 분야를 1개 이상 선택해주세요.')
-            fieldsetRef.current?.scrollIntoView({ block: 'center' })
-          }
-        }}
+        // 필수 칩그룹은 제출 전에 클라이언트에서 검증 — 서버 왕복 후 하단 에러만 보이던 문제(감사 docs/10 P3-43)
+        onSubmit={(e) => chips.validate(e)}
         className="flex flex-col gap-5"
       >
-        {/* 전문 분야 — fieldset/legend로 칩그룹에 그룹 이름 부여 (감사 docs/10 P3-50과 동일 패턴) */}
-        <fieldset ref={fieldsetRef}>
-          <legend className="mb-2 block text-sm font-medium text-text">
-            전문 분야 <span className="text-error">*</span>
-            <span className="ml-1 text-xs font-normal text-text-muted">(최대 5개)</span>
-          </legend>
-          <div className="grid grid-cols-3 gap-2 sm:grid-cols-4">
-            {FIELD_LIST.map((chip) => (
-              <button
-                key={chip}
-                type="button"
-                onClick={() => toggleField(chip)}
-                aria-pressed={selectedFields.includes(chip)}
-                className={`rounded-lg border px-2 py-2 text-xs text-center leading-tight break-keep transition-colors ${
-                  selectedFields.includes(chip)
-                    ? 'border-accent bg-accent/10 font-semibold text-accent'
-                    : 'border-border-light text-text-muted hover:border-accent/30'
-                }`}
-              >
-                {chip}
-              </button>
-            ))}
-          </div>
-          <p className="mt-2 text-xs text-text-subtle">
-            선택: {selectedFields.length}/5개
-          </p>
-          {capReached && (
-            <p role="status" aria-live="polite" className="mt-1 text-xs font-medium text-warning">
-              최대 5개까지 선택할 수 있어요. 다른 분야를 선택하려면 먼저 하나를 해제해주세요.
-            </p>
-          )}
-          {fieldError && (
-            <p role="alert" aria-live="polite" className="mt-1 text-sm text-error">
-              {fieldError}
-            </p>
-          )}
-          <input type="hidden" name="field" value={selectedFields.join(',')} />
-        </fieldset>
+        <FieldChips chips={chips} showCounter />
 
         {/* 경력 */}
         <div>
@@ -181,7 +120,7 @@ export default function RegisterPage() {
         )}
 
         {/* 제출 */}
-        <SubmitButton className="rounded-xl bg-accent px-6 py-3 font-semibold text-white shadow-sm transition-all hover:bg-accent/90 hover:shadow-md disabled:opacity-50">
+        <SubmitButton variant="accent" className="rounded-xl px-6 py-3 font-semibold shadow-sm hover:shadow-md">
           시니어지식인 등록 완료
         </SubmitButton>
       </form>

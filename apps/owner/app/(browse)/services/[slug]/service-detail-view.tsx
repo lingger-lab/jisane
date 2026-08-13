@@ -93,7 +93,7 @@ export function ServiceDetailView({ pkg }: { pkg: ServicePackage }) {
           <p className="text-sm text-error">{state.error}</p>
         )}
 
-        <SubmitButton className="rounded-xl bg-primary px-6 py-3 font-semibold text-white shadow-sm transition-all hover:bg-primary-light hover:shadow-md disabled:opacity-50">
+        <SubmitButton variant="primary" className="rounded-xl px-6 py-3 font-semibold shadow-sm hover:shadow-md">
           {pkg.price === 0 ? '무료 신청하기' : '상담 신청'}
         </SubmitButton>
 

@@ -74,7 +74,7 @@ export function ApplyForm() {
 
       {state.error && <p className="text-sm text-error">{state.error}</p>}
 
-      <SubmitButton className="rounded-xl bg-partner-solid px-6 py-3 font-semibold text-white shadow-sm transition-all hover:bg-partner-solid/90 hover:shadow-md disabled:opacity-50">
+      <SubmitButton variant="partner" className="rounded-xl px-6 py-3 font-semibold shadow-sm hover:shadow-md">
         등록 신청하기
       </SubmitButton>
     </form>
