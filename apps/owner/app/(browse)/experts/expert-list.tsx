@@ -18,15 +18,14 @@ interface ExpertItem {
   categories: string[]
 }
 
-interface MajorCategory {
+interface CategoryChip {
   id: string
   label: string
-  midCategories: { id: string; label: string }[]
 }
 
 interface ExpertListProps {
   experts: ExpertItem[]
-  categoryTree: MajorCategory[]
+  categoryTree: CategoryChip[]
   selectedCategory: string | null
   query: string
   /** 서버 쿼리 실패 — 빈 상태 대신 에러 상태를 렌더한다(검색 결과 없음과 구분, 감사 docs/11 P3-75). */
@@ -35,14 +34,6 @@ interface ExpertListProps {
 
 export function ExpertList({ experts, categoryTree, selectedCategory, query, loadFailed = false }: ExpertListProps) {
   const router = useRouter()
-
-  const selectedMajorIdx = selectedCategory
-    ? categoryTree.findIndex(
-        (m) =>
-          m.id === selectedCategory ||
-          m.midCategories.some((mid) => mid.id === selectedCategory)
-      )
-    : -1
 
   function handleCategoryChange(categoryId: string | null) {
     const params = new URLSearchParams()
@@ -87,46 +78,21 @@ export function ExpertList({ experts, categoryTree, selectedCategory, query, loa
         >
           전체
         </button>
-        {categoryTree.map((major) => {
-          const isActive =
-            major.id === selectedCategory ||
-            major.midCategories.some((m) => m.id === selectedCategory)
-          return (
-            <button
-              key={major.id}
-              type="button"
-              onClick={() => handleCategoryChange(major.id)}
-              className={`rounded-lg px-3.5 py-2 text-sm font-medium transition-colors ${
-                isActive
-                  ? 'bg-primary text-white'
-                  : 'bg-surface text-text-muted hover:bg-surface-warm'
-              }`}
-            >
-              {major.label}
-            </button>
-          )
-        })}
+        {categoryTree.map((cat) => (
+          <button
+            key={cat.id}
+            type="button"
+            onClick={() => handleCategoryChange(cat.id)}
+            className={`rounded-lg px-3.5 py-2 text-sm font-medium transition-colors ${
+              cat.id === selectedCategory
+                ? 'bg-primary text-white'
+                : 'bg-surface text-text-muted hover:bg-surface-warm'
+            }`}
+          >
+            {cat.label}
+          </button>
+        ))}
       </div>
-
-      {/* 중분류 칩 */}
-      {selectedMajorIdx >= 0 && (
-        <div className="mt-2 flex flex-wrap gap-1">
-          {categoryTree[selectedMajorIdx].midCategories.map((mid) => (
-            <button
-              key={mid.id}
-              type="button"
-              onClick={() => handleCategoryChange(mid.id)}
-              className={`rounded-full px-3 py-1.5 text-xs font-medium transition-colors ${
-                selectedCategory === mid.id
-                  ? 'bg-primary/15 text-primary border border-primary/30'
-                  : 'bg-surface text-text-subtle hover:bg-surface-warm'
-              }`}
-            >
-              {mid.label}
-            </button>
-          ))}
-        </div>
-      )}
 
       {/* 시니어지식인 리스트 — 조회 실패(에러)와 검색 결과 없음(빈)을 구분한다 */}
       <div className="mt-4 flex flex-col gap-3">

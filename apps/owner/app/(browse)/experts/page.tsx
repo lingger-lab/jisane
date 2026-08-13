@@ -32,21 +32,12 @@ export default async function ExpertsPage(props: PageProps) {
   let targetExpertIds: string[] | null = null
 
   if (category) {
+    // 평면 12(v3): category는 depth 0. expert_category가 직접 참조하므로 그대로 필터.
     const selectedCat = allCategories.find((c) => c.id === category)
-    let filterCatIds: string[] = []
-
-    if (selectedCat && selectedCat.depth === 1) {
-      filterCatIds = [category]
-    } else if (selectedCat && selectedCat.depth === 0) {
-      filterCatIds = allCategories
-        .filter((c) => c.parent_id === category && c.depth === 1)
-        .map((c) => c.id)
-    }
-
-    if (filterCatIds.length > 0) {
+    if (selectedCat) {
       const ids = new Set(
         expertCats
-          .filter((pc) => filterCatIds.includes(pc.category_id))
+          .filter((pc) => pc.category_id === category)
           .map((pc) => pc.expert_id)
       )
       targetExpertIds = [...ids]
@@ -95,26 +86,17 @@ export default async function ExpertsPage(props: PageProps) {
   for (const pc of expertCats) {
     if (!expertIdSet.has(pc.expert_id)) continue
     const cat = allCategories.find((c) => c.id === pc.category_id)
-    if (!cat || cat.depth !== 1) continue
+    if (!cat || cat.depth !== 0) continue
     const existing = expertCatMap.get(pc.expert_id) ?? []
     existing.push(cat.label)
     expertCatMap.set(pc.expert_id, existing)
   }
 
-  // 카테고리 계층 구조
-  const majors = allCategories
+  // 카테고리 목록 (평면 12)
+  const categoryTree = allCategories
     .filter((c) => c.depth === 0)
     .sort((a, b) => a.sort_order - b.sort_order)
-  const mids = allCategories.filter((c) => c.depth === 1)
-
-  const categoryTree = majors.map((major) => ({
-    id: major.id,
-    label: major.label,
-    midCategories: mids
-      .filter((m) => m.parent_id === major.id)
-      .sort((a, b) => a.sort_order - b.sort_order)
-      .map((m) => ({ id: m.id, label: m.label })),
-  }))
+    .map((c) => ({ id: c.id, label: c.label }))
 
   return (
     <div className="flex flex-1 flex-col">

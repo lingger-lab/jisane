@@ -6,42 +6,21 @@ import { SubmitButton } from '@jisane/ui/submit-button'
 import { MoneyInput } from '@jisane/ui/money-input'
 import { Input } from '@jisane/ui/input'
 import { Textarea } from '@jisane/ui/textarea'
-import { CATEGORY_TREE } from '@jisane/shared/categories'
+import { CATEGORY_LABELS } from '@jisane/shared/categories'
 
 export function RequestForm() {
   const [state, formAction] = useActionState(createRequest, {})
-  const [selectedMajor, setSelectedMajor] = useState(0)
   const [selectedChip, setSelectedChip] = useState<string | null>(null)
-
-  const currentMajor = CATEGORY_TREE[selectedMajor]
 
   return (
     <form action={formAction} className="flex flex-col gap-5">
-      {/* 대분류 탭 */}
+      {/* 분야 선택 (평면 12) */}
       <div>
         <label className="mb-2 block text-sm font-medium text-text">
-          어떤 일을 맡기시나요?
+          어떤 분야의 일을 맡기시나요?
         </label>
-        <div className="mb-3 flex flex-wrap gap-1.5">
-          {CATEGORY_TREE.map((major, idx) => (
-            <button
-              key={major.label}
-              type="button"
-              onClick={() => { setSelectedMajor(idx); setSelectedChip(null) }}
-              className={`rounded-lg px-3 py-1.5 text-xs font-medium transition-colors ${
-                selectedMajor === idx
-                  ? 'bg-primary text-white'
-                  : 'bg-surface text-text-muted hover:bg-surface-warm'
-              }`}
-            >
-              {major.label}
-            </button>
-          ))}
-        </div>
-
-        {/* 중분류 칩 */}
         <div className="flex flex-wrap gap-2">
-          {currentMajor.children.map((chip) => (
+          {CATEGORY_LABELS.map((chip) => (
             <button
               key={chip}
               type="button"

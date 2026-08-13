@@ -1,9 +1,5 @@
-'use client'
-
-import { useState } from 'react'
 import Link from 'next/link'
 import type { CategoryCount } from '@jisane/shared/landing-stats'
-import { FilterRadioGroup } from './filter-radio-group'
 
 interface CategoryBrowseProps {
   categoryCounts: CategoryCount[]
@@ -16,18 +12,14 @@ interface CategoryBrowseProps {
 }
 
 const colorMap = {
-  primary: {
-    text: 'text-primary',
-    bg: 'bg-primary',
-    bgLight: 'bg-primary/10',
-  },
-  accent: {
-    text: 'text-accent',
-    bg: 'bg-accent',
-    bgLight: 'bg-accent/10',
-  },
+  primary: 'text-primary',
+  accent: 'text-accent',
 } as const
 
+/**
+ * 평면 12분류 탐색 — 분류 카드 그리드(라벨 + 수). 각 카드는 baseHref?category=id로 이동.
+ * 이전 대분류탭→중분류 드릴다운은 폐기(v3 평면화). 서버 안전(표현 전용).
+ */
 export function CategoryBrowse({
   categoryCounts,
   newRequestsThisMonth,
@@ -37,52 +29,28 @@ export function CategoryBrowse({
   colorToken,
   baseHref,
 }: CategoryBrowseProps) {
-  const [selectedIdx, setSelectedIdx] = useState(0)
-  const colors = colorMap[colorToken]
-
-  const current = categoryCounts[selectedIdx]
-  const sortedMid = [...(current?.midCategories ?? [])].sort((a, b) => b.count - a.count)
+  const accentText = colorMap[colorToken]
 
   return (
     <section className="w-full">
       <h2 className="text-lg md:text-xl font-bold text-text">{title}</h2>
       {newRequestsThisMonth > 0 && (
         <p className="mt-1 text-sm text-text-muted">
-          이번 달 새 의뢰 <span className={`font-semibold ${colors.text}`}>{newRequestsThisMonth}건</span>
+          이번 달 새 의뢰 <span className={`font-semibold ${accentText}`}>{newRequestsThisMonth}건</span>
         </p>
       )}
 
-      {/* 대분류 탭 */}
-      <FilterRadioGroup
-        options={categoryCounts.map((cat) => ({ value: cat.majorId, label: cat.majorLabel }))}
-        value={current?.majorId ?? null}
-        onChange={(majorId) =>
-          setSelectedIdx(categoryCounts.findIndex((c) => c.majorId === majorId))
-        }
-        label={title}
-        selectOnArrow
-        className="mt-4 flex flex-wrap gap-2"
-        optionClassName={(selected) =>
-          `rounded-lg px-3.5 py-2 text-sm font-medium transition-colors ${
-            selected
-              ? `${colors.bg} text-white`
-              : 'bg-surface text-text-muted hover:bg-surface-warm'
-          }`
-        }
-      />
-
-      {/* 중분류 카드 */}
-      <div className="mt-3 grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-4">
-        {sortedMid.map((mid) => (
+      <div className="mt-4 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+        {categoryCounts.map((cat) => (
           <Link
-            key={mid.id}
-            href={`${baseHref}?category=${mid.id}`}
-            className="rounded-xl border border-border-light bg-white p-4 md:p-5 shadow-xs card-hover block"
+            key={cat.id}
+            href={`${baseHref}?category=${cat.id}`}
+            className="block rounded-xl border border-border-light bg-white p-4 shadow-xs card-hover"
           >
-            <p className="text-sm font-medium text-text">{mid.label}</p>
-            {mid.count > 0 ? (
-              <p className={`mt-1 text-xs ${colors.text} font-medium`}>
-                {countLabel} {mid.count}{countUnit}
+            <p className="text-sm font-medium text-text">{cat.label}</p>
+            {cat.count > 0 ? (
+              <p className={`mt-1 text-xs font-medium tabular-nums ${accentText}`}>
+                {countLabel} {cat.count}{countUnit}
               </p>
             ) : (
               <span className="mt-1 inline-block rounded-full bg-surface px-2.5 py-1 text-xs text-text-subtle">

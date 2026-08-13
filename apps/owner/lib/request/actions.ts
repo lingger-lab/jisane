@@ -39,7 +39,7 @@ export async function createRequest(
   const [ownerResult, catResult] = await Promise.all([
     adminClient.from('owner').select('id').eq('auth_user_id', user.id).single(),
     reqType
-      ? adminClient.from('category').select('id').eq('label', reqType).eq('depth', 1).single()
+      ? adminClient.from('category').select('id').eq('label', reqType).eq('depth', 0).single()
       : Promise.resolve({ data: null }),
   ])
 

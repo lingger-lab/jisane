@@ -20,23 +20,15 @@ export default async function AdminHome() {
 
   // 인기 분야 (시니어지식인 수 기준 상위 4개 대분류)
   const topExpertMajors = [...stats.owner.categoryCounts]
-    .sort((a, b) => {
-      const aSum = a.midCategories.reduce((s, m) => s + m.count, 0)
-      const bSum = b.midCategories.reduce((s, m) => s + m.count, 0)
-      return bSum - aSum
-    })
+    .sort((a, b) => b.count - a.count)
     .slice(0, 4)
-    .map((c) => c.majorLabel)
+    .map((c) => c.label)
 
   // 의뢰 많은 분야 (의뢰 수 기준 상위 4개 대분류)
   const topRequestMajors = [...stats.expert.categoryCounts]
-    .sort((a, b) => {
-      const aSum = a.midCategories.reduce((s, m) => s + m.count, 0)
-      const bSum = b.midCategories.reduce((s, m) => s + m.count, 0)
-      return bSum - aSum
-    })
+    .sort((a, b) => b.count - a.count)
     .slice(0, 4)
-    .map((c) => c.majorLabel)
+    .map((c) => c.label)
 
   return (
     <div className="flex flex-1 flex-col">
@@ -64,7 +56,7 @@ export default async function AdminHome() {
             중소기업 전문 서비스와 시니어 전문가 정보를 한곳에서.
           </p>
           <p className="text-xs text-white/50">
-            {stats.owner.totalMajorFields}개 분야 · {stats.owner.totalCategories}개 전문영역 · {stats.owner.totalServices}+ 서비스
+            {stats.owner.totalMajorFields}개 전문 분야 · 전문가 {stats.owner.totalExperts}명
           </p>
         </section>
       </div>

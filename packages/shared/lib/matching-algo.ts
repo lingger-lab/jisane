@@ -67,6 +67,8 @@ export function findCandidates(
         reqMidId = cat.id
         reqMajorId = cat.parent_id
       } else if (cat.depth === 0) {
+        // 평면 12(v3): 대분류가 최종 분류. 직접 일치(15점)로 스코어링되게 reqMidId도 설정.
+        reqMidId = cat.id
         reqMajorId = cat.id
       }
     }

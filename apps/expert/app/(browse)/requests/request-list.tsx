@@ -20,15 +20,14 @@ interface RequestItem {
   company: string | null
 }
 
-interface MajorCategory {
+interface CategoryChip {
   id: string
   label: string
-  midCategories: { id: string; label: string }[]
 }
 
 interface RequestListProps {
   requests: RequestItem[]
-  categoryTree: MajorCategory[]
+  categoryTree: CategoryChip[]
   selectedCategory: string | null
   query: string
   interestedIds: string[]
@@ -53,15 +52,6 @@ export function RequestList({
   const [interested, setInterested] = useSeededState(interestedIds, (ids) => new Set(ids))
   const [loading, setLoading] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
-
-  // 현재 선택된 대분류 찾기
-  const selectedMajorIdx = selectedCategory
-    ? categoryTree.findIndex(
-        (m) =>
-          m.id === selectedCategory ||
-          m.midCategories.some((mid) => mid.id === selectedCategory)
-      )
-    : -1
 
   function handleCategoryChange(categoryId: string | null) {
     const params = new URLSearchParams()
@@ -122,17 +112,15 @@ export function RequestList({
         />
       </div>
 
-      {/* 대분류 탭 — 선택이 URL 내비게이션을 유발하므로 화살표는 포커스만 이동(수동 활성화) */}
+      {/* 분류 필터 (평면 12) */}
       <FilterRadioGroup
         options={[
           { value: '', label: '전체' },
-          ...categoryTree.map((major) => ({ value: major.id, label: major.label })),
+          ...categoryTree.map((cat) => ({ value: cat.id, label: cat.label })),
         ]}
-        value={
-          !selectedCategory ? '' : selectedMajorIdx >= 0 ? categoryTree[selectedMajorIdx].id : null
-        }
+        value={selectedCategory ?? ''}
         onChange={(id) => handleCategoryChange(id || null)}
-        label="대분류 필터"
+        label="분류 필터"
         className="mt-4 flex flex-wrap gap-2"
         optionClassName={(selected) =>
           `rounded-lg px-3.5 py-2 text-sm font-medium transition-colors ${
@@ -142,27 +130,6 @@ export function RequestList({
           }`
         }
       />
-
-      {/* 중분류 칩 (대분류 선택 시) */}
-      {selectedMajorIdx >= 0 && (
-        <FilterRadioGroup
-          options={categoryTree[selectedMajorIdx].midCategories.map((mid) => ({
-            value: mid.id,
-            label: mid.label,
-          }))}
-          value={selectedCategory}
-          onChange={handleCategoryChange}
-          label="중분류 필터"
-          className="mt-2 flex flex-wrap gap-1"
-          optionClassName={(selected) =>
-            `rounded-full px-3 py-1.5 text-xs font-medium transition-colors ${
-              selected
-                ? 'bg-accent/15 text-accent border border-accent/30'
-                : 'bg-surface text-text-subtle hover:bg-surface-warm'
-            }`
-          }
-        />
-      )}
 
       {/* 에러 메시지 */}
       {error && <p className="mt-3 text-xs text-error" role="alert" aria-live="polite">{error}</p>}

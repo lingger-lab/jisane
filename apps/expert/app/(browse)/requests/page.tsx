@@ -55,22 +55,10 @@ export default async function RequestsPage(props: PageProps) {
     .limit(50)
 
   if (category) {
+    // 평면 12(v3): category는 depth 0. request.category_id가 직접 참조하므로 그대로 필터.
     const selectedCat = allCategories.find((c) => c.id === category)
-    if (selectedCat && selectedCat.depth === 1) {
-      // mid-category: 자기 자신 + depth=2 자식들
-      const childIds = allCategories
-        .filter((c) => c.parent_id === category && c.depth === 2)
-        .map((c) => c.id)
-      requestsQuery = requestsQuery.in('category_id', [category, ...childIds])
-    } else if (selectedCat && selectedCat.depth === 0) {
-      // major-category: 산하 모든 mid + detail
-      const midIds = allCategories
-        .filter((c) => c.parent_id === category && c.depth === 1)
-        .map((c) => c.id)
-      const detailIds = allCategories
-        .filter((c) => c.parent_id && midIds.includes(c.parent_id) && c.depth === 2)
-        .map((c) => c.id)
-      requestsQuery = requestsQuery.in('category_id', [...midIds, ...detailIds])
+    if (selectedCat) {
+      requestsQuery = requestsQuery.eq('category_id', category)
     }
   }
 
@@ -91,20 +79,11 @@ export default async function RequestsPage(props: PageProps) {
 
   const interestedIds = (interestsResult.data ?? []).map((i) => i.request_id)
 
-  // 카테고리 계층 구조 생성
-  const majors = allCategories
+  // 카테고리 목록 (평면 12)
+  const categoryTree = allCategories
     .filter((c) => c.depth === 0)
     .sort((a, b) => a.sort_order - b.sort_order)
-  const mids = allCategories.filter((c) => c.depth === 1)
-
-  const categoryTree = majors.map((major) => ({
-    id: major.id,
-    label: major.label,
-    midCategories: mids
-      .filter((m) => m.parent_id === major.id)
-      .sort((a, b) => a.sort_order - b.sort_order)
-      .map((m) => ({ id: m.id, label: m.label })),
-  }))
+    .map((c) => ({ id: c.id, label: c.label }))
 
   return (
     <div className="flex flex-1 flex-col">

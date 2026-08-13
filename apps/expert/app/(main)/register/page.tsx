@@ -6,7 +6,7 @@ import { SubmitButton } from '@jisane/ui/submit-button'
 import { Input } from '@jisane/ui/input'
 import { Select } from '@jisane/ui/select'
 // 대분류별 중분류 그룹 (category 테이블과 동기) — 편집기와 공유하는 단일 소스
-import { FIELD_GROUPS } from '@/lib/fields'
+import { FIELD_LIST } from '@/lib/fields'
 
 const CAREER_OPTIONS = [
   { value: '', label: '선택 안함' },
@@ -77,28 +77,21 @@ export default function RegisterPage() {
             전문 분야 <span className="text-error">*</span>
             <span className="ml-1 text-xs font-normal text-text-muted">(최대 5개)</span>
           </legend>
-          <div className="space-y-3">
-            {FIELD_GROUPS.map((group) => (
-              <div key={group.label}>
-                <p className="mb-1.5 text-xs font-semibold text-text-muted">{group.label}</p>
-                <div className="flex flex-wrap gap-2">
-                  {group.fields.map((chip) => (
-                    <button
-                      key={chip}
-                      type="button"
-                      onClick={() => toggleField(chip)}
-                      aria-pressed={selectedFields.includes(chip)}
-                      className={`rounded-full border px-3 py-1.5 text-sm transition-colors ${
-                        selectedFields.includes(chip)
-                          ? 'border-accent bg-accent/10 font-semibold text-accent'
-                          : 'border-border-light text-text-muted hover:border-accent/30'
-                      }`}
-                    >
-                      {chip}
-                    </button>
-                  ))}
-                </div>
-              </div>
+          <div className="flex flex-wrap gap-2">
+            {FIELD_LIST.map((chip) => (
+              <button
+                key={chip}
+                type="button"
+                onClick={() => toggleField(chip)}
+                aria-pressed={selectedFields.includes(chip)}
+                className={`rounded-full border px-3 py-1.5 text-sm transition-colors ${
+                  selectedFields.includes(chip)
+                    ? 'border-accent bg-accent/10 font-semibold text-accent'
+                    : 'border-border-light text-text-muted hover:border-accent/30'
+                }`}
+              >
+                {chip}
+              </button>
             ))}
           </div>
           <p className="mt-2 text-xs text-text-subtle">
