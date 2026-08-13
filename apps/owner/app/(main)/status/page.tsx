@@ -85,7 +85,7 @@ export default async function StatusPage() {
       </Link>
 
       {/* 의뢰 리스트 */}
-      <h2 className="mb-3 text-base font-bold text-text">의뢰 현황</h2>
+      <h2 className="mb-3 text-lg font-serif font-bold text-text">의뢰 현황</h2>
 
       {requestsFailed ? (
         <ErrorState message="의뢰 목록을 불러오지 못했습니다." />
@@ -121,7 +121,7 @@ export default async function StatusPage() {
       )}
 
       {/* 전문서비스 현황 */}
-      <h2 className="mb-3 mt-8 text-base font-bold text-text">전문서비스 현황</h2>
+      <h2 className="mb-3 mt-8 text-lg font-serif font-bold text-text">전문서비스 현황</h2>
 
       {ordersFailed ? (
         <ErrorState message="전문서비스 주문 목록을 불러오지 못했습니다." />

@@ -132,7 +132,7 @@ export default async function OwnerMyPage() {
 
         {/* 회사 정보 */}
         <section>
-          <h2 className="mb-3 text-base font-bold text-text">회사 정보</h2>
+          <h2 className="mb-3 text-lg font-serif font-bold text-text">회사 정보</h2>
           <OwnerProfileForm
             defaults={{
               company: owner.company ?? '',
@@ -147,7 +147,7 @@ export default async function OwnerMyPage() {
         {/* 섹션 A — 의뢰 현황 */}
         <section>
           <div className="mb-3 flex items-center justify-between">
-            <h2 className="text-base font-bold text-text">의뢰 현황</h2>
+            <h2 className="text-lg font-serif font-bold text-text">의뢰 현황</h2>
             <Link href="/status" className="text-xs font-medium text-primary hover:underline">전체 보기</Link>
           </div>
           {requestsRes.error ? (
@@ -174,7 +174,7 @@ export default async function OwnerMyPage() {
         {/* 섹션 B — 전문서비스 현황 */}
         <section>
           <div className="mb-3 flex items-center justify-between">
-            <h2 className="text-base font-bold text-text">전문서비스 현황</h2>
+            <h2 className="text-lg font-serif font-bold text-text">전문서비스 현황</h2>
             <Link href="/status" className="text-xs font-medium text-primary hover:underline">전체 보기</Link>
           </div>
           {ordersRes.error ? (
@@ -208,7 +208,7 @@ export default async function OwnerMyPage() {
         {/* 섹션 C — 거래 현황 */}
         <section>
           <div className="mb-3 flex items-center justify-between">
-            <h2 className="text-base font-bold text-text">거래 현황</h2>
+            <h2 className="text-lg font-serif font-bold text-text">거래 현황</h2>
             <Link href="/status" className="text-xs font-medium text-primary hover:underline">전체 보기</Link>
           </div>
           {dealsRes.error ? (
@@ -237,7 +237,7 @@ export default async function OwnerMyPage() {
 
         {/* 섹션 D — 받은 관심표현 */}
         <section>
-          <h2 className="mb-3 text-base font-bold text-text">받은 관심표현</h2>
+          <h2 className="mb-3 text-lg font-serif font-bold text-text">받은 관심표현</h2>
           {interestsRes.error ? (
             <ErrorState message="받은 관심표현을 불러오지 못했습니다." />
           ) : interests.length === 0 ? (
@@ -265,7 +265,7 @@ export default async function OwnerMyPage() {
 
         {/* 섹션 E — 초빙 이력 */}
         <section>
-          <h2 className="mb-3 text-base font-bold text-text">초빙 이력</h2>
+          <h2 className="mb-3 text-lg font-serif font-bold text-text">초빙 이력</h2>
           {invitationsRes.error ? (
             <ErrorState message="초빙 이력을 불러오지 못했습니다." />
           ) : invitations.length === 0 ? (
@@ -295,7 +295,7 @@ export default async function OwnerMyPage() {
 
         {/* 섹션 F — 쓴 리뷰 */}
         <section>
-          <h2 className="mb-3 text-base font-bold text-text">내가 쓴 리뷰</h2>
+          <h2 className="mb-3 text-lg font-serif font-bold text-text">내가 쓴 리뷰</h2>
           {reviewsRes.error ? (
             <ErrorState message="작성한 리뷰를 불러오지 못했습니다." />
           ) : reviews.length === 0 ? (

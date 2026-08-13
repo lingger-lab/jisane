@@ -131,7 +131,7 @@ export async function ExpertDashboard({
         </div>
 
         {/* 매칭 리스트 — 조회 실패(에러)와 제안 없음(빈)을 구분한다 */}
-        <h2 className="mb-3 text-base font-bold text-text">매칭 제안</h2>
+        <h2 className="mb-3 text-lg font-serif font-bold text-text">매칭 제안</h2>
         {matchingsError ? (
           <ErrorState message="매칭 제안을 불러오지 못했습니다." />
         ) : matchingList.length === 0 ? (
@@ -172,7 +172,7 @@ export async function ExpertDashboard({
         )}
 
         {/* 열린 의뢰 탐색 + 검색 */}
-        <h2 className="mb-3 mt-8 text-base font-bold text-text">열린 의뢰 탐색</h2>
+        <h2 className="mb-3 mt-8 text-lg font-serif font-bold text-text">열린 의뢰 탐색</h2>
         <p className="mb-3 text-xs text-text-muted">관심 있는 의뢰에 관심을 표현하면 매니저가 우선 검토합니다.</p>
         <div className="mb-4">
           <SearchBox target="/requests" placeholder="제목·내용으로 열린 의뢰 검색" colorToken="accent" />
@@ -184,7 +184,7 @@ export async function ExpertDashboard({
         )}
 
         {/* 교육·서비스 신청 현황 — 조회 실패(에러)와 신청 없음(빈)을 구분한다 */}
-        <h2 className="mb-3 mt-8 text-base font-bold text-text">교육·서비스 신청 현황</h2>
+        <h2 className="mb-3 mt-8 text-lg font-serif font-bold text-text">교육·서비스 신청 현황</h2>
         {serviceOrdersError ? (
           <ErrorState message="교육·서비스 신청 현황을 불러오지 못했습니다." />
         ) : serviceOrders.length === 0 ? (

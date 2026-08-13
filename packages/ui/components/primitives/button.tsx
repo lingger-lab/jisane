@@ -11,7 +11,7 @@ import { cn } from '../../lib/cn'
  * white 텍스트는 primary ≥600에서만(AA) — 기본 primary(700) 7.84:1.
  */
 const buttonVariants = cva(
-  'btn-press focus-ring inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-[var(--radius-md)] text-sm font-medium transition-colors duration-[var(--duration-base)] disabled:pointer-events-none disabled:opacity-50 [&_svg]:size-4 [&_svg]:shrink-0',
+  'btn-press focus-ring inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-xl text-sm font-medium transition-colors duration-[var(--duration-base)] disabled:pointer-events-none disabled:opacity-50 [&_svg]:size-4 [&_svg]:shrink-0',
   {
     variants: {
       variant: {

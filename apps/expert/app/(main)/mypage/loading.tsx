@@ -32,7 +32,7 @@ export default function MyPageLoading() {
 
         {/* 프로필 편집 폼 */}
         <section className="mb-8">
-          <h2 className="mb-4 text-base font-bold text-text">프로필 편집</h2>
+          <h2 className="mb-4 text-lg font-serif font-bold text-text">프로필 편집</h2>
           <div className="flex flex-col gap-5">
             {Array.from({ length: 3 }).map((_, i) => (
               <div key={i}>

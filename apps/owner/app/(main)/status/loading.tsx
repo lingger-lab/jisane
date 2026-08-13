@@ -32,7 +32,7 @@ export default function StatusLoading() {
         <div className="mb-6 h-12 animate-pulse rounded-xl bg-border-light" />
 
         {/* 의뢰 리스트 */}
-        <h2 className="mb-3 text-base font-bold text-text">의뢰 현황</h2>
+        <h2 className="mb-3 text-lg font-serif font-bold text-text">의뢰 현황</h2>
         <div className="flex flex-col gap-3">
           {Array.from({ length: 3 }).map((_, i) => (
             <div
@@ -46,7 +46,7 @@ export default function StatusLoading() {
         </div>
 
         {/* 전문서비스 현황 */}
-        <h2 className="mb-3 mt-8 text-base font-bold text-text">전문서비스 현황</h2>
+        <h2 className="mb-3 mt-8 text-lg font-serif font-bold text-text">전문서비스 현황</h2>
         <div className="flex flex-col gap-3">
           {Array.from({ length: 2 }).map((_, i) => (
             <div

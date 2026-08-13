@@ -158,14 +158,14 @@ export default async function MyPage() {
 
         {/* 프로필 편집 (개인정보 수정) */}
         <section>
-          <h2 className="mb-4 text-base font-bold text-text">프로필 편집</h2>
+          <h2 className="mb-4 text-lg font-serif font-bold text-text">프로필 편집</h2>
           <ProfileEditor profile={profile} />
         </section>
 
         {/* 종합점수 카드 */}
         <div className="rounded-xl border border-border-light bg-surface-warm p-4 shadow-sm">
           <div className="mb-3 flex items-center justify-between">
-            <h2 className="text-base font-bold text-text">내 전문점수</h2>
+            <h2 className="text-lg font-serif font-bold text-text">내 전문점수</h2>
             <span className="text-2xl font-bold text-accent tabular-nums">{expert.total_score?.toFixed(1) ?? '—'}</span>
           </div>
           <div className="grid grid-cols-3 gap-3 text-center text-sm">
@@ -191,14 +191,14 @@ export default async function MyPage() {
         {/* 내 분야 공개 의뢰 — 조회 실패는 섹션을 숨기지 않고 에러 상태로 표시 */}
         {matchedRequestsRes.error ? (
           <section>
-            <h2 className="mb-3 text-base font-bold text-text">내 분야 공개 의뢰</h2>
+            <h2 className="mb-3 text-lg font-serif font-bold text-text">내 분야 공개 의뢰</h2>
             <ErrorState message="내 분야 공개 의뢰를 불러오지 못했습니다." />
           </section>
         ) : null}
         {!matchedRequestsRes.error && matchedRequests.length > 0 && (
           <section>
             <div className="mb-3 flex items-center justify-between">
-              <h2 className="text-base font-bold text-text">내 분야 공개 의뢰</h2>
+              <h2 className="text-lg font-serif font-bold text-text">내 분야 공개 의뢰</h2>
               <Link href="/requests" className="text-xs font-medium text-accent hover:underline">전체 보기</Link>
             </div>
             <ul className="flex flex-col gap-2">
@@ -224,7 +224,7 @@ export default async function MyPage() {
         {/* 섹션 A — 작업 현황 */}
         <section>
           <div className="mb-3 flex items-center justify-between">
-            <h2 className="text-base font-bold text-text">작업 현황</h2>
+            <h2 className="text-lg font-serif font-bold text-text">작업 현황</h2>
             <Link href="/work" className="text-xs font-medium text-accent hover:underline">전체 보기</Link>
           </div>
           {dealsRes.error ? (
@@ -254,7 +254,7 @@ export default async function MyPage() {
         {/* 섹션 B — 교육·서비스 신청 현황 */}
         <section>
           <div className="mb-3 flex items-center justify-between">
-            <h2 className="text-base font-bold text-text">교육·서비스 현황</h2>
+            <h2 className="text-lg font-serif font-bold text-text">교육·서비스 현황</h2>
             <Link href="/matching" className="text-xs font-medium text-accent hover:underline">전체 보기</Link>
           </div>
           {ordersRes.error ? (
@@ -288,7 +288,7 @@ export default async function MyPage() {
         {/* 섹션 C — 매칭 현황 */}
         <section>
           <div className="mb-3 flex items-center justify-between">
-            <h2 className="text-base font-bold text-text">매칭 현황</h2>
+            <h2 className="text-lg font-serif font-bold text-text">매칭 현황</h2>
             <Link href="/matching" className="text-xs font-medium text-accent hover:underline">전체 보기</Link>
           </div>
           {matchingsRes.error ? (
@@ -318,13 +318,13 @@ export default async function MyPage() {
         {/* 섹션 D — 활동 이력 (조회 실패는 섹션을 숨기지 않고 에러 상태로 표시) */}
         {activitiesRes.error ? (
           <section>
-            <h2 className="mb-3 text-base font-bold text-text">활동 이력</h2>
+            <h2 className="mb-3 text-lg font-serif font-bold text-text">활동 이력</h2>
             <ErrorState message="활동 이력을 불러오지 못했습니다." />
           </section>
         ) : null}
         {!activitiesRes.error && activities.length > 0 && (
           <section>
-            <h2 className="mb-3 text-base font-bold text-text">활동 이력</h2>
+            <h2 className="mb-3 text-lg font-serif font-bold text-text">활동 이력</h2>
             <ul className="flex flex-col gap-2">
               {activities.map((a) => {
                 const isExpired = a.expires_at && new Date(a.expires_at) < new Date()
@@ -355,7 +355,7 @@ export default async function MyPage() {
         {/* 섹션 E — 관심 표현 이력 */}
         <section>
           <div className="mb-3 flex items-center justify-between">
-            <h2 className="text-base font-bold text-text">관심 표현 이력</h2>
+            <h2 className="text-lg font-serif font-bold text-text">관심 표현 이력</h2>
             <span className="text-xs font-medium text-text-muted tabular-nums">
               활성 {interestsRes.error ? '—' : activeInterestCount}/5개
             </span>

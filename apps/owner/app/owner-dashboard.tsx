@@ -87,7 +87,7 @@ export async function OwnerDashboard({
         {/* 내 현황 요약 */}
         <section>
           <div className="mb-3 flex items-center justify-between">
-            <h2 className="text-base font-bold text-text">내 현황</h2>
+            <h2 className="text-lg font-serif font-bold text-text">내 현황</h2>
             <Link href="/status" className="text-xs font-medium text-primary hover:underline">전체 보기</Link>
           </div>
           <div className="grid grid-cols-3 gap-3">
@@ -100,7 +100,7 @@ export async function OwnerDashboard({
         {/* 최근 의뢰 */}
         {recent.length > 0 && (
           <section>
-            <h2 className="mb-3 text-base font-bold text-text">최근 의뢰</h2>
+            <h2 className="mb-3 text-lg font-serif font-bold text-text">최근 의뢰</h2>
             <ul className="flex flex-col gap-2">
               {recent.map((req) => (
                 <li key={req.id}>
@@ -122,7 +122,7 @@ export async function OwnerDashboard({
 
         {/* 시니어지식인 탐색 — 검색 + 카테고리 + 추천 */}
         <section>
-          <h2 className="mb-3 text-base font-bold text-text">시니어지식인 찾기</h2>
+          <h2 className="mb-3 text-lg font-serif font-bold text-text">시니어지식인 찾기</h2>
           <SearchBox target="/experts" placeholder="이름·분야로 시니어지식인 검색" />
           <div className="mt-4">
             <CategoryBrowse
@@ -141,7 +141,7 @@ export async function OwnerDashboard({
         {topExperts.length > 0 && (
           <section>
             <div className="mb-3 flex items-center justify-between">
-              <h2 className="text-base font-bold text-text">추천 시니어지식인</h2>
+              <h2 className="text-lg font-serif font-bold text-text">추천 시니어지식인</h2>
               <Link href="/experts" className="text-xs font-medium text-primary hover:underline">전체 보기</Link>
             </div>
             <div className="grid gap-3 md:grid-cols-2">
@@ -157,7 +157,7 @@ export async function OwnerDashboard({
             <p className="mt-1 text-xs text-white/80">새 의뢰를 등록합니다</p>
           </Link>
           <Link href="/services" className="rounded-2xl border border-border-light bg-card p-5 shadow-sm transition-colors hover:border-primary/30">
-            <p className="text-base font-bold text-text">전문서비스</p>
+            <p className="text-lg font-serif font-bold text-text">전문서비스</p>
             <p className="mt-1 text-xs text-text-muted">S/W·P/G·컨설팅 둘러보기</p>
           </Link>
         </section>

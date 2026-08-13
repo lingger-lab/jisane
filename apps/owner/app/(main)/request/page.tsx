@@ -30,7 +30,7 @@ export default async function RequestPage() {
 
       {/* 의뢰서 작성 */}
       <section>
-        <h2 className="mb-4 text-base font-bold text-text">의뢰서 작성</h2>
+        <h2 className="mb-4 text-lg font-serif font-bold text-text">의뢰서 작성</h2>
         <RequestForm />
       </section>
       </div>
