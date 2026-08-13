@@ -5,6 +5,7 @@ import { CategoryBrowse } from '@jisane/ui/category-browse'
 import { SearchBox } from '@jisane/ui/search-box'
 import { StatusBadge } from '@jisane/ui/status-badge'
 import { StatCard } from '@jisane/ui/stat-card'
+import { HeroBackdrop } from '@jisane/ui/hero-backdrop'
 import { ExpertCard, type ExpertCardData } from './(browse)/experts/expert-card'
 
 /**
@@ -58,12 +59,13 @@ export async function OwnerDashboard({
     <div className="flex flex-1 flex-col items-center animate-fade-in">
       {/* 인사 히어로 — 로그인 상태 */}
       <div className="hero-dark w-full">
-        <section className="container-app flex flex-col gap-2 px-4 md:px-6 pt-10 md:pt-14 pb-8 md:pb-10">
-          <span className="hero-eyebrow self-start">기업회원</span>
-          <h1 className="text-2xl md:text-3xl font-bold font-serif text-white leading-snug">
+        <HeroBackdrop intensity="subtle" />
+        <section className="container-app relative z-10 flex flex-col gap-2 px-4 md:px-6 pt-10 md:pt-14 pb-8 md:pb-10">
+          <span className="hero-eyebrow self-start animate-slide-up stagger-1">기업회원</span>
+          <h1 className="text-2xl md:text-3xl font-bold font-serif text-white leading-snug animate-slide-up stagger-2">
             {greeting}님, 반갑습니다
           </h1>
-          <p className="text-sm md:text-base text-white/75">진행 중인 현황을 한눈에 확인하세요.</p>
+          <p className="text-sm md:text-base text-white/75 animate-slide-up stagger-3">진행 중인 현황을 한눈에 확인하세요.</p>
         </section>
       </div>
 
@@ -89,9 +91,9 @@ export async function OwnerDashboard({
             <Link href="/status" className="text-xs font-medium text-primary hover:underline">전체 보기</Link>
           </div>
           <div className="grid grid-cols-3 gap-3">
-            <StatCard href="/status" value={progressRequests} label="진행 의뢰" />
-            <StatCard href="/status" value={progressDeals} label="진행 거래" />
-            <StatCard href="/status" value={progressOrders} label="진행 서비스" />
+            <StatCard href="/status" countTo={progressRequests} label="진행 의뢰" />
+            <StatCard href="/status" countTo={progressDeals} label="진행 거래" />
+            <StatCard href="/status" countTo={progressOrders} label="진행 서비스" />
           </div>
         </section>
 

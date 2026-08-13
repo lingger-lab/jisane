@@ -10,6 +10,8 @@ import { getPackagesByAudience } from '@jisane/shared/service-package/queries'
 import { CategoryBrowse } from '@jisane/ui/category-browse'
 import { OwlIcon } from '@jisane/ui/icons/owl'
 import { ScrollReveal } from '@jisane/ui/scroll-reveal'
+import { HeroBackdrop } from '@jisane/ui/hero-backdrop'
+import { TextRotator } from '@jisane/ui/text-rotator'
 import { ADMIN_URL, EXPERT_URL } from '@/lib/urls'
 
 // 지사네가 제공하는 기업 전문 서비스 5대 분류 — 각 서비스를 나타내는 라인 아이콘.
@@ -95,14 +97,20 @@ export default async function OwnerHome() {
     <div className="flex flex-1 flex-col items-center">
       {/* [1] 히어로 — 브랜드 딥그린 다크 밴드 */}
       <div className="hero-dark w-full">
-        <section className="container-marketing flex flex-col items-center gap-4 px-4 md:px-6 pt-14 md:pt-20 pb-12 md:pb-16 text-center animate-fade-in">
-          <span className="hero-eyebrow">기업의 곁에, 언제나 당신곁에</span>
-          <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold font-serif text-white leading-snug">
-            지역 기업의
+        <HeroBackdrop intensity="hero" />
+        <section className="container-marketing relative z-10 flex flex-col items-center gap-4 px-4 md:px-6 pt-14 md:pt-20 pb-12 md:pb-16 text-center">
+          <span className="hero-eyebrow animate-slide-up stagger-1">기업의 곁에, 언제나 당신곁에</span>
+          <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold font-serif text-white leading-snug animate-slide-up stagger-2">
+            지역 기업의 든든한
             <br />
-            <span className="text-accent-light">든든한</span> 성장 파트너
+            성장{' '}
+            <TextRotator
+              words={['파트너', '동반자', '길잡이']}
+              className="text-accent-light"
+              buttonClassName="text-white/50 hover:text-white/90"
+            />
           </h1>
-          <p className="text-base md:text-lg text-white/75">
+          <p className="text-base md:text-lg text-white/75 animate-slide-up stagger-3">
             부울경 중소기업에 필요한 전문 서비스와 시니어 전문가 정보 제공
           </p>
         </section>

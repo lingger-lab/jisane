@@ -17,17 +17,19 @@ const ICONS: Record<Theme, typeof Sun> = { light: Sun, dark: Moon, system: Monit
  * 페인트 전 실제 적용은 각 앱 layout <head>의 인라인 스크립트가 담당(플래시 방지).
  */
 export function ThemeToggle({ className }: { className?: string }) {
-  const [theme, setTheme] = useState<Theme>('system')
+  // 기본 모드 = 라이트(저장값 없으면 라이트). 'system'만 OS(prefers-color-scheme) 추종.
+  const [theme, setTheme] = useState<Theme>('light')
 
   useEffect(() => {
     const stored = localStorage.getItem('theme')
-    setTheme(stored === 'light' || stored === 'dark' ? stored : 'system')
+    setTheme(stored === 'dark' || stored === 'light' || stored === 'system' ? stored : 'light')
   }, [])
 
   function apply(next: Theme) {
     setTheme(next)
     if (next === 'system') {
-      localStorage.removeItem('theme')
+      // 'system'은 명시 저장(재로드 시에도 OS 추종 유지) + 속성 제거해 media query가 결정
+      localStorage.setItem('theme', 'system')
       document.documentElement.removeAttribute('data-theme')
     } else {
       localStorage.setItem('theme', next)

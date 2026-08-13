@@ -327,7 +327,7 @@ body {
 }
 
 .animate-slide-up {
-  animation: slide-up 0.5s ease-out both;
+  animation: slide-up 1s ease-out both;
 }
 
 /* 브랜드 유틸리티 */
@@ -368,7 +368,9 @@ body {
   .splash-char,
   .owl-alive .owl-pupil,
   .splash-owl .owl-eye,
-  .splash-owl .owl-pupil {
+  .splash-owl .owl-pupil,
+  .hero-blob,
+  .hero-sweep {
     animation: none;
   }
   .card-hover {
@@ -389,13 +391,13 @@ summary {
 }
 
 .card-hover:hover {
-  box-shadow: var(--shadow-md);
-  transform: translateY(-1px);
+  box-shadow: var(--shadow-lg);
+  transform: translateY(-3px);
 }
 
 .card-glow:hover {
-  box-shadow: 0 0 20px var(--brand-glow), 0 0 60px rgba(var(--primary-rgb), 0.08), var(--shadow-md);
-  transform: translateY(-2px);
+  box-shadow: 0 0 20px var(--brand-glow), 0 0 60px rgba(var(--primary-rgb), 0.08), var(--shadow-lg);
+  transform: translateY(-3px);
 }
 
 /* 프로세스 스텝 연결선 (데스크탑) */
@@ -552,8 +554,60 @@ summary {
 
 /* 다크 히어로 (렐라랩 벤치마킹 — 브랜드 딥그린 고대비 밴드) */
 .hero-dark {
+  position: relative;
+  overflow: hidden;
   background: linear-gradient(160deg, #153f30 0%, #1f5c46 70%, #24684f 100%);
   color: #fff;
+}
+
+/* 히어로 앰비언트 백드롭 — 딥그린 밴드 위 브랜드 블롭 드리프트 + 라이트 스윕(장식·pointer-events 없음).
+   transform/opacity 전용(GPU) · 느린 루프 · 저opacity → "화려하되 calm". reduced-motion서 정지. */
+.hero-backdrop {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+.hero-backdrop > .hero-blob {
+  position: absolute;
+  border-radius: 9999px;
+  filter: blur(44px);
+  opacity: 0.16;
+  will-change: transform;
+}
+.hero-blob-1 {
+  width: 22rem; height: 22rem; left: -5rem; top: -7rem;
+  background: radial-gradient(circle, #5aad85 0%, transparent 68%);
+  animation: blob-float 22s ease-in-out infinite;
+}
+.hero-blob-2 {
+  width: 18rem; height: 18rem; right: -4rem; top: 18%;
+  background: radial-gradient(circle, #d99a4a 0%, transparent 68%);
+  opacity: 0.12;
+  animation: blob-float 28s ease-in-out infinite reverse;
+}
+.hero-blob-3 {
+  width: 16rem; height: 16rem; left: 32%; bottom: -6rem;
+  background: radial-gradient(circle, #2f8f68 0%, transparent 70%);
+  animation: blob-float 25s ease-in-out infinite;
+  animation-delay: -9s;
+}
+.hero-sweep {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(105deg, transparent 42%, rgba(255, 255, 255, 0.05) 50%, transparent 58%);
+  background-size: 250% 100%;
+  animation: shimmer 9s ease-in-out infinite;
+}
+/* subtle(내부 PageHero) — 더 옅게, 스윕 생략 */
+.hero-backdrop[data-intensity="subtle"] > .hero-blob { opacity: 0.09; filter: blur(52px); }
+.hero-backdrop[data-intensity="subtle"] .hero-sweep { display: none; }
+
+@keyframes blob-float {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  33% { transform: translate(22px, -26px) scale(1.08); }
+  66% { transform: translate(-18px, 14px) scale(0.95); }
 }
 
 .hero-eyebrow {

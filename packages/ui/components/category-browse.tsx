@@ -41,11 +41,11 @@ export function CategoryBrowse({
       )}
 
       <div className="mt-4 grid grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-2 md:gap-3">
-        {categoryCounts.map((cat) => (
+        {categoryCounts.map((cat, i) => (
           <Link
             key={cat.id}
             href={`${baseHref}?category=${cat.id}`}
-            className="block rounded-xl border border-border-light bg-card p-3 text-center shadow-xs card-hover"
+            className={`block rounded-xl border border-border-light bg-card p-3 text-center shadow-xs card-hover animate-fade-in stagger-${Math.min(i + 1, 5)}`}
           >
             <p className="text-xs font-medium leading-tight break-keep text-text sm:text-sm">{cat.label}</p>
             {cat.count > 0 ? (

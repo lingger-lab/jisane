@@ -90,10 +90,10 @@ export function EducationView({
         />
 
         <div className="flex flex-col gap-4">
-          {filtered.map((pkg) => (
+          {filtered.map((pkg, i) => (
             <div
               key={pkg.slug}
-              className="rounded-xl border border-border-light p-4 shadow-xs"
+              className={`rounded-xl border border-border-light p-4 shadow-xs animate-fade-in stagger-${Math.min(i + 1, 5)}`}
             >
               <div className="flex items-start justify-between gap-3">
                 <div className="min-w-0 flex-1">

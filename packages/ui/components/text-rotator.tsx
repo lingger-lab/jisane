@@ -6,6 +6,8 @@ interface TextRotatorProps {
   words: string[]
   interval?: number
   className?: string
+  /** 일시정지 버튼 색상 클래스(다크 히어로 등 배경별 대비 조정). 미지정 시 밝은 배경용 기본값. */
+  buttonClassName?: string
 }
 
 // prefers-reduced-motion 구독 (useSyncExternalStore 외부 시스템 패턴)
@@ -22,7 +24,7 @@ function subscribeReducedMotion(callback: () => void) {
  * 회전 텍스트는 aria-hidden(장식) — AT에는 전체 문구를 정적으로 1회만 제공해
  * 무한 낭독 인터럽트(구 aria-live)를 제거한다.
  */
-export function TextRotator({ words, interval = 2500, className = '' }: TextRotatorProps) {
+export function TextRotator({ words, interval = 2500, className = '', buttonClassName }: TextRotatorProps) {
   const [index, setIndex] = useState(0)
   const [phase, setPhase] = useState<'in' | 'out'>('in')
   const [paused, setPaused] = useState(false)
@@ -69,7 +71,7 @@ export function TextRotator({ words, interval = 2500, className = '' }: TextRota
           onClick={() => setPaused((p) => !p)}
           aria-pressed={paused}
           aria-label={paused ? '문구 회전 재생' : '문구 회전 일시정지'}
-          className="focus-ring ml-1.5 inline-flex h-6 w-6 shrink-0 items-center justify-center rounded align-middle text-sm text-text-subtle transition-colors hover:text-text-muted"
+          className={`focus-ring ml-1.5 inline-flex h-6 w-6 shrink-0 items-center justify-center rounded align-middle text-sm transition-colors ${buttonClassName || 'text-text-subtle hover:text-text-muted'}`}
         >
           {paused ? '▶︎' : '⏸︎'}
         </button>

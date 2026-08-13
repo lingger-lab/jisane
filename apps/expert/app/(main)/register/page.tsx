@@ -5,6 +5,7 @@ import { updateExpertProfile } from '@/lib/expert/actions'
 import { SubmitButton } from '@jisane/ui/submit-button'
 import { Input } from '@jisane/ui/input'
 import { Select } from '@jisane/ui/select'
+import { HeroBackdrop } from '@jisane/ui/hero-backdrop'
 // 전문 분야 = 평면 12분류 (category 테이블과 동기) — 편집기와 공유하는 단일 소스
 import { FIELD_LIST } from '@/lib/fields'
 
@@ -41,12 +42,13 @@ export default function RegisterPage() {
     <div className="flex flex-1 flex-col animate-fade-in">
       {/* 다크 히어로 — 브랜드 딥그린 밴드 (렐라랩 벤치마킹) */}
       <div className="hero-dark w-full">
-        <section className="container-form flex flex-col items-center gap-2 px-4 md:px-6 pt-10 md:pt-14 pb-8 md:pb-10 text-center">
-          <span className="hero-eyebrow">시니어지식인공간 · 등록</span>
-          <h1 className="text-2xl md:text-3xl font-bold font-serif text-white leading-snug">
+        <HeroBackdrop intensity="subtle" />
+        <section className="container-form relative z-10 flex flex-col items-center gap-2 px-4 md:px-6 pt-10 md:pt-14 pb-8 md:pb-10 text-center">
+          <span className="hero-eyebrow animate-slide-up stagger-1">시니어지식인공간 · 등록</span>
+          <h1 className="text-2xl md:text-3xl font-bold font-serif text-white leading-snug animate-slide-up stagger-2">
             경험의 값어치, <span className="text-accent-light">온전히</span> 받으세요
           </h1>
-          <p className="text-sm md:text-base text-white/75">전문 분야를 등록하면 맞춤 의뢰가 연결됩니다.</p>
+          <p className="text-sm md:text-base text-white/75 animate-slide-up stagger-3">전문 분야를 등록하면 맞춤 의뢰가 연결됩니다.</p>
         </section>
       </div>
 

@@ -60,12 +60,14 @@ export default async function RootLayout({
   const { data: { user } } = await supabase.auth.getUser();
 
   return (
-    <html lang="ko" className={`h-full antialiased ${pretendard.variable} ${gowunBatang.variable}`}>
+    <html lang="ko" className={`h-full antialiased ${pretendard.variable} ${gowunBatang.variable}`} suppressHydrationWarning>
       <body className="min-h-full flex flex-col bg-background text-foreground font-sans" suppressHydrationWarning>
-        {/* 다크모드 플래시 방지 — 페인트 전 저장된 테마를 <html>에 스탬프(첫 body 자식으로 동기 실행). */}
+        {/* 다크모드 플래시 방지 — 페인트 전 저장된 테마를 <html>에 스탬프(첫 body 자식으로 동기 실행).
+            기본=라이트(저장값 없으면 light 스탬프), 'dark'=다크, 'system'=미설정→prefers-color-scheme.
+            <html>에 data-theme를 쓰므로 <html>에도 suppressHydrationWarning 필요. */}
         <script
           dangerouslySetInnerHTML={{
-            __html: `(function(){try{var t=localStorage.getItem('theme');if(t==='light'||t==='dark')document.documentElement.setAttribute('data-theme',t);}catch(e){}})();`,
+            __html: `(function(){try{var t=localStorage.getItem('theme');if(t==='dark')document.documentElement.setAttribute('data-theme','dark');else if(t!=='system')document.documentElement.setAttribute('data-theme','light');}catch(e){document.documentElement.setAttribute('data-theme','light');}})();`,
           }}
         />
         <AppHeader

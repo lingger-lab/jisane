@@ -7,6 +7,7 @@ import { MATCHING_STATUS_LABELS } from '@jisane/shared/labels'
 import { MATCHING_STATUS_BADGE_CLASSES } from '@jisane/shared/status-badges'
 import { StatusBadge } from '@jisane/ui/status-badge'
 import { StatCard } from '@jisane/ui/stat-card'
+import { HeroBackdrop } from '@jisane/ui/hero-backdrop'
 import { OpportunitySection } from './(main)/matching/opportunity-section'
 
 // 매칭 배지는 이 화면에서 rejected를 에러색이 아닌 중립색으로 표시해 온 의도적 오버라이드가 있어
@@ -97,12 +98,13 @@ export async function ExpertDashboard({
 
       {/* 인사 히어로 */}
       <div className="hero-dark w-full">
-        <section className="container-app flex flex-col gap-1 px-4 md:px-6 pt-10 md:pt-14 pb-8 md:pb-10">
-          <span className="hero-eyebrow self-start">시니어지식인공간</span>
-          <h1 className="text-2xl md:text-3xl font-bold font-serif text-white leading-snug">
+        <HeroBackdrop intensity="subtle" />
+        <section className="container-app relative z-10 flex flex-col gap-1 px-4 md:px-6 pt-10 md:pt-14 pb-8 md:pb-10">
+          <span className="hero-eyebrow self-start animate-slide-up stagger-1">시니어지식인공간</span>
+          <h1 className="text-2xl md:text-3xl font-bold font-serif text-white leading-snug animate-slide-up stagger-2">
             {name || '시니어지식인'}님, 반갑습니다
           </h1>
-          <p className="text-sm md:text-base text-white/75">매칭 제안과 열린 의뢰를 한눈에 확인하세요.</p>
+          <p className="text-sm md:text-base text-white/75 animate-slide-up stagger-3">매칭 제안과 열린 의뢰를 한눈에 확인하세요.</p>
         </section>
       </div>
 
@@ -124,8 +126,8 @@ export async function ExpertDashboard({
 
         {/* 요약 카드 — 조회 실패 시 가짜 0 대신 미확인 표시 */}
         <div className="mb-6 grid grid-cols-2 gap-3">
-          <StatCard value={matchingsError ? '—' : proposedCount} label="새 매칭 제안" accent="accent" />
-          <StatCard href="/work" value={workingCountError ? '—' : workingCount || 0} label="진행 중 작업" accent="accent" />
+          <StatCard countTo={matchingsError ? undefined : proposedCount} value={matchingsError ? '—' : undefined} label="새 매칭 제안" accent="accent" />
+          <StatCard href="/work" countTo={workingCountError ? undefined : (workingCount || 0)} value={workingCountError ? '—' : undefined} label="진행 중 작업" accent="accent" />
         </div>
 
         {/* 매칭 리스트 — 조회 실패(에러)와 제안 없음(빈)을 구분한다 */}

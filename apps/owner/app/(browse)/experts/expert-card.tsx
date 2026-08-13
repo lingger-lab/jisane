@@ -13,11 +13,11 @@ export interface ExpertCardData {
 }
 
 /** 시니어지식인 카드 — 리스트·홈 추천·의뢰하기 미리보기 공용 */
-export function ExpertCard({ expert }: { expert: ExpertCardData }) {
+export function ExpertCard({ expert, className = '' }: { expert: ExpertCardData; className?: string }) {
   return (
     <Link
       href={`/experts/${expert.id}`}
-      className="rounded-xl border border-border-light p-4 md:p-5 shadow-xs card-hover block"
+      className={`rounded-xl border border-border-light p-4 md:p-5 shadow-xs card-hover block ${className}`}
     >
       <div className="flex items-start justify-between gap-2">
         <div className="min-w-0 flex-1">

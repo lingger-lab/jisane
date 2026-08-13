@@ -115,7 +115,13 @@ export function ExpertList({ experts, categoryTree, selectedCategory, query, loa
             )}
           </div>
         ) : (
-          experts.map((expert) => <ExpertCard key={expert.id} expert={expert} />)
+          experts.map((expert, i) => (
+            <ExpertCard
+              key={expert.id}
+              expert={expert}
+              className={`animate-fade-in stagger-${Math.min(i + 1, 5)}`}
+            />
+          ))
         )}
       </div>
     </div>

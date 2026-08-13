@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react'
+import { HeroBackdrop } from './hero-backdrop'
 
 /**
  * 페이지 공용 헤더 — 브랜드 딥그린 다크 밴드(hero-dark).
@@ -45,13 +46,14 @@ export function PageHero({
 
   return (
     <div className="hero-dark w-full">
-      <section className={`responsive-container flex flex-col gap-1.5 px-4 md:px-6 ${size === 'lg' ? 'pt-10 md:pt-14 pb-8 md:pb-10' : 'pt-8 md:pt-10 pb-6 md:pb-8'}`}>
+      <HeroBackdrop intensity="subtle" />
+      <section className={`responsive-container relative z-10 flex flex-col gap-1.5 px-4 md:px-6 ${size === 'lg' ? 'pt-10 md:pt-14 pb-8 md:pb-10' : 'pt-8 md:pt-10 pb-6 md:pb-8'}`}>
         {back && <div className="mb-1">{back}</div>}
-        {eyebrow && <span className="hero-eyebrow self-start">{eyebrow}</span>}
-        <h1 className={`${titleClass} font-bold font-serif text-white leading-snug`}>
+        {eyebrow && <span className="hero-eyebrow animate-slide-up stagger-1 self-start">{eyebrow}</span>}
+        <h1 className={`${titleClass} font-bold font-serif text-white leading-snug animate-slide-up stagger-2`}>
           {titleNode}
         </h1>
-        {subtitle && <p className="text-sm md:text-base text-white/80">{subtitle}</p>}
+        {subtitle && <p className="text-sm md:text-base text-white/80 animate-slide-up stagger-3">{subtitle}</p>}
       </section>
     </div>
   )

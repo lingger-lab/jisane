@@ -4,6 +4,9 @@ import { createClient } from '@jisane/shared/supabase/server'
 import { fetchHubLandingStats } from '@jisane/shared/landing-stats'
 import { SplashOverlay } from '@/components/splash-overlay'
 import { OwlIcon } from '@jisane/ui/icons/owl'
+import { HeroBackdrop } from '@jisane/ui/hero-backdrop'
+import { TextRotator } from '@jisane/ui/text-rotator'
+import { AnimatedCounter } from '@jisane/ui/animated-counter'
 import { OWNER_URL, EXPERT_URL } from '@/lib/urls'
 
 export default async function AdminHome() {
@@ -45,18 +48,24 @@ export default async function AdminHome() {
 
       {/* 히어로 — 브랜드 딥그린 다크 밴드 (렐라랩 벤치마킹: 아이브로우→제목→서브→수치) */}
       <div className="hero-dark w-full">
-        <section className="container-marketing flex flex-col items-center gap-4 px-4 md:px-6 pt-14 md:pt-20 pb-12 md:pb-16 text-center animate-fade-in">
-          <span className="hero-eyebrow">기업의 곁에, 언제나 당신곁에</span>
-          <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold font-serif text-white leading-snug">
-            지역 기업의 든든한
+        <HeroBackdrop intensity="hero" />
+        <section className="container-marketing relative z-10 flex flex-col items-center gap-4 px-4 md:px-6 pt-14 md:pt-20 pb-12 md:pb-16 text-center">
+          <span className="hero-eyebrow animate-slide-up stagger-1">기업의 곁에, 언제나 당신곁에</span>
+          <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold font-serif text-white leading-snug animate-slide-up stagger-2">
+            지역 기업의 든든한 성장
             <br />
-            <span className="text-accent-light">성장</span> 파트너
+            <TextRotator
+              words={['파트너', '동반자', '길잡이']}
+              className="text-accent-light"
+              buttonClassName="text-white/50 hover:text-white/90"
+            />
           </h1>
-          <p className="text-base md:text-lg text-white/75 leading-relaxed">
+          <p className="text-base md:text-lg text-white/75 leading-relaxed animate-slide-up stagger-3">
             중소기업 전문 서비스와 시니어 전문가 정보를 한곳에서.
           </p>
-          <p className="text-xs text-white/50">
-            {stats.owner.totalMajorFields}개 전문 분야 · 전문가 {stats.owner.totalExperts}명
+          <p className="text-xs text-white/50 animate-slide-up stagger-4">
+            <AnimatedCounter end={stats.owner.totalMajorFields} />개 전문 분야 · 전문가{' '}
+            <AnimatedCounter end={stats.owner.totalExperts} />명
           </p>
         </section>
       </div>
@@ -70,7 +79,7 @@ export default async function AdminHome() {
             <div className="flex flex-col gap-4">
               <a
                 href={ownerUrl}
-                className="rounded-2xl border border-border-light bg-card p-6 md:p-8 text-left shadow-sm card-hover transition-all"
+                className="rounded-2xl border border-border-light bg-card p-6 md:p-8 text-left shadow-sm card-hover card-glow transition-all"
               >
                 <h2 className="text-2xl md:text-3xl font-bold font-serif text-primary">기업회원</h2>
                 <p className="mt-2 text-sm md:text-base text-text-muted">기업 운영에 필요한 전문 서비스와 시니어 전문가 정보</p>
@@ -88,7 +97,7 @@ export default async function AdminHome() {
 
               <a
                 href={expertUrl}
-                className="rounded-2xl border border-border-light bg-card p-6 md:p-8 text-left shadow-sm card-hover transition-all"
+                className="rounded-2xl border border-border-light bg-card p-6 md:p-8 text-left shadow-sm card-hover card-glow transition-all"
               >
                 <h2 className="text-2xl md:text-3xl font-bold font-serif text-accent">시니어지식인회원</h2>
                 <p className="mt-2 text-sm md:text-base text-text-muted">경험과 노하우로 지역 기업과 협력</p>
@@ -107,7 +116,7 @@ export default async function AdminHome() {
               {/* 전문가회원(파트너) — 특수관계 제공기관용 (기업·시니어와 동일 구조) */}
               <Link
                 href="/partner"
-                className="rounded-2xl border border-border-light bg-card p-6 md:p-8 text-left shadow-sm card-hover transition-all"
+                className="rounded-2xl border border-border-light bg-card p-6 md:p-8 text-left shadow-sm card-hover card-glow transition-all"
               >
                 <h2 className="text-2xl md:text-3xl font-bold font-serif text-info">전문가회원(파트너)</h2>
                 <p className="mt-2 text-sm md:text-base text-text-muted">
