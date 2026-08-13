@@ -13,6 +13,7 @@ interface PackageRowWithProvider {
   id: string
   slug: string
   category: ServicePackage['category']
+  pillar: ServicePackage['pillar'] | null
   name: string
   description: string
   price: number
@@ -32,6 +33,7 @@ function toServicePackage(row: PackageRowWithProvider): ServicePackage {
     id: row.id,
     slug: row.slug,
     category: row.category,
+    pillar: row.pillar ?? undefined,
     name: row.name,
     description: row.description,
     price: row.price,
@@ -48,7 +50,7 @@ function toServicePackage(row: PackageRowWithProvider): ServicePackage {
 }
 
 const PACKAGE_SELECT =
-  'id, slug, category, name, description, price, is_free, deliverables, duration, target_audience, featured, value_desc, ax_dashboard_url, provider_id, provider:provider!inner(name)'
+  'id, slug, category, pillar, name, description, price, is_free, deliverables, duration, target_audience, featured, value_desc, ax_dashboard_url, provider_id, provider:provider!inner(name)'
 
 export async function getPackagesByAudience(
   audience: ServicePackage['targetAudience']

@@ -6,13 +6,15 @@ import Link from 'next/link'
 import { Badge } from '@jisane/ui/badge'
 import { PageHero } from '@jisane/ui/page-hero'
 import { FilterRadioGroup } from '@jisane/ui/filter-radio-group'
-import type { ServicePackage, ProviderInfo } from '@jisane/shared/service-catalog'
+import {
+  PILLAR_ORDER,
+  PILLAR_LABELS,
+  formatPackagePrice,
+  type ServicePackage,
+  type ProviderInfo,
+  type EnterprisePillar,
+} from '@jisane/shared/service-catalog'
 import { ADMIN_URL } from '@/lib/urls'
-
-const CATEGORY_TABS = [
-  { key: 'ax_consulting' as const, label: 'AX 컨설팅' },
-  { key: 'biz_consulting' as const, label: '경영 컨설팅' },
-]
 
 const CATEGORY_LABELS: Record<string, string> = {
   ax_consulting: 'AX 컨설팅',
@@ -41,7 +43,7 @@ function PackageCard({ pkg, className = '' }: { pkg: ServicePackage; className?:
           <p className="mt-1 text-xs text-text-muted leading-relaxed">{pkg.description}</p>
         </div>
         <p className="shrink-0 text-sm font-bold text-primary">
-          {pkg.isFree ? '무료' : `${pkg.price.toLocaleString('ko-KR')}원`}
+          {formatPackagePrice(pkg)}
         </p>
       </div>
 
@@ -85,12 +87,21 @@ function PackageCard({ pkg, className = '' }: { pkg: ServicePackage; className?:
 export function ServicesView({
   packages,
   providers,
+  initialPillar,
 }: {
   packages: ServicePackage[]
   providers: ProviderInfo[]
+  initialPillar?: string
 }) {
+  // 실제 서비스가 있는 pillar만 탭으로 노출(self-healing) — 빈 분류 탭을 만들지 않는다.
+  const availablePillars = PILLAR_ORDER.filter((code) => packages.some((p) => p.pillar === code))
+  const initialActive: EnterprisePillar =
+    initialPillar && availablePillars.includes(initialPillar as EnterprisePillar)
+      ? (initialPillar as EnterprisePillar)
+      : (availablePillars[0] ?? 'biz_marketing')
+
   const [search, setSearch] = useState('')
-  const [activeCategory, setActiveCategory] = useState<(typeof CATEGORY_TABS)[number]['key']>('ax_consulting')
+  const [activePillar, setActivePillar] = useState<EnterprisePillar>(initialActive)
   const [priceFilter, setPriceFilter] = useState<'all' | 'free' | 'paid'>('all')
   const [expandedProvider, setExpandedProvider] = useState<string | null>(providers[0]?.id ?? null)
 
@@ -113,7 +124,7 @@ export function ServicesView({
 
   const filtered = packages.filter(
     (p) =>
-      p.category === activeCategory &&
+      p.pillar === activePillar &&
       (expandedProvider === null || p.providerId === expandedProvider) &&
       priceMatch(p)
   )
@@ -228,15 +239,15 @@ export function ServicesView({
           {expandedProvider && (
             <div id="provider-packages-panel">
               <FilterRadioGroup
-                options={CATEGORY_TABS.map((tab) => ({ value: tab.key, label: tab.label }))}
-                value={activeCategory}
-                onChange={setActiveCategory}
+                options={availablePillars.map((code) => ({ value: code, label: PILLAR_LABELS[code] }))}
+                value={activePillar}
+                onChange={setActivePillar}
                 label="서비스 분류 필터"
                 selectOnArrow
-                className="mb-5 flex gap-1 rounded-lg bg-surface p-1"
+                className="mb-5 flex flex-wrap gap-1.5"
                 optionClassName={(selected) =>
-                  `flex-1 rounded-md px-3 py-2 text-sm font-medium transition-colors ${
-                    selected ? 'bg-primary text-white' : 'text-text-muted hover:text-text'
+                  `rounded-full px-3 py-1.5 text-sm font-medium transition-colors ${
+                    selected ? 'bg-primary text-white' : 'bg-surface text-text-muted hover:text-text'
                   }`
                 }
               />

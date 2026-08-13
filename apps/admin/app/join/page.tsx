@@ -23,7 +23,7 @@ const ROLES = [
     accent: 'primary',
     name: '기업회원',
     tagline: 'S/W·P/G를 쓰고, 시니어지식인에게 일을 맡깁니다',
-    price: '월 18,000원 (VAT 별도)',
+    price: '가입 무료 · 선택 구독 월 18,000원',
     benefits: [
       'S/W·P/G 사용',
       '시니어지식인 정보 열람 · 직접 연락',

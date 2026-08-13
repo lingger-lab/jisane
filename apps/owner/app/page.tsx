@@ -18,6 +18,7 @@ import { ADMIN_URL, EXPERT_URL } from '@/lib/urls'
 // 지사네가 제공하는 기업 전문 서비스 5대 분류 — 각 서비스를 나타내는 라인 아이콘.
 const ENTERPRISE_PILLARS = [
   {
+    code: 'biz_marketing' as const,
     title: '경영·마케팅 사업화 지원',
     desc: '사업 아이템 구체화 · 시장 진입 전략',
     icon: (
@@ -27,6 +28,7 @@ const ENTERPRISE_PILLARS = [
     ),
   },
   {
+    code: 'finance_tax' as const,
     title: '재무·세무·회계 경영컨설팅',
     desc: '자금 · 세무 · 회계 구조 진단과 자문',
     icon: (
@@ -37,6 +39,7 @@ const ENTERPRISE_PILLARS = [
     ),
   },
   {
+    code: 'tech_quality' as const,
     title: '기술·생산 품질관리 지원',
     desc: '생산 공정 · 품질 체계 개선',
     icon: (
@@ -47,6 +50,7 @@ const ENTERPRISE_PILLARS = [
     ),
   },
   {
+    code: 'online_sales' as const,
     title: '온라인·홍보 판로개척 지원',
     desc: '온라인 채널 · 홍보로 판로 확대',
     icon: (
@@ -56,6 +60,7 @@ const ENTERPRISE_PILLARS = [
     ),
   },
   {
+    code: 'ai_ax' as const,
     title: 'AI·AX 지원',
     desc: 'AI 도입 · 업무 전환(AX)으로 생산성 향상',
     icon: (
@@ -191,15 +196,20 @@ export default async function OwnerHome() {
           </header>
           <div className="flex flex-col gap-2.5">
             {ENTERPRISE_PILLARS.map((p) => (
-              <div key={p.title} className="flex items-start gap-3 rounded-xl border border-border-light bg-card p-4 shadow-xs card-hover">
+              <Link
+                key={p.title}
+                href={`/services?pillar=${p.code}`}
+                className="group flex items-center gap-3 rounded-xl border border-border-light bg-card p-4 shadow-xs card-hover transition-colors hover:border-primary/30"
+              >
                 <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary [&>svg]:h-[18px] [&>svg]:w-[18px]">
                   {p.icon}
                 </span>
-                <div className="min-w-0">
+                <div className="min-w-0 flex-1">
                   <p className="font-semibold text-text">{p.title}</p>
                   <p className="mt-0.5 text-sm text-text-muted">{p.desc}</p>
                 </div>
-              </div>
+                <span aria-hidden="true" className="shrink-0 text-text-subtle transition-transform group-hover:translate-x-0.5 group-hover:text-primary">&rarr;</span>
+              </Link>
             ))}
           </div>
         </section>

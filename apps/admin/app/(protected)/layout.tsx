@@ -23,6 +23,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
         <div className="mx-auto flex max-w-5xl items-center gap-4">
           <span className="text-lg font-bold text-primary">관리자</span>
           <Link href="/dashboard" className="text-sm text-text-muted hover:text-text">대시보드</Link>
+          <Link href="/dashboard/enterprise-services" className="text-sm text-text-muted hover:text-text">기업 전문서비스</Link>
         </div>
       </nav>
       <main className="flex-1">{children}</main>
