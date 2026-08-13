@@ -35,3 +35,6 @@ next-env.d.ts
 # supabase
 supabase/.temp/
 .gstack/
+
+# Claude Code 로컬 설정 (추적 금지)
+.claude/
