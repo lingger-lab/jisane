@@ -9,12 +9,12 @@ export default async function AdminLayout({ children }: { children: React.ReactN
   const { data: { user } } = await supabase.auth.getUser()
 
   if (!user || !user.email) {
-    redirect('/')
+    redirect('/login')
   }
 
   const adminEmails = (process.env.ADMIN_EMAILS || '').split(',').map(e => e.trim().toLowerCase())
   if (!adminEmails.includes(user.email.toLowerCase())) {
-    redirect('/')
+    redirect('/login?error=forbidden')
   }
 
   return (

@@ -157,6 +157,9 @@ export default async function AdminHome() {
             <Link href="/service" className="inline-flex min-h-6 items-center text-text-subtle hover:text-text-muted transition-colors">서비스 안내</Link>
             <Link href="/standard/scope" className="inline-flex min-h-6 items-center text-text-subtle hover:text-text-muted transition-colors">거래 표준</Link>
             <Link href="/ax" className="inline-flex min-h-6 items-center text-text-subtle hover:text-text-muted transition-colors">AX 전환</Link>
+            {!isAdmin && (
+              <Link href="/login" className="inline-flex min-h-6 items-center text-text-subtle hover:text-text-muted transition-colors">관리자 로그인</Link>
+            )}
           </div>
           <hr className="border-border-light" />
           <p className="text-xs text-text-subtle">&copy; {new Date().getFullYear()} (주)지사네. All rights reserved.</p>
