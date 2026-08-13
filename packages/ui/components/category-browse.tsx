@@ -45,7 +45,7 @@ export function CategoryBrowse({
           <Link
             key={cat.id}
             href={`${baseHref}?category=${cat.id}`}
-            className={`block rounded-xl border border-border-light bg-card p-3 text-center shadow-xs card-hover animate-fade-in stagger-${Math.min(i + 1, 5)}`}
+            className={`block rounded-xl border border-border-light bg-card p-3 text-center shadow-xs card-hover animate-appear stagger-${Math.min(i + 1, 5)}`}
           >
             <p className="text-xs font-medium leading-tight break-keep text-text sm:text-sm">{cat.label}</p>
             {cat.count > 0 ? (

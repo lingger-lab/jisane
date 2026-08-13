@@ -51,7 +51,7 @@ export default async function PartnerApplyPage(props: {
             <p className="mt-2 text-sm text-text-muted">문의: iamblackwhite86@gmail.com</p>
           </>
         )}
-        <Link href="/partner" className="mt-6 inline-block text-sm text-info hover:underline">
+        <Link href="/partner" className="mt-6 inline-block text-sm text-partner hover:underline">
           전문가회원 홈으로
         </Link>
       </div>

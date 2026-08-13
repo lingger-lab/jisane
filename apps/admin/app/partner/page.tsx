@@ -31,7 +31,7 @@ export default async function PartnerHome() {
     <div className="mx-auto flex max-w-2xl flex-col gap-8 px-6 py-12 animate-fade-in">
       {/* 히어로 */}
       <section className="text-center">
-        <p className="text-xs font-semibold text-info tracking-wide mb-2">JISANE PARTNERS</p>
+        <p className="text-xs font-semibold text-partner tracking-wide mb-2">JISANE PARTNERS</p>
         <h1 className="text-2xl md:text-3xl font-bold font-serif text-text leading-snug">
           지사네와 함께
           <br />
@@ -57,7 +57,7 @@ export default async function PartnerHome() {
       </section>
 
       {/* 상태별 CTA */}
-      <section className="rounded-2xl bg-info/10 p-6">
+      <section className="rounded-2xl bg-partner/10 p-6">
         {!user ? (
           <>
             <p className="mb-4 text-center text-sm font-semibold text-text">
@@ -90,7 +90,7 @@ export default async function PartnerHome() {
             <p className="mt-1 text-xs text-text-muted">등록 신청 후 관리자 승인을 거쳐 활동할 수 있습니다.</p>
             <Link
               href="/partner/apply"
-              className="mt-4 inline-block rounded-xl bg-info-solid px-6 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-info-solid/90"
+              className="mt-4 inline-block rounded-xl bg-partner-solid px-6 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-partner-solid/90"
             >
               전문가회원 등록 신청하기
             </Link>
@@ -100,7 +100,7 @@ export default async function PartnerHome() {
             <p className="text-sm font-semibold text-text">{provider.name} 전문가회원님, 환영합니다</p>
             <Link
               href="/partner/dashboard"
-              className="mt-4 inline-block rounded-xl bg-info-solid px-6 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-info-solid/90"
+              className="mt-4 inline-block rounded-xl bg-partner-solid px-6 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-partner-solid/90"
             >
               전문가회원 대시보드 열기
             </Link>

@@ -93,7 +93,7 @@ export function EducationView({
           {filtered.map((pkg, i) => (
             <div
               key={pkg.slug}
-              className={`rounded-xl border border-border-light p-4 shadow-xs animate-fade-in stagger-${Math.min(i + 1, 5)}`}
+              className={`rounded-xl border border-border-light p-4 shadow-xs card-hover animate-appear stagger-${Math.min(i + 1, 5)}`}
             >
               <div className="flex items-start justify-between gap-3">
                 <div className="min-w-0 flex-1">

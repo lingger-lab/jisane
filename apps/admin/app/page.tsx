@@ -118,11 +118,11 @@ export default async function AdminHome() {
                 href="/partner"
                 className="rounded-2xl border border-border-light bg-card p-6 md:p-8 text-left shadow-sm card-hover card-glow transition-all"
               >
-                <h2 className="text-2xl md:text-3xl font-bold font-serif text-info">전문가회원(파트너)</h2>
+                <h2 className="text-2xl md:text-3xl font-bold font-serif text-partner">전문가회원(파트너)</h2>
                 <p className="mt-2 text-sm md:text-base text-text-muted">
                   전문서비스를 제공하는 특수관계 회원 — 기업 또는 시니어지식인 — 서비스 등록 · 신청 관리
                 </p>
-                <div className="mt-4 text-sm font-semibold text-info">전문가회원(파트너) 바로가기 &rarr;</div>
+                <div className="mt-4 text-sm font-semibold text-partner">전문가회원(파트너) 바로가기 &rarr;</div>
               </Link>
             </div>
           </section>

@@ -33,7 +33,7 @@ export function ServicesList({ items }: { items: ServiceItem[] }) {
           onChange={(e) => setSearch(e.target.value)}
           placeholder="서비스명으로 검색"
           aria-label="서비스 검색"
-          className="w-full rounded-xl border border-border-light bg-background py-2.5 pl-10 pr-4 text-sm text-text placeholder:text-text-subtle focus:border-info focus:ring-1 focus:ring-info/20 focus:outline-none transition-colors"
+          className="w-full rounded-xl border border-border-light bg-background py-2.5 pl-10 pr-4 text-sm text-text placeholder:text-text-subtle focus:border-partner focus:ring-1 focus:ring-partner/20 focus:outline-none transition-colors"
         />
       </div>
 
@@ -56,7 +56,7 @@ export function ServicesList({ items }: { items: ServiceItem[] }) {
               <div className="flex shrink-0 items-center gap-2">
                 <Link
                   href={`/partner/dashboard/services/${pkg.id}`}
-                  className="rounded-lg border border-border-light px-3 py-1.5 text-xs font-medium text-text-muted transition-colors hover:border-info/30 hover:text-info"
+                  className="rounded-lg border border-border-light px-3 py-1.5 text-xs font-medium text-text-muted transition-colors hover:border-partner/30 hover:text-partner"
                 >
                   수정
                 </Link>

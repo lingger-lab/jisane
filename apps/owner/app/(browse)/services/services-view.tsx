@@ -27,7 +27,7 @@ const PRICE_FILTERS = [
 /** 전문서비스 카드 — 아코디언·검색결과 공용 */
 function PackageCard({ pkg, className = '' }: { pkg: ServicePackage; className?: string }) {
   return (
-    <div className={`rounded-xl border border-border-light p-4 shadow-xs ${className}`}>
+    <div className={`rounded-xl border border-border-light p-4 shadow-xs card-hover ${className}`}>
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0 flex-1">
           <div className="flex flex-wrap items-center gap-2">
@@ -172,7 +172,7 @@ export function ServicesView({
             </div>
           ) : (
             <div className="flex flex-col gap-4">
-              {searchResults.map((pkg, i) => <PackageCard key={pkg.slug} pkg={pkg} className={`animate-fade-in stagger-${Math.min(i + 1, 5)}`} />)}
+              {searchResults.map((pkg, i) => <PackageCard key={pkg.slug} pkg={pkg} className={`animate-appear stagger-${Math.min(i + 1, 5)}`} />)}
             </div>
           )}
         </div>
@@ -242,7 +242,7 @@ export function ServicesView({
                 {filtered.length === 0 ? (
                   <p className="py-6 text-center text-sm text-text-muted">해당 조건의 서비스가 없습니다.</p>
                 ) : (
-                  filtered.map((pkg, i) => <PackageCard key={pkg.slug} pkg={pkg} className={`animate-fade-in stagger-${Math.min(i + 1, 5)}`} />)
+                  filtered.map((pkg, i) => <PackageCard key={pkg.slug} pkg={pkg} className={`animate-appear stagger-${Math.min(i + 1, 5)}`} />)
                 )}
               </div>
             </div>

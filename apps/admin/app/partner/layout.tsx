@@ -6,7 +6,7 @@ export default function PartnerLayout({ children }: { children: React.ReactNode 
     <>
       <nav className="border-b border-border-light bg-background px-6 py-3">
         <div className="mx-auto flex max-w-5xl items-center gap-4">
-          <Link href="/partner" className="text-lg font-bold text-info">전문가회원</Link>
+          <Link href="/partner" className="text-lg font-bold text-partner">전문가회원</Link>
           <Link href="/partner/dashboard" className="text-sm text-text-muted hover:text-text transition-colors">
             대시보드
           </Link>

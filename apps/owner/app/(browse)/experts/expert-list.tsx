@@ -119,7 +119,7 @@ export function ExpertList({ experts, categoryTree, selectedCategory, query, loa
             <ExpertCard
               key={expert.id}
               expert={expert}
-              className={`animate-fade-in stagger-${Math.min(i + 1, 5)}`}
+              className={`animate-appear stagger-${Math.min(i + 1, 5)}`}
             />
           ))
         )}

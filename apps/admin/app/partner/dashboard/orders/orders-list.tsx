@@ -43,7 +43,7 @@ export function OrdersList({ items }: { items: OrderItem[] }) {
           onChange={(e) => setSearch(e.target.value)}
           placeholder="서비스명·신청자로 검색"
           aria-label="신청 검색"
-          className="w-full rounded-xl border border-border-light bg-background py-2.5 pl-10 pr-4 text-sm text-text placeholder:text-text-subtle focus:border-info focus:ring-1 focus:ring-info/20 focus:outline-none transition-colors"
+          className="w-full rounded-xl border border-border-light bg-background py-2.5 pl-10 pr-4 text-sm text-text placeholder:text-text-subtle focus:border-partner focus:ring-1 focus:ring-partner/20 focus:outline-none transition-colors"
         />
       </div>
 

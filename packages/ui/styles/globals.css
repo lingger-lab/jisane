@@ -48,6 +48,10 @@
   --warning-solid: #b45309;
   --error-solid: #b91c1c;
   --info-solid: #2563eb;
+  /* 전문가회원(파트너) 역할색 — 중립 그래파이트(브랜드 그린/앰버와 별개, 파랑 오용 대체).
+     partner=텍스트/헤딩·partner-solid=흰글자 버튼(다크서도 어둡게 유지). 파랑 info는 시맨틱 전용. */
+  --partner: #4a463d;
+  --partner-solid: #3a352e;
 
   /* 브랜드 그라디언트 */
   --brand-gradient: linear-gradient(135deg, #1f5c46 0%, #3c8767 50%, #5aad85 100%);
@@ -120,6 +124,7 @@
     --error-light: #331717;
     --info: #6ea0f0;
     --info-light: #16233a;
+    --partner: #c2bab0;
     --primary-rgb: 52, 153, 111;
     --brand-glow: rgba(52, 153, 111, 0.20);
     /* 로고(.text-brand-gradient)는 딥그린 그라디언트 → 다크 배경에서 안 보임. 라이트그린으로 반전. */
@@ -165,6 +170,7 @@
   --error-light: #331717;
   --info: #6ea0f0;
   --info-light: #16233a;
+  --partner: #c2bab0;
   --primary-rgb: 52, 153, 111;
   --brand-glow: rgba(52, 153, 111, 0.20);
   /* 로고(.text-brand-gradient)는 딥그린 그라디언트 → 다크 배경에서 안 보임. 라이트그린으로 반전. */
@@ -212,6 +218,8 @@
   --error-light: #fef2f2;
   --info: #2563eb;
   --info-light: #eff6ff;
+  --partner: #4a463d;
+  --partner-solid: #3a352e;
   --primary-rgb: 31, 92, 70;
   --brand-glow: rgba(31, 92, 70, 0.15);
   --brand-gradient-text: linear-gradient(135deg, #153f30 0%, #1f5c46 100%);
@@ -261,6 +269,8 @@
   --color-warning-solid: var(--warning-solid);
   --color-error-solid: var(--error-solid);
   --color-info-solid: var(--info-solid);
+  --color-partner: var(--partner);
+  --color-partner-solid: var(--partner-solid);
   --shadow-xs: var(--shadow-xs);
   --shadow-sm: var(--shadow-sm);
   --shadow-md: var(--shadow-md);
@@ -285,6 +295,13 @@ body {
 @keyframes scale-in {
   from { opacity: 0; transform: scale(0.95); }
   to { opacity: 1; transform: scale(1); }
+}
+
+/* 카드 등장 전용 — opacity만. transform을 건드리지 않아 fill-forwards가 transform을 잠그지 않는다
+   → card-hover의 호버 리프트(translateY)와 충돌하지 않음(Phase2a 회귀 방지). */
+@keyframes appear {
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
 @keyframes slide-up {
@@ -330,6 +347,12 @@ body {
   animation: slide-up 1s ease-out both;
 }
 
+/* 카드 등장 — opacity 전용(transform 미사용) → fill-forwards가 transform을 잠그지 않아
+   card-hover의 호버 리프트(translateY)와 충돌하지 않음. 카드 그리드 등장에 사용. */
+.animate-appear {
+  animation: appear 0.5s ease-out both;
+}
+
 /* 브랜드 유틸리티 */
 .text-brand-gradient {
   background: var(--brand-gradient-text);
@@ -355,6 +378,7 @@ body {
   .animate-fade-in,
   .animate-scale-in,
   .animate-slide-up,
+  .animate-appear,
   .cta-pulse,
   .splash-stagger-1,
   .splash-stagger-2,

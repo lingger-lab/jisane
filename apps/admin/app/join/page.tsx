@@ -65,7 +65,7 @@ const ROLES = [
 const ACCENT: Record<string, { text: string; chip: string }> = {
   primary: { text: 'text-primary', chip: 'bg-primary/10 text-primary' },
   accent: { text: 'text-accent', chip: 'bg-accent/10 text-accent' },
-  info: { text: 'text-info', chip: 'bg-info/10 text-info' },
+  info: { text: 'text-partner', chip: 'bg-partner/10 text-partner' },
 }
 
 export default async function JoinPage() {

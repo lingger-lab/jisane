@@ -44,15 +44,15 @@ export default async function PartnerDashboardHome() {
     <div className="flex flex-col gap-6 animate-fade-in">
       {/* 요약 카드 */}
       <div className="grid grid-cols-3 gap-3">
-        <Link href="/partner/dashboard/orders" className="rounded-xl border border-border-light bg-card p-4 text-center shadow-xs transition-colors hover:border-info/30">
-          <p className="text-2xl font-bold text-info">{newOrderCount}</p>
+        <Link href="/partner/dashboard/orders" className="rounded-xl border border-border-light bg-card p-4 text-center shadow-xs transition-colors hover:border-partner/30">
+          <p className="text-2xl font-bold text-partner">{newOrderCount}</p>
           <p className="mt-1 text-xs text-text-muted">신규 신청</p>
         </Link>
-        <Link href="/partner/dashboard/services" className="rounded-xl border border-border-light bg-card p-4 text-center shadow-xs transition-colors hover:border-info/30">
+        <Link href="/partner/dashboard/services" className="rounded-xl border border-border-light bg-card p-4 text-center shadow-xs transition-colors hover:border-partner/30">
           <p className="text-2xl font-bold text-text">{publishedCount}</p>
           <p className="mt-1 text-xs text-text-muted">공개 서비스</p>
         </Link>
-        <Link href="/partner/dashboard/services" className="rounded-xl border border-border-light bg-card p-4 text-center shadow-xs transition-colors hover:border-info/30">
+        <Link href="/partner/dashboard/services" className="rounded-xl border border-border-light bg-card p-4 text-center shadow-xs transition-colors hover:border-partner/30">
           <p className="text-2xl font-bold text-text-muted">{draftCount}</p>
           <p className="mt-1 text-xs text-text-muted">검수 대기</p>
         </Link>
@@ -62,7 +62,7 @@ export default async function PartnerDashboardHome() {
       <section>
         <div className="mb-3 flex items-center justify-between">
           <h2 className="text-sm font-bold text-text">최근 신청</h2>
-          <Link href="/partner/dashboard/orders" className="text-xs text-info hover:underline">전체 보기</Link>
+          <Link href="/partner/dashboard/orders" className="text-xs text-partner hover:underline">전체 보기</Link>
         </div>
         {recentOrders.length === 0 ? (
           <div className="rounded-xl border border-border-light bg-card p-8 text-center">

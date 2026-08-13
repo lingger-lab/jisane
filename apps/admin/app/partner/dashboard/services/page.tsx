@@ -35,7 +35,7 @@ export default async function PartnerServicesPage() {
         </div>
         <Link
           href="/partner/dashboard/services/new"
-          className="rounded-xl bg-info-solid px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-info-solid/90"
+          className="rounded-xl bg-partner-solid px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-partner-solid/90"
         >
           + 서비스 등록
         </Link>
@@ -44,7 +44,7 @@ export default async function PartnerServicesPage() {
       {items.length === 0 ? (
         <div className="rounded-xl border border-border-light bg-card p-10 text-center">
           <p className="text-sm text-text-muted">등록된 서비스가 없습니다.</p>
-          <Link href="/partner/dashboard/services/new" className="mt-3 inline-block text-sm font-medium text-info hover:underline">
+          <Link href="/partner/dashboard/services/new" className="mt-3 inline-block text-sm font-medium text-partner hover:underline">
             첫 서비스를 등록해보세요 &rarr;
           </Link>
         </div>

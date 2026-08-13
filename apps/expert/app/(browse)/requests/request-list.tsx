@@ -169,7 +169,7 @@ export function RequestList({
             return (
               <div
                 key={req.id}
-                className={`rounded-xl border border-border-light p-4 md:p-5 shadow-xs animate-fade-in stagger-${Math.min(i + 1, 5)}`}
+                className={`rounded-xl border border-border-light p-4 md:p-5 shadow-xs card-hover animate-appear stagger-${Math.min(i + 1, 5)}`}
               >
                 <Link href={`/requests/${req.id}`} className="block">
                   <h3 className="truncate font-medium text-text">{req.title}</h3>
