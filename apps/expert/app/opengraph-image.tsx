@@ -21,7 +21,7 @@ export default function Image() {
         }}
       >
         {/* Owl */}
-        <svg width="120" height="120" viewBox="0 0 48 48" fill="none">
+        <svg width="220" height="220" viewBox="0 0 48 48" fill="none">
           <circle cx="24" cy="26" r="17" fill="#fbf9f3" />
           <circle cx="18" cy="22" r="6" fill="#1f5c46" />
           <circle cx="30" cy="22" r="6" fill="#1f5c46" />
@@ -30,10 +30,10 @@ export default function Image() {
           <path d="M21 27 L24 30 L27 27 Z" fill="#b06a1e" />
           <path d="M14 10 Q18 15 21 17 M34 10 Q30 15 27 17" stroke="#fbf9f3" strokeWidth="3" strokeLinecap="round" />
         </svg>
-        <div style={{ fontSize: 64, fontWeight: 700, marginTop: 24, letterSpacing: '-0.02em' }}>
+        <div style={{ fontSize: 120, fontWeight: 700, marginTop: 40, letterSpacing: '-0.02em' }}>
           지사네
         </div>
-        <div style={{ fontSize: 28, marginTop: 12, opacity: 0.85 }}>
+        <div style={{ fontSize: 44, marginTop: 20, opacity: 0.85 }}>
           시니어지식인회원 — 지식나눔 사업협력 네트워크
         </div>
       </div>
