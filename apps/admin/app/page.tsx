@@ -56,12 +56,12 @@ export default async function AdminHome() {
         <section className="container-marketing flex flex-col items-center gap-4 px-4 md:px-6 pt-14 md:pt-20 pb-12 md:pb-16 text-center animate-fade-in">
           <span className="hero-eyebrow">기업의 곁에, 언제나 YourSide</span>
           <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold font-serif text-white leading-snug">
-            맡기기 전에,
+            지역 기업의 든든한
             <br />
-            <span className="text-accent-light">이것만</span> 확인해 보세요.
+            <span className="text-accent-light">성장</span> 파트너
           </h1>
           <p className="text-base md:text-lg text-white/75 leading-relaxed">
-            값·범위·약속·몫·복구 — 다섯 가지를 먼저 볼 수 있습니다.
+            중소기업 전문 서비스와 시니어 전문가 정보를 한곳에서.
           </p>
           <p className="text-xs text-white/50">
             {stats.owner.totalMajorFields}개 분야 · {stats.owner.totalCategories}개 전문영역 · {stats.owner.totalServices}+ 서비스
@@ -76,14 +76,14 @@ export default async function AdminHome() {
             <div className="flex flex-col gap-4 rounded-2xl bg-surface-warm p-4 md:p-6">
               <a
                 href={ownerUrl}
-                className="rounded-2xl border-t-4 border-t-primary border border-border-light bg-white p-6 md:p-8 text-left shadow-sm card-hover card-glow transition-all"
+                className="rounded-2xl border-t-4 border-t-primary border border-border-light bg-white p-6 md:p-8 text-left shadow-sm card-hover transition-all"
               >
                 <h2 className="text-2xl md:text-3xl font-bold text-primary">기업회원</h2>
                 <p className="mt-2 text-sm md:text-base text-text-muted">기업 운영에 필요한 전문 서비스와 시니어 전문가 정보</p>
                 <div className="mt-4 flex flex-wrap gap-2">
-                  <span className="rounded-full bg-primary/10 px-3 py-1.5 text-xs font-medium text-primary">에스크로 선입금</span>
-                  <span className="rounded-full bg-primary/10 px-3 py-1.5 text-xs font-medium text-primary">매칭비 사전 공개</span>
-                  <span className="rounded-full bg-primary/10 px-3 py-1.5 text-xs font-medium text-primary">검수 후 정산</span>
+                  <span className="rounded-full bg-primary/10 px-3 py-1.5 text-xs font-medium text-primary">전문 서비스</span>
+                  <span className="rounded-full bg-primary/10 px-3 py-1.5 text-xs font-medium text-primary">전문가 정보</span>
+                  <span className="rounded-full bg-primary/10 px-3 py-1.5 text-xs font-medium text-primary">매니저 지원</span>
                 </div>
                 {topExpertMajors.length > 0 && (
                   <p className="mt-3 text-xs text-text-subtle">
@@ -95,14 +95,14 @@ export default async function AdminHome() {
 
               <a
                 href={expertUrl}
-                className="rounded-2xl border-t-4 border-t-accent border border-border-light bg-white p-6 md:p-8 text-left shadow-sm card-hover card-glow transition-all"
+                className="rounded-2xl border-t-4 border-t-accent border border-border-light bg-white p-6 md:p-8 text-left shadow-sm card-hover transition-all"
               >
                 <h2 className="text-2xl md:text-3xl font-bold text-accent">시니어지식인회원</h2>
-                <p className="mt-2 text-sm md:text-base text-text-muted">당신의 30년, AI로 증폭하다 — 작업료 전액 수령</p>
+                <p className="mt-2 text-sm md:text-base text-text-muted">경험과 노하우로 지역 기업과 협력</p>
                 <div className="mt-4 flex flex-wrap gap-2">
                   <span className="rounded-full bg-accent/10 px-3 py-1.5 text-xs font-medium text-accent">열린 의뢰 {stats.expert.totalOpenRequests}건</span>
-                  <span className="rounded-full bg-accent/10 px-3 py-1.5 text-xs font-medium text-accent">수수료 0%</span>
-                  <span className="rounded-full bg-accent/10 px-3 py-1.5 text-xs font-medium text-accent">보장 결제</span>
+                  <span className="rounded-full bg-accent/10 px-3 py-1.5 text-xs font-medium text-accent">전문 도구</span>
+                  <span className="rounded-full bg-accent/10 px-3 py-1.5 text-xs font-medium text-accent">교육 지원</span>
                 </div>
                 {topRequestMajors.length > 0 && (
                   <p className="mt-3 text-xs text-text-subtle">

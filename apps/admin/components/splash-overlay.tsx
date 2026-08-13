@@ -77,7 +77,7 @@ export function SplashOverlay() {
 
         {/* 태그라인 */}
         <div className="mt-3 splash-stagger-2">
-          <p className="text-lg md:text-xl font-semibold text-text">일은 사람이 합니다</p>
+          <p className="text-lg md:text-xl font-semibold text-text">지식나눔 사업협력 네트워크</p>
         </div>
 
         {/* 구분선 — 가로 확장 애니메이션 */}
@@ -88,7 +88,7 @@ export function SplashOverlay() {
         {/* 서브카피 */}
         <div className="mt-4 splash-stagger-4">
           <p className="text-sm md:text-base text-text-muted">
-            부울경 시니어지식인 직거래 플랫폼
+            중소기업 전문 서비스 · 시니어 전문가 정보
           </p>
         </div>
 
@@ -98,7 +98,7 @@ export function SplashOverlay() {
             ref={buttonRef}
             type="button"
             onClick={handleEnter}
-            className="rounded-xl bg-primary px-10 py-3.5 text-base font-semibold text-white shadow-md transition-all hover:bg-primary-light hover:shadow-lg hover:-translate-y-0.5 btn-press cta-pulse"
+            className="rounded-xl bg-primary px-10 py-3.5 text-base font-semibold text-white shadow-md transition-all hover:bg-primary-light hover:shadow-lg hover:-translate-y-0.5 btn-press"
           >
             시작하기 &rarr;
           </button>
