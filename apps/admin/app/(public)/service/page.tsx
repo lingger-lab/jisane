@@ -1,10 +1,14 @@
 import Link from 'next/link'
 import { PageHero } from '@jisane/ui/page-hero'
+import { pageMetadata } from '@jisane/shared/seo'
 import { OWNER_URL, EXPERT_URL } from '@/lib/urls'
 
-export const metadata = {
-  title: '서비스 안내 | 지사네',
-}
+export const metadata = pageMetadata('admin', {
+  title: '서비스 안내',
+  description:
+    '지사네가 기업 운영에 필요한 전문 서비스를 제공하는 방식 — 접수·합의·결제·작업·정산 5단계와 에스크로 안전 직거래를 안내합니다.',
+  path: '/service',
+})
 
 const STEPS = [
   { num: '01', title: '접수', desc: '기업이 필요한 전문 서비스를 등록합니다.' },

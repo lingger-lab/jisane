@@ -1,8 +1,11 @@
 import { PageHero } from '@jisane/ui/page-hero'
+import { pageMetadata } from '@jisane/shared/seo'
 
-export const metadata = {
-  title: '개인정보처리방침 | 지사네',
-}
+export const metadata = pageMetadata('admin', {
+  title: '개인정보처리방침',
+  description: '지사네 개인정보처리방침 — 수집 항목·이용 목적·보관 기간·이용자 권리를 안내합니다.',
+  path: '/privacy',
+})
 
 export default function PrivacyPage() {
   return (

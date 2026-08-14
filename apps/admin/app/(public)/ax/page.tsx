@@ -1,11 +1,13 @@
 import Link from 'next/link'
 import { PageHero } from '@jisane/ui/page-hero'
+import { pageMetadata } from '@jisane/shared/seo'
 import { OWNER_URL } from '@/lib/urls'
 
-export const metadata = {
-  title: 'AX 전환 | 지사네',
-  description: 'AI Transformation — AI로 비즈니스를 바꾸는 AX 전환 서비스',
-}
+export const metadata = pageMetadata('admin', {
+  title: 'AX 전환',
+  description: 'AI Transformation — AI로 비용 절감·수익 향상·새 수익 모델을 만드는 AX 전환 서비스.',
+  path: '/ax',
+})
 
 const VALUES = [
   { title: '비용 절감', desc: '반복 업무를 AI가 대체하여 인건비·운영비를 줄입니다.' },

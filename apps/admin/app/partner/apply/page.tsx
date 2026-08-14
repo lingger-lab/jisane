@@ -7,7 +7,13 @@ import { getProviderByAuthUser } from '@jisane/shared/provider/auth'
 import { ApplyForm } from './apply-form'
 import { PageHero } from '@jisane/ui/page-hero'
 
-export const metadata = { title: '전문가회원 등록 신청 | 지사네 전문가회원' }
+import { pageMetadata } from '@jisane/shared/seo'
+
+export const metadata = pageMetadata('admin', {
+  title: '전문가회원 등록 신청',
+  description: '지사네 전문가회원(파트너) 등록 신청 — 전문 서비스를 직접 등록·제공하는 특수관계 회원 안내.',
+  path: '/partner/apply',
+})
 
 export default async function PartnerApplyPage(props: {
   searchParams: Promise<{ submitted?: string }>

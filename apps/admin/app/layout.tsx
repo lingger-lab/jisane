@@ -4,6 +4,7 @@ import { SuccessToast, ErrorToast } from "@jisane/ui/toast";
 import "@jisane/ui/styles/globals.css";
 import { cookies } from "next/headers";
 import { createClient } from "@jisane/shared/supabase/server";
+import { rootMetadata } from "@jisane/shared/seo";
 import { signInWithGoogle, signInWithKakao, signOut } from "@jisane/shared/auth/actions";
 import { AppHeader } from "@jisane/ui/app-header";
 import Script from "next/script";
@@ -24,24 +25,11 @@ const gowunBatang = Gowun_Batang({
   display: "swap",
 });
 
-export const metadata: Metadata = {
-  metadataBase: new URL("https://jisane.cloud"),
-  title: "지사네 — 지역 기업의 든든한 성장 파트너",
-  description: "부울경 중소기업 전문 서비스와 시니어 전문가 정보 제공. 지식나눔 사업협력 네트워크, 지사네 당신곁에.",
-  openGraph: {
-    title: "지사네 — 지역 기업의 든든한 성장 파트너",
-    description: "부울경 중소기업 전문 서비스와 시니어 전문가 정보 제공. 지식나눔 사업협력 네트워크, 지사네 당신곁에.",
-    url: "https://jisane.cloud",
-    siteName: "지사네",
-    locale: "ko_KR",
-    type: "website",
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "지사네 — 지역 기업의 든든한 성장 파트너",
-    description: "부울경 중소기업 전문 서비스와 시니어 전문가 정보 제공. 지식나눔 사업협력 네트워크.",
-  },
-};
+export const metadata: Metadata = rootMetadata("admin", {
+  titleDefault: "지사네 — 지역 기업의 든든한 성장 파트너",
+  description:
+    "부울경(부산·울산·경남) 중소기업을 위한 전문 서비스와 시니어 전문가 정보. AI(RAG) 상담 제공 — 지식나눔 사업협력 네트워크, 지사네 당신곁에.",
+});
 
 export const viewport: Viewport = {
   width: "device-width",

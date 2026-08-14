@@ -12,6 +12,7 @@
     "./auth/actions": "./lib/auth/actions.ts",
     "./auth/server-helpers": "./lib/auth/server-helpers.ts",
     "./service-catalog": "./lib/service-catalog.ts",
+    "./seo": "./lib/seo.ts",
     "./matching-algo": "./lib/matching-algo.ts",
     "./review-algo": "./lib/review-algo.ts",
     "./categories": "./lib/categories.ts",

@@ -4,6 +4,7 @@ import { SuccessToast, ErrorToast } from "@jisane/ui/toast";
 import "@jisane/ui/styles/globals.css";
 import { cookies } from "next/headers";
 import { createClient } from "@jisane/shared/supabase/server";
+import { rootMetadata } from "@jisane/shared/seo";
 import { signInWithGoogle, signInWithKakao, signOut } from "@jisane/shared/auth/actions";
 import { AppHeader } from "@jisane/ui/app-header";
 import { ClientNav } from "@/components/client-nav";
@@ -27,24 +28,10 @@ const gowunBatang = Gowun_Batang({
   display: "swap",
 });
 
-export const metadata: Metadata = {
-  metadataBase: new URL("https://owner.jisane.cloud"),
-  title: "지사네 기업회원",
-  description: "기업 운영에 필요한 전문 서비스와 시니어 전문가 정보 — 지사네 당신곁에.",
-  openGraph: {
-    title: "지사네 기업회원",
-    description: "조건을 먼저 볼 수 있는 곳에 맡깁니다 — 에스크로 직거래.",
-    url: "https://owner.jisane.cloud",
-    siteName: "지사네",
-    locale: "ko_KR",
-    type: "website",
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "지사네 기업회원",
-    description: "조건을 먼저 볼 수 있는 곳에 맡깁니다 — 에스크로 직거래.",
-  },
-};
+export const metadata: Metadata = rootMetadata("owner", {
+  titleDefault: "지사네 기업회원",
+  description: "기업 운영에 필요한 전문 서비스와 시니어 전문가 정보 — 조건을 먼저 볼 수 있는 에스크로 직거래. 지사네 당신곁에.",
+});
 
 export const viewport: Viewport = {
   width: "device-width",

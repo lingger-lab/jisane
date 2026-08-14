@@ -4,6 +4,7 @@ import { SuccessToast, ErrorToast } from "@jisane/ui/toast";
 import "@jisane/ui/styles/globals.css";
 import { cookies } from "next/headers";
 import { createClient } from "@jisane/shared/supabase/server";
+import { rootMetadata } from "@jisane/shared/seo";
 import { signInWithGoogle, signInWithKakao, signOut } from "@jisane/shared/auth/actions";
 import { AppHeader } from "@jisane/ui/app-header";
 import { ExpertNav } from "@/components/expert-nav";
@@ -26,24 +27,10 @@ const gowunBatang = Gowun_Batang({
   display: "swap",
 });
 
-export const metadata: Metadata = {
-  metadataBase: new URL("https://expert.jisane.cloud"),
-  title: "지사네 시니어지식인회원",
-  description: "경험으로 일하고, 정당한 대가를 받으세요. 지사네 시니어지식인 플랫폼.",
-  openGraph: {
-    title: "지사네 시니어지식인회원",
-    description: "경험으로 일하고, 정당한 대가를 받으세요. 지사네 시니어지식인 플랫폼.",
-    url: "https://expert.jisane.cloud",
-    siteName: "지사네",
-    locale: "ko_KR",
-    type: "website",
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "지사네 시니어지식인회원",
-    description: "경험으로 일하고, 정당한 대가를 받으세요. 지사네 시니어지식인 플랫폼.",
-  },
-};
+export const metadata: Metadata = rootMetadata("expert", {
+  titleDefault: "지사네 시니어지식인회원",
+  description: "경험으로 일하고, 정당한 대가를 받으세요 — 작업료 전액 수령. 지사네 시니어지식인 플랫폼.",
+});
 
 export const viewport: Viewport = {
   width: "device-width",

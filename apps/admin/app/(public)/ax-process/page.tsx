@@ -1,11 +1,13 @@
 import Link from 'next/link'
 import { PageHero } from '@jisane/ui/page-hero'
+import { pageMetadata } from '@jisane/shared/seo'
 import { OWNER_URL } from '@/lib/urls'
 
-export const metadata = {
-  title: 'AX 전환 프로세스 | 지사네',
-  description: 'AX(AI Transformation) 전환의 4단계 프로세스와 구현 방식',
-}
+export const metadata = pageMetadata('admin', {
+  title: 'AX 전환 프로세스',
+  description: 'AX(AI Transformation) 전환의 4단계 프로세스 — 진단·실험·측정·확장과 구현 방식.',
+  path: '/ax-process',
+})
 
 const PROCESS_STEPS = [
   {
