@@ -18,6 +18,7 @@ export const TAB_GROUPS = [
     tabs: [
       { key: 'owner_members', label: '기업회원' },
       { key: 'expert_members', label: '시니어지식인' },
+      { key: 'partner', label: '전문가회원' },
     ],
   },
   {
@@ -32,7 +33,6 @@ export const TAB_GROUPS = [
     label: '지원',
     tabs: [
       { key: 'service', label: '서비스 주문' },
-      { key: 'partner', label: '전문가회원' },
       { key: 'inquiry', label: '문의' },
     ],
   },
