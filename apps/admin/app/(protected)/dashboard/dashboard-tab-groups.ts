@@ -14,14 +14,6 @@ export const TAB_GROUPS = [
     ],
   },
   {
-    label: '회원',
-    tabs: [
-      { key: 'owner_members', label: '기업회원' },
-      { key: 'expert_members', label: '시니어지식인' },
-      { key: 'partner', label: '전문가회원' },
-    ],
-  },
-  {
     label: '신뢰',
     tabs: [{ key: 'settlement', label: '정산 관리' }],
   },

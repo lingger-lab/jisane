@@ -21,12 +21,9 @@ import { ProposedTab } from './proposed-tab'
 import { ProgressTab } from './progress-tab'
 import { InvitationTab } from './invitation-tab'
 import { SettlementTab } from './settlement-tab'
-import { PartnerTab, type ProviderItem, type DraftPackageItem } from './partner-tab'
 import { ServiceTab } from './service-tab'
 import { DisputeTab } from './dispute-tab'
 import { InquiryTab } from './inquiry-tab'
-import { OwnerMembersTab, type OwnerMemberItem } from './owner-members-tab'
-import { ExpertMembersTab, type ExpertMemberItem } from './expert-members-tab'
 import { DashboardTabs } from './dashboard-tabs'
 import { SummaryCard } from './summary-card'
 import { PageHero } from '@jisane/ui/page-hero'
@@ -193,38 +190,13 @@ export default async function AdminDashboardPage() {
   const rawInquiries = rawInquiriesRes.data
 
   // 주문 카드의 제공 내용/소요 표시용 — service_package를 slug 맵으로 (하드코딩 카탈로그 대체)
-  // + 전문가회원 탭: 전체 provider 목록·검수 대기(draft) 서비스
   // + 의뢰별 관심 카운트: 전 테이블이 아니라 열린 의뢰의 관심만 조회(감사 docs/11 P2-3) —
   //   openRequests 결과가 필요해 1차 배치가 아닌 여기서 병렬 실행. 카운트만 쓰므로 request_id만 선택.
   const openRequestIds = (openRequests || []).map((r) => r.id)
-  const [
-    { data: packageRows },
-    { data: allProviders },
-    { data: draftPackages },
-    interestsDataRes,
-    { data: ownerMembers },
-    { data: expertMembers },
-  ] = await Promise.all([
+  // 회원(기업·시니어·파트너) 조회는 헤더 "회원" 드롭다운의 개별 페이지(/members/*)로 이관됨.
+  const [{ data: packageRows }, interestsDataRes] = await Promise.all([
     adminClient.from('service_package').select('slug, duration, deliverables'),
-    adminClient
-      .from('provider')
-      .select('id, name, kind, type, status, email, contact, description, website, auth_user_id, created_at')
-      .order('created_at', { ascending: false }),
-    adminClient
-      .from('service_package')
-      .select('id, name, category, price, is_free, target_audience, status, created_at, provider:provider!inner(name)')
-      .eq('status', 'draft')
-      .order('created_at', { ascending: false }),
     adminClient.from('expert_interest').select('request_id').in('request_id', openRequestIds),
-    // 회원 탭 — 기업회원·시니어지식인 가입자(최신순)
-    adminClient
-      .from('owner')
-      .select('id, email, company, ceo_name, region, industry, status, completed_deals, created_at')
-      .order('created_at', { ascending: false }),
-    adminClient
-      .from('expert')
-      .select('id, email, name, field, career_years, status, created_at')
-      .order('created_at', { ascending: false }),
   ])
   const packagesBySlug = Object.fromEntries(
     (packageRows || []).map((p) => [
@@ -335,12 +307,6 @@ export default async function AdminDashboardPage() {
         invitationTab={
           <InvitationTab invitations={allInvitations || []} />
         }
-        ownerMembersTab={
-          <OwnerMembersTab members={(ownerMembers || []) as OwnerMemberItem[]} />
-        }
-        expertMembersTab={
-          <ExpertMembersTab members={(expertMembers || []) as ExpertMemberItem[]} />
-        }
         settlementTab={
           <SettlementTab
             settlements={pendingSettlements || []}
@@ -353,12 +319,6 @@ export default async function AdminDashboardPage() {
         }
         serviceTab={
           <ServiceTab orders={serviceOrders || []} packagesBySlug={packagesBySlug} />
-        }
-        partnerTab={
-          <PartnerTab
-            providers={(allProviders || []) as ProviderItem[]}
-            draftPackages={(draftPackages || []) as unknown as DraftPackageItem[]}
-          />
         }
         inquiryTab={
           <InquiryTab inquiries={inquiries || []} />
