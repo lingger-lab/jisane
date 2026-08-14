@@ -407,6 +407,42 @@ export async function updateProviderStatus(
   return {}
 }
 
+/** 기업회원(owner) 상태 변경 — 관리자 전용 (owner_status: active/inactive) */
+export async function updateOwnerStatus(
+  ownerId: string,
+  status: 'active' | 'inactive'
+): Promise<{ error?: string }> {
+  await verifyAdmin()
+
+  const { error } = await adminClient
+    .from('owner')
+    .update({ status })
+    .eq('id', ownerId)
+
+  if (error) return { error: error.message }
+
+  revalidatePath('/dashboard')
+  return {}
+}
+
+/** 시니어지식인(expert) 상태 변경 — 관리자 전용 (expert_status: active/waiting/suspended) */
+export async function updateExpertStatus(
+  expertId: string,
+  status: 'active' | 'waiting' | 'suspended'
+): Promise<{ error?: string }> {
+  await verifyAdmin()
+
+  const { error } = await adminClient
+    .from('expert')
+    .update({ status })
+    .eq('id', expertId)
+
+  if (error) return { error: error.message }
+
+  revalidatePath('/dashboard')
+  return {}
+}
+
 /** 파트너 서비스 검수 — draft ↔ published / archived 전환 */
 export async function updatePackageStatus(
   packageId: string,

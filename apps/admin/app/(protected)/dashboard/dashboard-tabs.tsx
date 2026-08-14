@@ -10,6 +10,8 @@ interface DashboardTabsProps {
   proposedTab: ReactNode
   progressTab: ReactNode
   invitationTab: ReactNode
+  ownerMembersTab: ReactNode
+  expertMembersTab: ReactNode
   settlementTab: ReactNode
   disputeTab: ReactNode
   serviceTab: ReactNode
@@ -24,6 +26,8 @@ export function DashboardTabs({
   proposedTab,
   progressTab,
   invitationTab,
+  ownerMembersTab,
+  expertMembersTab,
   settlementTab,
   disputeTab,
   serviceTab,
@@ -118,6 +122,8 @@ export function DashboardTabs({
         {activeTab === 'proposed' && proposedTab}
         {activeTab === 'progress' && progressTab}
         {activeTab === 'invitation' && invitationTab}
+        {activeTab === 'owner_members' && ownerMembersTab}
+        {activeTab === 'expert_members' && expertMembersTab}
         {activeTab === 'settlement' && settlementTab}
         {activeTab === 'dispute' && disputeTab}
         {activeTab === 'service' && serviceTab}
