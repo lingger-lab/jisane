@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import { PageHero } from '@jisane/ui/page-hero'
-import { pageMetadata } from '@jisane/shared/seo'
+import { pageMetadata, serviceListJsonLd } from '@jisane/shared/seo'
+import { JsonLd } from '@jisane/ui/json-ld'
 import { OWNER_URL, EXPERT_URL } from '@/lib/urls'
 
 export const metadata = pageMetadata('admin', {
@@ -17,6 +18,15 @@ const STEPS = [
   { num: '04', title: '작업', desc: '5단계 워크플로우로 체계적으로 작업을 진행합니다.' },
   { num: '05', title: '정산', desc: '검수 완료 후 전문가에게 작업료 전액이 지급됩니다.' },
 ] as const
+
+// 5대 지원 서비스 — Service ItemList JSON-LD 소스
+const SERVICES = [
+  { name: '경영·마케팅 사업화 지원', description: '사업 아이템 구체화·시장 진입 전략' },
+  { name: '재무·세무·회계 경영컨설팅', description: '자금·세무·회계 구조 진단과 자문' },
+  { name: '기술·생산 품질관리 지원', description: '생산 공정·품질 체계 개선' },
+  { name: '온라인·홍보 판로개척 지원', description: '온라인 채널·홍보로 판로 확대' },
+  { name: 'AI·AX 지원', description: 'AI 도입·업무 전환(AX)으로 생산성 향상' },
+]
 
 export default function ServicePage() {
   const ownerUrl = OWNER_URL
@@ -169,6 +179,7 @@ export default function ServicePage() {
         </Link>
       </section>
       </div>
+      <JsonLd data={serviceListJsonLd(SERVICES)} />
     </div>
   )
 }

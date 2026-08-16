@@ -4,7 +4,8 @@ import { SuccessToast, ErrorToast } from "@jisane/ui/toast";
 import "@jisane/ui/styles/globals.css";
 import { cookies } from "next/headers";
 import { createClient } from "@jisane/shared/supabase/server";
-import { rootMetadata } from "@jisane/shared/seo";
+import { rootMetadata, orgJsonLd, websiteJsonLd } from "@jisane/shared/seo";
+import { JsonLd } from "@jisane/ui/json-ld";
 import { signInWithGoogle, signInWithKakao, signOut } from "@jisane/shared/auth/actions";
 import { AppHeader } from "@jisane/ui/app-header";
 import Script from "next/script";
@@ -58,6 +59,8 @@ export default async function RootLayout({
             __html: `(function(){try{var t=localStorage.getItem('theme');if(t==='dark')document.documentElement.setAttribute('data-theme','dark');else if(t!=='system')document.documentElement.setAttribute('data-theme','light');}catch(e){document.documentElement.setAttribute('data-theme','light');}})();`,
           }}
         />
+        {/* 구조화 데이터 — 조직·웹사이트(검색 리치결과·AEO 사실 앵커) */}
+        <JsonLd data={[orgJsonLd(), websiteJsonLd("admin")]} />
         <AppHeader
           appName="지사네"
           hubUrl="/"

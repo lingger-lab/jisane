@@ -9,6 +9,18 @@ import { TextRotator } from '@jisane/ui/text-rotator'
 import { AnimatedCounter } from '@jisane/ui/animated-counter'
 import { ArrowRight, Building2, UserRound, Handshake } from 'lucide-react'
 import { OWNER_URL, EXPERT_URL } from '@/lib/urls'
+import { faqJsonLd } from '@jisane/shared/seo'
+import { JsonLd } from '@jisane/ui/json-ld'
+
+// FAQ 단일 소스 — 화면 렌더 + FAQPage JSON-LD(AEO) + llms.txt가 같은 답변을 쓴다.
+const FAQS = [
+  { q: '지사네는 어떤 서비스인가요?', a: '부울경(부산·울산·경남) 중소기업에 필요한 전문 서비스와 경험·노하우를 갖춘 시니어 전문가 정보를 연결하는 지식나눔 사업협력 네트워크입니다. 온사이트 AI(RAG) 상담도 제공합니다.' },
+  { q: '어떤 전문 서비스를 제공하나요?', a: '경영·마케팅 사업화, 재무·세무·회계 컨설팅, 기술·생산 품질관리, 온라인·홍보 판로개척, AI·AX 전환 등 5대 지원 분야의 전문 서비스를 제공합니다.' },
+  { q: '이용 절차는 어떻게 되나요?', a: '접수 → 합의 → 결제(에스크로) → 작업 → 정산의 5단계로 진행됩니다. 조건을 먼저 확인하고 맡기는 안전 직거래 방식입니다.' },
+  { q: '비용은 어떻게 되나요?', a: '회원 가입은 무료이며, 서비스별 비용은 상담으로 안내합니다(일부는 상담 문의). 시니어 전문가는 작업료 전액을 수령합니다(작업료 수수료 0%).' },
+  { q: '어느 지역을 대상으로 하나요?', a: '부산·울산·경남(부울경) 지역 중소기업을 주 대상으로 합니다.' },
+  { q: '안전 거래는 어떻게 보장하나요?', a: '지사네 거래 표준(값·범위·약속·몫·복구 5원칙)과 에스크로, 책임 적립금 운영으로 문제가 생기면 지사네가 먼저 움직입니다.' },
+]
 
 export default async function AdminHome() {
   const cookieStore = await cookies()
@@ -131,8 +143,22 @@ export default async function AdminHome() {
             </div>
           </section>
 
+          {/* FAQ — 답변형 콘텐츠(AEO). FAQPage JSON-LD와 동일 소스(FAQS). */}
+          <section className="container-marketing px-4 md:px-6 pb-12">
+            <h2 className="mb-5 text-xl md:text-2xl font-bold font-serif text-text">자주 묻는 질문</h2>
+            <dl className="flex flex-col gap-3">
+              {FAQS.map((f) => (
+                <div key={f.q} className="rounded-xl border border-border-light bg-card p-4 shadow-xs">
+                  <dt className="text-sm md:text-base font-semibold text-text">{f.q}</dt>
+                  <dd className="mt-1.5 text-sm leading-relaxed text-text-muted">{f.a}</dd>
+                </div>
+              ))}
+            </dl>
+          </section>
+
         </main>
       </div>
+      <JsonLd data={faqJsonLd(FAQS)} />
 
       {/* 푸터 */}
       <footer className="border-t border-border-light bg-surface py-6">
