@@ -23,8 +23,10 @@ export const LEGAL_NAME = '(주)지사네'
 export const CONTACT_EMAIL = 'iamblackwhite86@gmail.com'
 export const AREA_SERVED = ['부산광역시', '울산광역시', '경상남도']
 export const LOCALE = 'ko_KR'
-/** 소셜 미리보기 기본 이미지(1200×630 권장) — 각 앱 public 폴더에 존재 */
+/** 소셜 미리보기 기본 이미지 — 각 앱 public 폴더에 존재(2848×1496, OG 1.91:1 비율) */
 export const DEFAULT_OG = '/jisane-og-image.png'
+const OG_WIDTH = 2848
+const OG_HEIGHT = 1496
 /** 정사각 로고(Organization logo용) — apps/admin/public */
 const LOGO = `${SITES.admin.baseUrl}/jisane-app-icon-512.png`
 
@@ -57,7 +59,7 @@ export function rootMetadata(
       siteName: BRAND,
       locale: LOCALE,
       type: 'website',
-      images: [{ url: image, width: 1200, height: 630, alt: opts.titleDefault }],
+      images: [{ url: image, width: OG_WIDTH, height: OG_HEIGHT, alt: opts.titleDefault }],
     },
     twitter: {
       card: 'summary_large_image',
@@ -88,7 +90,7 @@ export function pageMetadata(
       siteName: BRAND,
       locale: LOCALE,
       type: 'website',
-      images: [{ url: image, width: 1200, height: 630, alt: opts.title }],
+      images: [{ url: image, width: OG_WIDTH, height: OG_HEIGHT, alt: opts.title }],
     },
     twitter: {
       card: 'summary_large_image',
