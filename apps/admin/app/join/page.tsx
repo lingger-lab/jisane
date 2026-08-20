@@ -49,7 +49,7 @@ const ROLES = [
   {
     key: 'partner',
     accent: 'info',
-    name: '전문가회원 (파트너)',
+    name: '전문가회원',
     tagline: '전문서비스를 제공하는 특수관계 회원',
     price: '협약 · 관리자 승인제',
     benefits: [

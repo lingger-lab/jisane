@@ -128,17 +128,17 @@ export default async function AdminHome() {
                 <div className="mt-4 flex items-center text-sm font-semibold text-accent">시니어지식인회원 바로가기<ArrowRight className="ml-1 h-4 w-4 transition-transform group-hover:translate-x-1" aria-hidden="true" /></div>
               </a>
 
-              {/* 전문가회원(파트너) — 특수관계 제공기관용 (기업·시니어와 동일 구조) */}
+              {/* 전문가회원 — 특수관계 제공기관용 (기업·시니어와 동일 구조) */}
               <Link
                 href="/partner"
                 className="rounded-2xl border border-border-light bg-card p-6 md:p-8 text-left group shadow-sm card-hover card-glow transition-all"
               >
                 <span className="mb-3 inline-flex h-11 w-11 items-center justify-center rounded-xl bg-partner/10 text-partner"><Handshake className="h-6 w-6" strokeWidth={1.75} aria-hidden="true" /></span>
-                <h2 className="text-2xl md:text-3xl font-bold font-serif text-partner">전문가회원(파트너)</h2>
+                <h2 className="text-2xl md:text-3xl font-bold font-serif text-partner">전문가회원</h2>
                 <p className="mt-2 text-sm md:text-base text-text-muted">
                   전문서비스를 제공하는 특수관계 회원 — 기업 또는 시니어지식인 — 서비스 등록 · 신청 관리
                 </p>
-                <div className="mt-4 flex items-center text-sm font-semibold text-partner">전문가회원(파트너) 바로가기<ArrowRight className="ml-1 h-4 w-4 transition-transform group-hover:translate-x-1" aria-hidden="true" /></div>
+                <div className="mt-4 flex items-center text-sm font-semibold text-partner">전문가회원 바로가기<ArrowRight className="ml-1 h-4 w-4 transition-transform group-hover:translate-x-1" aria-hidden="true" /></div>
               </Link>
             </div>
           </section>

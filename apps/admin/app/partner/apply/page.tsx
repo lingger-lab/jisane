@@ -12,7 +12,7 @@ import { EXPERT_URL } from '@/lib/urls'
 
 export const metadata = pageMetadata('admin', {
   title: '전문가회원 등록 신청',
-  description: '지사네 전문가회원(파트너) 등록 신청 — 전문 서비스를 직접 등록·제공하는 특수관계 회원 안내.',
+  description: '지사네 전문가회원 등록 신청 — 전문 서비스를 직접 등록·제공하는 특수관계 회원 안내.',
   path: '/partner/apply',
 })
 
