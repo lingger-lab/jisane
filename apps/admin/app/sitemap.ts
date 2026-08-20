@@ -14,6 +14,7 @@ export default function sitemap() {
     { path: '/standard/guarantee', priority: 0.5, changeFrequency: 'yearly' as const },
     { path: '/partner', priority: 0.6, changeFrequency: 'monthly' as const },
     { path: '/join', priority: 0.6, changeFrequency: 'monthly' as const },
+    { path: '/event/senior100', priority: 0.7, changeFrequency: 'weekly' as const },
     { path: '/privacy', priority: 0.3, changeFrequency: 'yearly' as const },
   ]
   return routes.map((r) => ({

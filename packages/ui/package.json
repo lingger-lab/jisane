@@ -19,6 +19,7 @@
     "./print-button": "./components/print-button.tsx",
     "./toast": "./components/toast.tsx",
     "./json-ld": "./components/json-ld.tsx",
+    "./event-popup": "./components/event-popup.tsx",
     "./icons/google": "./components/icons/google.tsx",
     "./icons/kakao": "./components/icons/kakao.tsx",
     "./icons/owl": "./components/icons/owl.tsx",

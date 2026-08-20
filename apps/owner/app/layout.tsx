@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Suspense } from "react";
 import { SuccessToast, ErrorToast } from "@jisane/ui/toast";
+import { EventPopup } from "@jisane/ui/event-popup";
 import "@jisane/ui/styles/globals.css";
 import { cookies } from "next/headers";
 import { createClient } from "@jisane/shared/supabase/server";
@@ -71,6 +72,8 @@ export default async function RootLayout({
           showThemeToggle
         />
         {children}
+        {/* 시니어지식인 100인 초빙 이벤트 팝업 (허브 상세로 이동) */}
+        <EventPopup eventUrl={`${ADMIN_URL}/event/senior100`} />
         {/* 토스트는 루트에 한 번만 마운트한다 — 페이지별로 달면 마운트되지 않은 화면
             (특히 로그인 실패가 향하는 "/")에서 안내가 통째로 사라진다. */}
         <Suspense>
