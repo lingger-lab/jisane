@@ -35,7 +35,25 @@ export function EventPopup({ eventUrl }: { eventUrl: string }) {
       /* localStorage 불가 환경 — 그냥 노출 */
     }
     if (dismissed === today) return // 오늘 이미 닫음
-    setOpen(true)
+
+    // 허브 스플래시 오버레이와 겹치지 않도록: 스플래시가 떠 있으면 닫힌 뒤 노출.
+    // (owner/expert엔 스플래시가 없어 플래그가 없으므로 즉시 노출)
+    // setTimeout(0): 스플래시 마운트 이펙트가 플래그를 세팅할 시간 확보(이펙트 순서 방어).
+    let cleanup: (() => void) | undefined
+    const t = setTimeout(() => {
+      const w = window as Window & { __jisaneSplashActive?: boolean }
+      if (w.__jisaneSplashActive) {
+        const onClosed = () => setOpen(true)
+        window.addEventListener('jisane:splash-closed', onClosed, { once: true })
+        cleanup = () => window.removeEventListener('jisane:splash-closed', onClosed)
+      } else {
+        setOpen(true)
+      }
+    }, 0)
+    return () => {
+      clearTimeout(t)
+      cleanup?.()
+    }
   }, [])
 
   useEffect(() => {
@@ -109,6 +127,7 @@ export function EventPopup({ eventUrl }: { eventUrl: string }) {
         <a
           ref={ctaRef}
           href={eventUrl}
+          onClick={close}
           className="btn-press focus-ring mt-5 flex w-full items-center justify-center rounded-xl bg-accent px-5 py-3 text-sm font-semibold text-white transition-colors hover:bg-accent/90"
         >
           초빙 이벤트 자세히 보기 &rarr;

@@ -12,8 +12,10 @@ export function SplashOverlay() {
 
   // 모달 시맨틱(WCAG 2.1.2): 열리면 포커스를 유일한 포커서블(시작하기)로 이동.
   // 자동 표시 오버레이라 복귀할 트리거가 없다 — 닫히면 문서 처음부터 탐색한다.
+  // + 스플래시가 떠 있는 동안 이벤트 팝업과 겹치지 않도록 전역 플래그를 세운다(EventPopup이 참조).
   useEffect(() => {
     buttonRef.current?.focus()
+    ;(window as Window & { __jisaneSplashActive?: boolean }).__jisaneSplashActive = true
   }, [])
 
   if (!visible) return null
@@ -21,7 +23,12 @@ export function SplashOverlay() {
   function handleEnter() {
     if (fading) return
     setFading(true)
-    setTimeout(() => setVisible(false), 500)
+    setTimeout(() => {
+      setVisible(false)
+      // 스플래시 종료를 EventPopup에 알려 그때 팝업을 노출시킨다.
+      ;(window as Window & { __jisaneSplashActive?: boolean }).__jisaneSplashActive = false
+      window.dispatchEvent(new Event('jisane:splash-closed'))
+    }, 500)
   }
 
   // Tab은 오버레이 안에서 순환(포커서블 1개 = 제자리), Esc는 '시작하기'와 동일하게 닫는다.
