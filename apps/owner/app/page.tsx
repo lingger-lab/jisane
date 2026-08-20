@@ -227,21 +227,7 @@ export default async function OwnerHome() {
         </section>
       </ScrollReveal>
 
-      {/* [6] 크로스링크 배너 */}
-      <section className="container-marketing px-4 md:px-6 py-6 md:py-8">
-        <a
-          href={expertUrl}
-          className="flex items-center justify-between rounded-xl border border-accent/20 bg-accent/5 p-5 md:p-6 transition-colors hover:bg-accent/10"
-        >
-          <div>
-            <p className="text-base font-semibold text-text">시니어 전문가이신가요?</p>
-            <p className="mt-1 text-sm text-text-muted">경험과 노하우로 지역 기업과 협력하세요</p>
-          </div>
-          <span className="text-sm font-medium text-accent shrink-0">&rarr;</span>
-        </a>
-      </section>
-
-      {/* [6] 푸터 */}
+      {/* 푸터 (회원 전환은 헤더 "회원 전환" 메뉴로 이동) */}
       <footer className="w-full border-t border-border-light py-6">
         <div className="container-marketing flex flex-col gap-4 px-4 md:px-6">
           <div className="flex items-center gap-2">

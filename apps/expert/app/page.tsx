@@ -184,21 +184,7 @@ export default async function ExpertHome() {
         </section>
       </ScrollReveal>
 
-      {/* [6] 크로스링크 배너 */}
-      <section className="container-marketing px-4 md:px-6 py-6 md:py-8">
-        <a
-          href={ownerUrl}
-          className="flex items-center justify-between rounded-xl border border-primary/20 bg-primary/5 p-5 md:p-6 transition-colors hover:bg-primary/10"
-        >
-          <div>
-            <p className="text-base font-semibold text-text">기업을 운영하고 계신가요?</p>
-            <p className="mt-1 text-sm text-text-muted">전문 서비스와 시니어 전문가 정보 보기</p>
-          </div>
-          <span className="text-sm font-medium text-primary shrink-0">&rarr;</span>
-        </a>
-      </section>
-
-      {/* [7] 푸터 */}
+      {/* 푸터 (회원 전환은 헤더 "회원 전환" 메뉴로 이동) */}
       <footer className="w-full border-t border-border-light py-6">
         <div className="container-marketing flex flex-col gap-4 px-4 md:px-6">
           <div className="flex items-center gap-2">

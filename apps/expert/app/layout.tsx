@@ -9,7 +9,7 @@ import { rootMetadata } from "@jisane/shared/seo";
 import { signInWithGoogle, signInWithKakao, signOut } from "@jisane/shared/auth/actions";
 import { AppHeader } from "@jisane/ui/app-header";
 import { ExpertNav } from "@/components/expert-nav";
-import { ADMIN_URL } from "@/lib/urls";
+import { ADMIN_URL, OWNER_URL } from "@/lib/urls";
 import Script from "next/script";
 import localFont from "next/font/local";
 import { Gowun_Batang } from "next/font/google";
@@ -69,6 +69,7 @@ export default async function RootLayout({
           signOutAction={signOut}
           signInWithKakao={signInWithKakao}
           signInWithGoogle={signInWithGoogle}
+          roleSwitch={[{ label: "기업회원으로 전환", url: OWNER_URL }]}
           showThemeToggle
         />
         {children}

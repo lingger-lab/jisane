@@ -1,6 +1,7 @@
 import { LoginDropdown } from './login-dropdown'
 import { OwlIcon } from './icons/owl'
 import { ThemeToggle } from './theme-toggle'
+import { RoleSwitchMenu, type RoleSwitchItem } from './role-switch-menu'
 
 export function AppHeader({
   appName,
@@ -11,6 +12,7 @@ export function AppHeader({
   signInWithKakao,
   signInWithGoogle,
   showThemeToggle = false,
+  roleSwitch,
   children,
 }: {
   appName: string
@@ -23,6 +25,8 @@ export function AppHeader({
   signInWithGoogle?: () => Promise<void>
   /** 테마 토글 노출 여부(다크모드 지원 앱만 true). admin은 다크 미지원이라 기본 false */
   showThemeToggle?: boolean
+  /** 회원 전환 메뉴 항목(기업↔시니어 등). 비면 미노출 */
+  roleSwitch?: RoleSwitchItem[]
   children?: React.ReactNode
 }) {
   return (
@@ -42,6 +46,10 @@ export function AppHeader({
 
         <div className="flex items-center gap-2 md:gap-3">
           {children}
+
+          {roleSwitch && roleSwitch.length > 0 && (
+            <RoleSwitchMenu items={roleSwitch} loggedIn={!!userEmail} />
+          )}
 
           {showThemeToggle && <ThemeToggle />}
 

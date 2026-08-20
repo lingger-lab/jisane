@@ -20,6 +20,7 @@
     "./toast": "./components/toast.tsx",
     "./json-ld": "./components/json-ld.tsx",
     "./event-popup": "./components/event-popup.tsx",
+    "./role-switch-menu": "./components/role-switch-menu.tsx",
     "./icons/google": "./components/icons/google.tsx",
     "./icons/kakao": "./components/icons/kakao.tsx",
     "./icons/owl": "./components/icons/owl.tsx",
