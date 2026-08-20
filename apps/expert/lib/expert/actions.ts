@@ -35,8 +35,34 @@ export async function updateExpertProfile(
     return { error: '시간당 단가는 10,000원 ~ 100,000원 범위여야 합니다.' }
   }
 
-  if (!expert) {
-    return { error: '시니어지식인 계정 정보를 찾을 수 없습니다.' }
+  // expert row가 없으면 생성(insert-if-missing) — .jisane.cloud 공유세션으로 expert 콜백을
+  // 건너뛴 사용자(예: 반려된 파트너가 시니어로 가입)도 /register가 항상 완료되도록.
+  // 콜백과 동일한 email 가드(카카오 이메일 미동의 dead-end 방지).
+  let expertId = expert?.id
+  if (!expertId) {
+    if (!user.email) {
+      return { error: '이메일 제공에 동의한 계정으로 다시 로그인해주세요.' }
+    }
+    const authProvider = (user.app_metadata.provider as string) || 'google'
+    const { data: created, error: insertErr } = await adminClient
+      .from('expert')
+      .insert({ auth_user_id: user.id, provider: authProvider, email: user.email })
+      .select('id')
+      .single()
+    if (insertErr || !created) {
+      // 유니크 경합 등 — 이미 있으면 재조회로 복구
+      const { data: existing } = await adminClient
+        .from('expert')
+        .select('id')
+        .eq('auth_user_id', user.id)
+        .single()
+      if (!existing) {
+        return { error: '시니어지식인 계정 생성에 실패했습니다. 다시 시도해주세요.' }
+      }
+      expertId = existing.id
+    } else {
+      expertId = created.id
+    }
   }
 
   const { error } = await adminClient
@@ -49,7 +75,7 @@ export async function updateExpertProfile(
       name: name?.trim() || null,
       contact: contact?.trim() || null,
     })
-    .eq('id', expert.id)
+    .eq('id', expertId)
 
   if (error) {
     return { error: '프로필 등록에 실패했습니다. 다시 시도해주세요.' }
@@ -69,7 +95,7 @@ export async function updateExpertProfile(
     const { error: delErr } = await adminClient
       .from('expert_category')
       .delete()
-      .eq('expert_id', expert.id)
+      .eq('expert_id', expertId)
     if (delErr) {
       console.error('[expert] expert_category delete failed:', delErr.message)
     }
@@ -77,7 +103,7 @@ export async function updateExpertProfile(
     if (cats && cats.length > 0) {
       const { error: insErr } = await adminClient
         .from('expert_category')
-        .insert(cats.map((c) => ({ expert_id: expert.id, category_id: c.id })))
+        .insert(cats.map((c) => ({ expert_id: expertId, category_id: c.id })))
       // insert 실패는 삭제 후 매핑 공백을 남기므로 반드시 가시화(감사 docs/11 P2-29).
       // 원자성(delete+insert 트랜잭션)은 RPC 이관이 필요 — 별건(P1-17 계열).
       if (insErr) {

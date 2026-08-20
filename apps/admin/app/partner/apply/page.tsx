@@ -8,6 +8,7 @@ import { ApplyForm } from './apply-form'
 import { PageHero } from '@jisane/ui/page-hero'
 
 import { pageMetadata } from '@jisane/shared/seo'
+import { EXPERT_URL } from '@/lib/urls'
 
 export const metadata = pageMetadata('admin', {
   title: '전문가회원 등록 신청',
@@ -58,9 +59,17 @@ export default async function PartnerApplyPage(props: {
             <p className="mt-2 text-sm text-text-muted">문의: iamblackwhite86@gmail.com</p>
           </>
         )}
-        <Link href="/partner" className="mt-6 inline-block text-sm text-partner hover:underline">
-          전문가회원 홈으로
-        </Link>
+        <div className="mt-6 flex flex-col items-center gap-3">
+          {/* 반려/대기/중지 상태여도 시니어지식인(전문가)으로는 활동 가능 — dual-role 허용 */}
+          <a
+            href={EXPERT_URL}
+            className="btn-press focus-ring inline-flex items-center gap-1 rounded-xl bg-accent px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-accent/90"
+          >
+            시니어지식인으로 가입하기 &rarr;
+          </a>
+          <p className="text-xs text-text-subtle">전문가회원 대신 시니어지식인(전문가)으로 활동하실 수 있습니다.</p>
+          <Link href="/partner" className="text-sm text-partner hover:underline">전문가회원 홈으로</Link>
+        </div>
       </div>
     )
   }

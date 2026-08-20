@@ -8,6 +8,7 @@ import {
 import { getProviderByAuthUser } from '@jisane/shared/provider/auth'
 import { GoogleIcon } from '@jisane/ui/icons/google'
 import { KakaoIcon } from '@jisane/ui/icons/kakao'
+import { EXPERT_URL } from '@/lib/urls'
 
 export const metadata = {
   title: '지사네 전문가회원',
@@ -117,6 +118,13 @@ export default async function PartnerHome() {
             <p className="mt-1 text-xs text-text-muted">
               문의: iamblackwhite86@gmail.com
             </p>
+            {/* dual-role 허용 — 반려/중지여도 시니어지식인(전문가)으로는 활동 가능 */}
+            <a
+              href={EXPERT_URL}
+              className="mt-4 inline-block rounded-xl bg-accent px-6 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-accent/90"
+            >
+              시니어지식인으로 가입하기 &rarr;
+            </a>
           </div>
         )}
       </section>
