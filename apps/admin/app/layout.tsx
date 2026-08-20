@@ -73,8 +73,12 @@ export default async function RootLayout({
           showThemeToggle
         />
         {children}
-        {/* 시니어지식인 100인 초빙 이벤트 팝업 (마감 자동 종료·하루 1회) */}
-        <EventPopup eventUrl="/event/senior100" />
+        {/* 시니어지식인 100인 초빙 이벤트 팝업 (마감 자동 종료·하루 1회).
+            관리자/인증/관리 화면·이벤트 페이지 자체·전문가회원 공간에선 미노출. */}
+        <EventPopup
+          eventUrl="/event/senior100"
+          hideOnPrefixes={['/login', '/dashboard', '/members', '/docs', '/partner', '/event', '/join']}
+        />
         {/* 토스트는 루트에 한 번만 마운트한다 — 페이지별로 달면 마운트되지 않은 화면
             (특히 로그인 실패가 향하는 "/")에서 안내가 통째로 사라진다. */}
         <Suspense>

@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useRef, useState, type KeyboardEvent } from 'react'
+import { usePathname } from 'next/navigation'
 import { resolveTrapKey } from './focus-trap'
 
 /** 이벤트 마감(이 날짜 이후 자동 미노출) */
@@ -19,7 +20,15 @@ function todayStr(): string {
  * SSR 안전: 서버에선 null, 클라이언트 useEffect에서 노출 결정(하이드레이션 미스매치 방지).
  * a11y: role=dialog·aria-modal·포커스 트랩(resolveTrapKey)·Escape/오버레이 닫기. 모션은 reduced-motion 가드(globals).
  */
-export function EventPopup({ eventUrl }: { eventUrl: string }) {
+export function EventPopup({
+  eventUrl,
+  hideOnPrefixes,
+}: {
+  eventUrl: string
+  /** 이 경로들(prefix)에선 팝업을 띄우지 않음 — 관리자/인증/관리 화면·이벤트 페이지 제외용 */
+  hideOnPrefixes?: string[]
+}) {
+  const pathname = usePathname()
   const [open, setOpen] = useState(false)
   const closeRef = useRef<HTMLButtonElement>(null)
   const ctaRef = useRef<HTMLAnchorElement>(null)
@@ -87,7 +96,8 @@ export function EventPopup({ eventUrl }: { eventUrl: string }) {
     }
   }
 
-  if (!open) return null
+  const hidden = !!hideOnPrefixes?.some((p) => pathname?.startsWith(p))
+  if (!open || hidden) return null
 
   return (
     <div
