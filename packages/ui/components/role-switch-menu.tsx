@@ -50,7 +50,7 @@ export function RoleSwitchMenu({ items, loggedIn }: { items: RoleSwitchItem[]; l
         <div
           role="menu"
           aria-label="회원 전환"
-          className="absolute right-0 top-full z-50 mt-1.5 min-w-52 rounded-lg border border-border-light bg-background p-1 shadow-md"
+          className="absolute left-0 top-full z-50 mt-1.5 min-w-52 rounded-lg border border-border-light bg-background p-1 shadow-md md:left-auto md:right-0"
         >
           {items.map((it) => (
             <a
