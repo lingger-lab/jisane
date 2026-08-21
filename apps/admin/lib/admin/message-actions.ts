@@ -26,3 +26,26 @@ export async function sendAdminMessage(
   revalidatePath('/dashboard')
   return {}
 }
+
+/** 서비스 주문 메시지 — 관리자. */
+export async function sendServiceOrderMessage(
+  orderId: string,
+  content: string
+): Promise<{ error?: string }> {
+  const { email } = await verifyAdmin()
+
+  if (!content.trim()) return { error: '메시지를 입력해주세요.' }
+  if (content.length > 1000) return { error: '메시지는 1000자 이내로 입력해주세요.' }
+
+  const { error } = await adminClient.from('service_order_message').insert({
+    service_order_id: orderId,
+    sender_type: 'admin',
+    sender_id: email,
+    content: content.trim(),
+  })
+
+  if (error) return { error: error.message }
+
+  revalidatePath(`/service-orders/${orderId}`)
+  return {}
+}

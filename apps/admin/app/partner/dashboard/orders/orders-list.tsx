@@ -1,9 +1,9 @@
 'use client'
 
 import { useState } from 'react'
+import Link from 'next/link'
 import { ORDER_STATUS_LABELS } from '@jisane/shared/labels'
 import { ORDER_STATUS_BADGE_CLASSES } from '@jisane/shared/status-badges'
-import { CompleteOrderButton } from './complete-order-button'
 
 const STATUS_BADGE: Record<string, string> = {
   ...ORDER_STATUS_BADGE_CLASSES,
@@ -52,7 +52,11 @@ export function OrdersList({ items }: { items: OrderItem[] }) {
       ) : (
         <div className="flex flex-col gap-3">
           {filtered.map((o) => (
-            <div key={o.id} className="rounded-xl border border-border-light bg-card p-4 shadow-xs">
+            <Link
+              key={o.id}
+              href={`/partner/dashboard/orders/${o.id}`}
+              className="block rounded-xl border border-border-light bg-card p-4 shadow-xs card-hover"
+            >
               <div className="flex items-start justify-between gap-3">
                 <div className="min-w-0 flex-1">
                   <p className="text-sm font-medium text-text">{o.packageName}</p>
@@ -61,17 +65,17 @@ export function OrdersList({ items }: { items: OrderItem[] }) {
                     {o.isFree ? '무료' : `${o.price.toLocaleString('ko-KR')}원`}
                   </p>
                   {o.detail && (
-                    <p className="mt-2 rounded-lg bg-surface-warm p-2.5 text-xs text-text-muted">{o.detail}</p>
+                    <p className="mt-2 rounded-lg bg-surface-warm p-2.5 text-xs text-text-muted line-clamp-2">{o.detail}</p>
                   )}
                 </div>
                 <div className="flex shrink-0 flex-col items-end gap-2">
                   <span className={`rounded-full px-2 py-0.5 text-xs font-medium ${STATUS_BADGE[o.status] || ''}`}>
                     {ORDER_STATUS_LABELS[o.status] || o.status}
                   </span>
-                  {o.status === 'processing' && <CompleteOrderButton orderId={o.id} />}
+                  {o.status === 'processing' && <span className="text-xs font-medium text-partner">완료 처리 →</span>}
                 </div>
               </div>
-            </div>
+            </Link>
           ))}
         </div>
       )}

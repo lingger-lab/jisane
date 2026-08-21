@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { Package } from 'lucide-react'
+import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useSeededState } from '@jisane/ui/use-seeded-state'
 
@@ -204,6 +205,12 @@ export function ServiceTab({
                         </option>
                       ))}
                     </select>
+                    <Link
+                      href={`/service-orders/${order.id}`}
+                      className="text-xs font-medium text-accent hover:text-accent/80 transition-colors"
+                    >
+                      대화 열기 →
+                    </Link>
                   </div>
                 </div>
 

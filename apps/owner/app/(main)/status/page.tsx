@@ -7,6 +7,7 @@ import type { RequestRow, ServiceOrderRow } from '@jisane/shared/types'
 import { PageHero } from '@jisane/ui/page-hero'
 import { ErrorState } from '@jisane/ui/error-state'
 import { StatusBadge } from '@jisane/ui/status-badge'
+import { formatPackagePrice } from '@jisane/shared/service-catalog'
 
 export default async function StatusPage() {
   const cookieStore = await cookies()
@@ -139,14 +140,17 @@ export default async function StatusPage() {
         <ul className="flex flex-col gap-3">
           {serviceOrders.map((order, i) => (
             <li key={order.id} className={`animate-fade-in stagger-${Math.min(i + 1, 5)}`}>
-              <div className="rounded-xl border border-border-light bg-surface-warm p-4 shadow-xs">
+              <Link
+                href={`/orders/${order.id}`}
+                className="block rounded-xl border border-border-light bg-surface-warm p-4 shadow-xs card-hover"
+              >
                 <div className="flex items-start justify-between gap-3">
                   <div className="min-w-0 flex-1">
                     <h3 className="truncate font-medium text-text">{order.package_name}</h3>
                     <p className="mt-1 text-xs text-text-muted tabular-nums">
                       {new Date(order.created_at).toLocaleDateString('ko-KR')}
                       {' · '}
-                      {order.price === 0 ? '무료' : `${order.price.toLocaleString('ko-KR')}원`}
+                      {formatPackagePrice({ isFree: order.is_free, price: order.price })}
                     </p>
                   </div>
                   <StatusBadge kind="order" status={order.status} className="px-2.5" />
@@ -154,7 +158,7 @@ export default async function StatusPage() {
                 {order.status === 'pending' && (
                   <p className="mt-2 text-xs text-info">접수 완료 — 담당 매니저가 확인 후 연락드리겠습니다.</p>
                 )}
-              </div>
+              </Link>
             </li>
           ))}
         </ul>

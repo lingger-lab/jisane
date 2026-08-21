@@ -2,7 +2,7 @@
 
 import { useActionState } from 'react'
 import Link from 'next/link'
-import type { ServicePackage } from '@jisane/shared/service-catalog'
+import { formatPackagePrice, type ServicePackage } from '@jisane/shared/service-catalog'
 import { SubmitButton } from '@jisane/ui/submit-button'
 import { PageHero } from '@jisane/ui/page-hero'
 import { createServiceOrder } from '@/lib/services/actions'
@@ -36,7 +36,7 @@ export function ServiceDetailView({ pkg }: { pkg: ServicePackage }) {
 
         <div className="mt-4 flex items-baseline gap-2">
           <span className="text-2xl font-bold text-primary">
-            {pkg.price === 0 ? '무료' : `${pkg.price.toLocaleString('ko-KR')}원`}
+            {formatPackagePrice(pkg)}
           </span>
           {pkg.duration && (
             <span className="text-sm text-text-subtle">· 소요 {pkg.duration}</span>
@@ -94,7 +94,7 @@ export function ServiceDetailView({ pkg }: { pkg: ServicePackage }) {
         )}
 
         <SubmitButton variant="primary" className="rounded-xl px-6 py-3 font-semibold shadow-sm hover:shadow-md">
-          {pkg.price === 0 ? '무료 신청하기' : '상담 신청'}
+          {pkg.isFree ? '신청하기' : '상담 신청'}
         </SubmitButton>
 
         <p className="text-center text-xs text-text-subtle">

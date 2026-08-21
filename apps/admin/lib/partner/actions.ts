@@ -300,3 +300,41 @@ export async function completeOrder(orderId: string): Promise<ActionState> {
   revalidatePath('/partner/dashboard/orders')
   return {}
 }
+
+/** 서비스 주문 메시지 — 전문가회원(공급자). service_order.provider_id 소유검증 후 저장. */
+export async function sendServiceOrderMessage(
+  orderId: string,
+  content: string
+): Promise<ActionState> {
+  const user = await getSessionUser()
+  if (!user) return { error: '로그인이 필요합니다.' }
+
+  const guard = await requireActiveProvider(user.id)
+  if (!guard.ok) return { error: '접근 권한이 없습니다.' }
+
+  if (!content.trim()) return { error: '메시지를 입력해주세요.' }
+  if (content.length > 1000) return { error: '메시지는 1000자 이내로 입력해주세요.' }
+
+  const { data: order } = await adminClient
+    .from('service_order')
+    .select('id, provider_id')
+    .eq('id', orderId)
+    .single()
+
+  if (!order || order.provider_id !== guard.provider.id) return { error: '접근 권한이 없습니다.' }
+
+  const { error } = await adminClient.from('service_order_message').insert({
+    service_order_id: orderId,
+    sender_type: 'provider',
+    sender_id: guard.provider.id,
+    content: content.trim(),
+  })
+
+  if (error) {
+    console.error('[partner/actions] sendServiceOrderMessage 저장 실패:', error.message)
+    return { error: '메시지 전송에 실패했습니다.' }
+  }
+
+  revalidatePath(`/partner/dashboard/orders/${orderId}`)
+  return {}
+}

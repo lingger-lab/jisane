@@ -41,6 +41,7 @@
     "./page-hero": "./components/page-hero.tsx",
     "./hero-backdrop": "./components/hero-backdrop.tsx",
     "./char-limit-notice": "./components/char-limit-notice.tsx",
+    "./order-message-thread": "./components/order-message-thread.tsx",
     "./error-state": "./components/error-state.tsx",
     "./route-loading": "./components/route-loading.tsx",
     "./status-badge": "./components/status-badge.tsx",

@@ -70,6 +70,40 @@ export async function sendOwnerMessage(
   return {}
 }
 
+/** 서비스 주문 메시지 — 발주 기업회원(owner). service_order.owner_id 소유검증 후 저장. */
+export async function sendServiceOrderMessage(
+  orderId: string,
+  content: string
+): Promise<{ error?: string }> {
+  const ownerId = await getOwnerId()
+
+  if (!content.trim()) return { error: '메시지를 입력해주세요.' }
+  if (content.length > 1000) return { error: '메시지는 1000자 이내로 입력해주세요.' }
+
+  const { data: order } = await adminClient
+    .from('service_order')
+    .select('id, owner_id')
+    .eq('id', orderId)
+    .single()
+
+  if (!order || order.owner_id !== ownerId) return { error: '접근 권한이 없습니다.' }
+
+  const { error } = await adminClient.from('service_order_message').insert({
+    service_order_id: orderId,
+    sender_type: 'owner',
+    sender_id: ownerId,
+    content: content.trim(),
+  })
+
+  if (error) {
+    console.error('[message/actions] sendServiceOrderMessage(owner) 저장 실패:', error)
+    return { error: '메시지 전송에 실패했습니다. 잠시 후 다시 시도해주세요.' }
+  }
+
+  revalidatePath(`/orders/${orderId}`)
+  return {}
+}
+
 export async function sendDealInquiry(
   dealId: string,
   content: string,
