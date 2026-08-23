@@ -7,6 +7,7 @@ import { updateExpertStatus } from '@/lib/admin/actions'
 export interface ExpertMemberItem {
   id: string
   email: string
+  real_name: string | null
   name: string | null
   field: string | null
   career_years: number | null
@@ -30,7 +31,7 @@ export function ExpertMembersTab({ members }: { members: ExpertMemberItem[] }) {
   const [ask, confirmDialog] = useConfirmDialog()
 
   async function handleStatus(m: ExpertMemberItem, status: 'active' | 'suspended') {
-    const label = m.name || m.email
+    const label = m.real_name || m.name || m.email
     if (
       !(await ask({
         title: status === 'active' ? '회원 활성화' : '회원 중지',
@@ -66,7 +67,8 @@ export function ExpertMembersTab({ members }: { members: ExpertMemberItem[] }) {
               <div key={m.id} className="flex items-center justify-between gap-3 rounded-lg border border-border-light p-3">
                 <div className="min-w-0 flex-1">
                   <div className="flex items-center gap-2">
-                    <p className="truncate text-sm font-medium text-text">{m.name || '(이름 미입력)'}</p>
+                    <p className="truncate text-sm font-medium text-text">{m.real_name || '(실명 미입력)'}</p>
+                    {m.name && <span className="shrink-0 text-xs text-text-subtle">활동명 {m.name}</span>}
                     <span className={`shrink-0 rounded-full px-2 py-0.5 text-xs font-medium ${badge.color}`}>{badge.label}</span>
                   </div>
                   <p className="mt-0.5 truncate text-xs text-text-subtle">

@@ -12,7 +12,7 @@ export function ReferralForm() {
   return (
     <form action={formAction} className="flex flex-col gap-5">
       <div className="rounded-xl border border-border-light bg-card p-4">
-        <p className="mb-3 text-sm font-semibold text-text">추천인 (리워드 받으실 본인)</p>
+        <p className="mb-3 text-sm font-semibold text-text">① 리워드 받으실 분 (추천인)</p>
         <div className="flex flex-col gap-3">
           <div>
             <label htmlFor="referrer_name" className="mb-1 block text-sm font-medium text-text">
@@ -38,13 +38,13 @@ export function ReferralForm() {
       </div>
 
       <div className="rounded-xl border border-border-light bg-card p-4">
-        <p className="mb-3 text-sm font-semibold text-text">추천하신 분</p>
+        <p className="mb-3 text-sm font-semibold text-text">② 초빙된 시니어 (추천대상)</p>
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
           <div>
             <label htmlFor="referee_name" className="mb-1 block text-sm font-medium text-text">
               성함 <span className="text-error">*</span>
             </label>
-            <Input id="referee_name" name="referee_name" type="text" required tone="accent" placeholder="추천하신 분 성함" />
+            <Input id="referee_name" name="referee_name" type="text" required tone="accent" placeholder="초빙된 시니어 성함" />
           </div>
           <div>
             <label htmlFor="referee_contact" className="mb-1 block text-sm font-medium text-text">

@@ -32,7 +32,7 @@ export default async function MyPage() {
 
   const { data: expert } = await adminClient
     .from('expert')
-    .select('id, name, field, career_years, hourly_rate, contact, email, grade, created_at, career_score, review_score, completion_score, total_score, activity_points')
+    .select('id, real_name, name, field, career_years, hourly_rate, contact, email, grade, created_at, career_score, review_score, completion_score, total_score, activity_points')
     .eq('auth_user_id', user.id)
     .single()
 
@@ -118,6 +118,7 @@ export default async function MyPage() {
   }>
 
   const profile = {
+    real_name: expert.real_name,
     name: expert.name,
     field: expert.field,
     career_years: expert.career_years,

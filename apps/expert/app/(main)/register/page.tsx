@@ -86,16 +86,33 @@ export default function RegisterPage() {
           <p className="mt-1 text-xs text-text-subtle">10,000원 ~ 100,000원 (기준 25,000원)</p>
         </div>
 
-        {/* 이름 (선택) */}
+        {/* 실명 (필수, 비공개) */}
+        <div>
+          <label htmlFor="real_name" className="mb-1 block text-sm font-medium text-text">
+            실명 <span className="text-error">*</span>
+            <span className="ml-1 text-xs text-text-subtle">(비공개, 관리용)</span>
+          </label>
+          <Input
+            id="real_name"
+            name="real_name"
+            type="text"
+            required
+            placeholder="주민등록상 실명"
+            tone="accent"
+          />
+          <p className="mt-1 text-xs text-text-subtle">외부에 공개되지 않으며, 지사네 관리자만 확인합니다.</p>
+        </div>
+
+        {/* 활동명 (선택, 공개 표시명) */}
         <div>
           <label htmlFor="name" className="mb-1 block text-sm font-medium text-text">
-            이름 <span className="text-xs text-text-subtle">(선택)</span>
+            활동명 <span className="text-xs text-text-subtle">(공개, 선택)</span>
           </label>
           <Input
             id="name"
             name="name"
             type="text"
-            placeholder="본명 또는 활동명"
+            placeholder="목록·프로필에 표시될 이름"
             tone="accent"
           />
         </div>

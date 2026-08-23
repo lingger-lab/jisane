@@ -24,11 +24,17 @@ export async function updateExpertProfile(
   const careerYears = careerYearsRaw ? parseInt(careerYearsRaw, 10) : null
   const hourlyRateRaw = formData.get('hourly_rate') as string | null
   const hourlyRate = hourlyRateRaw ? parseInt(hourlyRateRaw, 10) : null
+  const realName = formData.get('real_name') as string | null
   const name = formData.get('name') as string | null
   const contact = formData.get('contact') as string | null
 
   if (!field || !field.trim()) {
     return { error: '전문 분야를 선택해주세요.' }
+  }
+
+  // 실명은 필수 — 활동명(name)과 분리된 비공개 식별정보(관리자용). 값은 로그 금지(PII).
+  if (!realName || !realName.trim()) {
+    return { error: '실명을 입력해주세요.' }
   }
 
   if (hourlyRate !== null && (hourlyRate < 10000 || hourlyRate > 100000)) {
@@ -72,6 +78,7 @@ export async function updateExpertProfile(
       career_years: careerYears,
       career_score: computeCareerScore(careerYears),
       hourly_rate: hourlyRate,
+      real_name: realName.trim(),
       name: name?.trim() || null,
       contact: contact?.trim() || null,
     })

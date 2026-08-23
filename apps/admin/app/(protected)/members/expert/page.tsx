@@ -12,7 +12,7 @@ export default async function ExpertMembersPage() {
 
   const { data } = await adminClient
     .from('expert')
-    .select('id, email, name, field, career_years, status, created_at')
+    .select('id, email, real_name, name, field, career_years, status, created_at')
     .order('created_at', { ascending: false })
 
   return (

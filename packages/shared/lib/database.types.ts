@@ -289,6 +289,7 @@ export type Database = {
           is_newbie: boolean
           name: string | null
           provider: Database["public"]["Enums"]["auth_provider"] | null
+          real_name: string | null
           review_score: number
           status: Database["public"]["Enums"]["expert_status"]
           total_score: number
@@ -310,6 +311,7 @@ export type Database = {
           is_newbie?: boolean
           name?: string | null
           provider?: Database["public"]["Enums"]["auth_provider"] | null
+          real_name?: string | null
           review_score?: number
           status?: Database["public"]["Enums"]["expert_status"]
           updated_at?: string
@@ -330,6 +332,7 @@ export type Database = {
           is_newbie?: boolean
           name?: string | null
           provider?: Database["public"]["Enums"]["auth_provider"] | null
+          real_name?: string | null
           review_score?: number
           status?: Database["public"]["Enums"]["expert_status"]
           updated_at?: string
