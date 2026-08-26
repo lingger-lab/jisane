@@ -2,7 +2,7 @@
 
 import { redirect } from 'next/navigation'
 import { adminClient } from '@jisane/shared/supabase/admin'
-import { resolveExpertFromAuth } from '@jisane/shared/auth/server-helpers'
+import { resolveExpertFromAuth, requireActiveExpert } from '@jisane/shared/auth/server-helpers'
 import { getPackageBySlug } from '@jisane/shared/service-package/queries'
 
 interface CreateEducationOrderState {
@@ -34,6 +34,10 @@ export async function createEducationOrder(
   if (!expert) {
     redirect('/register')
   }
+
+  // 활성 계정만 교육 주문 가능(감사 P2-1/P2-D) — 탈퇴·중지 세션 차단.
+  const guard = await requireActiveExpert()
+  if (!guard.ok) return { error: guard.error }
 
   const { error } = await adminClient.from('service_order').insert({
     expert_id: expert.id,

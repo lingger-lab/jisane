@@ -45,12 +45,22 @@ export async function acceptMatching(matchingId: string): Promise<{ error?: stri
   // 의뢰 정보에서 budget_hope로 work_fee 결정
   const { data: request } = await adminClient
     .from('request')
-    .select('id, budget_hope, scope')
+    .select('id, budget_hope, scope, status, owner:owner!inner(status)')
     .eq('id', matching.request_id)
     .single()
 
   if (!request) {
     return { error: '의뢰 정보를 찾을 수 없습니다.' }
+  }
+
+  // 발주 측 상태 재검증(감사 P1-2) — 매칭 제안 후 owner가 탈퇴/비활성이 되었거나 의뢰가
+  // 종료(closed)됐으면 딜을 만들지 않는다. (탈퇴회원 명의 deal·고착 방지)
+  const ownerStatus = (request as unknown as { owner: { status: string } }).owner?.status
+  if (request.status !== 'matching') {
+    return { error: '이미 종료되었거나 취소된 의뢰입니다.' }
+  }
+  if (ownerStatus !== 'active') {
+    return { error: '발주 기업회원이 이용 불가 상태입니다. 관리자에게 문의해주세요.' }
   }
 
   // work_fee: budget_hope 기반 (없으면 기본값 100,000)

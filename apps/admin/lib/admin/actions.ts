@@ -230,6 +230,16 @@ export async function selectCandidate(
     return { error: '선택할 수 없는 시니어지식인입니다(비활성 또는 계정 미연결).' }
   }
 
+  // 경합 가드(감사 P1-1) — request를 open→matching으로 CAS 선점. 동시 선택/이중클릭에서
+  // 한 번만 통과해 한 의뢰에 매칭·deal이 중복 생성되는 것을 차단한다.
+  const { data: claimed } = await adminClient
+    .from('request')
+    .update({ status: 'matching' })
+    .eq('id', requestId)
+    .eq('status', 'open')
+    .select('id')
+  if (!claimed || claimed.length === 0) return { error: '이미 매칭 진행 중인 의뢰입니다.' }
+
   // 선택된 후보를 selected로, 나머지를 skipped로
   await adminClient
     .from('matching_candidate')
@@ -252,12 +262,11 @@ export async function selectCandidate(
       status: 'proposed',
     })
 
-  if (matchError) return { error: matchError.message }
-
-  await adminClient
-    .from('request')
-    .update({ status: 'matching' })
-    .eq('id', requestId)
+  if (matchError) {
+    // 보상: 선점했던 request를 open으로 되돌림(재시도 가능 상태 복원).
+    await adminClient.from('request').update({ status: 'open' }).eq('id', requestId)
+    return { error: matchError.message }
+  }
 
   revalidatePath('/dashboard')
   return {}
@@ -348,6 +357,14 @@ export async function autoAssignOverdue(): Promise<number> {
 
   if (matchInsertError) {
     console.error('[autoAssignOverdue] matching insert failed:', matchInsertError.message)
+    // 보상 롤백(감사 P1-5) — 선점했던 후보를 pending으로 되돌려 다음 크론이 재시도하게 한다.
+    // 롤백을 안 하면 후보가 selected로 고착되고 matching은 없어 자동배정이 영구 중단된다.
+    const { error: rbError } = await adminClient
+      .from('matching_candidate')
+      .update({ status: 'pending' })
+      .in('id', actuallySelected.map((c: { id: string }) => c.id))
+      .eq('status', 'selected')
+    if (rbError) console.error('[autoAssignOverdue] CRITICAL 후보 롤백 실패(수동 보정 필요):', rbError.message)
     return 0
   }
 
@@ -386,12 +403,22 @@ export async function createMatching(
   // 시니어지식인 확인
   const { data: expert } = await adminClient
     .from('expert')
-    .select('id, status')
+    .select('id, status, auth_user_id')
     .eq('id', expertId)
     .single()
 
   if (!expert) return { error: '시니어지식인을 찾을 수 없습니다.' }
   if (expert.status !== 'active') return { error: '비활성 시니어지식인입니다.' }
+  if (!expert.auth_user_id) return { error: '계정이 연결되지 않은 시니어지식인입니다.' }
+
+  // 경합 가드(감사 P1-1) — request open→matching CAS 선점 후 매칭 생성.
+  const { data: claimed } = await adminClient
+    .from('request')
+    .update({ status: 'matching' })
+    .eq('id', requestId)
+    .eq('status', 'open')
+    .select('id')
+  if (!claimed || claimed.length === 0) return { error: '이미 매칭 진행 중인 의뢰입니다.' }
 
   // matching 생성
   const { error: matchError } = await adminClient
@@ -402,13 +429,10 @@ export async function createMatching(
       status: 'proposed',
     })
 
-  if (matchError) return { error: matchError.message }
-
-  // request.status → 'matching'
-  await adminClient
-    .from('request')
-    .update({ status: 'matching' })
-    .eq('id', requestId)
+  if (matchError) {
+    await adminClient.from('request').update({ status: 'open' }).eq('id', requestId)
+    return { error: matchError.message }
+  }
 
   revalidatePath('/dashboard')
   return {}
@@ -421,10 +445,12 @@ export async function updateProviderStatus(
 ): Promise<{ error?: string }> {
   await verifyAdmin()
 
+  // 탈퇴(withdrawn) 행은 이 경로로 되살리지 않는다(감사 P2-4) — 정식 재활성은 reactivateMemberByAdmin.
   const { error } = await adminClient
     .from('provider')
     .update({ status })
     .eq('id', providerId)
+    .neq('status', 'withdrawn')
 
   if (error) return { error: error.message }
 
@@ -443,6 +469,7 @@ export async function updateOwnerStatus(
     .from('owner')
     .update({ status })
     .eq('id', ownerId)
+    .neq('status', 'withdrawn')
 
   if (error) return { error: error.message }
 
@@ -457,10 +484,12 @@ export async function updateExpertStatus(
 ): Promise<{ error?: string }> {
   await verifyAdmin()
 
+  // 탈퇴 행은 이 경로로 되살리지 않는다(감사 P2-4).
   const { error } = await adminClient
     .from('expert')
     .update({ status })
     .eq('id', expertId)
+    .neq('status', 'withdrawn')
 
   if (error) return { error: error.message }
 
@@ -746,15 +775,13 @@ export async function releaseSettlement(
     return { error: '이미 처리되었거나 상태가 변경된 정산입니다.' }
   }
 
-  // deal.status → 'done'
-  await adminClient
-    .from('deal')
-    .update({ status: 'done' })
-    .eq('id', settlement.deal_id)
+  // (deal.status는 이 함수 진입 가드(dealStatus==='done')로 이미 done이므로 재갱신하지 않는다.
+  //  기존의 무조건 done 갱신은 죽은 쓰기였음 — 감사 P1-4.)
 
-  // guarantee_fund_ledger 적립
+  // guarantee_fund_ledger 적립 — 실패는 금전 기록 유실이므로 CRITICAL로 표면화한다(감사 P1-4).
+  // 정산 자체는 이미 released(CAS 성공)이므로 흐름은 중단하지 않고, 원장 보정 필요를 로그로 남긴다.
   if (settlement.guarantee_fee > 0) {
-    await adminClient
+    const { error: ledgerErr } = await adminClient
       .from('guarantee_fund_ledger')
       .insert({
         settlement_id: settlementId,
@@ -762,6 +789,9 @@ export async function releaseSettlement(
         amount: settlement.guarantee_fee,
         note: '에스크로 해제 — 책임 적립금 적립',
       })
+    if (ledgerErr) {
+      console.error(`[releaseSettlement] CRITICAL 원장 적립 실패(수동 보정 필요) settlement=${settlementId}:`, ledgerErr.message)
+    }
   }
 
   // 시니어지식인 스코어 재계산 (completion_score 반영)

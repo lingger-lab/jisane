@@ -5,6 +5,7 @@ import { redirect } from 'next/navigation'
 import { createClient } from '@jisane/shared/supabase/server'
 import { adminClient } from '@jisane/shared/supabase/admin'
 import { getPackageBySlug } from '@jisane/shared/service-package/queries'
+import { resolveOrCreateOwner } from '@jisane/shared/auth/server-helpers'
 import { notifyAdmin } from '@jisane/shared/notify/email'
 
 interface CreateServiceOrderState {
@@ -35,29 +36,13 @@ export async function createServiceOrder(
     return { error: '유효하지 않은 서비스입니다.' }
   }
 
-  // owner_id 조회 (없으면 자동 생성)
-  let { data: owner } = await adminClient
-    .from('owner')
-    .select('id')
-    .eq('auth_user_id', user.id)
-    .single()
-
-  if (!owner) {
-    const provider = (user.app_metadata?.provider as string) || 'google'
-    const { data: newOwner } = await adminClient
-      .from('owner')
-      .insert({ auth_user_id: user.id, provider, email: user.email! })
-      .select('id')
-      .single()
-    owner = newOwner
-  }
-
-  if (!owner) {
-    return { error: '계정 생성에 실패했습니다. 다시 시도해주세요.' }
-  }
+  // owner 해석/생성 — 활성 게이트·email 가드·경합복구 통합(감사 P1-3/리팩토링 1).
+  const guard = await resolveOrCreateOwner()
+  if (!guard.ok) return { error: guard.error }
+  const ownerId = guard.ownerId
 
   const { error } = await adminClient.from('service_order').insert({
-    owner_id: owner.id,
+    owner_id: ownerId,
     category: pkg.category,
     package_slug: pkg.slug,
     package_name: pkg.name,

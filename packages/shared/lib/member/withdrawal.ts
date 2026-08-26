@@ -72,6 +72,17 @@ export async function withdrawOwner(id: string, by: WithdrawnBy): Promise<{ erro
   const { error: invErr } = await adminClient.from('invitation').update({ status: 'declined' }).eq('owner_id', id).eq('status', 'invited')
   if (invErr) console.error('[withdrawal] invited invitation 정리 실패:', invErr.message)
 
+  // 진행 대기(matching) 의뢰도 정리(감사 P1-2) — proposed 매칭을 거절하고 의뢰를 닫아,
+  // expert가 탈퇴회원 명의로 딜을 생성하는 경로를 차단한다.
+  const { data: matchingReqs } = await adminClient.from('request').select('id').eq('owner_id', id).eq('status', 'matching')
+  const matchingReqIds = (matchingReqs ?? []).map((r) => r.id)
+  if (matchingReqIds.length > 0) {
+    const { error: mErr } = await adminClient.from('matching').update({ status: 'rejected' }).in('request_id', matchingReqIds).eq('status', 'proposed')
+    if (mErr) console.error('[withdrawal] proposed matching 정리 실패:', mErr.message)
+    const { error: rErr } = await adminClient.from('request').update({ status: 'closed' }).in('id', matchingReqIds).eq('status', 'matching')
+    if (rErr) console.error('[withdrawal] matching request 정리 실패:', rErr.message)
+  }
+
   // 구독 정리(subscription 다형참조)는 구독 기능이 코드에 연동되는 시점에 추가한다
   // — 현재 subscription 테이블은 앱 코드 미사용·미타입이라 방어 코드를 넣지 않는다(스코프 보류).
   return {}

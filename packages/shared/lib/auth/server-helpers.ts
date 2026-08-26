@@ -61,6 +61,45 @@ export async function requireActiveExpert(): Promise<
 }
 
 /**
+ * 활성 owner 게이트 + insert-if-missing 통합 헬퍼 — 회원전환(다른 역할→기업)·의뢰/주문 생성에서
+ * 공용 사용(감사 리팩토링 1). owner 행이 없으면 생성하고, 있으면 active만 통과시킨다.
+ * email 가드(카카오 미동의)·UNIQUE 경합 재조회를 한 곳에 두어 산재하던 구현 편차를 제거.
+ */
+export async function resolveOrCreateOwner(): Promise<
+  { ok: true; ownerId: string } | { ok: false; error: string }
+> {
+  const cookieStore = await cookies()
+  const supabase = createClient(cookieStore)
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) return { ok: false, error: '로그인이 필요합니다.' }
+
+  const { data: owner, error: lookupErr } = await adminClient
+    .from('owner')
+    .select('id, status')
+    .eq('auth_user_id', user.id)
+    .maybeSingle()
+  if (lookupErr) return { ok: false, error: '계정 조회에 실패했습니다. 잠시 후 다시 시도해주세요.' }
+  if (owner) {
+    if (owner.status !== 'active') return { ok: false, error: '현재 이용할 수 없는 계정입니다. 관리자에게 문의해주세요.' }
+    return { ok: true, ownerId: owner.id }
+  }
+
+  if (!user.email) return { ok: false, error: '이메일 제공에 동의한 계정으로 다시 로그인해주세요.' }
+  const authProvider = (user.app_metadata?.provider as string) || 'google'
+  const { data: created, error: insErr } = await adminClient
+    .from('owner')
+    .insert({ auth_user_id: user.id, provider: authProvider === 'kakao' ? 'kakao' : 'google', email: user.email })
+    .select('id')
+    .single()
+  if (insErr || !created) {
+    const { data: existing } = await adminClient.from('owner').select('id').eq('auth_user_id', user.id).single()
+    if (!existing) return { ok: false, error: '계정 생성에 실패했습니다. 다시 시도해주세요.' }
+    return { ok: true, ownerId: existing.id }
+  }
+  return { ok: true, ownerId: created.id }
+}
+
+/**
  * Admin 권한을 검증합니다.
  * ADMIN_EMAILS 환경변수에 포함된 이메일만 허용합니다.
  */

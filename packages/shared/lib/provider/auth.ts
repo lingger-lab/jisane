@@ -5,13 +5,17 @@ import type { Database } from '../database.types'
 
 export type ProviderRow = Database['public']['Tables']['provider']['Row']
 
-/** auth 사용자에 연결된 provider(파트너) 행 조회 — 없으면 null */
+/**
+ * auth 사용자에 연결된 provider(파트너) 행 조회 — 없으면 null.
+ * .maybeSingle()로 "행 없음(정상)"과 "조회 오류"를 구분한다. .single()은 0행도 error로
+ * 취급해 DB 순단을 미가입으로 오판, 기존 회원을 /partner/apply로 오배송할 수 있다(감사 P2-2).
+ */
 export async function getProviderByAuthUser(authUserId: string): Promise<ProviderRow | null> {
   const { data } = await adminClient
     .from('provider')
     .select('*')
     .eq('auth_user_id', authUserId)
-    .single()
+    .maybeSingle()
   return (data as ProviderRow | null) ?? null
 }
 
@@ -24,12 +28,12 @@ export async function requireActiveProvider(
   authUserId: string
 ): Promise<
   | { ok: true; provider: ProviderRow }
-  | { ok: false; reason: 'no_provider' | 'pending' | 'rejected' | 'suspended' }
+  | { ok: false; reason: 'no_provider' | 'pending' | 'rejected' | 'suspended' | 'withdrawn' }
 > {
   const provider = await getProviderByAuthUser(authUserId)
   if (!provider) return { ok: false, reason: 'no_provider' }
   if (provider.status === 'active') return { ok: true, provider }
-  return { ok: false, reason: provider.status as 'pending' | 'rejected' | 'suspended' }
+  return { ok: false, reason: provider.status as 'pending' | 'rejected' | 'suspended' | 'withdrawn' }
 }
 
 /** 패키지 수정/삭제 전 소유권 검증 — service_package.provider_id 대조 */
