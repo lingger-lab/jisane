@@ -77,9 +77,9 @@ export function DashboardTabs({
         className="mb-4 flex gap-1 overflow-x-auto rounded-lg bg-surface p-1"
       >
         {TAB_GROUPS.map((group, gi) => (
-          <div key={group.label} role="presentation" className="flex items-center">
+          <div key={group.label} role="presentation" className="flex shrink-0 items-center">
             {gi > 0 && <div aria-hidden="true" className="mx-0.5 h-6 w-px shrink-0 bg-border" />}
-            <div role="presentation" className="flex gap-0.5">
+            <div role="presentation" className="flex shrink-0 gap-0.5">
               {group.tabs.map((tab) => {
                 const flatIndex = FLAT_TABS.findIndex((t) => t.key === tab.key)
                 return (

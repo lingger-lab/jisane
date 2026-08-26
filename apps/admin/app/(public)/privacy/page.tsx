@@ -13,7 +13,7 @@ export default function PrivacyPage() {
       <PageHero
         eyebrow="지사네"
         title="개인정보처리방침"
-        subtitle="시행일: 2025년 6월 15일"
+        subtitle="시행일: 2026년 6월 15일"
         size="lg"
       />
       <div className="container-read px-4 md:px-6 py-6">
@@ -175,7 +175,7 @@ export default function PrivacyPage() {
         <section>
           <h2 className="mb-3 text-base font-semibold text-text">10. 개인정보처리방침 변경</h2>
           <p>
-            본 방침은 2025년 6월 15일부터 시행됩니다.
+            본 방침은 2026년 6월 15일부터 시행됩니다.
             내용이 변경될 경우 시행 7일 전부터 서비스 내 공지사항을 통해 안내합니다.
           </p>
         </section>
