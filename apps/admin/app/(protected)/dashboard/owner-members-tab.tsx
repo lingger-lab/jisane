@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import Link from 'next/link'
 import { useConfirmDialog } from '@jisane/ui/confirm-dialog'
 import { updateOwnerStatus } from '@/lib/admin/actions'
 
@@ -19,6 +20,7 @@ export interface OwnerMemberItem {
 const STATUS: Record<string, { label: string; color: string }> = {
   active: { label: '활성', color: 'bg-primary/10 text-primary' },
   inactive: { label: '비활성', color: 'bg-surface text-text-muted' },
+  withdrawn: { label: '탈퇴', color: 'bg-surface text-text-subtle' },
 }
 
 function fmtDate(v: string) {
@@ -65,7 +67,7 @@ export function OwnerMembersTab({ members }: { members: OwnerMemberItem[] }) {
             const badge = STATUS[m.status] || STATUS.inactive
             return (
               <div key={m.id} className="flex items-center justify-between gap-3 rounded-lg border border-border-light p-3">
-                <div className="min-w-0 flex-1">
+                <Link href={`/members/owner/${m.id}`} className="-m-1 min-w-0 flex-1 rounded-md p-1 transition-colors hover:bg-surface-warm">
                   <div className="flex items-center gap-2">
                     <p className="truncate text-sm font-medium text-text">{m.company || '(회사명 미입력)'}</p>
                     <span className={`shrink-0 rounded-full px-2 py-0.5 text-xs font-medium ${badge.color}`}>{badge.label}</span>
@@ -79,7 +81,7 @@ export function OwnerMembersTab({ members }: { members: OwnerMemberItem[] }) {
                   <p className="mt-0.5 text-xs tabular-nums text-text-subtle">
                     가입 {fmtDate(m.created_at)} · 거래 {m.completed_deals}건
                   </p>
-                </div>
+                </Link>
                 <div className="flex shrink-0 items-center gap-2">
                   {m.status === 'active' ? (
                     <button

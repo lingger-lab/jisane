@@ -7,6 +7,7 @@ import { calculateAiRating } from '@jisane/shared/review-algo'
 import { recalcExpertScores, batchRecalcExpertScores } from '@jisane/shared/expert-scoring'
 import { autoReleaseSettlements } from '@jisane/shared/automation/auto-settlement'
 import { verifyAdmin } from '@jisane/shared/auth/server-helpers'
+import { withdrawMember, type MemberRole } from '@jisane/shared/member/withdrawal'
 import type { ExpertRow } from '@jisane/shared/types'
 import type { InterestWithExpert } from '@jisane/shared/query-types'
 import { getCachedCategories, type CategoryRow } from '@jisane/shared/categories'
@@ -458,6 +459,96 @@ export async function updatePackageStatus(
   if (error) return { error: error.message }
 
   revalidatePath('/dashboard')
+  return {}
+}
+
+// ── 회원 유형 관리 / 강제 탈퇴 (Phase 1) ──
+
+/** role → members 라우트 세그먼트(provider는 /members/partner). */
+const MEMBER_ROUTE: Record<MemberRole, string> = { owner: 'owner', expert: 'expert', provider: 'partner' }
+
+function revalidateMember(role: MemberRole, id: string) {
+  revalidatePath('/dashboard')
+  revalidatePath(`/members/${MEMBER_ROUTE[role]}`)
+  revalidatePath(`/members/${MEMBER_ROUTE[role]}/${id}`)
+}
+
+/** 관리자 강제 탈퇴 — soft-delete + 개인정보 익명화(비가역). 거래·정산 기록은 보존. */
+export async function withdrawMemberByAdmin(role: MemberRole, id: string): Promise<{ error?: string }> {
+  await verifyAdmin()
+  const result = await withdrawMember(role, id, 'admin')
+  if (result.error) return result
+  revalidateMember(role, id)
+  return {}
+}
+
+/**
+ * 관리자 역할 부여 — 잘못된 유형으로 가입한 계정에 올바른 역할 행을 생성(insert-if-missing).
+ * 같은 auth 계정의 기존 역할 행에서 email을 복사. 이미 있으면 멱등(withdrawn이면 재활성).
+ * provider는 name·type이 NOT NULL(빈 shell 불가) + 승인제라 이 액션 대상이 아님 — /partner/apply 경유.
+ */
+export async function grantRoleByAdmin(
+  authUserId: string,
+  targetRole: 'owner' | 'expert'
+): Promise<{ error?: string }> {
+  await verifyAdmin()
+
+  const { data: existing } = await adminClient
+    .from(targetRole)
+    .select('id, status')
+    .eq('auth_user_id', authUserId)
+    .maybeSingle()
+
+  if (existing) {
+    if (existing.status === 'withdrawn') {
+      await adminClient
+        .from(targetRole)
+        .update({ status: 'active', withdrawn_at: null, withdrawn_by: null })
+        .eq('id', existing.id)
+    }
+    revalidateMember(targetRole, existing.id)
+    return {}
+  }
+
+  // 같은 계정의 다른 역할 행에서 email 확보(owner/expert/provider 순).
+  let email: string | null = null
+  for (const table of ['owner', 'expert', 'provider'] as const) {
+    const { data } = await adminClient.from(table).select('email').eq('auth_user_id', authUserId).maybeSingle()
+    if (data?.email) {
+      email = data.email
+      break
+    }
+  }
+  if (!email) return { error: '이 계정의 이메일을 찾을 수 없어 역할을 부여할 수 없습니다.' }
+
+  const { error } =
+    targetRole === 'owner'
+      ? await adminClient.from('owner').insert({ auth_user_id: authUserId, email })
+      : await adminClient.from('expert').insert({ auth_user_id: authUserId, email })
+  if (error) return { error: error.message }
+
+  revalidatePath('/dashboard')
+  revalidatePath(`/members/${MEMBER_ROUTE[targetRole]}`)
+  return {}
+}
+
+/**
+ * 관리자 재활성 — status만 복구(active). 익명화된 개인정보는 복원하지 않는다(회원이 재입력).
+ * 강제탈퇴 오조작 되돌리기용.
+ */
+export async function reactivateMemberByAdmin(role: MemberRole, id: string): Promise<{ error?: string }> {
+  await verifyAdmin()
+
+  const patch = { status: 'active' as const, withdrawn_at: null, withdrawn_by: null }
+  const { error } =
+    role === 'owner'
+      ? await adminClient.from('owner').update(patch).eq('id', id)
+      : role === 'expert'
+        ? await adminClient.from('expert').update(patch).eq('id', id)
+        : await adminClient.from('provider').update(patch).eq('id', id)
+  if (error) return { error: error.message }
+
+  revalidateMember(role, id)
   return {}
 }
 

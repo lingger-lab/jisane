@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import Link from 'next/link'
 import { useConfirmDialog } from '@jisane/ui/confirm-dialog'
 import { updateProviderStatus, updatePackageStatus } from '@/lib/admin/actions'
 import { PROVIDER_KIND_LABELS } from '@jisane/shared/labels'
@@ -37,6 +38,7 @@ const PROVIDER_STATUS_BADGE: Record<string, { label: string; color: string }> = 
   active: { label: '활동 중', color: PROVIDER_STATUS_BADGE_CLASSES.active },
   rejected: { label: '반려', color: PROVIDER_STATUS_BADGE_CLASSES.rejected },
   suspended: { label: '중지', color: PROVIDER_STATUS_BADGE_CLASSES.suspended },
+  withdrawn: { label: '탈퇴', color: 'bg-surface text-text-subtle' },
 }
 
 const KIND_LABELS = PROVIDER_KIND_LABELS
@@ -197,13 +199,13 @@ export function PartnerTab({
               const badge = PROVIDER_STATUS_BADGE[p.status] || PROVIDER_STATUS_BADGE.pending
               return (
                 <div key={p.id} className="flex items-center justify-between rounded-lg border border-border-light p-3">
-                  <div className="min-w-0">
+                  <Link href={`/members/partner/${p.id}`} className="-m-1 min-w-0 rounded-md p-1 transition-colors hover:bg-surface-warm">
                     <p className="text-sm font-medium text-text">{p.name}</p>
                     <p className="text-xs text-text-subtle">
                       {KIND_LABELS[p.kind] || p.kind} · {TYPE_LABELS[p.type] || p.type}
                       {!p.auth_user_id && ' · 계정 미연결(관리자 대리)'}
                     </p>
-                  </div>
+                  </Link>
                   <div className="flex shrink-0 items-center gap-2">
                     <span className={`rounded-full px-2 py-0.5 text-xs font-medium ${badge.color}`}>
                       {badge.label}

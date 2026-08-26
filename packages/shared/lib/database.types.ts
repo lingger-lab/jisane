@@ -294,6 +294,8 @@ export type Database = {
           status: Database["public"]["Enums"]["expert_status"]
           total_score: number
           updated_at: string
+          withdrawn_at: string | null
+          withdrawn_by: string | null
         }
         Insert: {
           activity_points?: number
@@ -315,6 +317,8 @@ export type Database = {
           review_score?: number
           status?: Database["public"]["Enums"]["expert_status"]
           updated_at?: string
+          withdrawn_at?: string | null
+          withdrawn_by?: string | null
         }
         Update: {
           activity_points?: number
@@ -336,6 +340,8 @@ export type Database = {
           review_score?: number
           status?: Database["public"]["Enums"]["expert_status"]
           updated_at?: string
+          withdrawn_at?: string | null
+          withdrawn_by?: string | null
         }
         Relationships: []
       }
@@ -695,6 +701,8 @@ export type Database = {
           region: string | null
           status: Database["public"]["Enums"]["owner_status"]
           updated_at: string
+          withdrawn_at: string | null
+          withdrawn_by: string | null
         }
         Insert: {
           auth_user_id?: string | null
@@ -710,6 +718,8 @@ export type Database = {
           region?: string | null
           status?: Database["public"]["Enums"]["owner_status"]
           updated_at?: string
+          withdrawn_at?: string | null
+          withdrawn_by?: string | null
         }
         Update: {
           auth_user_id?: string | null
@@ -725,6 +735,8 @@ export type Database = {
           region?: string | null
           status?: Database["public"]["Enums"]["owner_status"]
           updated_at?: string
+          withdrawn_at?: string | null
+          withdrawn_by?: string | null
         }
         Relationships: []
       }
@@ -765,6 +777,8 @@ export type Database = {
           type: Database["public"]["Enums"]["provider_type"]
           updated_at: string
           website: string | null
+          withdrawn_at: string | null
+          withdrawn_by: string | null
         }
         Insert: {
           auth_user_id?: string | null
@@ -781,6 +795,8 @@ export type Database = {
           type: Database["public"]["Enums"]["provider_type"]
           updated_at?: string
           website?: string | null
+          withdrawn_at?: string | null
+          withdrawn_by?: string | null
         }
         Update: {
           auth_user_id?: string | null
@@ -797,6 +813,8 @@ export type Database = {
           type?: Database["public"]["Enums"]["provider_type"]
           updated_at?: string
           website?: string | null
+          withdrawn_at?: string | null
+          withdrawn_by?: string | null
         }
         Relationships: []
       }
@@ -1207,7 +1225,7 @@ export type Database = {
         | "refunded"
       expert_activity_type: "band_join" | "post"
       expert_grade: "veteran" | "standard" | "new"
-      expert_status: "active" | "waiting" | "suspended"
+      expert_status: "active" | "waiting" | "suspended" | "withdrawn"
       guarantee_entry_type: "accrual" | "release" | "refund" | "newbie_guarantee"
       inquiry_status: "open" | "ai_answered" | "human_routed" | "closed"
       invitation_status: "invited" | "accepted" | "declined"
@@ -1215,9 +1233,9 @@ export type Database = {
       matching_status: "proposed" | "accepted" | "rejected"
       message_sender_type: "owner" | "expert" | "admin"
       order_status: "pending" | "paid" | "processing" | "completed" | "cancelled"
-      owner_status: "active" | "inactive"
+      owner_status: "active" | "inactive" | "withdrawn"
       provider_kind: "company" | "senior"
-      provider_status: "pending" | "active" | "rejected" | "suspended"
+      provider_status: "pending" | "active" | "rejected" | "suspended" | "withdrawn"
       provider_type: "consulting" | "legal" | "tax" | "accounting" | "insurance"
       queue_status: "auto_passed" | "pending_review" | "audited"
       request_status: "open" | "matching" | "dealt" | "closed"
@@ -1371,7 +1389,7 @@ export const Constants = {
       ],
       expert_activity_type: ["band_join", "post"],
       expert_grade: ["veteran", "standard", "new"],
-      expert_status: ["active", "waiting", "suspended"],
+      expert_status: ["active", "waiting", "suspended", "withdrawn"],
       guarantee_entry_type: ["accrual", "release", "refund", "newbie_guarantee"],
       inquiry_status: ["open", "ai_answered", "human_routed", "closed"],
       invitation_status: ["invited", "accepted", "declined"],
@@ -1379,9 +1397,9 @@ export const Constants = {
       matching_status: ["proposed", "accepted", "rejected"],
       message_sender_type: ["owner", "expert", "admin"],
       order_status: ["pending", "paid", "processing", "completed", "cancelled"],
-      owner_status: ["active", "inactive"],
+      owner_status: ["active", "inactive", "withdrawn"],
       provider_kind: ["company", "senior"],
-      provider_status: ["pending", "active", "rejected", "suspended"],
+      provider_status: ["pending", "active", "rejected", "suspended", "withdrawn"],
       provider_type: ["consulting", "legal", "tax", "accounting", "insurance"],
       queue_status: ["auto_passed", "pending_review", "audited"],
       request_status: ["open", "matching", "dealt", "closed"],

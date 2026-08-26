@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import Link from 'next/link'
 import { useConfirmDialog } from '@jisane/ui/confirm-dialog'
 import { updateExpertStatus } from '@/lib/admin/actions'
 
@@ -19,6 +20,7 @@ const STATUS: Record<string, { label: string; color: string }> = {
   active: { label: '활성', color: 'bg-primary/10 text-primary' },
   waiting: { label: '대기', color: 'bg-warning-light text-warning' },
   suspended: { label: '중지', color: 'bg-error-light text-error' },
+  withdrawn: { label: '탈퇴', color: 'bg-surface text-text-subtle' },
 }
 
 function fmtDate(v: string) {
@@ -65,7 +67,7 @@ export function ExpertMembersTab({ members }: { members: ExpertMemberItem[] }) {
             const badge = STATUS[m.status] || STATUS.waiting
             return (
               <div key={m.id} className="flex items-center justify-between gap-3 rounded-lg border border-border-light p-3">
-                <div className="min-w-0 flex-1">
+                <Link href={`/members/expert/${m.id}`} className="-m-1 min-w-0 flex-1 rounded-md p-1 transition-colors hover:bg-surface-warm">
                   <div className="flex items-center gap-2">
                     <p className="truncate text-sm font-medium text-text">{m.real_name || '(실명 미입력)'}</p>
                     {m.name && <span className="shrink-0 text-xs text-text-subtle">활동명 {m.name}</span>}
@@ -77,7 +79,7 @@ export function ExpertMembersTab({ members }: { members: ExpertMemberItem[] }) {
                     {m.career_years != null && ` · 경력 ${m.career_years}년`}
                   </p>
                   <p className="mt-0.5 text-xs tabular-nums text-text-subtle">가입 {fmtDate(m.created_at)}</p>
-                </div>
+                </Link>
                 <div className="flex shrink-0 items-center gap-2">
                   {m.status === 'suspended' ? (
                     <button
