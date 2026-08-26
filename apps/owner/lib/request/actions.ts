@@ -37,21 +37,34 @@ export async function createRequest(
 
   // owner + category 병렬 조회
   const [ownerResult, catResult] = await Promise.all([
-    adminClient.from('owner').select('id').eq('auth_user_id', user.id).single(),
+    adminClient.from('owner').select('id, status').eq('auth_user_id', user.id).single(),
     reqType
       ? adminClient.from('category').select('id').eq('label', reqType).eq('depth', 0).single()
       : Promise.resolve({ data: null }),
   ])
 
   let owner = ownerResult.data
+  // 탈퇴·비활성 계정 차단(감사 P1-1).
+  if (owner && owner.status !== 'active') {
+    return { error: '현재 이용할 수 없는 계정입니다. 관리자에게 문의해주세요.' }
+  }
   if (!owner) {
+    // insert-if-missing — email 가드 + 경합 재조회(감사 P2-4, updateOwnerProfile 패턴 통일).
+    if (!user.email) {
+      return { error: '이메일 제공에 동의한 계정으로 다시 로그인해주세요.' }
+    }
     const provider = (user.app_metadata?.provider as string) || 'google'
-    const { data: newOwner } = await adminClient
+    const { data: newOwner, error: insErr } = await adminClient
       .from('owner')
-      .insert({ auth_user_id: user.id, provider, email: user.email! })
-      .select('id')
+      .insert({ auth_user_id: user.id, provider: provider === 'kakao' ? 'kakao' : 'google', email: user.email })
+      .select('id, status')
       .single()
-    owner = newOwner
+    if (insErr || !newOwner) {
+      const { data: existing } = await adminClient.from('owner').select('id, status').eq('auth_user_id', user.id).single()
+      owner = existing ?? null
+    } else {
+      owner = newOwner
+    }
   }
 
   if (!owner) {

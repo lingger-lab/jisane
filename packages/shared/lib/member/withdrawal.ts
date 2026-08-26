@@ -65,6 +65,13 @@ export async function withdrawOwner(id: string, by: WithdrawnBy): Promise<{ erro
   const at = new Date().toISOString()
   const { error } = await adminClient.from('owner').update(ownerWithdrawalPayload(id, by, at)).eq('id', id)
   if (error) return { error: error.message }
+
+  // 파생 정리(감사 P1-5) — 탈퇴 owner의 열린 파이프라인을 닫아 매칭 대상·초빙 대기에서 제거.
+  const { error: reqErr } = await adminClient.from('request').update({ status: 'closed' }).eq('owner_id', id).eq('status', 'open')
+  if (reqErr) console.error('[withdrawal] open request 정리 실패:', reqErr.message)
+  const { error: invErr } = await adminClient.from('invitation').update({ status: 'declined' }).eq('owner_id', id).eq('status', 'invited')
+  if (invErr) console.error('[withdrawal] invited invitation 정리 실패:', invErr.message)
+
   // 구독 정리(subscription 다형참조)는 구독 기능이 코드에 연동되는 시점에 추가한다
   // — 현재 subscription 테이블은 앱 코드 미사용·미타입이라 방어 코드를 넣지 않는다(스코프 보류).
   return {}
@@ -77,6 +84,12 @@ export async function withdrawExpert(id: string, by: WithdrawnBy): Promise<{ err
   // 매칭 후보 이중 방어 — status='withdrawn' 필터에 더해 전문분야 매핑도 제거.
   const { error: catErr } = await adminClient.from('expert_category').delete().eq('expert_id', id)
   if (catErr) console.error('[withdrawal] expert_category 삭제 실패:', catErr.message)
+
+  // 파생 정리(감사 P1-5) — 잔존 관심표현 삭제(관리자 후보 병합 노출 차단) + 대기 초빙 거절 처리.
+  const { error: intErr } = await adminClient.from('expert_interest').delete().eq('expert_id', id)
+  if (intErr) console.error('[withdrawal] expert_interest 삭제 실패:', intErr.message)
+  const { error: invErr } = await adminClient.from('invitation').update({ status: 'declined' }).eq('expert_id', id).eq('status', 'invited')
+  if (invErr) console.error('[withdrawal] invited invitation 정리 실패:', invErr.message)
   return {}
 }
 

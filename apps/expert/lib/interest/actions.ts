@@ -3,7 +3,7 @@
 import { redirect } from 'next/navigation'
 import { revalidatePath } from 'next/cache'
 import { adminClient } from '@jisane/shared/supabase/admin'
-import { resolveExpertFromAuth } from '@jisane/shared/auth/server-helpers'
+import { resolveExpertFromAuth, requireActiveExpert } from '@jisane/shared/auth/server-helpers'
 
 async function getExpertId(): Promise<string> {
   const { user, expert } = await resolveExpertFromAuth()
@@ -17,7 +17,10 @@ export async function expressInterest(
   requestId: string,
   note?: string
 ): Promise<{ error?: string }> {
-  const expertId = await getExpertId()
+  // 활성 계정만 관심표현 가능(탈퇴·중지·대기 차단 — 감사 P1-1).
+  const guard = await requireActiveExpert()
+  if (!guard.ok) return { error: guard.error }
+  const expertId = guard.expertId
 
   // 동시 활성 관심표현 제한 (platform_config.max_active_interests, 기본 5)
   const { data: config } = await adminClient

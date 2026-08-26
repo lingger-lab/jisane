@@ -26,12 +26,17 @@ export async function GET(request: Request) {
 
   const provider = (user.app_metadata.provider as string) || 'google'
 
-  // expert 레코드 확인/생성
-  const { data: existingExpert } = await adminClient
+  // expert 레코드 확인/생성 — .maybeSingle()로 "행 없음(정상)"과 "조회 오류"를 구분(감사 P2-1).
+  const { data: existingExpert, error: lookupErr } = await adminClient
     .from('expert')
     .select('id, status')
     .eq('auth_user_id', user.id)
-    .single()
+    .maybeSingle()
+
+  if (lookupErr) {
+    console.error('[auth/callback] expert lookup failed:', lookupErr.message)
+    return NextResponse.redirect(`${origin}/?error=lookup_failed`)
+  }
 
   // 탈퇴한 계정으로 재로그인 — 등록폼에서 필수정보 재입력하며 재활성.
   if (existingExpert && existingExpert.status === 'withdrawn') {

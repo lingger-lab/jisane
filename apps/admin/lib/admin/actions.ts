@@ -69,7 +69,7 @@ export async function getCandidatesForRequest(requestId: string) {
   if (!req) return { candidates: [], hasAiCandidates: false }
 
   const [{ data: experts }, categories, { data: expertCategories }] = await Promise.all([
-    adminClient.from('expert').select('*').eq('status', 'active'),
+    adminClient.from('expert').select('*').eq('status', 'active').not('auth_user_id', 'is', null),
     getCachedCategories(adminClient),
     adminClient.from('expert_category').select('expert_id, category_id'),
   ])
@@ -161,7 +161,7 @@ export async function generateAiCandidates(requestId: string): Promise<{ error?:
   if (req.status !== 'open') return { error: '매칭 대기 상태가 아닙니다.' }
 
   const [{ data: experts }, categories, { data: expertCategories }, { data: interests }] = await Promise.all([
-    adminClient.from('expert').select('*').eq('status', 'active'),
+    adminClient.from('expert').select('*').eq('status', 'active').not('auth_user_id', 'is', null),
     getCachedCategories(adminClient),
     adminClient.from('expert_category').select('expert_id, category_id'),
     adminClient.from('expert_interest').select('expert_id').eq('request_id', requestId),
@@ -218,6 +218,17 @@ export async function selectCandidate(
 
   if (!req) return { error: '의뢰를 찾을 수 없습니다.' }
   if (req.status !== 'open') return { error: '이미 매칭 진행 중인 의뢰입니다.' }
+
+  // 후보 스냅샷 이후 상태가 바뀌었을 수 있으므로 배정 직전 재검증(감사 P1-2/P1-3):
+  // 비활성·유령(auth_user_id null 시드) expert에게 매칭이 생성되는 것을 차단.
+  const { data: cand } = await adminClient
+    .from('expert')
+    .select('status, auth_user_id')
+    .eq('id', expertId)
+    .single()
+  if (!cand || cand.status !== 'active' || !cand.auth_user_id) {
+    return { error: '선택할 수 없는 시니어지식인입니다(비활성 또는 계정 미연결).' }
+  }
 
   // 선택된 후보를 selected로, 나머지를 skipped로
   await adminClient
@@ -277,7 +288,20 @@ export async function autoAssignOverdue(): Promise<number> {
   )
 
   // open 상태인 의뢰의 후보만 필터
-  const eligible = overdue.filter((c) => openRequestIds.has(c.request_id))
+  const openEligible = overdue.filter((c) => openRequestIds.has(c.request_id))
+  if (openEligible.length === 0) return 0
+
+  // 비활성·유령(auth_user_id null) expert 후보 배제 — 로그인 불가 유령에게 자동배정되어
+  // request가 영구 고착되는 것을 차단(감사 P1-2/P1-3).
+  const candidateExpertIds = [...new Set(openEligible.map((c) => c.expert_id))]
+  const { data: activeExperts } = await adminClient
+    .from('expert')
+    .select('id')
+    .eq('status', 'active')
+    .not('auth_user_id', 'is', null)
+    .in('id', candidateExpertIds)
+  const activeExpertSet = new Set((activeExperts || []).map((e) => e.id))
+  const eligible = openEligible.filter((c) => activeExpertSet.has(c.expert_id))
   if (eligible.length === 0) return 0
 
   const eligibleIds = eligible.map((c) => c.id)
@@ -473,9 +497,41 @@ function revalidateMember(role: MemberRole, id: string) {
   revalidatePath(`/members/${MEMBER_ROUTE[role]}/${id}`)
 }
 
+/** 역할별 진행 중 작업 존재 여부 — 강제탈퇴 가드(본인 탈퇴와 동일 기준). */
+async function hasInProgressWork(role: MemberRole, id: string): Promise<boolean> {
+  if (role === 'owner') {
+    const { data: reqs } = await adminClient.from('request').select('id').eq('owner_id', id)
+    const reqIds = (reqs ?? []).map((r) => r.id)
+    if (reqIds.length === 0) return false
+    const { count } = await adminClient
+      .from('deal')
+      .select('id', { count: 'exact', head: true })
+      .in('request_id', reqIds)
+      .in('status', ['quoted', 'working'])
+    return (count ?? 0) > 0
+  }
+  if (role === 'expert') {
+    const [{ count: m }, { count: d }] = await Promise.all([
+      adminClient.from('matching').select('id', { count: 'exact', head: true }).eq('expert_id', id).in('status', ['proposed', 'accepted']),
+      adminClient.from('deal').select('id', { count: 'exact', head: true }).eq('expert_id', id).in('status', ['quoted', 'working']),
+    ])
+    return (m ?? 0) > 0 || (d ?? 0) > 0
+  }
+  const { count } = await adminClient
+    .from('service_order')
+    .select('id', { count: 'exact', head: true })
+    .eq('provider_id', id)
+    .in('status', ['paid', 'processing'])
+  return (count ?? 0) > 0
+}
+
 /** 관리자 강제 탈퇴 — soft-delete + 개인정보 익명화(비가역). 거래·정산 기록은 보존. */
 export async function withdrawMemberByAdmin(role: MemberRole, id: string): Promise<{ error?: string }> {
   await verifyAdmin()
+  // 진행 중 거래·주문이 있으면 차단(감사 P1-5, 본인 탈퇴 가드와 동일 기준).
+  if (await hasInProgressWork(role, id)) {
+    return { error: '진행 중인 거래·주문이 있어 탈퇴 처리할 수 없습니다. 완료 후 다시 시도해주세요.' }
+  }
   const result = await withdrawMember(role, id, 'admin')
   if (result.error) return result
   revalidateMember(role, id)
@@ -499,26 +555,22 @@ export async function grantRoleByAdmin(
     .eq('auth_user_id', authUserId)
     .maybeSingle()
 
+  // 실제 email은 auth.users에서 취득 — 기존 역할 행이 탈퇴 익명화 상태면 그 email을
+  // 복사할 수 없으므로(감사 P2-2) auth 원본을 사용.
+  const { data: authRes } = await adminClient.auth.admin.getUserById(authUserId)
+  const email = authRes?.user?.email ?? null
+
   if (existing) {
     if (existing.status === 'withdrawn') {
       await adminClient
         .from(targetRole)
-        .update({ status: 'active', withdrawn_at: null, withdrawn_by: null })
+        .update({ status: 'active', withdrawn_at: null, withdrawn_by: null, ...(email ? { email } : {}) })
         .eq('id', existing.id)
     }
     revalidateMember(targetRole, existing.id)
     return {}
   }
 
-  // 같은 계정의 다른 역할 행에서 email 확보(owner/expert/provider 순).
-  let email: string | null = null
-  for (const table of ['owner', 'expert', 'provider'] as const) {
-    const { data } = await adminClient.from(table).select('email').eq('auth_user_id', authUserId).maybeSingle()
-    if (data?.email) {
-      email = data.email
-      break
-    }
-  }
   if (!email) return { error: '이 계정의 이메일을 찾을 수 없어 역할을 부여할 수 없습니다.' }
 
   const { error } =
@@ -532,20 +584,40 @@ export async function grantRoleByAdmin(
   return {}
 }
 
+/** 회원 행 id → auth_user_id (역할별 조회). */
+async function memberAuthUserId(role: MemberRole, id: string): Promise<string | null> {
+  const { data } =
+    role === 'owner'
+      ? await adminClient.from('owner').select('auth_user_id').eq('id', id).maybeSingle()
+      : role === 'expert'
+        ? await adminClient.from('expert').select('auth_user_id').eq('id', id).maybeSingle()
+        : await adminClient.from('provider').select('auth_user_id').eq('id', id).maybeSingle()
+  return data?.auth_user_id ?? null
+}
+
 /**
- * 관리자 재활성 — status만 복구(active). 익명화된 개인정보는 복원하지 않는다(회원이 재입력).
- * 강제탈퇴 오조작 되돌리기용.
+ * 관리자 재활성 — 강제탈퇴 오조작 되돌리기용. 익명화된 email은 auth.users의 실제 email로
+ * 복원(감사 P1-4). provider는 승인 재심사를 위해 pending으로(감사 P2-5), 그 외 active.
+ * 나머지 프로필 정보는 복원하지 않는다(회원이 재입력).
  */
 export async function reactivateMemberByAdmin(role: MemberRole, id: string): Promise<{ error?: string }> {
   await verifyAdmin()
 
-  const patch = { status: 'active' as const, withdrawn_at: null, withdrawn_by: null }
+  const authUserId = await memberAuthUserId(role, id)
+  let email: string | null = null
+  if (authUserId) {
+    const { data } = await adminClient.auth.admin.getUserById(authUserId)
+    email = data?.user?.email ?? null
+  }
+  const emailPatch = email ? { email } : {}
+  const base = { withdrawn_at: null, withdrawn_by: null, ...emailPatch }
+
   const { error } =
     role === 'owner'
-      ? await adminClient.from('owner').update(patch).eq('id', id)
+      ? await adminClient.from('owner').update({ status: 'active', ...base }).eq('id', id)
       : role === 'expert'
-        ? await adminClient.from('expert').update(patch).eq('id', id)
-        : await adminClient.from('provider').update(patch).eq('id', id)
+        ? await adminClient.from('expert').update({ status: 'active', ...base }).eq('id', id)
+        : await adminClient.from('provider').update({ status: 'pending', ...base }).eq('id', id)
   if (error) return { error: error.message }
 
   revalidateMember(role, id)

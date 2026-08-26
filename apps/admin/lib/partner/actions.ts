@@ -63,17 +63,36 @@ export async function applyAsPartner(
     status: 'pending' as const,
   }
 
-  // 탈퇴 계정 재신청이면 기존 행을 pending으로 복구(익명화된 값 덮어쓰기), 아니면 신규 insert.
+  // auth 연결된 기존 행이 없으면, email 일치하는 관리자 대리등록(auth_user_id null) 행을 찾아
+  // 연결한다 — 당사자 OAuth 로그인 시 중복 provider 행이 생기던 문제 방지(감사 P2-3).
+  let danglingId: string | null = null
+  if (!existing && user.email) {
+    const { data: dangling } = await adminClient
+      .from('provider')
+      .select('id')
+      .is('auth_user_id', null)
+      .eq('email', user.email)
+      .maybeSingle()
+    danglingId = dangling?.id ?? null
+  }
+
   const { error } = existing
-    ? await adminClient
+    ? // 탈퇴 계정 재신청 — 기존 행을 pending으로 복구(익명화된 값 덮어쓰기).
+      await adminClient
         .from('provider')
         .update({ ...fields, withdrawn_at: null, withdrawn_by: null })
         .eq('id', existing.id)
-    : await adminClient.from('provider').insert({
-        ...fields,
-        auth_user_id: user.id,
-        provider: authProvider === 'kakao' ? 'kakao' : 'google',
-      })
+    : danglingId
+      ? // 대리등록 행 연결 — auth_user_id 부여 + 입력값 반영.
+        await adminClient
+          .from('provider')
+          .update({ ...fields, auth_user_id: user.id, provider: authProvider === 'kakao' ? 'kakao' : 'google', withdrawn_at: null, withdrawn_by: null })
+          .eq('id', danglingId)
+      : await adminClient.from('provider').insert({
+          ...fields,
+          auth_user_id: user.id,
+          provider: authProvider === 'kakao' ? 'kakao' : 'google',
+        })
 
   if (error) {
     console.error('[applyAsPartner] insert/update failed:', error.message)

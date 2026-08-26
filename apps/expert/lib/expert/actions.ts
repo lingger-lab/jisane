@@ -87,7 +87,10 @@ export async function updateExpertProfile(
       real_name: realName.trim(),
       name: name?.trim() || null,
       contact: contact?.trim() || null,
-      ...(reactivate ? { status: 'active' as const, withdrawn_at: null, withdrawn_by: null } : {}),
+      // 재활성 시 익명화된 email도 실제 email로 복원(감사 P1-4).
+      ...(reactivate
+        ? { status: 'active' as const, withdrawn_at: null, withdrawn_by: null, ...(user.email ? { email: user.email } : {}) }
+        : {}),
     })
     .eq('id', expertId)
 

@@ -26,12 +26,19 @@ export async function GET(request: Request) {
 
   const provider = (user.app_metadata.provider as string) || 'google'
 
-  // owner 레코드 확인/생성
-  const { data: existingOwner } = await adminClient
+  // owner 레코드 확인/생성 — .maybeSingle()로 "행 없음(정상)"과 "조회 오류"를 구분한다.
+  // .single()은 0행도 error로 취급해, DB 순단을 미가입으로 오판하고 기존 회원을 /join으로
+  // 오배송할 수 있다(감사 P2-1).
+  const { data: existingOwner, error: lookupErr } = await adminClient
     .from('owner')
     .select('id, status')
     .eq('auth_user_id', user.id)
-    .single()
+    .maybeSingle()
+
+  if (lookupErr) {
+    console.error('[auth/callback] owner lookup failed:', lookupErr.message)
+    return NextResponse.redirect(`${origin}/?error=lookup_failed`)
+  }
 
   // 탈퇴한 계정으로 재로그인 — 재활성 확인 페이지로.
   if (existingOwner && existingOwner.status === 'withdrawn') {

@@ -44,6 +44,23 @@ export async function resolveExpertFromAuth<T = { id: string }>(
 }
 
 /**
+ * 활성 expert 게이트 — 뮤테이션 액션(관심표현·매칭수락·초빙수락) 진입부용.
+ * status 게이트가 콜백에만 있어 세션 유지 중인 withdrawn/suspended/waiting 회원이
+ * 핵심 액션을 수행하던 결함(Fable5 감사 P1-1)을 액션 레벨에서 차단한다.
+ */
+export async function requireActiveExpert(): Promise<
+  { ok: true; expertId: string } | { ok: false; error: string }
+> {
+  const { user, expert } = await resolveExpertFromAuth<{ id: string; status: string }>('id, status')
+  if (!user) return { ok: false, error: '로그인이 필요합니다.' }
+  if (!expert) return { ok: false, error: '시니어지식인 계정이 없습니다.' }
+  if (expert.status !== 'active') {
+    return { ok: false, error: '현재 이용할 수 없는 계정입니다. 관리자에게 문의해주세요.' }
+  }
+  return { ok: true, expertId: expert.id }
+}
+
+/**
  * Admin 권한을 검증합니다.
  * ADMIN_EMAILS 환경변수에 포함된 이메일만 허용합니다.
  */

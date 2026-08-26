@@ -2,7 +2,7 @@
 
 import { redirect } from 'next/navigation'
 import { adminClient } from '@jisane/shared/supabase/admin'
-import { resolveExpertFromAuth } from '@jisane/shared/auth/server-helpers'
+import { resolveExpertFromAuth, requireActiveExpert } from '@jisane/shared/auth/server-helpers'
 import { calcMatchFee, calcGuaranteeFee } from '@jisane/shared/pricing'
 import { isFreeModeEnabled } from '@jisane/shared/payment'
 import type { WorkflowStep } from '@jisane/shared/types'
@@ -18,7 +18,10 @@ async function getExpertIdFromAuth(): Promise<{ expertId: string; authUserId: st
 }
 
 export async function acceptMatching(matchingId: string): Promise<{ error?: string }> {
-  const { expertId } = await getExpertIdFromAuth()
+  // 활성 계정만 매칭 수락 가능(탈퇴·중지·대기 차단 — 감사 P1-1).
+  const guard = await requireActiveExpert()
+  if (!guard.ok) return { error: guard.error }
+  const expertId = guard.expertId
 
   // 매칭 조회 + 소유권 확인
   const { data: matching } = await adminClient

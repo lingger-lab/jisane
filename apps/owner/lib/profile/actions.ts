@@ -58,7 +58,10 @@ export async function updateOwnerProfile(
       contact: (formData.get('contact') as string | null)?.trim() || null,
       region: (formData.get('region') as string | null)?.trim() || null,
       industry: (formData.get('industry') as string | null)?.trim() || null,
-      ...(reactivate ? { status: 'active' as const, withdrawn_at: null, withdrawn_by: null } : {}),
+      // 재활성 시 익명화된 email도 실제 email로 복원(감사 P1-4).
+      ...(reactivate
+        ? { status: 'active' as const, withdrawn_at: null, withdrawn_by: null, ...(user.email ? { email: user.email } : {}) }
+        : {}),
     })
     .eq('id', ownerId)
 
@@ -116,7 +119,7 @@ export async function reactivateOwnerSelf(): Promise<void> {
   if (owner && owner.status === 'withdrawn') {
     await adminClient
       .from('owner')
-      .update({ status: 'active', withdrawn_at: null, withdrawn_by: null })
+      .update({ status: 'active', withdrawn_at: null, withdrawn_by: null, ...(user.email ? { email: user.email } : {}) })
       .eq('id', owner.id)
   }
   redirect('/mypage?success=reactivated')

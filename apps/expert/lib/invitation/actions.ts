@@ -2,7 +2,7 @@
 
 import { redirect } from 'next/navigation'
 import { adminClient } from '@jisane/shared/supabase/admin'
-import { resolveExpertFromAuth } from '@jisane/shared/auth/server-helpers'
+import { resolveExpertFromAuth, requireActiveExpert } from '@jisane/shared/auth/server-helpers'
 import { calcCapPricing } from '@jisane/shared/cap-pricing'
 import { isFreeModeEnabled } from '@jisane/shared/payment'
 import type { WorkflowStep } from '@jisane/shared/types'
@@ -28,6 +28,9 @@ export async function acceptInvitation(
   _prev: { error?: string },
   formData: FormData
 ): Promise<{ error?: string }> {
+  // 활성 계정만 초빙 수락 가능(탈퇴·중지·대기 차단 — 감사 P1-1).
+  const active = await requireActiveExpert()
+  if (!active.ok) return { error: active.error }
   const { expertId, hourlyRate, name: expertName } = await getExpertFromAuth()
 
   const invitationId = formData.get('invitation_id') as string | null
