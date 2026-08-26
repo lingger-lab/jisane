@@ -39,6 +39,12 @@ export async function GET(request: Request) {
   }
 
   if (!existingOwner) {
+    // 유형선택(/join)을 거치지 않은 로그인 시도는 자동 가입하지 않고 /join으로 유도한다.
+    const isJoin = searchParams.get('join') === '1'
+    if (!isJoin) {
+      const adminUrl = (process.env.NEXT_PUBLIC_ADMIN_URL || 'https://jisane.cloud').trim().replace(/\/+$/, '')
+      return NextResponse.redirect(`${adminUrl}/join?from=owner`)
+    }
     // Kakao는 이메일 제공 동의가 선택일 수 있다 — email 없이 insert하면 NOT NULL 위반으로
     // 매 로그인마다 같은 실패를 반복하는 dead-end가 된다(감사 docs/11 P3-72).
     // 일반 profile_create가 아닌 구분된 에러로 원인을 표면화한다.

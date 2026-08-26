@@ -68,13 +68,19 @@ const ACCENT: Record<string, { text: string; chip: string }> = {
   info: { text: 'text-partner', chip: 'bg-partner/10 text-partner' },
 }
 
-export default async function JoinPage() {
+export default async function JoinPage(props: { searchParams: Promise<{ from?: string }> }) {
+  const { from } = await props.searchParams
   const cookieStore = await cookies()
   const supabase = createClient(cookieStore)
   const { data: { user } } = await supabase.auth.getUser()
 
   return (
     <div className="mx-auto flex max-w-4xl flex-col gap-8 px-4 md:px-6 py-12 animate-fade-in">
+      {from && (
+        <p className="rounded-xl border border-warning/30 bg-warning-light/40 p-3 text-center text-sm text-text-muted">
+          아직 가입된 회원이 아닙니다 — 시작할 회원 유형을 먼저 선택해 주세요.
+        </p>
+      )}
       {/* 헤더 */}
       <section className="text-center">
         <p className="text-xs font-semibold text-primary tracking-wide mb-2">지사네 회원가입</p>

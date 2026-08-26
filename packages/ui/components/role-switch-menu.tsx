@@ -65,7 +65,7 @@ export function RoleSwitchMenu({ items, loggedIn }: { items: RoleSwitchItem[]; l
           ))}
           {loggedIn && (
             <p className="mt-0.5 border-t border-border-light px-3 py-2 text-[11px] leading-snug text-text-subtle">
-              다른 회원으로 전환하려면 <span className="font-medium text-text-muted">로그아웃 후</span> 해당 화면에서 로그인하세요.
+              같은 계정으로 <span className="font-medium text-text-muted">부족한 정보만 입력하면</span> 바로 전환됩니다.
             </p>
           )}
         </div>

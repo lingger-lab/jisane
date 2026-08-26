@@ -45,12 +45,14 @@ async function signInWithOAuth(
 }
 
 // ── 회원가입(/join) 역할별 OAuth — 각 역할의 콜백으로 복귀 ──
-// 콜백 URL은 Supabase Redirect URLs 등록 필요(owner/expert는 기존 로그인이 이미 사용 중).
+// join=1 쿼리로 "유형선택을 거친 가입"임을 표시한다. 콜백은 join=1일 때만 역할 행을
+// 생성하고, 없으면 /join으로 유도(유형선택 없는 자동 가입 방지).
+// ※ Supabase Redirect URLs에 `?join=1` 포함 URL(또는 /callback** 와일드카드) 등록 필요.
 function ownerCallback() {
-  return `${cleanUrl(process.env.NEXT_PUBLIC_OWNER_URL || 'https://owner.jisane.cloud')}/callback`
+  return `${cleanUrl(process.env.NEXT_PUBLIC_OWNER_URL || 'https://owner.jisane.cloud')}/callback?join=1`
 }
 function expertCallback() {
-  return `${cleanUrl(process.env.NEXT_PUBLIC_EXPERT_URL || 'https://expert.jisane.cloud')}/callback`
+  return `${cleanUrl(process.env.NEXT_PUBLIC_EXPERT_URL || 'https://expert.jisane.cloud')}/callback?join=1`
 }
 
 export async function joinAsOwnerKakao() {

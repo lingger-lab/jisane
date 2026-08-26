@@ -23,16 +23,32 @@ export async function updateOwnerProfile(
 
   if (!user) return { error: '로그인이 필요합니다.' }
 
-  const { data: owner } = await adminClient
-    .from('owner')
-    .select('id')
-    .eq('auth_user_id', user.id)
-    .single()
-
-  if (!owner) return { error: '계정 정보를 찾을 수 없습니다.' }
-
   const company = (formData.get('company') as string | null)?.trim()
   if (!company) return { error: '회사명(또는 상호)을 입력해주세요.' }
+
+  // owner 행이 없으면 생성(insert-if-missing) — 회원전환(시니어/전문가→기업)으로 /register에
+  // 진입한 사용자도 완료되도록. (expert updateExpertProfile 패턴 미러)
+  const { data: owner } = await adminClient.from('owner').select('id, status').eq('auth_user_id', user.id).single()
+  let ownerId = owner?.id
+  if (!ownerId) {
+    if (!user.email) return { error: '이메일 제공에 동의한 계정으로 다시 로그인해주세요.' }
+    const authProvider = (user.app_metadata.provider as string) || 'google'
+    const { data: created, error: insertErr } = await adminClient
+      .from('owner')
+      .insert({ auth_user_id: user.id, provider: authProvider === 'kakao' ? 'kakao' : 'google', email: user.email })
+      .select('id')
+      .single()
+    if (insertErr || !created) {
+      const { data: existing } = await adminClient.from('owner').select('id').eq('auth_user_id', user.id).single()
+      if (!existing) return { error: '계정 생성에 실패했습니다. 다시 시도해주세요.' }
+      ownerId = existing.id
+    } else {
+      ownerId = created.id
+    }
+  }
+
+  // 탈퇴 상태였다면 재입력과 함께 활성 복구.
+  const reactivate = owner?.status === 'withdrawn'
 
   const { error } = await adminClient
     .from('owner')
@@ -42,8 +58,9 @@ export async function updateOwnerProfile(
       contact: (formData.get('contact') as string | null)?.trim() || null,
       region: (formData.get('region') as string | null)?.trim() || null,
       industry: (formData.get('industry') as string | null)?.trim() || null,
+      ...(reactivate ? { status: 'active' as const, withdrawn_at: null, withdrawn_by: null } : {}),
     })
-    .eq('id', owner.id)
+    .eq('id', ownerId)
 
   if (error) return { error: '저장에 실패했습니다. 다시 시도해주세요.' }
 

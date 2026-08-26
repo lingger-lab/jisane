@@ -69,7 +69,10 @@ export default async function RootLayout({
           signOutAction={signOut}
           signInWithKakao={signInWithKakao}
           signInWithGoogle={signInWithGoogle}
-          roleSwitch={[{ label: "시니어지식인으로 전환", url: EXPERT_URL }]}
+          roleSwitch={[
+            { label: "시니어지식인으로 전환", url: `${EXPERT_URL}/register` },
+            { label: "전문가회원으로 전환 (승인제)", url: `${ADMIN_URL}/partner/apply` },
+          ]}
           showThemeToggle
         />
         {children}
