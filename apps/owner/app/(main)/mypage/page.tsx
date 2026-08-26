@@ -9,7 +9,9 @@ import { ErrorState } from '@jisane/ui/error-state'
 import { EmptyState } from '@jisane/ui/empty-state'
 import { StatusBadge } from '@jisane/ui/status-badge'
 import { StarRating } from '@jisane/ui/star-rating'
+import { DangerZone } from '@jisane/ui/danger-zone'
 import { OwnerProfileForm } from './owner-profile-form'
+import { withdrawOwnerSelf } from '@/lib/profile/actions'
 
 // 목록 행 공통 스타일 — radius·보더·서피스·그림자를 한 곳에서 고정(정렬 일관).
 const ROW = 'rounded-xl border border-border-light bg-surface-warm p-4 shadow-xs'
@@ -328,6 +330,20 @@ export default async function OwnerMyPage() {
             로그아웃
           </button>
         </form>
+
+        {/* 회원 탈퇴 */}
+        <DangerZone
+          title="기업회원 탈퇴"
+          description={
+            <>
+              탈퇴하면 회사 정보가 즉시 익명화되며 복구할 수 없습니다. 시니어지식인·전문가 등 다른 역할로 가입돼
+              있다면 그 역할은 유지됩니다. 거래·정산 기록은 관련 법령에 따라 5년간 보존됩니다.
+            </>
+          }
+          buttonLabel="기업회원 탈퇴"
+          confirmMessage="기업회원에서 탈퇴합니다. 회사 정보가 즉시 익명화되어 복구할 수 없습니다. 계속할까요?"
+          action={withdrawOwnerSelf}
+        />
       </div>
     </div>
   )

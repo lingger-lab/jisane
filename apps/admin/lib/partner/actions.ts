@@ -11,6 +11,8 @@ import {
   verifyPackageOwnership,
 } from '@jisane/shared/provider/auth'
 import { applyPackageEdit } from '@jisane/shared/service-package/edit-review-gate'
+import { withdrawProvider } from '@jisane/shared/member/withdrawal'
+import { signOut } from '@jisane/shared/auth/actions'
 
 interface ActionState {
   error?: string
@@ -32,7 +34,10 @@ export async function applyAsPartner(
   if (!user) return { error: '로그인이 필요합니다.' }
 
   const existing = await getProviderByAuthUser(user.id)
-  if (existing) return { error: '이미 전문가회원 신청 이력이 있습니다.' }
+  // 탈퇴 상태가 아닌 기존 이력만 재신청 차단 — 탈퇴 계정은 재신청 허용(pending 복구).
+  if (existing && existing.status !== 'withdrawn') {
+    return { error: '이미 전문가회원 신청 이력이 있습니다.' }
+  }
 
   const name = (formData.get('name') as string | null)?.trim()
   const kind = formData.get('kind') as string | null
@@ -47,22 +52,31 @@ export async function applyAsPartner(
   if (!type || !validTypes.includes(type)) return { error: '전문 분야를 선택해주세요.' }
 
   const authProvider = (user.app_metadata?.provider as string) || 'google'
-
-  const { error } = await adminClient.from('provider').insert({
+  const fields = {
     name,
     kind: kind as 'company' | 'senior',
     type: type as 'consulting' | 'legal' | 'tax' | 'accounting' | 'insurance',
-    auth_user_id: user.id,
-    provider: authProvider === 'kakao' ? 'kakao' : 'google',
     email: user.email ?? null,
     contact: contact || null,
     description: description || null,
     website: website || null,
-    status: 'pending',
-  })
+    status: 'pending' as const,
+  }
+
+  // 탈퇴 계정 재신청이면 기존 행을 pending으로 복구(익명화된 값 덮어쓰기), 아니면 신규 insert.
+  const { error } = existing
+    ? await adminClient
+        .from('provider')
+        .update({ ...fields, withdrawn_at: null, withdrawn_by: null })
+        .eq('id', existing.id)
+    : await adminClient.from('provider').insert({
+        ...fields,
+        auth_user_id: user.id,
+        provider: authProvider === 'kakao' ? 'kakao' : 'google',
+      })
 
   if (error) {
-    console.error('[applyAsPartner] insert failed:', error.message)
+    console.error('[applyAsPartner] insert/update failed:', error.message)
     return { error: '전문가회원 신청에 실패했습니다. 다시 시도해주세요.' }
   }
 
@@ -336,5 +350,33 @@ export async function sendServiceOrderMessage(
   }
 
   revalidatePath(`/partner/dashboard/orders/${orderId}`)
+  return {}
+}
+
+/**
+ * 전문가회원 본인 탈퇴(soft-delete) — 진행 중 서비스 주문이 없을 때만.
+ * 개인정보 익명화 + 공개 서비스 archive 후 로그아웃.
+ */
+export async function withdrawProviderSelf(): Promise<ActionState> {
+  const user = await getSessionUser()
+  if (!user) return { error: '로그인이 필요합니다.' }
+
+  const guard = await requireActiveProvider(user.id)
+  if (!guard.ok) return { error: '접근 권한이 없습니다.' }
+  const providerId = guard.provider.id
+
+  const { count } = await adminClient
+    .from('service_order')
+    .select('id', { count: 'exact', head: true })
+    .eq('provider_id', providerId)
+    .in('status', ['paid', 'processing'])
+  if ((count ?? 0) > 0) {
+    return { error: '진행 중인 서비스 주문이 있어 탈퇴할 수 없습니다. 완료한 뒤 다시 시도해주세요.' }
+  }
+
+  const result = await withdrawProvider(providerId, 'self')
+  if (result.error) return { error: '탈퇴 처리에 실패했습니다. 잠시 후 다시 시도해주세요.' }
+
+  await signOut() // 로그아웃 후 '/'로 리다이렉트 — 이 아래로는 도달하지 않음.
   return {}
 }

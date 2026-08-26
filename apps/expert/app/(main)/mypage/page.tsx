@@ -9,7 +9,9 @@ import { PageHero } from '@jisane/ui/page-hero'
 import { ErrorState } from '@jisane/ui/error-state'
 import { EmptyState } from '@jisane/ui/empty-state'
 import { StatusBadge } from '@jisane/ui/status-badge'
+import { DangerZone } from '@jisane/ui/danger-zone'
 import { ProfileEditor } from '@/components/profile-editor'
+import { withdrawExpertSelf } from '@/lib/expert/actions'
 
 // 목록 행 공통 스타일 — radius·보더·서피스·그림자를 한 곳에서 고정(정렬 일관).
 const ROW = 'rounded-xl border border-border-light bg-surface-warm p-4 shadow-xs'
@@ -395,6 +397,20 @@ export default async function MyPage() {
             로그아웃
           </button>
         </form>
+
+        {/* 회원 탈퇴 */}
+        <DangerZone
+          title="시니어지식인 탈퇴"
+          description={
+            <>
+              탈퇴하면 실명·활동명 등 개인정보가 즉시 익명화되며 복구할 수 없습니다. 매칭 후보에서도 제외됩니다.
+              기업회원 등 다른 역할로 가입돼 있다면 그 역할은 유지됩니다. 거래·정산 기록은 법령에 따라 5년간 보존됩니다.
+            </>
+          }
+          buttonLabel="시니어지식인 탈퇴"
+          confirmMessage="시니어지식인에서 탈퇴합니다. 개인정보가 즉시 익명화되어 복구할 수 없습니다. 계속할까요?"
+          action={withdrawExpertSelf}
+        />
       </div>
     </div>
   )

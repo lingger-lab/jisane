@@ -31,8 +31,8 @@ export default async function PartnerApplyPage(props: {
 
   const provider = await getProviderByAuthUser(user.id)
 
-  // 이미 신청/활동 이력이 있으면 상태 안내
-  if (provider) {
+  // 이미 신청/활동 이력이 있으면 상태 안내 (탈퇴 상태는 아래 재신청 폼으로)
+  if (provider && provider.status !== 'withdrawn') {
     if (provider.status === 'active') redirect('/partner/dashboard')
     return (
       <div className="mx-auto max-w-md px-6 py-16 text-center animate-fade-in">
@@ -82,6 +82,11 @@ export default async function PartnerApplyPage(props: {
         subtitle="신청 내용을 검토한 뒤 관리자가 승인합니다. 승인 후 서비스 등록·신청 관리가 가능합니다."
       />
       <div className="mx-auto w-full max-w-xl px-4 md:px-6 py-6">
+        {provider?.status === 'withdrawn' && (
+          <p className="mb-4 rounded-lg border border-border-light bg-surface-warm p-3 text-sm text-text-muted">
+            탈퇴한 전문가회원 계정입니다. 다시 신청하려면 정보를 입력해 주세요. 재신청 시 관리자 승인을 거칩니다.
+          </p>
+        )}
         <ApplyForm />
       </div>
     </div>

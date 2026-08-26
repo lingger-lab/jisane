@@ -49,7 +49,8 @@
     "./empty-state": "./components/empty-state.tsx",
     "./stat-card": "./components/stat-card.tsx",
     "./star-rating": "./components/star-rating.tsx",
-    "./confirm-dialog": "./components/confirm-dialog.tsx"
+    "./confirm-dialog": "./components/confirm-dialog.tsx",
+    "./danger-zone": "./components/danger-zone.tsx"
   },
   "dependencies": {
     "@radix-ui/react-slot": "^1.1.1",

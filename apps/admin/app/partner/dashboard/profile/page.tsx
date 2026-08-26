@@ -3,7 +3,9 @@ import { redirect } from 'next/navigation'
 import { createClient } from '@jisane/shared/supabase/server'
 import { getProviderByAuthUser } from '@jisane/shared/provider/auth'
 import { PROVIDER_KIND_LABELS, PROVIDER_TYPE_LABELS } from '@jisane/shared/labels'
+import { DangerZone } from '@jisane/ui/danger-zone'
 import { ProfileForm } from './profile-form'
+import { withdrawProviderSelf } from '@/lib/partner/actions'
 
 export const metadata = { title: '전문가회원 정보 | 지사네 전문가회원' }
 
@@ -30,6 +32,21 @@ export default async function PartnerProfilePage() {
           description: provider.description ?? '',
         }}
       />
+
+      <div className="mt-8">
+        <DangerZone
+          title="전문가회원 탈퇴"
+          description={
+            <>
+              탈퇴하면 기관 정보가 즉시 익명화되고 등록한 서비스는 노출이 중단됩니다. 복구할 수 없습니다.
+              기업회원·시니어지식인 등 다른 역할은 유지됩니다. 거래·정산 기록은 법령에 따라 5년간 보존됩니다.
+            </>
+          }
+          buttonLabel="전문가회원 탈퇴"
+          confirmMessage="전문가회원에서 탈퇴합니다. 기관 정보가 익명화되고 서비스 노출이 중단되며 복구할 수 없습니다. 계속할까요?"
+          action={withdrawProviderSelf}
+        />
+      </div>
     </div>
   )
 }

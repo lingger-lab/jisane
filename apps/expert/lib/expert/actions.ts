@@ -4,6 +4,8 @@ import { redirect } from 'next/navigation'
 import { adminClient } from '@jisane/shared/supabase/admin'
 import { resolveExpertFromAuth } from '@jisane/shared/auth/server-helpers'
 import { computeCareerScore } from '@jisane/shared/expert-scoring'
+import { withdrawExpert } from '@jisane/shared/member/withdrawal'
+import { signOut } from '@jisane/shared/auth/actions'
 
 interface ProfileState {
   error?: string
@@ -71,6 +73,10 @@ export async function updateExpertProfile(
     }
   }
 
+  // 탈퇴 상태였다면 프로필 재입력과 함께 활성 복구(재가입=재활성 단일경로).
+  const { data: cur } = await adminClient.from('expert').select('status').eq('id', expertId).single()
+  const reactivate = cur?.status === 'withdrawn'
+
   const { error } = await adminClient
     .from('expert')
     .update({
@@ -81,6 +87,7 @@ export async function updateExpertProfile(
       real_name: realName.trim(),
       name: name?.trim() || null,
       contact: contact?.trim() || null,
+      ...(reactivate ? { status: 'active' as const, withdrawn_at: null, withdrawn_by: null } : {}),
     })
     .eq('id', expertId)
 
@@ -122,4 +129,27 @@ export async function updateExpertProfile(
   const redirectTo = (formData.get('redirect_to') as string) || '/matching'
   const successKey = redirectTo === '/mypage' ? 'profile_updated' : 'expert_registered'
   redirect(`${redirectTo}?success=${successKey}`)
+}
+
+/**
+ * 시니어지식인 본인 탈퇴(soft-delete) — 진행 중 매칭·거래가 없을 때만.
+ * 개인정보 익명화 + 전문분야 매핑 제거 후 로그아웃. 다른 역할은 유지된다.
+ */
+export async function withdrawExpertSelf(): Promise<{ error?: string }> {
+  const { user, expert } = await resolveExpertFromAuth()
+  if (!user || !expert) return { error: '로그인이 필요합니다.' }
+
+  const [{ count: matchingCount }, { count: dealCount }] = await Promise.all([
+    adminClient.from('matching').select('id', { count: 'exact', head: true }).eq('expert_id', expert.id).in('status', ['proposed', 'accepted']),
+    adminClient.from('deal').select('id', { count: 'exact', head: true }).eq('expert_id', expert.id).in('status', ['quoted', 'working']),
+  ])
+  if ((matchingCount ?? 0) > 0 || (dealCount ?? 0) > 0) {
+    return { error: '진행 중인 매칭·거래가 있어 탈퇴할 수 없습니다. 완료한 뒤 다시 시도해주세요.' }
+  }
+
+  const result = await withdrawExpert(expert.id, 'self')
+  if (result.error) return { error: '탈퇴 처리에 실패했습니다. 잠시 후 다시 시도해주세요.' }
+
+  await signOut() // 로그아웃 후 '/'로 리다이렉트 — 이 아래로는 도달하지 않음.
+  return {}
 }

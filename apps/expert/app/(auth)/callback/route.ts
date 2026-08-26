@@ -29,9 +29,14 @@ export async function GET(request: Request) {
   // expert 레코드 확인/생성
   const { data: existingExpert } = await adminClient
     .from('expert')
-    .select('id')
+    .select('id, status')
     .eq('auth_user_id', user.id)
     .single()
+
+  // 탈퇴한 계정으로 재로그인 — 등록폼에서 필수정보 재입력하며 재활성.
+  if (existingExpert && existingExpert.status === 'withdrawn') {
+    return NextResponse.redirect(`${origin}/register?rejoin=1`)
+  }
 
   if (!existingExpert) {
     // Kakao는 이메일 제공 동의가 선택일 수 있다 — email 없이 insert하면 NOT NULL 위반으로

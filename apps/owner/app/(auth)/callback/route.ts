@@ -29,9 +29,14 @@ export async function GET(request: Request) {
   // owner 레코드 확인/생성
   const { data: existingOwner } = await adminClient
     .from('owner')
-    .select('id')
+    .select('id, status')
     .eq('auth_user_id', user.id)
     .single()
+
+  // 탈퇴한 계정으로 재로그인 — 재활성 확인 페이지로.
+  if (existingOwner && existingOwner.status === 'withdrawn') {
+    return NextResponse.redirect(`${origin}/rejoin`)
+  }
 
   if (!existingOwner) {
     // Kakao는 이메일 제공 동의가 선택일 수 있다 — email 없이 insert하면 NOT NULL 위반으로
