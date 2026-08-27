@@ -98,7 +98,7 @@ export default async function AdminHome() {
                 <h2 className="text-2xl md:text-3xl font-bold font-serif text-primary">기업회원</h2>
                 <p className="mt-2 text-sm md:text-base text-text-muted">기업 운영에 필요한 전문 서비스와 시니어 전문가 정보</p>
                 <div className="mt-4 flex flex-wrap gap-2">
-                  <span className="rounded-full bg-primary/10 px-3 py-1.5 text-xs font-medium text-primary">전문 서비스</span>
+                  <span className="rounded-full bg-primary/10 px-3 py-1.5 text-xs font-medium text-primary">전문서비스 정보</span>
                   <span className="rounded-full bg-primary/10 px-3 py-1.5 text-xs font-medium text-primary">전문가 정보</span>
                 </div>
                 {topExpertMajors.length > 0 && (
