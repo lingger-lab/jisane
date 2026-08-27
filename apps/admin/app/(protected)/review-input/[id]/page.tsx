@@ -64,7 +64,7 @@ export default async function ReviewInputPage(props: PageProps) {
 
   return (
     <div className="flex flex-1 flex-col">
-      <PageHero
+      <PageHero container="form"
         eyebrow="관리자"
         title={req.title}
         subtitle="지사네 리뷰 입력"

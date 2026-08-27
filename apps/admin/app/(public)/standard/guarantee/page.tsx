@@ -8,7 +8,7 @@ export const metadata = {
 export default function GuaranteePage() {
   return (
     <div className="flex flex-1 flex-col">
-      <PageHero
+      <PageHero container="read"
         eyebrow="거래 표준 문서 ②"
         title="지사네 책임 적립금 운영 규정"
         subtitle="초안 v1.0 · 오해 제거 5대 메커니즘 ⑤ 복구 실물화"

@@ -34,7 +34,7 @@ export default function ServicePage() {
 
   return (
     <div className="flex flex-1 flex-col">
-      <PageHero
+      <PageHero container="marketing"
         eyebrow="지사네 서비스"
         title="지사네 서비스 안내"
         subtitle="부울경 중소기업에 필요한 전문 서비스와 경험·노하우를 갖춘 시니어 전문가 정보를 제공합니다. 지식나눔 사업협력 네트워크로 지역 기업의 성장을 함께합니다."

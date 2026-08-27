@@ -48,7 +48,7 @@ export default function AXPage() {
 
   return (
     <div className="flex flex-1 flex-col">
-      <PageHero
+      <PageHero container="marketing"
         eyebrow="AI Transformation"
         title="AX 전환: AI로 비즈니스를 바꾸다"
         highlight="AX 전환"

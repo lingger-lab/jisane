@@ -8,7 +8,7 @@ export const metadata = {
 export default function ScopePage() {
   return (
     <div className="flex flex-1 flex-col">
-      <PageHero
+      <PageHero container="read"
         eyebrow="거래 표준 문서 ①"
         title="지사네 용역 명세서"
         subtitle="초안 v1.0 · 오해 제거 5대 메커니즘 ② 범위 실물화"

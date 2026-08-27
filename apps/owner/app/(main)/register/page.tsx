@@ -24,7 +24,7 @@ export default async function OwnerRegisterPage() {
 
   return (
     <div className="flex flex-1 flex-col animate-fade-in">
-      <PageHero
+      <PageHero container="form"
         eyebrow="기업회원"
         title="기업회원으로 시작하기"
         subtitle="회사 정보만 입력하면 바로 이용할 수 있습니다."

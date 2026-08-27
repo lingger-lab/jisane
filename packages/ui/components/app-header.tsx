@@ -31,7 +31,7 @@ export function AppHeader({
 }) {
   return (
     <header className="sticky top-0 z-40 border-b border-border-light bg-background/80 backdrop-blur-lg">
-      <div className="responsive-container flex h-14 items-center justify-between px-4 md:px-6">
+      <div className="container-app flex h-14 items-center justify-between px-4 md:px-6">
         {hubUrl ? (
           <a href={hubUrl} className="flex items-baseline gap-1.5 hover:opacity-80 transition-opacity">
             <OwlIcon className="h-7 w-7 shrink-0 text-primary owl-alive" />

@@ -10,7 +10,7 @@ export const metadata = pageMetadata('admin', {
 export default function PrivacyPage() {
   return (
     <div className="flex flex-1 flex-col">
-      <PageHero
+      <PageHero container="read"
         eyebrow="지사네"
         title="개인정보처리방침"
         subtitle="시행일: 2026년 6월 15일"

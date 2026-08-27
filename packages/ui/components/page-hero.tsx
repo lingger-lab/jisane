@@ -10,7 +10,16 @@ import { HeroBackdrop } from './hero-backdrop'
  * - subtitle: 부제(옵션).
  * - back: 좌상단 뒤로가기 링크 노드(옵션).
  * - size: 'md'(기본) | 'lg'(마케팅/랜딩성 큰 제목).
+ * - container: 히어로 내부 폭 — 본문·헤더와 정렬선을 맞추기 위해 서피스별 컨테이너를 선택.
+ *   기본 'app'(64rem, 헤더·탭바와 동일). 랜딩='marketing', 폼='form'.
  */
+const CONTAINER: Record<string, string> = {
+  app: 'container-app',
+  marketing: 'container-marketing',
+  form: 'container-form',
+  read: 'container-read',
+}
+
 export function PageHero({
   eyebrow,
   title,
@@ -18,6 +27,7 @@ export function PageHero({
   subtitle,
   back,
   size = 'md',
+  container = 'app',
 }: {
   eyebrow?: string
   title: string
@@ -25,6 +35,7 @@ export function PageHero({
   subtitle?: string
   back?: ReactNode
   size?: 'md' | 'lg'
+  container?: 'app' | 'marketing' | 'form' | 'read'
 }) {
   const titleClass =
     size === 'lg'
@@ -47,7 +58,7 @@ export function PageHero({
   return (
     <div className="hero-dark w-full">
       <HeroBackdrop intensity="subtle" />
-      <section className={`responsive-container relative z-10 flex flex-col gap-1.5 px-4 md:px-6 ${size === 'lg' ? 'pt-10 md:pt-14 pb-8 md:pb-10' : 'pt-8 md:pt-10 pb-6 md:pb-8'}`}>
+      <section className={`${CONTAINER[container]} relative z-10 flex flex-col gap-1.5 px-4 md:px-6 ${size === 'lg' ? 'pt-10 md:pt-14 pb-8 md:pb-10' : 'pt-8 md:pt-10 pb-6 md:pb-8'}`}>
         {back && <div className="mb-1">{back}</div>}
         {eyebrow && <span className="hero-eyebrow animate-slide-up stagger-1 self-start">{eyebrow}</span>}
         <h1 className={`${titleClass} font-bold font-serif text-white leading-snug animate-slide-up stagger-2`}>

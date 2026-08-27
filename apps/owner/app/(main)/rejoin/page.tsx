@@ -20,7 +20,7 @@ export default async function RejoinPage() {
 
   return (
     <div className="flex flex-1 flex-col animate-fade-in">
-      <PageHero eyebrow="기업회원" title="탈퇴한 계정입니다" subtitle="다시 이용하시려면 계정을 재활성할 수 있습니다." />
+      <PageHero container="form" eyebrow="기업회원" title="탈퇴한 계정입니다" subtitle="다시 이용하시려면 계정을 재활성할 수 있습니다." />
       <div className="container-form px-4 md:px-6 py-8">
         <div className="rounded-xl border border-border-light bg-surface-warm p-5">
           <p className="text-sm leading-relaxed text-text-muted">

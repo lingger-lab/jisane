@@ -56,7 +56,7 @@ const PRINCIPLES = [
 export default function StandardIndexPage() {
   return (
     <div className="flex flex-1 flex-col">
-      <PageHero
+      <PageHero container="read"
         eyebrow="지사네 표준"
         title="먼저 꺼내놓는 다섯 가지"
         subtitle="감추는 것이 관행이 된 시장에서, 지사네는 먼저 꺼내놓는 것을 표준으로 삼습니다. 거래 전에 이 다섯 가지를 확인하실 수 있습니다."

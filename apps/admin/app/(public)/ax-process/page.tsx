@@ -82,7 +82,7 @@ export default function AXProcessPage() {
 
   return (
     <div className="flex flex-1 flex-col">
-      <PageHero
+      <PageHero container="marketing"
         eyebrow="Process"
         title="AX 전환 프로세스"
         subtitle="진단 → 실험 → 측정 → 확장. 4단계를 반복하며 AI 전환을 체계적으로 완성합니다."
