@@ -45,13 +45,14 @@ export function AppHeader({
         )}
 
         <div className="flex items-center gap-2 md:gap-3">
+          {/* 테마 토글을 그룹 맨 앞에 — 디자인 위계상 우선 */}
+          {showThemeToggle && <ThemeToggle />}
+
           {children}
 
           {roleSwitch && roleSwitch.length > 0 && (
             <RoleSwitchMenu items={roleSwitch} loggedIn={!!userEmail} />
           )}
-
-          {showThemeToggle && <ThemeToggle />}
 
           {userEmail && signOutAction ? (
             <form action={signOutAction}>
