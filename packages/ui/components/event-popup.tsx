@@ -16,6 +16,29 @@ function todayStr(): string {
   return `${d.getFullYear()}-${m}-${day}`
 }
 
+// 닫힘 상태는 쿠키에 저장한다 — localStorage는 (1) 서브도메인(owner/expert/admin)마다 분리돼
+// 한 앱에서 닫아도 다른 앱에서 다시 뜨고, (2) 사파리 사생활 모드 등에서 setItem이 예외를 던져
+// 조용히 저장 실패한다. .jisane.cloud 도메인 쿠키면 3앱 공유 + 사생활 모드서도 견고.
+function getCookie(name: string): string | null {
+  try {
+    const m = document.cookie.match(new RegExp('(?:^|; )' + name + '=([^;]*)'))
+    return m ? decodeURIComponent(m[1]) : null
+  } catch {
+    return null
+  }
+}
+function setDismissCookie(value: string): void {
+  try {
+    // 프로드(*.jisane.cloud)는 서브도메인 공유, 로컬/기타는 host-only.
+    const host = window.location.hostname
+    const domain = host.endsWith('jisane.cloud') ? '; domain=.jisane.cloud' : ''
+    // max-age 1일(정리용); 실제 "오늘" 판정은 저장된 날짜 문자열 === 오늘 비교로 한다.
+    document.cookie = `${DISMISS_KEY}=${value}; path=/; max-age=86400; SameSite=Lax${domain}`
+  } catch {
+    /* 무시 */
+  }
+}
+
 /**
  * 시니어지식인 100인 초빙 이벤트 팝업 — 3앱 공유(중앙 모달, 하루 1회, 마감 자동 종료).
  * SSR 안전: 서버에선 null, 클라이언트 useEffect에서 노출 결정(하이드레이션 미스매치 방지).
@@ -38,13 +61,7 @@ export function EventPopup({
   useEffect(() => {
     const today = todayStr()
     if (today > EVENT_END) return // 마감 후 미노출
-    let dismissed: string | null = null
-    try {
-      dismissed = localStorage.getItem(DISMISS_KEY)
-    } catch {
-      /* localStorage 불가 환경 — 그냥 노출 */
-    }
-    if (dismissed === today) return // 오늘 이미 닫음
+    if (getCookie(DISMISS_KEY) === today) return // 오늘 이미 닫음(쿠키, 3앱 공유)
 
     // 허브 스플래시 오버레이와 겹치지 않도록: 스플래시가 떠 있으면 닫힌 뒤 노출.
     // (owner/expert엔 스플래시가 없어 플래그가 없으므로 즉시 노출)
@@ -76,11 +93,7 @@ export function EventPopup({
     setOpen(false)
   }
   function dismissToday() {
-    try {
-      localStorage.setItem(DISMISS_KEY, todayStr())
-    } catch {
-      /* 무시 */
-    }
+    setDismissCookie(todayStr())
     setOpen(false)
   }
 
