@@ -723,3 +723,27 @@ summary {
 .container-app { max-width: 64rem; }
 .container-form { max-width: 42rem; }
 .container-read { max-width: 40rem; }
+
+/* 세리프 헤딩 3단 스케일 — 화면별 재량으로 흩어지던 제목 크기를 명명된 역할로 수렴.
+   display=랜딩 히어로 / title=페이지 헤로(lg) / heading=페이지 헤로(md).
+   모두 Gowun 세리프·bold·leading-snug. 기존 Tailwind 반응형 클래스와 동일 rem(무시각변화). */
+.text-display,
+.text-title,
+.text-heading {
+  font-family: var(--font-serif);
+  font-weight: 700;
+  line-height: 1.375; /* snug */
+}
+.text-display { font-size: 1.875rem; } /* text-3xl */
+.text-title   { font-size: 1.5rem; }   /* text-2xl */
+.text-heading { font-size: 1.25rem; }  /* text-xl */
+
+@media (min-width: 768px) {
+  .text-display { font-size: 2.25rem; }  /* md:text-4xl */
+  .text-title   { font-size: 1.875rem; } /* md:text-3xl */
+  .text-heading { font-size: 1.5rem; }   /* md:text-2xl */
+}
+@media (min-width: 1024px) {
+  .text-display { font-size: 3rem; }    /* lg:text-5xl */
+  .text-title   { font-size: 2.25rem; } /* lg:text-4xl */
+}

@@ -37,10 +37,8 @@ export function PageHero({
   size?: 'md' | 'lg'
   container?: 'app' | 'marketing' | 'form' | 'read'
 }) {
-  const titleClass =
-    size === 'lg'
-      ? 'text-2xl md:text-3xl lg:text-4xl'
-      : 'text-xl md:text-2xl'
+  // 세리프 3단 스케일(globals.css) — title=lg / heading=md. font·weight·leading 포함.
+  const titleClass = size === 'lg' ? 'text-title' : 'text-heading'
 
   // highlight가 title에 있으면 그 부분만 accent-light 스팬으로 분리
   let titleNode: ReactNode = title
@@ -61,7 +59,7 @@ export function PageHero({
       <section className={`${CONTAINER[container]} relative z-10 flex flex-col gap-1.5 px-4 md:px-6 ${size === 'lg' ? 'pt-10 md:pt-14 pb-8 md:pb-10' : 'pt-8 md:pt-10 pb-6 md:pb-8'}`}>
         {back && <div className="mb-1">{back}</div>}
         {eyebrow && <span className="hero-eyebrow animate-slide-up stagger-1 self-start">{eyebrow}</span>}
-        <h1 className={`${titleClass} font-bold font-serif text-white leading-snug animate-slide-up stagger-2`}>
+        <h1 className={`${titleClass} text-white animate-slide-up stagger-2`}>
           {titleNode}
         </h1>
         {subtitle && <p className="text-sm md:text-base text-white/80 animate-slide-up stagger-3">{subtitle}</p>}

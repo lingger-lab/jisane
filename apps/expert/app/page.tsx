@@ -56,7 +56,7 @@ export default async function ExpertHome() {
         <HeroBackdrop intensity="hero" />
         <section className="container-marketing relative z-10 flex flex-col items-center gap-4 px-4 md:px-6 pt-14 md:pt-20 pb-12 md:pb-16 text-center">
           <span className="hero-eyebrow animate-slide-up stagger-1">당신의 경험, 지역 기업의 힘</span>
-          <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold font-serif text-white leading-snug animate-slide-up stagger-2">
+          <h1 className="text-display text-white animate-slide-up stagger-2">
             경험의 값어치, 온전히
             <br />
             <TextRotator
