@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import { cookies } from 'next/headers'
+import { TrendingUp, Calculator, Settings, Megaphone, Cpu } from 'lucide-react'
 import { createClient } from '@jisane/shared/supabase/server'
 import { adminClient } from '@jisane/shared/supabase/admin'
 import { signInWithGoogle, signInWithKakao } from '@jisane/shared/auth/actions'
@@ -18,59 +19,11 @@ import { ADMIN_URL, EXPERT_URL } from '@/lib/urls'
 
 // 지사네가 제공하는 기업 전문 서비스 5대 분류 — 각 서비스를 나타내는 라인 아이콘.
 const ENTERPRISE_PILLARS = [
-  {
-    code: 'biz_marketing' as const,
-    title: '경영·마케팅 사업화 지원',
-    desc: '사업 아이템 구체화 · 시장 진입 전략',
-    icon: (
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M3 3v18h18" /><path d="m19 9-5 5-4-4-3 3" />
-      </svg>
-    ),
-  },
-  {
-    code: 'finance_tax' as const,
-    title: '재무·세무·회계 경영컨설팅',
-    desc: '자금 · 세무 · 회계 구조 진단과 자문',
-    icon: (
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round">
-        <rect x="4" y="2" width="16" height="20" rx="2" /><path d="M8 6h8" />
-        <path d="M8 10h.01M12 10h.01M16 10h.01M8 14h.01M12 14h.01M8 18h4M16 14v4" />
-      </svg>
-    ),
-  },
-  {
-    code: 'tech_quality' as const,
-    title: '기술·생산 품질관리 지원',
-    desc: '생산 공정 · 품질 체계 개선',
-    icon: (
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round">
-        <circle cx="12" cy="12" r="3" />
-        <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" />
-      </svg>
-    ),
-  },
-  {
-    code: 'online_sales' as const,
-    title: '온라인·홍보 판로개척 지원',
-    desc: '온라인 채널 · 홍보로 판로 확대',
-    icon: (
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round">
-        <path d="m3 11 18-5v12L3 14v-3z" /><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6" />
-      </svg>
-    ),
-  },
-  {
-    code: 'ai_ax' as const,
-    title: 'AI·AX 지원',
-    desc: 'AI 도입 · 업무 전환(AX)으로 생산성 향상',
-    icon: (
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round">
-        <rect x="9" y="9" width="6" height="6" rx="1" /><rect x="4" y="4" width="16" height="16" rx="2" />
-        <path d="M9 2v2M15 2v2M9 20v2M15 20v2M2 9h2M2 15h2M20 9h2M20 15h2" />
-      </svg>
-    ),
-  },
+  { code: 'biz_marketing' as const, title: '경영·마케팅 사업화 지원', desc: '사업 아이템 구체화 · 시장 진입 전략', Icon: TrendingUp },
+  { code: 'finance_tax' as const, title: '재무·세무·회계 경영컨설팅', desc: '자금 · 세무 · 회계 구조 진단과 자문', Icon: Calculator },
+  { code: 'tech_quality' as const, title: '기술·생산 품질관리 지원', desc: '생산 공정 · 품질 체계 개선', Icon: Settings },
+  { code: 'online_sales' as const, title: '온라인·홍보 판로개척 지원', desc: '온라인 채널 · 홍보로 판로 확대', Icon: Megaphone },
+  { code: 'ai_ax' as const, title: 'AI·AX 지원', desc: 'AI 도입 · 업무 전환(AX)으로 생산성 향상', Icon: Cpu },
 ] as const
 
 export default async function OwnerHome() {
@@ -184,8 +137,8 @@ export default async function OwnerHome() {
                 href={`/services?pillar=${p.code}`}
                 className="group flex items-center gap-3 rounded-xl border border-border-light bg-card p-4 shadow-xs card-hover transition-colors hover:border-primary/30"
               >
-                <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary [&>svg]:h-[18px] [&>svg]:w-[18px]">
-                  {p.icon}
+                <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
+                  <p.Icon className="h-[18px] w-[18px]" strokeWidth={1.75} aria-hidden="true" />
                 </span>
                 <div className="min-w-0 flex-1">
                   <p className="font-semibold text-text">{p.title}</p>

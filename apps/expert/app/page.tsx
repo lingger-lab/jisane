@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import { cookies } from 'next/headers'
+import { LayoutGrid, Sparkles } from 'lucide-react'
 import { redirect } from 'next/navigation'
 import { createClient } from '@jisane/shared/supabase/server'
 import { adminClient } from '@jisane/shared/supabase/admin'
@@ -19,28 +20,8 @@ import { TextRotator } from '@jisane/ui/text-rotator'
 
 // 시니어 작업에 필요한 전문 도구 — 무료 S/W를 미끼로, 고급 도구는 유료.
 const EXPERT_TOOLS = [
-  {
-    name: '지사네 업무 S/W',
-    badge: '무료',
-    desc: '의뢰 관리 · 문서 작성 · 정산까지 기본 도구 무료 제공',
-    icon: (
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round">
-        <rect x="3" y="3" width="7" height="7" rx="1" /><rect x="14" y="3" width="7" height="7" rx="1" />
-        <rect x="14" y="14" width="7" height="7" rx="1" /><rect x="3" y="14" width="7" height="7" rx="1" />
-      </svg>
-    ),
-  },
-  {
-    name: 'AI 작업 도구 (프로)',
-    badge: '유료',
-    desc: '제안서 · 보고서 AI 초안, 고급 분석 템플릿',
-    icon: (
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9z" />
-        <path d="M19 15l.7 1.9 1.8.7-1.8.7L19 20l-.7-1.7-1.8-.7 1.8-.7z" />
-      </svg>
-    ),
-  },
+  { name: '지사네 업무 S/W', badge: '무료', desc: '의뢰 관리 · 문서 작성 · 정산까지 기본 도구 무료 제공', Icon: LayoutGrid },
+  { name: 'AI 작업 도구 (프로)', badge: '유료', desc: '제안서 · 보고서 AI 초안, 고급 분석 템플릿', Icon: Sparkles },
 ] as const
 
 export default async function ExpertHome() {
@@ -114,8 +95,8 @@ export default async function ExpertHome() {
             <div className="flex flex-col gap-3">
               {EXPERT_TOOLS.map((tool) => (
                 <div key={tool.name} className="flex items-start gap-3 rounded-xl border border-border-light bg-card p-4 shadow-xs card-hover">
-                  <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-accent/10 text-accent [&>svg]:h-[18px] [&>svg]:w-[18px]">
-                    {tool.icon}
+                  <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-accent/10 text-accent">
+                    <tool.Icon className="h-[18px] w-[18px]" strokeWidth={1.75} aria-hidden="true" />
                   </span>
                   <div className="min-w-0">
                     <div className="flex items-center gap-2">
