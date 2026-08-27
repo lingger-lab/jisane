@@ -697,6 +697,24 @@ summary {
   }
 }
 
+/* 스크롤 구동 리빌 — 지원 브라우저는 스크롤 진행에 연동(뚜렷한 rise+scale).
+   애니메이션(스크롤 스크럽)이 .revealed 선언을 카스케이드상 오버라이드 → JS는 폴백에만 유효.
+   미지원 브라우저는 위 .reveal→.revealed(JS ScrollReveal) 경로 그대로. reduced-motion=정적. */
+@keyframes reveal-scroll {
+  from { opacity: 0; transform: translateY(40px) scale(0.97); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .reveal {
+      opacity: 0;
+      animation: reveal-scroll linear both;
+      animation-timeline: view();
+      animation-range: entry 5% cover 20%;
+    }
+  }
+}
+
 /* iOS safe area 지원 */
 @supports (padding-bottom: env(safe-area-inset-bottom)) {
   .pb-safe {
