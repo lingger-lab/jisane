@@ -608,6 +608,38 @@ summary {
   letter-spacing: 0.02em;
 }
 
+/* 네비게이션 진행바 — 모든 내부 이동에 뜨는 상단 브랜드 그린 바(비주얼 전용·문구 없음).
+   transform(scaleX)만 애니메이션 → 레이아웃 시프트 0. NavProgressProvider가 phase 제어. */
+.nav-progress {
+  position: fixed;
+  inset-inline: 0;
+  top: 0;
+  height: 2px;
+  background: var(--primary);
+  transform-origin: left center;
+  z-index: 100;
+  pointer-events: none;
+  will-change: transform, opacity;
+}
+.nav-progress--active {
+  opacity: 1;
+  animation: nav-progress-trickle 8s cubic-bezier(0.1, 0.7, 0.1, 1) forwards;
+}
+.nav-progress--done {
+  opacity: 0;
+  transform: scaleX(1);
+  transition: transform 200ms ease-out, opacity 300ms ease-out 150ms;
+}
+@keyframes nav-progress-trickle {
+  0% { transform: scaleX(0.03); }
+  100% { transform: scaleX(0.9); }
+}
+@media (prefers-reduced-motion: reduce) {
+  /* 모션 없이도 전환은 항상 표시(요구) — 즉시 90%로 세우고 완료 시 페이드만 */
+  .nav-progress--active { animation: none; transform: scaleX(0.9); }
+  .nav-progress--done { transition: opacity 150ms ease-out; }
+}
+
 /* 페이지 전환 로딩 — 부엉이 펄스 (RouteLoading) */
 .route-loading-owl {
   display: inline-block;

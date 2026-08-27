@@ -16,7 +16,7 @@ export default function RouteLoading() {
       <span className="route-loading-owl text-primary">
         <OwlIcon className="h-11 w-11" />
       </span>
-      <p className="text-sm text-text-muted">불러오는 중…</p>
+      {/* 전환 표시는 비주얼(부엉이 펄스)만 — 보이는 문구 없음. sr-only만 스크린리더용으로 유지. */}
       <span className="sr-only">페이지를 불러오는 중입니다</span>
     </div>
   )

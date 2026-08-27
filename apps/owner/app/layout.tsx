@@ -8,6 +8,7 @@ import { createClient } from "@jisane/shared/supabase/server";
 import { rootMetadata } from "@jisane/shared/seo";
 import { signInWithGoogle, signInWithKakao, signOut } from "@jisane/shared/auth/actions";
 import { AppHeader } from "@jisane/ui/app-header";
+import { NavProgressProvider } from "@jisane/ui/nav-progress";
 import { ClientNav } from "@/components/client-nav";
 import { ADMIN_URL, EXPERT_URL } from "@/lib/urls";
 import Script from "next/script";
@@ -62,6 +63,7 @@ export default async function RootLayout({
             __html: `(function(){try{var t=localStorage.getItem('theme');document.documentElement.setAttribute('data-theme',t==='dark'?'dark':t==='system'?'system':'light');}catch(e){document.documentElement.setAttribute('data-theme','light');}})();`,
           }}
         />
+        <NavProgressProvider>
         <AppHeader
           appName="지사네"
           hubUrl="/"
@@ -93,6 +95,7 @@ export default async function RootLayout({
           data-bot="bc714dfa-4cc5-474a-aa14-e0c0493b4a0c"
           strategy="lazyOnload"
         />
+        </NavProgressProvider>
       </body>
     </html>
   );
