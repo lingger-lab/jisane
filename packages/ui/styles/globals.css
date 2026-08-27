@@ -776,6 +776,23 @@ summary {
     }
   }
 }
+
+/* 헤더 자동 숨김/재등장 — HeaderAutoHide가 방향 감지로 html.header-hidden 토글, 이동은 CSS transform
+   트랜지션(컴포지터). scroll() 지원과 무관하게 동작. 헤더가 숨으면 스티키 섹션헤더도 위로 붙여 틈 방지. */
+.app-header-scroll {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  will-change: transform;
+}
+html.header-hidden .app-header-scroll { transform: translateY(-100%); }
+.section-sticky { transition: top 0.3s ease; }
+html.header-hidden .section-sticky { top: 0.5rem; }
+@media (prefers-reduced-motion: reduce) {
+  /* 숨기지 않음(항상 표시)·트랜지션 없음 */
+  .app-header-scroll { transition: none; }
+  html.header-hidden .app-header-scroll { transform: none; }
+  .section-sticky { transition: none; }
+  html.header-hidden .section-sticky { top: 3.5rem; }
+}
 @supports (animation-timeline: view()) {
   @media (prefers-reduced-motion: no-preference) {
     .reveal-cards > * {

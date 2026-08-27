@@ -9,6 +9,7 @@ import { rootMetadata } from "@jisane/shared/seo";
 import { signInWithGoogle, signInWithKakao, signOut } from "@jisane/shared/auth/actions";
 import { AppHeader } from "@jisane/ui/app-header";
 import { NavProgressProvider } from "@jisane/ui/nav-progress";
+import { HeaderAutoHide } from "@jisane/ui/header-auto-hide";
 import { ClientNav } from "@/components/client-nav";
 import { ADMIN_URL, EXPERT_URL } from "@/lib/urls";
 import Script from "next/script";
@@ -64,6 +65,7 @@ export default async function RootLayout({
           }}
         />
         <NavProgressProvider>
+        <HeaderAutoHide />
         <AppHeader
           appName="지사네"
           hubUrl="/"

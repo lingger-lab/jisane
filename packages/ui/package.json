@@ -40,6 +40,7 @@
     "./use-seeded-state": "./components/use-seeded-state.ts",
     "./use-unsaved-guard": "./hooks/use-unsaved-guard.ts",
     "./nav-progress": "./components/nav-progress.tsx",
+    "./header-auto-hide": "./components/header-auto-hide.tsx",
     "./page-hero": "./components/page-hero.tsx",
     "./section-header": "./components/section-header.tsx",
     "./hero-backdrop": "./components/hero-backdrop.tsx",

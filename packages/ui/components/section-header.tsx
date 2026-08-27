@@ -32,7 +32,7 @@ export function SectionHeader({
       className={cn(
         'flex items-start gap-3',
         sticky
-          ? 'sticky top-14 z-20 mb-5 -mx-4 bg-background/85 px-4 py-2.5 backdrop-blur-sm md:-mx-6 md:px-6'
+          ? 'section-sticky sticky top-14 z-20 mb-5 -mx-4 bg-background/85 px-4 py-2.5 backdrop-blur-sm md:-mx-6 md:px-6'
           : 'mb-5',
         className,
       )}

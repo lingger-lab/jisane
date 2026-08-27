@@ -10,6 +10,7 @@ import { JsonLd } from "@jisane/ui/json-ld";
 import { signInWithGoogle, signInWithKakao, signOut } from "@jisane/shared/auth/actions";
 import { AppHeader } from "@jisane/ui/app-header";
 import { NavProgressProvider } from "@jisane/ui/nav-progress";
+import { HeaderAutoHide } from "@jisane/ui/header-auto-hide";
 import Script from "next/script";
 import localFont from "next/font/local";
 import { Gowun_Batang } from "next/font/google";
@@ -65,6 +66,7 @@ export default async function RootLayout({
         {/* 구조화 데이터 — 조직·웹사이트(검색 리치결과·AEO 사실 앵커) */}
         <JsonLd data={[orgJsonLd(), websiteJsonLd("admin")]} />
         <NavProgressProvider>
+        <HeaderAutoHide />
         <AppHeader
           appName="지사네"
           hubUrl="/"
