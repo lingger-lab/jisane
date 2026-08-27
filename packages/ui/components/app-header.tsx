@@ -13,6 +13,7 @@ export function AppHeader({
   signInWithGoogle,
   showThemeToggle = false,
   roleSwitch,
+  centerNav,
   children,
 }: {
   appName: string
@@ -27,22 +28,27 @@ export function AppHeader({
   showThemeToggle?: boolean
   /** 회원 전환 메뉴 항목(기업↔시니어 등). 비면 미노출 */
   roleSwitch?: RoleSwitchItem[]
+  /** 데스크탑 주요 내비(로고 옆). 자체적으로 `hidden md:flex`라 모바일에선 안 보인다(하단탭이 대체). */
+  centerNav?: React.ReactNode
   children?: React.ReactNode
 }) {
   return (
     <header className="app-header-scroll sticky top-0 z-40 border-b border-border-light bg-background/80 backdrop-blur-lg">
       <div className="container-app flex h-14 items-center justify-between px-4 md:px-6">
-        {hubUrl ? (
-          <a href={hubUrl} className="flex items-baseline gap-1.5 hover:opacity-80 transition-opacity">
-            <OwlIcon className="h-7 w-7 shrink-0 text-primary owl-alive" />
-            <span className="text-xl md:text-2xl font-bold tracking-tight text-brand-gradient">{appName}</span>
-          </a>
-        ) : (
-          <span className="flex items-baseline gap-1.5">
-            <OwlIcon className="h-7 w-7 shrink-0 text-primary owl-alive" />
-            <span className="text-xl md:text-2xl font-bold tracking-tight text-brand-gradient">{appName}</span>
-          </span>
-        )}
+        <div className="flex items-center gap-4 md:gap-6">
+          {hubUrl ? (
+            <a href={hubUrl} className="flex items-baseline gap-1.5 hover:opacity-80 transition-opacity">
+              <OwlIcon className="h-7 w-7 shrink-0 text-primary owl-alive" />
+              <span className="text-xl md:text-2xl font-bold tracking-tight text-brand-gradient">{appName}</span>
+            </a>
+          ) : (
+            <span className="flex items-baseline gap-1.5">
+              <OwlIcon className="h-7 w-7 shrink-0 text-primary owl-alive" />
+              <span className="text-xl md:text-2xl font-bold tracking-tight text-brand-gradient">{appName}</span>
+            </span>
+          )}
+          {centerNav}
+        </div>
 
         <div className="flex items-center gap-2 md:gap-3">
           {/* 테마 토글을 그룹 맨 앞에 — 디자인 위계상 우선 */}

@@ -10,7 +10,7 @@ import { signInWithGoogle, signInWithKakao, signOut } from "@jisane/shared/auth/
 import { AppHeader } from "@jisane/ui/app-header";
 import { NavProgressProvider } from "@jisane/ui/nav-progress";
 import { HeaderAutoHide } from "@jisane/ui/header-auto-hide";
-import { ClientNav } from "@/components/client-nav";
+import { ClientNav, ClientHeaderNav } from "@/components/client-nav";
 import { ADMIN_URL, EXPERT_URL } from "@/lib/urls";
 import Script from "next/script";
 import localFont from "next/font/local";
@@ -54,7 +54,7 @@ export default async function RootLayout({
 
   return (
     <html lang="ko" className={`h-full antialiased ${pretendard.variable} ${gowunBatang.variable}`} suppressHydrationWarning>
-      <body className="min-h-full flex flex-col bg-background text-foreground font-sans pb-16" suppressHydrationWarning>
+      <body className="min-h-full flex flex-col bg-background text-foreground font-sans pb-16 md:pb-0" suppressHydrationWarning>
         {/* 다크모드 플래시 방지 — 페인트 전 저장된 테마를 <html>에 스탬프(첫 body 자식으로 동기 실행).
             기본=라이트(저장값 없으면 light 스탬프 — 모든 디스플레이 기본), 'dark'=다크,
             'system'=data-theme="system" 스탬프→[data-theme=system]에서만 OS 추종.
@@ -74,6 +74,7 @@ export default async function RootLayout({
           signOutAction={signOut}
           signInWithKakao={signInWithKakao}
           signInWithGoogle={signInWithGoogle}
+          centerNav={<ClientHeaderNav />}
           roleSwitch={[
             { label: "시니어지식인으로 전환", url: `${EXPERT_URL}/register` },
             { label: "전문가회원으로 전환 (승인제)", url: `${ADMIN_URL}/partner/apply` },
