@@ -16,16 +16,27 @@ export function SectionHeader({
   title,
   subtitle,
   tone = 'primary',
+  sticky = false,
   className,
 }: {
   num: React.ReactNode
   title: string
   subtitle?: string
   tone?: 'primary' | 'accent' | 'partner'
+  /** true면 스크롤 시 앱헤더(top-14) 아래 고정 — 콘텐츠가 밑으로 슬라이드(랜딩 리듬감). */
+  sticky?: boolean
   className?: string
 }) {
   return (
-    <header className={cn('mb-5 flex items-start gap-3', className)}>
+    <header
+      className={cn(
+        'flex items-start gap-3',
+        sticky
+          ? 'sticky top-14 z-20 mb-5 -mx-4 bg-background/85 px-4 py-2.5 backdrop-blur-sm md:-mx-6 md:px-6'
+          : 'mb-5',
+        className,
+      )}
+    >
       <span
         className={cn(
           'flex h-8 w-8 shrink-0 items-center justify-center rounded-lg font-serif text-base font-bold text-white',

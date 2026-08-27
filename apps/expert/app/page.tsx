@@ -12,6 +12,7 @@ import { ADMIN_URL, OWNER_URL } from '@/lib/urls'
 import { getPackagesByAudience } from '@jisane/shared/service-package/queries'
 import { CategoryBrowse } from '@jisane/ui/category-browse'
 import { SectionHeader } from '@jisane/ui/section-header'
+import { AnimatedCounter } from '@jisane/ui/animated-counter'
 import { Badge } from '@jisane/ui/badge'
 import { OwlIcon } from '@jisane/ui/icons/owl'
 import { ScrollReveal } from '@jisane/ui/scroll-reveal'
@@ -74,7 +75,7 @@ export default async function ExpertHome() {
       {/* [2] ① 기업 의뢰 정보 */}
       <ScrollReveal className="w-full snap-section">
         <section className="container-marketing px-4 md:px-6 py-8 md:py-12">
-          <SectionHeader num={1} tone="accent" title="기업 의뢰 정보" subtitle="지금 열린 기업의 협력 요청" />
+          <SectionHeader sticky num={1} tone="accent" title="기업 의뢰 정보" subtitle="지금 열린 기업의 협력 요청" />
           <CategoryBrowse
             categoryCounts={stats.categoryCounts}
             newRequestsThisMonth={stats.newRequestsThisMonth}
@@ -91,7 +92,7 @@ export default async function ExpertHome() {
       <ScrollReveal className="w-full snap-section">
         <div className="w-full bg-surface-warm py-8 md:py-12">
           <section className="container-marketing px-4 md:px-6">
-            <SectionHeader num={2} tone="primary" title="작업에 필요한 전문 도구" subtitle="시니어 작업을 돕는 S/W 도구" />
+            <SectionHeader sticky num={2} tone="primary" title="작업에 필요한 전문 도구" subtitle="시니어 작업을 돕는 S/W 도구" />
             <div className="reveal-cards flex flex-col gap-3">
               {EXPERT_TOOLS.map((tool) => (
                 <div key={tool.name} className="flex items-start gap-3 rounded-xl border border-border-light bg-card p-4 shadow-xs card-hover">
@@ -115,7 +116,7 @@ export default async function ExpertHome() {
       {/* [4] ③ 지사네가 제공하는 시니어 전문 서비스 — 역량 강화·교육 */}
       <ScrollReveal className="w-full snap-section">
         <section className="container-marketing px-4 md:px-6 py-8 md:py-12">
-          <SectionHeader num={3} tone="accent" title="지사네가 제공하는 시니어 전문 서비스" subtitle="역량 강화 · 교육 프로그램" />
+          <SectionHeader sticky num={3} tone="accent" title="지사네가 제공하는 시니어 전문 서비스" subtitle="역량 강화 · 교육 프로그램" />
           <div className="reveal-cards flex flex-col gap-3">
             {education.map((pkg) => (
               <Link
@@ -141,7 +142,7 @@ export default async function ExpertHome() {
         <section className="container-marketing px-4 md:px-6 py-8 md:py-12">
           <div className="rounded-2xl bg-accent/10 p-6 md:p-8">
             <p className="mb-5 text-center text-base md:text-lg font-semibold text-text leading-relaxed">
-              지금 등록하고 열린 의뢰 {stats.totalOpenRequests}건을 확인하세요
+              지금 등록하고 열린 의뢰 <AnimatedCounter end={stats.totalOpenRequests} suffix="건" />을 확인하세요
             </p>
             <OAuthButtons signInWithKakao={signInWithKakao} signInWithGoogle={signInWithGoogle} />
           </div>

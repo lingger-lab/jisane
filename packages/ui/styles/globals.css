@@ -759,6 +759,23 @@ summary {
   from { opacity: 0; transform: translateY(24px) scale(0.98); }
   to { opacity: 1; transform: none; }
 }
+
+/* 상단 고정 헤더 — 스크롤 위치에 따라 표시 상태 변경(scroll() 타임라인, CSS SDA·JS 스크롤 리스너 0).
+   최상단=평평(border만), 스크롤 시작하면 그림자로 콘텐츠 위 부상(Tokopedia류 성능 이점).
+   @supports·reduced-motion 가드. 컴포지터 실행 → CWV 무저하. */
+@keyframes header-elevate {
+  from { box-shadow: 0 0 0 0 rgba(21, 63, 48, 0); }
+  to { box-shadow: 0 5px 18px -8px rgba(21, 63, 48, 0.22); }
+}
+@supports (animation-timeline: scroll()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .app-header-scroll {
+      animation: header-elevate linear both;
+      animation-timeline: scroll(root block);
+      animation-range: 0 110px;
+    }
+  }
+}
 @supports (animation-timeline: view()) {
   @media (prefers-reduced-motion: no-preference) {
     .reveal-cards > * {

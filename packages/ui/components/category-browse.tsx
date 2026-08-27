@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import { AnimatedCounter } from './animated-counter'
 import type { CategoryCount } from '@jisane/shared/landing-stats'
 
 interface CategoryBrowseProps {
@@ -36,7 +37,7 @@ export function CategoryBrowse({
       <h2 className="text-lg md:text-xl font-bold font-serif text-text">{title}</h2>
       {newRequestsThisMonth > 0 && (
         <p className="mt-1 text-sm text-text-muted">
-          이번 달 새 의뢰 <span className={`font-semibold ${accentText}`}>{newRequestsThisMonth}건</span>
+          이번 달 새 의뢰 <AnimatedCounter end={newRequestsThisMonth} suffix="건" className={`font-semibold ${accentText}`} />
         </p>
       )}
 
