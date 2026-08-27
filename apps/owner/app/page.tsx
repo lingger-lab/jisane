@@ -8,6 +8,7 @@ import { OAuthButtons } from '@jisane/ui/oauth-buttons'
 import { fetchOwnerLandingStats } from '@jisane/shared/landing-stats'
 import { getPackagesByAudience } from '@jisane/shared/service-package/queries'
 import { CategoryBrowse } from '@jisane/ui/category-browse'
+import { SectionHeader } from '@jisane/ui/section-header'
 import { Badge } from '@jisane/ui/badge'
 import { OwlIcon } from '@jisane/ui/icons/owl'
 import { ScrollReveal } from '@jisane/ui/scroll-reveal'
@@ -125,13 +126,7 @@ export default async function OwnerHome() {
       {/* [2] ① 기업 운영 전문 서비스 */}
       <ScrollReveal className="w-full">
         <section className="container-marketing px-4 md:px-6 py-8 md:py-12">
-          <header className="mb-5 flex items-start gap-3">
-            <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-primary font-serif text-base font-bold text-white">1</span>
-            <div>
-              <h2 className="text-xl md:text-2xl font-bold font-serif text-text leading-tight">기업 운영 전문 서비스</h2>
-              <p className="mt-0.5 text-sm text-text-muted">기업 운영에 필요한 전문 서비스 신청</p>
-            </div>
-          </header>
+          <SectionHeader num={1} tone="primary" title="기업 운영 전문 서비스" subtitle="기업 운영에 필요한 전문 서비스 신청" />
           <div className="flex flex-col gap-3">
             {landingServices.map((pkg) => (
               <Link
@@ -164,13 +159,7 @@ export default async function OwnerHome() {
       <ScrollReveal className="w-full">
         <div className="w-full bg-surface-warm py-8 md:py-12">
           <section className="container-marketing px-4 md:px-6">
-            <header className="mb-5 flex items-start gap-3">
-              <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-accent font-serif text-base font-bold text-white">2</span>
-              <div>
-                <h2 className="text-xl md:text-2xl font-bold font-serif text-text leading-tight">시니어 전문가 정보</h2>
-                <p className="mt-0.5 text-sm text-text-muted">경험과 노하우를 갖춘 분야별 전문가</p>
-              </div>
-            </header>
+            <SectionHeader num={2} tone="accent" title="시니어 전문가 정보" subtitle="경험과 노하우를 갖춘 분야별 전문가" />
             <CategoryBrowse
               categoryCounts={stats.categoryCounts}
               newRequestsThisMonth={stats.newRequestsThisMonth}
@@ -187,13 +176,7 @@ export default async function OwnerHome() {
       {/* [4] ③ 지사네가 제공하는 기업 전문 서비스 (5) */}
       <ScrollReveal className="w-full">
         <section className="container-marketing px-4 md:px-6 py-8 md:py-12">
-          <header className="mb-5 flex items-start gap-3">
-            <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-primary font-serif text-base font-bold text-white">3</span>
-            <div>
-              <h2 className="text-xl md:text-2xl font-bold font-serif text-text leading-tight">지사네가 제공하는 기업 전문 서비스</h2>
-              <p className="mt-0.5 text-sm text-text-muted">지역 기업 성장을 위한 5대 지원</p>
-            </div>
-          </header>
+          <SectionHeader num={3} tone="primary" title="지사네가 제공하는 기업 전문 서비스" subtitle="지역 기업 성장을 위한 5대 지원" />
           <div className="flex flex-col gap-2.5">
             {ENTERPRISE_PILLARS.map((p) => (
               <Link
