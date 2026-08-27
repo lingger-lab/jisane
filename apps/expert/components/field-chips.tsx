@@ -46,7 +46,16 @@ type FieldChipsState = ReturnType<typeof useFieldChips>
  * 전문 분야 칩 그룹 UI — fieldset/legend로 그룹 이름 부여(접근성), 상한/에러 안내, hidden input(name="field").
  * showCounter로 "선택: n/5개" 카운터 노출(등록 폼에서 사용).
  */
-export function FieldChips({ chips, showCounter = false }: { chips: FieldChipsState; showCounter?: boolean }) {
+export function FieldChips({
+  chips,
+  showCounter = false,
+  onToggle,
+}: {
+  chips: FieldChipsState
+  showCounter?: boolean
+  /** 칩 선택 변경 시 호출 — 폼 change 이벤트를 안 내는 버튼 토글을 dirty로 잡기 위함 */
+  onToggle?: () => void
+}) {
   const { selectedFields, capReached, fieldError, fieldsetRef, toggleField } = chips
   return (
     <fieldset ref={fieldsetRef}>
@@ -59,7 +68,7 @@ export function FieldChips({ chips, showCounter = false }: { chips: FieldChipsSt
           <button
             key={chip}
             type="button"
-            onClick={() => toggleField(chip)}
+            onClick={() => { toggleField(chip); onToggle?.() }}
             aria-pressed={selectedFields.includes(chip)}
             className={`rounded-lg border px-2 py-2 text-xs text-center leading-tight break-keep transition-colors ${
               selectedFields.includes(chip)

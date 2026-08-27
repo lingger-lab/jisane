@@ -60,10 +60,11 @@ export function RegisterForm({ rejoin, defaults }: { rejoin?: boolean; defaults?
         <form
           action={formAction}
           onChange={guard.markDirty}
-          onSubmit={(e) => { chips.validate(e); guard.reset() }}
+          // 검증 통과 시에만 dirty 해제 — 칩 미선택으로 제출이 막히면 미저장 경고 유지
+          onSubmit={(e) => { if (chips.validate(e)) guard.reset() }}
           className="flex flex-col gap-5"
         >
-          <FieldChips chips={chips} showCounter />
+          <FieldChips chips={chips} showCounter onToggle={guard.markDirty} />
 
           {/* 경력 */}
           <div>

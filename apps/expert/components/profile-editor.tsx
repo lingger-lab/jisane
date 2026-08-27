@@ -37,12 +37,13 @@ export function ProfileEditor({ profile }: { profile: ExpertProfile }) {
     <form
       action={formAction}
       onChange={guard.markDirty}
-      // 필수 칩그룹은 제출 전에 클라이언트에서 검증 — 서버 왕복 후 하단 에러만 보이던 문제(감사 docs/10 P3-49)
-      onSubmit={(e) => { chips.validate(e); guard.reset() }}
+      // 필수 칩그룹은 제출 전에 클라이언트에서 검증 — 서버 왕복 후 하단 에러만 보이던 문제(감사 docs/10 P3-49).
+      // 검증 통과(제출 진행) 시에만 dirty 해제 — 검증 실패로 막히면 미저장 경고 유지.
+      onSubmit={(e) => { if (chips.validate(e)) guard.reset() }}
       className="flex flex-col gap-5"
     >
       <input type="hidden" name="redirect_to" value="/mypage" />
-      <FieldChips chips={chips} />
+      <FieldChips chips={chips} onToggle={guard.markDirty} />
 
       {/* 경력 */}
       <div>
