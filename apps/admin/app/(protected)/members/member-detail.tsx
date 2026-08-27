@@ -3,7 +3,10 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
+import { ArrowLeft, ArrowRight, Check, X, UserX, RotateCcw } from 'lucide-react'
 import { useConfirmDialog } from '@jisane/ui/confirm-dialog'
+import { Card } from '@jisane/ui/card'
+import { Button } from '@jisane/ui/button'
 import {
   updateOwnerStatus,
   updateExpertStatus,
@@ -78,6 +81,10 @@ function StatusBadge({ status }: { status: string }) {
       {STATUS_LABEL[status] || status}
     </span>
   )
+}
+
+function SectionTitle({ children }: { children: React.ReactNode }) {
+  return <h2 className="mb-3 text-sm font-semibold text-text">{children}</h2>
 }
 
 export function MemberDetail({ role, id, authUserId, title, status, profileRows, relatedCounts, holdings }: MemberDetailProps) {
@@ -158,7 +165,7 @@ export function MemberDetail({ role, id, authUserId, title, status, profileRows,
         href={`/members/${ROLE_ROUTE[role]}`}
         className="mb-4 inline-flex items-center gap-1 text-sm text-text-muted hover:text-text transition-colors"
       >
-        &larr; {ROLE_LABEL[role]} 목록
+        <ArrowLeft className="h-4 w-4" /> {ROLE_LABEL[role]} 목록
       </Link>
 
       <div className="mb-5 flex items-start justify-between gap-3">
@@ -172,8 +179,8 @@ export function MemberDetail({ role, id, authUserId, title, status, profileRows,
       {error && <p className="mb-4 text-sm text-error" role="alert" aria-live="polite">{error}</p>}
 
       {/* 프로필 */}
-      <section className="mb-5 rounded-xl border border-border-light bg-card p-4">
-        <h2 className="mb-3 text-sm font-semibold text-text">프로필</h2>
+      <Card className="mb-5 p-4">
+        <SectionTitle>프로필</SectionTitle>
         <dl className="flex flex-col gap-2 text-sm">
           {profileRows.map((r) => (
             <div key={r.label} className="flex gap-3">
@@ -182,17 +189,18 @@ export function MemberDetail({ role, id, authUserId, title, status, profileRows,
             </div>
           ))}
         </dl>
-      </section>
+      </Card>
 
       {/* 역할 겸유 현황 */}
-      <section className="mb-5 rounded-xl border border-border-light bg-card p-4">
-        <h2 className="mb-3 text-sm font-semibold text-text">이 계정의 역할</h2>
+      <Card className="mb-5 p-4">
+        <SectionTitle>이 계정의 역할</SectionTitle>
         <div className="flex flex-col gap-2">
           {holdings.map((h) => (
             <div key={h.role} className="flex items-center justify-between gap-2">
               <div className="flex items-center gap-2 text-sm">
-                <span className={h.id ? 'text-text' : 'text-text-subtle'}>
-                  {h.id ? '✓' : '✗'} {ROLE_LABEL[h.role]}
+                <span className={`inline-flex items-center gap-1.5 ${h.id ? 'text-text' : 'text-text-subtle'}`}>
+                  {h.id ? <Check className="h-4 w-4 text-primary" /> : <X className="h-4 w-4 text-text-subtle" />}
+                  {ROLE_LABEL[h.role]}
                 </span>
                 {h.id && h.status && <StatusBadge status={h.status} />}
               </div>
@@ -200,91 +208,78 @@ export function MemberDetail({ role, id, authUserId, title, status, profileRows,
                 h.role !== role && (
                   <Link
                     href={`/members/${ROLE_ROUTE[h.role]}/${h.id}`}
-                    className="text-xs font-medium text-accent hover:text-accent/80 transition-colors"
+                    className="inline-flex items-center gap-0.5 text-xs font-medium text-accent hover:text-accent/80 transition-colors"
                   >
-                    상세 →
+                    상세 <ArrowRight className="h-3.5 w-3.5" />
                   </Link>
                 )
               ) : h.role !== 'provider' && authUserId ? (
-                <button
-                  type="button"
-                  disabled={busy}
-                  onClick={() => grant(h.role as 'owner' | 'expert')}
-                  className="rounded-lg border border-border-light px-2.5 py-1 text-xs text-text-muted transition-colors hover:border-primary/30 hover:text-primary disabled:opacity-50"
-                >
+                <Button variant="outline" size="sm" disabled={busy} onClick={() => grant(h.role as 'owner' | 'expert')}>
                   역할 부여
-                </button>
+                </Button>
               ) : (
                 h.role === 'provider' && <span className="text-xs text-text-subtle">승인제(본인 신청)</span>
               )}
             </div>
           ))}
         </div>
-        <p className="mt-2 text-xs text-text-subtle">
+        <p className="mt-3 text-xs text-text-subtle">
           잘못된 유형으로 가입한 경우: 올바른 역할을 부여한 뒤 잘못된 역할을 아래에서 탈퇴 처리하세요.
         </p>
-      </section>
+      </Card>
 
       {/* 연관 데이터 */}
       {relatedCounts.length > 0 && (
-        <section className="mb-5 rounded-xl border border-border-light bg-card p-4">
-          <h2 className="mb-3 text-sm font-semibold text-text">연관 데이터</h2>
+        <Card className="mb-5 p-4">
+          <SectionTitle>연관 데이터</SectionTitle>
           <div className="grid grid-cols-3 gap-3 text-center">
             {relatedCounts.map((c) => (
-              <div key={c.label} className="rounded-lg bg-surface-warm p-2">
-                <p className="text-lg font-bold text-text tabular-nums">{c.value}</p>
+              <div key={c.label} className="rounded-lg bg-surface p-2">
+                <p className="text-lg font-bold tabular-nums text-text">{c.value}</p>
                 <p className="text-xs text-text-subtle">{c.label}</p>
               </div>
             ))}
           </div>
-        </section>
+        </Card>
       )}
 
-      {/* 위험 액션 */}
-      <section className="rounded-xl border border-error/20 bg-error/5 p-4">
-        <h2 className="mb-1 text-sm font-semibold text-error">관리 액션</h2>
+      {/* 상태 관리 (중립) */}
+      {!withdrawn && (
+        <Card className="mb-5 p-4">
+          <SectionTitle>상태 관리</SectionTitle>
+          <div className="flex flex-wrap gap-2">
+            {STATUS_ACTIONS[role]
+              .filter((a) => a.value !== status)
+              .map((a) => (
+                <Button key={a.value} variant="outline" size="sm" disabled={busy} onClick={() => changeStatus(a.value)}>
+                  {a.label}
+                </Button>
+              ))}
+          </div>
+        </Card>
+      )}
+
+      {/* 위험 구역 — 강제 탈퇴 / 재활성만 */}
+      <Card className="border-error/25 bg-error/[0.04] p-4">
+        <h2 className="mb-1 flex items-center gap-1.5 text-sm font-semibold text-error">
+          <UserX className="h-4 w-4" /> 위험 구역
+        </h2>
         {withdrawn ? (
           <>
             <p className="mb-3 text-xs text-text-muted">탈퇴 처리된 회원입니다. 필요 시 상태만 재활성할 수 있습니다(개인정보 미복원).</p>
-            <button
-              type="button"
-              disabled={busy}
-              onClick={reactivate}
-              className="rounded-lg border border-border-light bg-card px-3 py-1.5 text-xs font-medium text-text-muted transition-colors hover:border-primary/30 hover:text-primary disabled:opacity-50"
-            >
-              재활성
-            </button>
+            <Button variant="outline" size="sm" disabled={busy} onClick={reactivate}>
+              <RotateCcw className="h-3.5 w-3.5" /> 재활성
+            </Button>
           </>
         ) : (
           <>
-            <div className="mb-3 flex flex-wrap gap-2">
-              {STATUS_ACTIONS[role]
-                .filter((a) => a.value !== status)
-                .map((a) => (
-                  <button
-                    key={a.value}
-                    type="button"
-                    disabled={busy}
-                    onClick={() => changeStatus(a.value)}
-                    className={`rounded-lg border border-border-light bg-card px-3 py-1.5 text-xs font-medium transition-colors disabled:opacity-50 ${
-                      a.danger ? 'text-text-muted hover:border-error/30 hover:text-error' : 'text-text-muted hover:border-primary/30 hover:text-primary'
-                    }`}
-                  >
-                    {a.label}
-                  </button>
-                ))}
-            </div>
-            <button
-              type="button"
-              disabled={busy}
-              onClick={withdraw}
-              className="rounded-lg bg-error-solid px-3 py-1.5 text-xs font-semibold text-white transition-colors hover:brightness-95 disabled:opacity-50"
-            >
-              강제 탈퇴
-            </button>
+            <p className="mb-3 text-xs text-text-muted">탈퇴 처리 시 개인정보가 즉시 익명화되며 복구할 수 없습니다.</p>
+            <Button variant="danger" size="sm" disabled={busy} onClick={withdraw}>
+              <UserX className="h-3.5 w-3.5" /> 강제 탈퇴
+            </Button>
           </>
         )}
-      </section>
+      </Card>
 
       {confirmDialog}
     </div>

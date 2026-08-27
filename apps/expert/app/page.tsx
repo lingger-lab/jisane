@@ -10,6 +10,7 @@ import { fetchExpertLandingStats } from '@jisane/shared/landing-stats'
 import { ADMIN_URL, OWNER_URL } from '@/lib/urls'
 import { getPackagesByAudience } from '@jisane/shared/service-package/queries'
 import { CategoryBrowse } from '@jisane/ui/category-browse'
+import { SectionHeader } from '@jisane/ui/section-header'
 import { Badge } from '@jisane/ui/badge'
 import { OwlIcon } from '@jisane/ui/icons/owl'
 import { ScrollReveal } from '@jisane/ui/scroll-reveal'
@@ -92,13 +93,7 @@ export default async function ExpertHome() {
       {/* [2] ① 기업 의뢰 정보 */}
       <ScrollReveal className="w-full">
         <section className="container-marketing px-4 md:px-6 py-8 md:py-12">
-          <header className="mb-5 flex items-start gap-3">
-            <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-accent font-serif text-base font-bold text-white">1</span>
-            <div>
-              <h2 className="text-xl md:text-2xl font-bold font-serif text-text leading-tight">기업 의뢰 정보</h2>
-              <p className="mt-0.5 text-sm text-text-muted">지금 열린 기업의 협력 요청</p>
-            </div>
-          </header>
+          <SectionHeader num={1} tone="accent" title="기업 의뢰 정보" subtitle="지금 열린 기업의 협력 요청" />
           <CategoryBrowse
             categoryCounts={stats.categoryCounts}
             newRequestsThisMonth={stats.newRequestsThisMonth}
@@ -115,13 +110,7 @@ export default async function ExpertHome() {
       <ScrollReveal className="w-full">
         <div className="w-full bg-surface-warm py-8 md:py-12">
           <section className="container-marketing px-4 md:px-6">
-            <header className="mb-5 flex items-start gap-3">
-              <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-primary font-serif text-base font-bold text-white">2</span>
-              <div>
-                <h2 className="text-xl md:text-2xl font-bold font-serif text-text leading-tight">작업에 필요한 전문 도구</h2>
-                <p className="mt-0.5 text-sm text-text-muted">시니어 작업을 돕는 S/W 도구</p>
-              </div>
-            </header>
+            <SectionHeader num={2} tone="primary" title="작업에 필요한 전문 도구" subtitle="시니어 작업을 돕는 S/W 도구" />
             <div className="flex flex-col gap-3">
               {EXPERT_TOOLS.map((tool) => (
                 <div key={tool.name} className="flex items-start gap-3 rounded-xl border border-border-light bg-card p-4 shadow-xs card-hover">
@@ -145,13 +134,7 @@ export default async function ExpertHome() {
       {/* [4] ③ 지사네가 제공하는 시니어 전문 서비스 — 역량 강화·교육 */}
       <ScrollReveal className="w-full">
         <section className="container-marketing px-4 md:px-6 py-8 md:py-12">
-          <header className="mb-5 flex items-start gap-3">
-            <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-accent font-serif text-base font-bold text-white">3</span>
-            <div>
-              <h2 className="text-xl md:text-2xl font-bold font-serif text-text leading-tight">지사네가 제공하는 시니어 전문 서비스</h2>
-              <p className="mt-0.5 text-sm text-text-muted">역량 강화 · 교육 프로그램</p>
-            </div>
-          </header>
+          <SectionHeader num={3} tone="accent" title="지사네가 제공하는 시니어 전문 서비스" subtitle="역량 강화 · 교육 프로그램" />
           <div className="flex flex-col gap-3">
             {education.map((pkg) => (
               <Link

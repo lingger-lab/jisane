@@ -1,7 +1,10 @@
 'use client'
 
 import { useState, useEffect, useRef } from 'react'
-import { Users } from 'lucide-react'
+import { Users, Sparkles, Clock, X } from 'lucide-react'
+import { Card } from '@jisane/ui/card'
+import { Button } from '@jisane/ui/button'
+import { Skeleton } from '@jisane/ui/skeleton'
 import { getCandidatesForRequest, createMatching, generateAiCandidates, selectCandidate } from '@/lib/admin/actions'
 
 interface RequestItem {
@@ -54,7 +57,7 @@ function CountdownTimer({ targetDate }: { targetDate: string }) {
     return () => clearInterval(interval)
   }, [targetDate])
 
-  return <span className="text-xs text-warning font-medium">{remaining}</span>
+  return <span className="text-xs font-medium text-warning">{remaining}</span>
 }
 
 export function MatchingTab({
@@ -150,36 +153,35 @@ export function MatchingTab({
           <button
             type="button"
             onClick={() => setActionError(null)}
-            className="shrink-0 rounded-lg border border-error/30 px-2.5 py-1 text-xs font-medium text-error hover:bg-error/10 transition-colors"
+            aria-label="오류 닫기"
+            className="focus-ring shrink-0 rounded-md p-1 text-error/70 transition-colors hover:text-error"
           >
-            닫기
+            <X className="h-4 w-4" />
           </button>
         </div>
       )}
       {assignedId && (
-        <div className="rounded-lg bg-success-light border border-success/20 p-3 text-sm text-success font-medium animate-fade-in">
+        <div className="animate-fade-in rounded-lg border border-primary/20 bg-primary/10 p-3 text-sm font-medium text-primary">
           매칭이 생성되었습니다. &ldquo;매칭 진행&rdquo; 탭에서 확인하세요.
         </div>
       )}
       {visibleRequests.map((req) => (
-        <div key={req.id} className="rounded-lg border border-border p-4">
+        <Card key={req.id} className="p-4">
           <div className="flex items-start justify-between">
             <div className="flex-1">
               <h3 className="font-medium text-text">{req.title}</h3>
               <div className="mt-1 flex gap-2 text-xs text-text-muted">
                 {req.req_type && <span className="rounded bg-surface px-2 py-0.5">{req.req_type}</span>}
-                {req.budget_hope && (
-                  <span>{req.budget_hope.toLocaleString('ko-KR')}원</span>
-                )}
+                {req.budget_hope && <span className="tabular-nums">{req.budget_hope.toLocaleString('ko-KR')}원</span>}
               </div>
               <p className="mt-2 line-clamp-2 text-sm text-text-muted">{req.detail}</p>
               <div className="mt-2 flex flex-wrap items-center gap-x-2 gap-y-0.5 text-xs text-text-subtle">
                 {req.owner.company && <span className="font-medium text-text-muted">{req.owner.company}</span>}
                 {req.owner.ceo_name && <span>{req.owner.ceo_name}</span>}
                 {req.owner.contact && (
-                  <a href={`tel:${req.owner.contact}`} className="rounded px-1 py-0.5 hover:text-accent hover:bg-accent/5 transition-colors">{req.owner.contact}</a>
+                  <a href={`tel:${req.owner.contact}`} className="rounded px-1 py-0.5 transition-colors hover:bg-accent/5 hover:text-accent">{req.owner.contact}</a>
                 )}
-                <a href={`mailto:${req.owner.email}`} className="rounded px-1 py-0.5 hover:text-accent hover:bg-accent/5 transition-colors">{req.owner.email}</a>
+                <a href={`mailto:${req.owner.email}`} className="rounded px-1 py-0.5 transition-colors hover:bg-accent/5 hover:text-accent">{req.owner.email}</a>
               </div>
               {(interestCounts[req.id] || 0) > 0 && (
                 <span className="mt-1 inline-flex items-center gap-1 rounded bg-accent/10 px-2 py-0.5 text-xs font-medium text-accent">
@@ -187,30 +189,25 @@ export function MatchingTab({
                 </span>
               )}
             </div>
-            <button
-              type="button"
-              onClick={() => handleShowCandidates(req.id)}
-              className="ml-3 shrink-0 rounded-lg bg-accent px-3 py-1.5 text-xs font-medium text-white hover:bg-accent/90"
-            >
+            <Button variant="outline" size="sm" className="ml-3 shrink-0" onClick={() => handleShowCandidates(req.id)}>
               {expandedId === req.id ? '닫기' : '후보 보기'}
-            </button>
+            </Button>
           </div>
 
           {expandedId === req.id && (
             <div className="mt-3 border-t border-border pt-3">
               {loading ? (
-                <p className="text-sm text-text-muted">후보 검색 중...</p>
+                <div className="flex flex-col gap-2" aria-label="후보 검색 중">
+                  <Skeleton className="h-14 w-full" />
+                  <Skeleton className="h-14 w-full" />
+                  <Skeleton className="h-14 w-full" />
+                </div>
               ) : candidates.length === 0 ? (
                 <div className="flex flex-col items-center gap-2 py-4">
                   <p className="text-sm text-text-muted">적합한 후보가 없습니다.</p>
-                  <button
-                    type="button"
-                    onClick={() => handleGenerateAi(req.id)}
-                    disabled={generating}
-                    className="rounded-lg bg-info-solid px-4 py-2 text-xs font-medium text-white hover:bg-info-solid/90 disabled:opacity-50"
-                  >
-                    {generating ? 'AI 분석 중...' : 'AI 후보 추천'}
-                  </button>
+                  <Button variant="accent" size="sm" disabled={generating} onClick={() => handleGenerateAi(req.id)}>
+                    <Sparkles className="h-3.5 w-3.5" /> {generating ? 'AI 분석 중…' : 'AI 후보 추천'}
+                  </Button>
                 </div>
               ) : (
                 <div className="flex flex-col gap-2">
@@ -219,19 +216,15 @@ export function MatchingTab({
                       {hasAiCandidates ? 'AI 추천 후보' : '추천 후보 (관심 표현 우선)'}
                     </p>
                     {!hasAiCandidates && (
-                      <button
-                        type="button"
-                        onClick={() => handleGenerateAi(req.id)}
-                        disabled={generating}
-                        className="rounded-lg border border-info/30 bg-info/5 px-3 py-1 text-xs font-medium text-info hover:bg-info/10 disabled:opacity-50"
-                      >
-                        {generating ? 'AI 분석 중...' : 'AI 후보 확정'}
-                      </button>
+                      <Button variant="outline" size="sm" disabled={generating} onClick={() => handleGenerateAi(req.id)}>
+                        <Sparkles className="h-3.5 w-3.5" /> {generating ? 'AI 분석 중…' : 'AI 후보 확정'}
+                      </Button>
                     )}
                   </div>
 
                   {autoAssignAt && (
-                    <div className="flex items-center gap-2 rounded-lg bg-warning/5 border border-warning/20 px-3 py-2">
+                    <div className="flex items-center gap-1.5 rounded-lg border border-warning/20 bg-warning/5 px-3 py-2">
+                      <Clock className="h-3.5 w-3.5 text-warning" />
                       <CountdownTimer targetDate={autoAssignAt} />
                     </div>
                   )}
@@ -239,62 +232,41 @@ export function MatchingTab({
                   {candidates.map((c) => (
                     <div
                       key={c.expert_id}
-                      className={`flex flex-col gap-1 rounded-md p-3 ${
-                        c.interested
-                          ? 'bg-accent/5 border border-accent/20'
-                          : hasAiCandidates && c.rank <= 3
-                            ? 'bg-info/5 border border-info/20'
-                            : 'bg-surface'
+                      className={`flex flex-col gap-1 rounded-lg p-3 ${
+                        c.interested ? 'border border-accent/20 bg-accent/5' : 'border border-border-light bg-surface-warm'
                       }`}
                     >
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-2">
-                          {/* 금·은·동 → 토큰 계열(warning=앰버, surface=중립, accent=브론즈)로 통일 (감사 UX P3-2) */}
+                      <div className="flex items-center justify-between gap-2">
+                        <div className="flex min-w-0 items-center gap-2">
+                          {/* 순위는 무게+앰버로 — 1순위만 강조, 그 외 중립(감사 UX: 색 수렴) */}
                           {hasAiCandidates && c.rank <= 3 && (
-                            <span className={`shrink-0 rounded-full px-2 py-0.5 text-xs font-bold ${
-                              c.rank === 1
-                                ? 'bg-warning-light text-warning'
-                                : c.rank === 2
-                                  ? 'bg-surface text-text-muted'
-                                  : 'bg-accent/10 text-accent'
+                            <span className={`shrink-0 rounded-full px-2 py-0.5 text-xs font-bold tabular-nums ${
+                              c.rank === 1 ? 'bg-accent/15 text-accent' : 'bg-surface text-text-muted'
                             }`}>
                               {RANK_BADGE[c.rank]}
                             </span>
                           )}
-                          <div>
+                          <div className="min-w-0">
                             <span className="font-medium text-text">{c.name || '이름 미등록'}</span>
-                            <span className="ml-2 text-xs text-text-muted">
-                              {c.field} · {c.career_years || 0}년
-                            </span>
+                            <span className="ml-2 text-xs text-text-muted">{c.field} · {c.career_years || 0}년</span>
                             {c.score > 0 && (
-                              <span className="ml-2 rounded bg-info-light px-1.5 py-0.5 text-xs font-medium text-info">
-                                {c.score}점
-                              </span>
+                              <span className="ml-2 rounded bg-surface px-1.5 py-0.5 text-xs font-medium tabular-nums text-text-muted">{c.score}점</span>
                             )}
                             {c.interested && (
-                              <span className="ml-2 rounded bg-accent/10 px-1.5 py-0.5 text-xs font-medium text-accent">
-                                관심 표현
-                              </span>
+                              <span className="ml-2 rounded bg-accent/10 px-1.5 py-0.5 text-xs font-medium text-accent">관심 표현</span>
                             )}
                           </div>
                         </div>
                         {c.status !== 'selected' && c.status !== 'skipped' && (
-                          <button
-                            type="button"
-                            onClick={() => handleAssign(req.id, c.expert_id)}
-                            disabled={assigningExpertId !== null}
-                            className="rounded-lg bg-success-solid px-3 py-1 text-xs font-medium text-white hover:bg-success-solid/90 disabled:opacity-50"
-                          >
-                            {assigningExpertId === c.expert_id
-                              ? '배정 중...'
-                              : hasAiCandidates ? '이 후보로 매칭' : '배정'}
-                          </button>
+                          <Button variant="accent" size="sm" className="shrink-0" disabled={assigningExpertId !== null} onClick={() => handleAssign(req.id, c.expert_id)}>
+                            {assigningExpertId === c.expert_id ? '배정 중…' : hasAiCandidates ? '이 후보로 매칭' : '배정'}
+                          </Button>
                         )}
                         {c.status === 'selected' && (
-                          <span className="rounded-lg bg-success/10 px-3 py-1 text-xs font-medium text-success">선택됨</span>
+                          <span className="shrink-0 rounded-lg bg-primary/10 px-3 py-1 text-xs font-medium text-primary">선택됨</span>
                         )}
                         {c.status === 'skipped' && (
-                          <span className="rounded-lg bg-surface px-3 py-1 text-xs font-medium text-text-subtle">미선택</span>
+                          <span className="shrink-0 rounded-lg bg-surface px-3 py-1 text-xs font-medium text-text-subtle">미선택</span>
                         )}
                       </div>
 
@@ -321,7 +293,7 @@ export function MatchingTab({
               )}
             </div>
           )}
-        </div>
+        </Card>
       ))}
     </div>
   )
