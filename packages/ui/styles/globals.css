@@ -634,10 +634,22 @@ summary {
   0% { transform: scaleX(0.03); }
   100% { transform: scaleX(0.9); }
 }
+
+/* 클릭한 링크/탭/카드 로컬 pending — 전환 중 은은한 펄스(NavProgress가 <a>에 부여/해제).
+   비주얼 전용·레이아웃 무영향(opacity만). reduced-motion 시 정적 딤. */
+.nav-pending {
+  animation: nav-pending-pulse 1s ease-in-out infinite;
+}
+@keyframes nav-pending-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
 @media (prefers-reduced-motion: reduce) {
   /* 모션 없이도 전환은 항상 표시(요구) — 즉시 90%로 세우고 완료 시 페이드만 */
   .nav-progress--active { animation: none; transform: scaleX(0.9); }
   .nav-progress--done { transition: opacity 150ms ease-out; }
+  /* 클릭 요소는 펄스 대신 정적 딤으로 pending 표시 */
+  .nav-pending { animation: none; opacity: 0.6; }
 }
 
 /* 페이지 전환 로딩 — 부엉이 펄스 (RouteLoading) */

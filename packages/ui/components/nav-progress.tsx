@@ -54,16 +54,23 @@ export function NavProgressProvider({ children }: { children: ReactNode }) {
   const startAtRef = useRef(0)
   const timersRef = useRef<ReturnType<typeof setTimeout>[]>([])
   const prevPathRef = useRef(pathname)
+  const markedRef = useRef<Element | null>(null) // 클릭된 <a> — 로컬 pending 펄스 대상
 
   const clearTimers = useCallback(() => {
     timersRef.current.forEach(clearTimeout)
     timersRef.current = []
   }, [])
 
+  const unmark = useCallback(() => {
+    markedRef.current?.classList.remove('nav-pending')
+    markedRef.current = null
+  }, [])
+
   const finish = useCallback(() => {
     if (!activeRef.current) return
     activeRef.current = false
     clearTimers()
+    unmark() // 도착 → 클릭 요소 펄스 해제
     const elapsed = Date.now() - startAtRef.current
     const wait = Math.max(0, MIN_VISIBLE_MS - elapsed)
     const t1 = setTimeout(() => {
@@ -75,7 +82,7 @@ export function NavProgressProvider({ children }: { children: ReactNode }) {
       timersRef.current.push(t2)
     }, wait)
     timersRef.current.push(t1)
-  }, [clearTimers])
+  }, [clearTimers, unmark])
 
   const start = useCallback(
     (href?: string) => {
@@ -98,7 +105,7 @@ export function NavProgressProvider({ children }: { children: ReactNode }) {
   }, [pathname, finish])
 
   // 언마운트 정리
-  useEffect(() => () => clearTimers(), [clearTimers])
+  useEffect(() => () => { clearTimers(); unmark() }, [clearTimers, unmark])
 
   // 전역 위임 클릭 리스너 — 모든 내부 <a> 좌클릭을 자동 감지(capture라 링크 핸들러보다 먼저).
   useEffect(() => {
@@ -120,11 +127,15 @@ export function NavProgressProvider({ children }: { children: ReactNode }) {
       }
       if (url.origin !== window.location.origin) return // 외부/크로스앱 = 전체 로드(브라우저가 표시)
       if (url.pathname === window.location.pathname) return // 동일 경로(해시/쿼리만) = 스킵
+      // 클릭한 <a>에 로컬 pending 펄스 부여(전환 완료/다음 클릭 시 해제) — 컴포넌트 수정 0
+      unmark()
+      anchor.classList.add('nav-pending')
+      markedRef.current = anchor
       start(url.pathname + url.search)
     }
     document.addEventListener('click', onClick, { capture: true })
     return () => document.removeEventListener('click', onClick, { capture: true })
-  }, [start])
+  }, [start, unmark])
 
   return (
     <NavProgressContext.Provider value={{ start, pendingHref }}>
