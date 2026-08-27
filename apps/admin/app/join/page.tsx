@@ -9,8 +9,7 @@ import {
   signInWithKakaoPartner,
   signInWithGooglePartner,
 } from '@jisane/shared/auth/actions'
-import { GoogleIcon } from '@jisane/ui/icons/google'
-import { KakaoIcon } from '@jisane/ui/icons/kakao'
+import { OAuthButtons } from '@jisane/ui/oauth-buttons'
 
 export const metadata = {
   title: '회원가입 | 지사네',
@@ -121,26 +120,13 @@ export default async function JoinPage(props: { searchParams: Promise<{ from?: s
                 ))}
               </ul>
 
-              <div className="mt-5 flex flex-col gap-2">
-                <form action={role.kakao}>
-                  <button
-                    type="submit"
-                    className="flex h-11 w-full items-center justify-center gap-2 rounded-xl bg-[#FEE500] text-sm font-semibold text-[#191919] shadow-sm transition-all hover:bg-[#FDD800] hover:shadow-md btn-press"
-                  >
-                    <KakaoIcon className="h-4 w-4 shrink-0" />
-                    카카오로 시작
-                  </button>
-                </form>
-                <form action={role.google}>
-                  <button
-                    type="submit"
-                    className="flex h-11 w-full items-center justify-center gap-2 rounded-xl border border-border bg-white text-sm font-medium text-[#1f1f1f] shadow-sm transition-all hover:bg-surface hover:shadow-md btn-press"
-                  >
-                    <GoogleIcon className="h-4 w-4 shrink-0" />
-                    Google로 시작
-                  </button>
-                </form>
-              </div>
+              <OAuthButtons
+                signInWithKakao={role.kakao}
+                signInWithGoogle={role.google}
+                size="sm"
+                labelSuffix="시작"
+                className="mt-5 gap-2"
+              />
             </div>
           )
         })}

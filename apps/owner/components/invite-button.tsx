@@ -4,8 +4,7 @@ import { useActionState } from 'react'
 import { createInvitation } from '@/lib/invitation/actions'
 // 초대 수락은 명시적 기업회원 가입 의사 — join=1 콜백으로 owner 행을 생성(/join 튕김 방지).
 import { joinAsOwnerKakao, joinAsOwnerGoogle } from '@jisane/shared/auth/actions'
-import { KakaoIcon } from '@jisane/ui/icons/kakao'
-import { GoogleIcon } from '@jisane/ui/icons/google'
+import { OAuthButtons } from '@jisane/ui/oauth-buttons'
 import { Button } from '@jisane/ui/button'
 
 interface InviteButtonProps {
@@ -25,24 +24,13 @@ export function InviteButton({ expertId, isLoggedIn, alreadyInvited }: InviteBut
         <p className="text-center text-xs text-text-muted">
           로그인하면 이 시니어지식인을 초빙할 수 있어요
         </p>
-        <form action={joinAsOwnerKakao}>
-          <button
-            type="submit"
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-[#FEE500] text-sm font-semibold text-[#191919] shadow-sm transition-all hover:bg-[#FDD800] hover:shadow-md btn-press"
-          >
-            <KakaoIcon className="h-5 w-5 shrink-0" />
-            카카오로 로그인
-          </button>
-        </form>
-        <form action={joinAsOwnerGoogle}>
-          <button
-            type="submit"
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-xl border border-border bg-white text-sm font-medium text-[#1f1f1f] shadow-sm transition-all hover:bg-surface hover:shadow-md btn-press"
-          >
-            <GoogleIcon className="h-5 w-5 shrink-0" />
-            Google로 로그인
-          </button>
-        </form>
+        <OAuthButtons
+          signInWithKakao={joinAsOwnerKakao}
+          signInWithGoogle={joinAsOwnerGoogle}
+          size="md"
+          labelSuffix="로그인"
+          className="gap-2"
+        />
       </div>
     )
   }
