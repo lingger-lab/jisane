@@ -597,6 +597,32 @@ summary {
   66% { transform: translate(-18px, 14px) scale(0.95); }
 }
 
+/* 히어로 패럴럭스 — 스크롤 이탈(exit) 시 배경(컨테이너)은 뒤처지고(lag) 콘텐츠는 더 빨리
+   올라가며 페이드 → 깊이감(랜딩 hero 한정). 블롭 자체 드리프트(blob-float, 자식)는 그대로.
+   view() 타임라인 · @supports · reduced-motion 가드. overflow:hidden(hero-dark)이 넘침 클립. */
+@keyframes hero-bg-parallax {
+  from { transform: translateY(0); }
+  to { transform: translateY(64px); }
+}
+@keyframes hero-content-parallax {
+  from { transform: translateY(0); opacity: 1; }
+  to { transform: translateY(-40px); opacity: 0.55; }
+}
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .hero-backdrop[data-intensity="hero"] {
+      animation: hero-bg-parallax linear both;
+      animation-timeline: view();
+      animation-range: exit;
+    }
+    .hero-parallax-content {
+      animation: hero-content-parallax linear both;
+      animation-timeline: view();
+      animation-range: exit;
+    }
+  }
+}
+
 .hero-eyebrow {
   display: inline-block;
   padding: 6px 14px;
