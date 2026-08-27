@@ -56,6 +56,12 @@
 `로컬(green) → 스테이징(통합·검증) → 프로덕션`. 마이그레이션은 스테이징 먼저(additive·reversible),
 롤백 경로 확인 후 프로드. 배포는 게이트 통과분만. 프로덕션은 실험장이 아니다.
 
+## 5-1. 바로 쓰는 스크립트
+- **스키마 검증** — 마이그레이션 적용 후 `scripts/staging/verify-schema.sql`을 SQL Editor에서 실행
+  → 0039~0042(withdrawn enum·탈퇴 컬럼·real_name·백스톱 유니크 인덱스) 반영 확인.
+- **배포 후 스모크** — `OWNER=… EXPERT=… ADMIN=… bash scripts/staging/smoke-check.sh`
+  → 3앱 도달성 + 공개 라우트 + 감지 마커 자동 점검(로그인/결제는 E2E로).
+
 ## 6. 스모크 체크리스트 (스테이징 배포 후)
 - [ ] 3역할 가입(/join) × 카카오·구글 = 6조합
 - [ ] 회원전환(부족정보만 입력) · 탈퇴 → 재로그인 → 재활성
