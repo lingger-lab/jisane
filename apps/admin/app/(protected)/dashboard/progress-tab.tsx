@@ -5,6 +5,7 @@ import { Wrench } from 'lucide-react'
 import Link from 'next/link'
 import { WorkflowChecklist } from '@jisane/ui/workflow-checklist'
 import { CharLimitNotice } from '@jisane/ui/char-limit-notice'
+import { Skeleton } from '@jisane/ui/skeleton'
 import { getMessagesForDeal } from '@/lib/admin/actions'
 import { sendAdminMessage } from '@/lib/admin/message-actions'
 import type { DealWorkflowRow } from '@jisane/shared/types'
@@ -196,7 +197,11 @@ export function ProgressTab({
             {expandedMsgId === deal.id && (
               <div className="mt-3 border-t border-border pt-3">
                 {msgLoading ? (
-                  <p className="text-sm text-text-muted">메시지 로딩 중...</p>
+                  <div className="mb-3 flex flex-col gap-2" aria-label="메시지 불러오는 중" aria-busy="true">
+                    <Skeleton className="h-10 w-3/4" />
+                    <Skeleton className="h-10 w-2/3 self-end" />
+                    <Skeleton className="h-10 w-1/2" />
+                  </div>
                 ) : msgError ? (
                   <div className="mb-2" role="alert">
                     <p className="text-xs text-error">{msgError} 잠시 후 다시 시도해주세요.</p>
