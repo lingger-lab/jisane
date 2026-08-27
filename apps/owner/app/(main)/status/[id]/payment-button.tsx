@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { Button } from '@jisane/ui/button'
 
 interface PaymentButtonProps {
   dealId: string
@@ -91,20 +92,21 @@ export function PaymentButton({ dealId, amount, enabled, freeMode, onError }: Pa
   }
 
   return (
-    <button
+    <Button
       type="button"
+      variant="accent"
       onClick={handlePay}
       disabled={pending}
-      className="btn-press focus-ring w-full flex-1 rounded-xl bg-accent px-4 py-3 font-semibold text-white shadow-sm transition-all hover:bg-accent/90 hover:shadow-md disabled:opacity-50"
+      className="h-12 w-full flex-1 font-semibold shadow-sm hover:shadow-md"
     >
       {pending ? (
-        <span className="flex items-center justify-center gap-2">
+        <>
           <span className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
           결제창 여는 중...
-        </span>
+        </>
       ) : (
         '견적 승인 · 결제'
       )}
-    </button>
+    </Button>
   )
 }

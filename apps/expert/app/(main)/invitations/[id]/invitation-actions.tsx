@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useActionState } from 'react'
+import { Button } from '@jisane/ui/button'
 import { acceptInvitation, declineInvitation } from '@/lib/invitation/actions'
 
 interface InvitationActionsProps {
@@ -71,13 +72,14 @@ export function InvitationActions({ invitationId, hourlyRate }: InvitationAction
       <form action={acceptAction}>
         <input type="hidden" name="invitation_id" value={invitationId} />
         <input type="hidden" name="est_hours" value={estHours} />
-        <button
+        <Button
           type="submit"
+          variant="accent"
           disabled={isAccepting || !estHours || parseInt(estHours, 10) < 1}
-          className="flex h-12 w-full items-center justify-center rounded-xl bg-accent text-sm font-semibold text-white shadow-sm transition-all hover:bg-accent/90 btn-press disabled:opacity-50 disabled:cursor-not-allowed"
+          className="h-12 w-full font-semibold shadow-sm"
         >
           {isAccepting ? '수락 처리 중...' : '초빙 수락'}
-        </button>
+        </Button>
         {acceptState.error && (
           <p className="mt-2 text-center text-xs text-error">{acceptState.error}</p>
         )}
@@ -85,32 +87,19 @@ export function InvitationActions({ invitationId, hourlyRate }: InvitationAction
 
       {/* 거절 버튼 */}
       {!showDeclineConfirm ? (
-        <button
-          type="button"
-          onClick={() => setShowDeclineConfirm(true)}
-          className="flex h-10 w-full items-center justify-center rounded-xl border border-border-light text-sm font-medium text-text-muted transition-colors hover:bg-surface"
-        >
+        <Button type="button" variant="outline" onClick={() => setShowDeclineConfirm(true)} className="h-10 w-full">
           거절하기
-        </button>
+        </Button>
       ) : (
         <div className="rounded-xl border border-error/20 bg-error/5 p-4">
           <p className="text-sm text-text">정말 이 초빙을 거절하시겠습니까?</p>
           <div className="mt-3 flex gap-2">
-            <button
-              type="button"
-              onClick={handleDecline}
-              disabled={declining}
-              className="flex-1 rounded-lg bg-error-solid px-4 py-2 text-sm font-medium text-white hover:bg-error-solid/90 disabled:opacity-50"
-            >
+            <Button type="button" variant="danger" size="sm" onClick={handleDecline} disabled={declining} className="flex-1">
               {declining ? '거절 중...' : '거절 확인'}
-            </button>
-            <button
-              type="button"
-              onClick={() => setShowDeclineConfirm(false)}
-              className="flex-1 rounded-lg border border-border-light px-4 py-2 text-sm font-medium text-text-muted hover:bg-surface"
-            >
+            </Button>
+            <Button type="button" variant="outline" size="sm" onClick={() => setShowDeclineConfirm(false)} className="flex-1">
               취소
-            </button>
+            </Button>
           </div>
           {declineError && (
             <p className="mt-2 text-center text-xs text-error" role="alert">{declineError}</p>

@@ -6,6 +6,7 @@ import { createInvitation } from '@/lib/invitation/actions'
 import { joinAsOwnerKakao, joinAsOwnerGoogle } from '@jisane/shared/auth/actions'
 import { KakaoIcon } from '@jisane/ui/icons/kakao'
 import { GoogleIcon } from '@jisane/ui/icons/google'
+import { Button } from '@jisane/ui/button'
 
 interface InviteButtonProps {
   expertId: string
@@ -48,26 +49,18 @@ export function InviteButton({ expertId, isLoggedIn, alreadyInvited }: InviteBut
 
   if (alreadyInvited) {
     return (
-      <button
-        type="button"
-        disabled
-        className="flex h-12 w-full items-center justify-center rounded-xl bg-surface text-sm font-semibold text-text-muted cursor-not-allowed"
-      >
+      <Button type="button" variant="outline" disabled className="h-12 w-full">
         초빙 완료 (대기 중)
-      </button>
+      </Button>
     )
   }
 
   return (
     <form action={action}>
       <input type="hidden" name="expert_id" value={expertId} />
-      <button
-        type="submit"
-        disabled={isPending}
-        className="flex h-12 w-full items-center justify-center rounded-xl bg-accent text-sm font-semibold text-white shadow-sm transition-all hover:bg-accent/90 hover:shadow-md btn-press disabled:opacity-50 disabled:cursor-not-allowed"
-      >
+      <Button type="submit" variant="accent" disabled={isPending} className="h-12 w-full shadow-sm hover:shadow-md">
         {isPending ? '초빙 요청 중...' : '이 시니어지식인 초빙하기'}
-      </button>
+      </Button>
       {state.error && (
         <p className="mt-2 text-center text-xs text-error">{state.error}</p>
       )}

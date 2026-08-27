@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { createClient } from '@jisane/shared/supabase/server'
 import { adminClient } from '@jisane/shared/supabase/admin'
 import { PageHero } from '@jisane/ui/page-hero'
+import { Button } from '@jisane/ui/button'
 import { reactivateOwnerSelf } from '@/lib/profile/actions'
 
 export const metadata = { title: '계정 재활성 | 지사네' }
@@ -28,12 +29,9 @@ export default async function RejoinPage() {
             회사 정보는 마이페이지에서 새로 입력해 주세요. 지난 거래·정산 기록은 그대로 보존됩니다.
           </p>
           <form action={reactivateOwnerSelf} className="mt-5">
-            <button
-              type="submit"
-              className="w-full rounded-xl bg-primary px-6 py-3 text-sm font-semibold text-white shadow-sm transition-all hover:bg-primary-light hover:shadow-md btn-press"
-            >
+            <Button type="submit" variant="primary" className="h-12 w-full shadow-sm hover:shadow-md">
               계정 재활성하기
-            </button>
+            </Button>
           </form>
           <Link href="/" className="mt-3 block text-center text-xs text-text-subtle hover:text-text-muted transition-colors">
             나중에 하기
