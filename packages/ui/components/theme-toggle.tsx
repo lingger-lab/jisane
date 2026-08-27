@@ -12,8 +12,8 @@ const ICONS: Record<Theme, typeof Sun> = { light: Sun, dark: Moon, system: Monit
 
 /**
  * 테마 토글 — 라이트 → 다크 → 시스템 순환. localStorage('theme')에 지속.
- * 명시 선택은 <html data-theme>로 스탬프, '시스템'은 속성 제거 → prefers-color-scheme 추종.
- * 초기값은 'system'이라 서버/첫 클라이언트 렌더가 일치(하이드레이션 안전) — 마운트 후 저장값 반영.
+ * 세 값 모두 <html data-theme>로 스탬프. '시스템'은 data-theme="system"→[data-theme=system]에서만
+ * OS(prefers-color-scheme) 추종. 기본(미저장)은 스탬프 없이도 :root 라이트가 유지된다.
  * 페인트 전 실제 적용은 각 앱 layout <head>의 인라인 스크립트가 담당(플래시 방지).
  */
 export function ThemeToggle({ className }: { className?: string }) {
@@ -27,14 +27,10 @@ export function ThemeToggle({ className }: { className?: string }) {
 
   function apply(next: Theme) {
     setTheme(next)
-    if (next === 'system') {
-      // 'system'은 명시 저장(재로드 시에도 OS 추종 유지) + 속성 제거해 media query가 결정
-      localStorage.setItem('theme', 'system')
-      document.documentElement.removeAttribute('data-theme')
-    } else {
-      localStorage.setItem('theme', next)
-      document.documentElement.setAttribute('data-theme', next)
-    }
+    // 'system'도 명시 스탬프(data-theme="system") — media query는 [data-theme="system"]에서만
+    // OS를 따른다. 속성을 지우면 기본(라이트)이 되므로 system은 반드시 스탬프해야 OS 추종.
+    localStorage.setItem('theme', next)
+    document.documentElement.setAttribute('data-theme', next)
   }
 
   const nextTheme = ORDER[(ORDER.indexOf(theme) + 1) % ORDER.length]

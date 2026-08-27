@@ -85,13 +85,13 @@
 /* ──────────────────────────────────────────────────────────────────────────
    다크모드 — 토큰만 오버라이드(컴포넌트는 전부 토큰 참조 → 자동 추종).
    아티팩트 다크 팔레트 기반 + AA 미세조정(node 대비검증 ALL PASS, docs 스크립트).
-   패턴: :root=라이트 기준. system 다크는 :root:not([data-theme="light"])로,
-   명시 다크는 [data-theme="dark"]로 적용. 명시 라이트(system 다크 무시)는
-   :root 기준값이 그대로 유효(가드로 media 미적용) → 별도 재선언 불필요.
+   패턴: :root=라이트 기준(모든 디스플레이 기본). system 다크는 **명시 opt-in**
+   :root[data-theme="system"]로만 OS 추종 → data-theme 미지정(기본)은 다크폰에서도
+   항상 라이트(첫 페인트·JS 미실행에도 안전). 명시 다크는 [data-theme="dark"].
    시맨틱 -solid(흰 글자 버튼)은 :root값(어두운 saturated) 상속 유지 → 다크서도 흰 글자 AA 보존.
    ────────────────────────────────────────────────────────────────────────── */
 @media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) {
+  :root[data-theme="system"] {
     --background: #171310;
     --foreground: #f2ede2;
     --primary: #34996f;
