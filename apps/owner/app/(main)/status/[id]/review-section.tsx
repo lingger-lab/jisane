@@ -90,7 +90,7 @@ export function ReviewSection({ dealId, existingReview }: ReviewSectionProps) {
       {error && <p className="mb-2 text-xs text-error" role="alert" aria-live="polite">{error}</p>}
 
       <form action={handleSubmit}>
-        <SubmitButton className="w-full rounded-xl bg-accent px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-accent/90 disabled:opacity-50">
+        <SubmitButton variant="accent" className="w-full">
           리뷰 제출
         </SubmitButton>
       </form>

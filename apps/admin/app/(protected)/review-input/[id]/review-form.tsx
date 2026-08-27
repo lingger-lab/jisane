@@ -240,7 +240,7 @@ export function ReviewForm({
           />
         </div>
 
-        <SubmitButton className="w-full rounded-lg bg-accent py-3 text-sm font-semibold text-white hover:bg-accent/90 disabled:opacity-50">
+        <SubmitButton variant="accent" className="h-12 w-full">
           리뷰 저장
         </SubmitButton>
       </form>

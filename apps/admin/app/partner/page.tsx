@@ -6,8 +6,8 @@ import {
   signInWithKakaoPartner,
 } from '@jisane/shared/auth/actions'
 import { getProviderByAuthUser } from '@jisane/shared/provider/auth'
-import { GoogleIcon } from '@jisane/ui/icons/google'
-import { KakaoIcon } from '@jisane/ui/icons/kakao'
+import { OAuthButtons } from '@jisane/ui/oauth-buttons'
+import { Button } from '@jisane/ui/button'
 import { EXPERT_URL } from '@/lib/urls'
 
 export const metadata = {
@@ -64,26 +64,11 @@ export default async function PartnerHome() {
             <p className="mb-4 text-center text-sm font-semibold text-text">
               전문가회원 계정으로 로그인하고 시작하세요
             </p>
-            <div className="flex flex-col gap-3">
-              <form action={signInWithKakaoPartner}>
-                <button
-                  type="submit"
-                  className="flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-[#FEE500] text-sm font-semibold text-[#191919] shadow-sm transition-all hover:bg-[#FDD800] hover:shadow-md btn-press"
-                >
-                  <KakaoIcon className="h-5 w-5 shrink-0" />
-                  카카오로 시작하기
-                </button>
-              </form>
-              <form action={signInWithGooglePartner}>
-                <button
-                  type="submit"
-                  className="flex h-12 w-full items-center justify-center gap-2 rounded-xl border border-border bg-white text-sm font-medium text-[#1f1f1f] shadow-sm transition-all hover:bg-surface hover:shadow-md btn-press"
-                >
-                  <GoogleIcon className="h-5 w-5 shrink-0" />
-                  Google로 시작하기
-                </button>
-              </form>
-            </div>
+            <OAuthButtons
+              signInWithKakao={signInWithKakaoPartner}
+              signInWithGoogle={signInWithGooglePartner}
+              size="md"
+            />
           </>
         ) : !provider ? (
           <div className="text-center">
@@ -119,12 +104,9 @@ export default async function PartnerHome() {
               문의: iamblackwhite86@gmail.com
             </p>
             {/* dual-role 허용 — 반려/중지여도 시니어지식인(전문가)으로는 활동 가능 */}
-            <a
-              href={EXPERT_URL}
-              className="mt-4 inline-block rounded-xl bg-accent px-6 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-accent/90"
-            >
-              시니어지식인으로 가입하기 &rarr;
-            </a>
+            <Button asChild variant="accent" className="mt-4 px-6">
+              <a href={EXPERT_URL}>시니어지식인으로 가입하기 &rarr;</a>
+            </Button>
           </div>
         )}
       </section>
