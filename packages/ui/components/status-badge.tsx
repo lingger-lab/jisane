@@ -8,6 +8,7 @@ import {
   DISPUTE_STATUS_LABELS,
   PROVIDER_STATUS_LABELS,
   PACKAGE_STATUS_LABELS,
+  MEMBER_STATUS_LABELS,
 } from '@jisane/shared/labels'
 import {
   REQUEST_STATUS_BADGE_CLASSES,
@@ -18,6 +19,7 @@ import {
   DISPUTE_STATUS_BADGE_CLASSES,
   PROVIDER_STATUS_BADGE_CLASSES,
   PACKAGE_STATUS_BADGE_CLASSES,
+  MEMBER_STATUS_BADGE_CLASSES,
 } from '@jisane/shared/status-badges'
 import { cn } from '../lib/cn'
 
@@ -35,6 +37,7 @@ export type StatusKind =
   | 'dispute'
   | 'provider'
   | 'package'
+  | 'member'
 
 const MAPS: Record<StatusKind, readonly [Record<string, string>, Record<string, string>]> = {
   request: [REQUEST_STATUS_LABELS, REQUEST_STATUS_BADGE_CLASSES],
@@ -45,6 +48,7 @@ const MAPS: Record<StatusKind, readonly [Record<string, string>, Record<string, 
   dispute: [DISPUTE_STATUS_LABELS, DISPUTE_STATUS_BADGE_CLASSES],
   provider: [PROVIDER_STATUS_LABELS, PROVIDER_STATUS_BADGE_CLASSES],
   package: [PACKAGE_STATUS_LABELS, PACKAGE_STATUS_BADGE_CLASSES],
+  member: [MEMBER_STATUS_LABELS, MEMBER_STATUS_BADGE_CLASSES],
 }
 
 export interface StatusBadgeProps extends React.HTMLAttributes<HTMLSpanElement> {

@@ -7,6 +7,8 @@ import { ArrowLeft, ArrowRight, Check, X, UserX, RotateCcw } from 'lucide-react'
 import { useConfirmDialog } from '@jisane/ui/confirm-dialog'
 import { Card } from '@jisane/ui/card'
 import { Button } from '@jisane/ui/button'
+import { StatusBadge } from '@jisane/ui/status-badge'
+import { MEMBER_STATUS_LABELS } from '@jisane/shared/labels'
 import {
   updateOwnerStatus,
   updateExpertStatus,
@@ -20,25 +22,6 @@ export type MemberRole = 'owner' | 'expert' | 'provider'
 
 const ROLE_LABEL: Record<MemberRole, string> = { owner: '기업회원', expert: '시니어지식인', provider: '전문가회원' }
 const ROLE_ROUTE: Record<MemberRole, string> = { owner: 'owner', expert: 'expert', provider: 'partner' }
-
-const STATUS_LABEL: Record<string, string> = {
-  active: '활성',
-  inactive: '비활성',
-  waiting: '대기',
-  suspended: '중지',
-  pending: '승인대기',
-  rejected: '반려',
-  withdrawn: '탈퇴',
-}
-const STATUS_COLOR: Record<string, string> = {
-  active: 'bg-primary/10 text-primary',
-  inactive: 'bg-surface text-text-muted',
-  waiting: 'bg-warning-light text-warning',
-  suspended: 'bg-error-light text-error',
-  pending: 'bg-warning-light text-warning',
-  rejected: 'bg-error-light text-error',
-  withdrawn: 'bg-surface text-text-subtle',
-}
 
 // 역할별 관리자가 설정 가능한 상태 전이(탈퇴/승인대기 제외 — 탈퇴는 강제탈퇴 액션으로).
 const STATUS_ACTIONS: Record<MemberRole, { value: string; label: string; danger?: boolean }[]> = {
@@ -75,14 +58,6 @@ export interface MemberDetailProps {
   holdings: RoleHolding[]
 }
 
-function StatusBadge({ status }: { status: string }) {
-  return (
-    <span className={`shrink-0 rounded-full px-2.5 py-0.5 text-xs font-medium ${STATUS_COLOR[status] || STATUS_COLOR.inactive}`}>
-      {STATUS_LABEL[status] || status}
-    </span>
-  )
-}
-
 function SectionTitle({ children }: { children: React.ReactNode }) {
   return <h2 className="mb-3 text-sm font-semibold text-text">{children}</h2>
 }
@@ -106,7 +81,7 @@ export function MemberDetail({ role, id, authUserId, title, status, profileRows,
     if (
       !(await ask({
         title: '상태 변경',
-        message: `${title} 회원을 '${STATUS_LABEL[next] || next}' 상태로 변경할까요?`,
+        message: `${title} 회원을 '${MEMBER_STATUS_LABELS[next] || next}' 상태로 변경할까요?`,
         danger: next === 'inactive' || next === 'suspended' || next === 'rejected',
       }))
     )
@@ -173,7 +148,7 @@ export function MemberDetail({ role, id, authUserId, title, status, profileRows,
           <p className="text-xs text-text-subtle">{ROLE_LABEL[role]}</p>
           <h1 className="truncate text-xl font-serif font-bold text-text">{title}</h1>
         </div>
-        <StatusBadge status={status} />
+        <StatusBadge kind="member" status={status} />
       </div>
 
       {error && <p className="mb-4 text-sm text-error" role="alert" aria-live="polite">{error}</p>}
@@ -202,7 +177,7 @@ export function MemberDetail({ role, id, authUserId, title, status, profileRows,
                   {h.id ? <Check className="h-4 w-4 text-primary" /> : <X className="h-4 w-4 text-text-subtle" />}
                   {ROLE_LABEL[h.role]}
                 </span>
-                {h.id && h.status && <StatusBadge status={h.status} />}
+                {h.id && h.status && <StatusBadge kind="member" status={h.status} />}
               </div>
               {h.id ? (
                 h.role !== role && (

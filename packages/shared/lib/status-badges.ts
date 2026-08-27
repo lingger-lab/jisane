@@ -59,3 +59,14 @@ export const PROVIDER_STATUS_BADGE_CLASSES: Record<string, string> = {
   rejected: 'bg-error-light text-error',
   suspended: 'bg-surface text-text-subtle',
 }
+
+/** 회원 계정 상태 배지 — 색 무변경(AA 동결). MEMBER_STATUS_LABELS와 쌍. */
+export const MEMBER_STATUS_BADGE_CLASSES: Record<string, string> = {
+  active: 'bg-primary/10 text-primary',
+  inactive: 'bg-surface text-text-muted',
+  waiting: 'bg-warning-light text-warning',
+  suspended: 'bg-error-light text-error',
+  pending: 'bg-warning-light text-warning',
+  rejected: 'bg-error-light text-error',
+  withdrawn: 'bg-surface text-text-subtle',
+}

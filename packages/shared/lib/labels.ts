@@ -103,6 +103,17 @@ export const PACKAGE_STATUS_LABELS: Record<string, string> = {
   archived: '보관',
 }
 
+/** 회원 계정 상태 — owner·expert·provider 세 역할의 상태 합집합(관리자 회원 상세 공용) */
+export const MEMBER_STATUS_LABELS: Record<string, string> = {
+  active: '활성',
+  inactive: '비활성',
+  waiting: '대기',
+  suspended: '중지',
+  pending: '승인대기',
+  rejected: '반려',
+  withdrawn: '탈퇴',
+}
+
 export const PROVIDER_KIND_LABELS: Record<string, string> = {
   company: '기업',
   senior: '시니어지식인',
