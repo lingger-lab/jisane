@@ -88,6 +88,7 @@ export function SuccessToast() {
 
 const ERROR_MESSAGES = {
   unauthorized: '로그인이 필요합니다',
+  login_required: '회원가입·로그인 후 이용할 수 있습니다',
   forbidden: '접근 권한이 없습니다',
   not_found: '요청한 정보를 찾을 수 없습니다',
   payment_failed: '결제에 실패했습니다',
