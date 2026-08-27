@@ -105,7 +105,7 @@ export function SplashOverlay() {
             ref={buttonRef}
             type="button"
             onClick={handleEnter}
-            className="rounded-xl bg-primary px-10 py-3.5 text-base font-semibold text-white shadow-md transition-all hover:bg-primary-light hover:shadow-lg hover:-translate-y-0.5 btn-press"
+            className="focus-ring rounded-xl bg-primary px-10 py-3.5 text-base font-semibold text-white shadow-md transition-all hover:bg-primary-light hover:shadow-lg hover:-translate-y-0.5 btn-press"
           >
             시작하기 &rarr;
           </button>

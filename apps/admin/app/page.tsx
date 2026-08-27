@@ -49,7 +49,7 @@ export default async function AdminHome() {
   return (
     <div className="landing-snap flex flex-1 flex-col">
       {/* 네비게이션 */}
-      <nav className="container-marketing flex items-center justify-end gap-3 px-4 md:px-6 py-2">
+      <nav className="container-app flex items-center justify-end gap-3 px-4 md:px-6 py-2">
         <Link href="/ax" className="text-xs text-text-muted hover:text-text transition-colors">AX 전환</Link>
         <Link href="/service" className="text-xs text-text-muted hover:text-text transition-colors">서비스 안내</Link>
         {isAdmin && (
