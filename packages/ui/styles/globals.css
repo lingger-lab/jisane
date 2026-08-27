@@ -614,8 +614,11 @@ summary {
   position: fixed;
   inset-inline: 0;
   top: 0;
-  height: 2px;
-  background: var(--primary);
+  height: 4px;
+  /* 앰버 액센트 — 딥그린 hero-dark 최상단·크림 본문 양쪽에서 대비 확보(딥그린 바는 hero에 묻힘).
+     글로우로 얇은 바의 가시성·움직임 인지 강화. */
+  background: var(--accent);
+  box-shadow: 0 0 8px 0 var(--accent), 0 0 2px 0 var(--accent);
   transform-origin: left center;
   z-index: 100;
   pointer-events: none;
