@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { sendDealInquiry } from '@/lib/message/actions'
 import { SubmitButton } from '@jisane/ui/submit-button'
+import { Button } from '@jisane/ui/button'
 import { calcPayableAmount, calcVat } from '@jisane/shared/pricing'
 import { PaymentButton } from './payment-button'
 
@@ -120,13 +121,9 @@ export function QuoteSection({ deal, expert, paymentEnabled, freeModeEnabled }: 
           onError={setError}
         />
         {!showInquiry && !inquirySent && (
-          <button
-            type="button"
-            onClick={() => setShowInquiry(true)}
-            className="flex items-center justify-center rounded-xl border border-border-light px-4 py-3 text-sm text-text-muted transition-colors hover:bg-surface"
-          >
+          <Button type="button" variant="outline" onClick={() => setShowInquiry(true)} className="h-12">
             금액 상의
-          </button>
+          </Button>
         )}
       </div>
 
@@ -144,16 +141,12 @@ export function QuoteSection({ deal, expert, paymentEnabled, freeModeEnabled }: 
             className="w-full resize-none rounded-xl border border-border-light bg-background px-3 py-2 text-sm text-text placeholder:text-text-subtle focus:border-primary focus:ring-1 focus:ring-primary/20 focus:outline-none transition-colors"
           />
           <div className="flex gap-2">
-            <SubmitButton className="flex-1 rounded-xl bg-accent px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-accent/90 disabled:opacity-50">
+            <SubmitButton variant="accent" size="sm" className="flex-1">
               메시지 전송
             </SubmitButton>
-            <button
-              type="button"
-              onClick={() => { setShowInquiry(false); setInquiryText('') }}
-              className="rounded-xl border border-border-light px-4 py-2 text-sm text-text-muted transition-colors"
-            >
+            <Button type="button" variant="outline" size="sm" onClick={() => { setShowInquiry(false); setInquiryText('') }}>
               취소
-            </button>
+            </Button>
           </div>
         </form>
       )}

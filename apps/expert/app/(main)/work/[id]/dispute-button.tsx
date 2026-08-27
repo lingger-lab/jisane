@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { Button } from '@jisane/ui/button'
 
 interface ReviewDisputeButtonProps {
   reviewId: string
@@ -76,21 +77,23 @@ export function ReviewDisputeButton({ reviewId, hasOpenDispute }: ReviewDisputeB
             <p className="text-xs text-error">{result.error}</p>
           )}
           <div className="flex gap-2">
-            <button
+            <Button
               type="button"
+              variant="danger"
+              size="sm"
               onClick={handleSubmit}
               disabled={submitting || !reason.trim()}
-              className="rounded-lg bg-error-solid px-4 py-2 text-sm font-medium text-white disabled:opacity-50"
             >
               {submitting ? '접수 중...' : '이의제기 접수'}
-            </button>
-            <button
+            </Button>
+            <Button
               type="button"
+              variant="outline"
+              size="sm"
               onClick={() => { setOpen(false); setReason(''); setResult(null) }}
-              className="rounded-lg border border-border px-4 py-2 text-sm text-text-muted"
             >
               취소
-            </button>
+            </Button>
           </div>
         </div>
       )}

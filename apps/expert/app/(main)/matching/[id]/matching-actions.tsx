@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { acceptMatching, rejectMatching } from '@/lib/matching/actions'
 import { sendMatchingInquiry } from '@/lib/message/actions'
 import { SubmitButton } from '@jisane/ui/submit-button'
+import { Button } from '@jisane/ui/button'
 
 interface MatchingActionsProps {
   matchingId: string
@@ -47,7 +48,7 @@ export function MatchingActions({ matchingId }: MatchingActionsProps) {
       {error && <p className="text-sm text-error" role="alert" aria-live="polite">{error}</p>}
 
       <form action={handleAccept}>
-        <SubmitButton variant="accent" className="w-full rounded-xl px-4 py-3 font-semibold shadow-sm hover:shadow-md">
+        <SubmitButton variant="accent" className="h-12 w-full font-semibold shadow-sm hover:shadow-md">
           수락
         </SubmitButton>
       </form>
@@ -77,31 +78,28 @@ export function MatchingActions({ matchingId }: MatchingActionsProps) {
           />
           <div className="flex gap-2">
             <form action={handleSendInquiry} className="flex-1">
-              <SubmitButton className="w-full rounded-lg bg-accent px-4 py-2 text-sm font-medium text-white hover:bg-accent/90 disabled:opacity-50">
+              <SubmitButton variant="accent" size="sm" className="w-full">
                 전송
               </SubmitButton>
             </form>
-            <button
+            <Button
               type="button"
+              variant="outline"
+              size="sm"
               onClick={() => { setShowInquiry(false); setInquiryText('') }}
-              className="rounded-lg border border-border-light px-4 py-2 text-sm text-text-muted hover:bg-surface"
             >
               취소
-            </button>
+            </Button>
           </div>
         </div>
       ) : (
-        <button
-          type="button"
-          onClick={() => setShowInquiry(true)}
-          className="w-full rounded-xl border border-border-light px-4 py-3 text-sm text-text-muted transition-colors hover:bg-surface"
-        >
+        <Button type="button" variant="outline" onClick={() => setShowInquiry(true)} className="h-12 w-full">
           조건 상의
-        </button>
+        </Button>
       )}
 
       <form action={handleReject}>
-        <SubmitButton className="w-full rounded-xl border border-border-light px-4 py-3 text-sm text-text-muted transition-colors hover:bg-surface disabled:opacity-50">
+        <SubmitButton variant="outline" className="h-12 w-full">
           거절
         </SubmitButton>
       </form>

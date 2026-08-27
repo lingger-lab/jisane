@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { confirmDeal, requestRevision } from '@/lib/deal/actions'
 import { sendDealInquiry } from '@/lib/message/actions'
 import { SubmitButton } from '@jisane/ui/submit-button'
+import { Button } from '@jisane/ui/button'
 
 interface InspectionSectionProps {
   dealId: string
@@ -55,20 +56,16 @@ export function InspectionSection({ dealId }: InspectionSectionProps) {
         )}
         {/* 검수완료 */}
         <form action={handleConfirm}>
-          <SubmitButton className="w-full rounded-xl bg-success-solid px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-success-solid/90 disabled:opacity-50">
+          <SubmitButton variant="success" className="w-full">
             검수완료
           </SubmitButton>
         </form>
 
         {/* 수정요청 */}
         {!showRevisionForm ? (
-          <button
-            type="button"
-            onClick={() => setShowRevisionForm(true)}
-            className="w-full rounded-xl border border-border-light px-4 py-2.5 text-sm text-text-muted transition-colors hover:bg-surface"
-          >
+          <Button type="button" variant="outline" onClick={() => setShowRevisionForm(true)} className="w-full">
             수정요청
-          </button>
+          </Button>
         ) : (
           <form action={handleRevision} className="flex flex-col gap-2">
             <textarea
@@ -83,19 +80,20 @@ export function InspectionSection({ dealId }: InspectionSectionProps) {
               <p className="text-xs text-error">{revisionError}</p>
             )}
             <div className="flex gap-2">
-              <SubmitButton className="flex-1 rounded-xl bg-warning-solid px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-warning-solid/90 disabled:opacity-50">
+              <SubmitButton variant="warning" size="sm" className="flex-1">
                 수정 요청 전송
               </SubmitButton>
-              <button
+              <Button
                 type="button"
+                variant="outline"
+                size="sm"
                 onClick={() => {
                   setShowRevisionForm(false)
                   setRevisionError(null)
                 }}
-                className="rounded-xl border border-border-light px-4 py-2 text-sm text-text-muted transition-colors"
               >
                 취소
-              </button>
+              </Button>
             </div>
           </form>
         )}
@@ -133,16 +131,17 @@ export function InspectionSection({ dealId }: InspectionSectionProps) {
             />
             {issueError && <p className="text-xs text-error">{issueError}</p>}
             <div className="flex gap-2">
-              <SubmitButton className="flex-1 rounded-xl bg-error-solid px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-error-solid/90 disabled:opacity-50">
+              <SubmitButton variant="danger" size="sm" className="flex-1">
                 문제신고 전송
               </SubmitButton>
-              <button
+              <Button
                 type="button"
+                variant="outline"
+                size="sm"
                 onClick={() => { setShowIssueForm(false); setIssueText(''); setIssueError(null) }}
-                className="rounded-xl border border-border-light px-4 py-2 text-sm text-text-muted transition-colors"
               >
                 취소
-              </button>
+              </Button>
             </div>
           </form>
         )}
