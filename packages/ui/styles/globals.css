@@ -741,6 +741,34 @@ summary {
   }
 }
 
+/* 랜딩 스크롤 스냅 — proximity(자유 스크롤 보존, 근처에서만 "탁" 안착). :has로 랜딩 페이지 한정
+   → 다른 화면 스크롤 무영향. reduced-motion 시 스냅 없음. snap-section=스냅 타깃(헤더 높이 보정). */
+@supports selector(:has(*)) {
+  @media (prefers-reduced-motion: no-preference) {
+    html:has(.landing-snap) { scroll-snap-type: y proximity; }
+  }
+}
+.snap-section {
+  scroll-snap-align: start;
+  scroll-margin-top: 3.5rem; /* sticky 앱헤더 높이 보정 — 섹션 top이 헤더에 가리지 않게 */
+}
+
+/* 카드 스태거 리빌 — 컨테이너 .reveal-cards, 자식 카드가 진입 시 rise+scale(스크롤 연동).
+   수직 위치차로 자연 스태거. @supports·reduced-motion 가드. 미지원/reduced-motion=정상 표시. */
+@keyframes reveal-card {
+  from { opacity: 0; transform: translateY(24px) scale(0.98); }
+  to { opacity: 1; transform: none; }
+}
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .reveal-cards > * {
+      animation: reveal-card linear both;
+      animation-timeline: view();
+      animation-range: entry 0% cover 12%;
+    }
+  }
+}
+
 /* iOS safe area 지원 */
 @supports (padding-bottom: env(safe-area-inset-bottom)) {
   .pb-safe {

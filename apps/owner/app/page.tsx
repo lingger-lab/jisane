@@ -54,9 +54,9 @@ export default async function OwnerHome() {
   const landingServices = featuredServices.length > 0 ? featuredServices : services.slice(0, 3)
 
   return (
-    <div className="flex flex-1 flex-col items-center">
+    <div className="landing-snap flex flex-1 flex-col items-center">
       {/* [1] 히어로 — 브랜드 딥그린 다크 밴드 */}
-      <div className="hero-dark w-full">
+      <div className="hero-dark w-full snap-section">
         <HeroBackdrop intensity="hero" />
         <section className="hero-parallax-content container-marketing relative z-10 flex flex-col items-center gap-4 px-4 md:px-6 pt-14 md:pt-20 pb-12 md:pb-16 text-center">
           <span className="hero-eyebrow animate-slide-up stagger-1">기업의 곁에, 언제나 당신곁에</span>
@@ -77,10 +77,10 @@ export default async function OwnerHome() {
       </div>
 
       {/* [2] ① 기업 운영 전문 서비스 */}
-      <ScrollReveal className="w-full">
+      <ScrollReveal className="w-full snap-section">
         <section className="container-marketing px-4 md:px-6 py-8 md:py-12">
           <SectionHeader num={1} tone="primary" title="기업 운영 전문 서비스" subtitle="기업 운영에 필요한 전문 서비스 신청" />
-          <div className="flex flex-col gap-3">
+          <div className="reveal-cards flex flex-col gap-3">
             {landingServices.map((pkg) => (
               <Link
                 key={pkg.slug}
@@ -109,7 +109,7 @@ export default async function OwnerHome() {
       </ScrollReveal>
 
       {/* [3] ② 시니어 전문가 정보 — 풀블리드 warm */}
-      <ScrollReveal className="w-full">
+      <ScrollReveal className="w-full snap-section">
         <div className="w-full bg-surface-warm py-8 md:py-12">
           <section className="container-marketing px-4 md:px-6">
             <SectionHeader num={2} tone="accent" title="시니어 전문가 정보" subtitle="경험과 노하우를 갖춘 분야별 전문가" />
@@ -127,10 +127,10 @@ export default async function OwnerHome() {
       </ScrollReveal>
 
       {/* [4] ③ 지사네가 제공하는 기업 전문 서비스 (5) */}
-      <ScrollReveal className="w-full">
+      <ScrollReveal className="w-full snap-section">
         <section className="container-marketing px-4 md:px-6 py-8 md:py-12">
           <SectionHeader num={3} tone="primary" title="지사네가 제공하는 기업 전문 서비스" subtitle="지역 기업 성장을 위한 5대 지원" />
-          <div className="flex flex-col gap-2.5">
+          <div className="reveal-cards flex flex-col gap-2.5">
             {ENTERPRISE_PILLARS.map((p) => (
               <Link
                 key={p.title}
@@ -152,7 +152,7 @@ export default async function OwnerHome() {
       </ScrollReveal>
 
       {/* [5] 회원가입/로그인 CTA — 하단 */}
-      <ScrollReveal className="w-full">
+      <ScrollReveal className="w-full snap-section">
         <section className="container-marketing px-4 md:px-6 py-8 md:py-12">
           <div className="rounded-2xl bg-primary/10 p-6 md:p-8">
             <p className="mb-5 text-center text-base md:text-lg font-semibold text-text leading-relaxed">

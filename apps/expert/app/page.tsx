@@ -50,9 +50,9 @@ export default async function ExpertHome() {
   const ownerUrl = OWNER_URL
 
   return (
-    <div className="flex flex-1 flex-col items-center">
+    <div className="landing-snap flex flex-1 flex-col items-center">
       {/* [1] 히어로 — 브랜드 딥그린 다크 밴드 */}
-      <div className="hero-dark w-full">
+      <div className="hero-dark w-full snap-section">
         <HeroBackdrop intensity="hero" />
         <section className="hero-parallax-content container-marketing relative z-10 flex flex-col items-center gap-4 px-4 md:px-6 pt-14 md:pt-20 pb-12 md:pb-16 text-center">
           <span className="hero-eyebrow animate-slide-up stagger-1">당신의 경험, 지역 기업의 힘</span>
@@ -72,7 +72,7 @@ export default async function ExpertHome() {
       </div>
 
       {/* [2] ① 기업 의뢰 정보 */}
-      <ScrollReveal className="w-full">
+      <ScrollReveal className="w-full snap-section">
         <section className="container-marketing px-4 md:px-6 py-8 md:py-12">
           <SectionHeader num={1} tone="accent" title="기업 의뢰 정보" subtitle="지금 열린 기업의 협력 요청" />
           <CategoryBrowse
@@ -88,11 +88,11 @@ export default async function ExpertHome() {
       </ScrollReveal>
 
       {/* [3] ② 작업에 필요한 전문 도구 — 풀블리드 warm */}
-      <ScrollReveal className="w-full">
+      <ScrollReveal className="w-full snap-section">
         <div className="w-full bg-surface-warm py-8 md:py-12">
           <section className="container-marketing px-4 md:px-6">
             <SectionHeader num={2} tone="primary" title="작업에 필요한 전문 도구" subtitle="시니어 작업을 돕는 S/W 도구" />
-            <div className="flex flex-col gap-3">
+            <div className="reveal-cards flex flex-col gap-3">
               {EXPERT_TOOLS.map((tool) => (
                 <div key={tool.name} className="flex items-start gap-3 rounded-xl border border-border-light bg-card p-4 shadow-xs card-hover">
                   <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-accent/10 text-accent">
@@ -113,10 +113,10 @@ export default async function ExpertHome() {
       </ScrollReveal>
 
       {/* [4] ③ 지사네가 제공하는 시니어 전문 서비스 — 역량 강화·교육 */}
-      <ScrollReveal className="w-full">
+      <ScrollReveal className="w-full snap-section">
         <section className="container-marketing px-4 md:px-6 py-8 md:py-12">
           <SectionHeader num={3} tone="accent" title="지사네가 제공하는 시니어 전문 서비스" subtitle="역량 강화 · 교육 프로그램" />
-          <div className="flex flex-col gap-3">
+          <div className="reveal-cards flex flex-col gap-3">
             {education.map((pkg) => (
               <Link
                 key={pkg.slug}
@@ -137,7 +137,7 @@ export default async function ExpertHome() {
       </ScrollReveal>
 
       {/* [5] 회원가입/로그인 CTA — 하단 */}
-      <ScrollReveal className="w-full">
+      <ScrollReveal className="w-full snap-section">
         <section className="container-marketing px-4 md:px-6 py-8 md:py-12">
           <div className="rounded-2xl bg-accent/10 p-6 md:p-8">
             <p className="mb-5 text-center text-base md:text-lg font-semibold text-text leading-relaxed">
