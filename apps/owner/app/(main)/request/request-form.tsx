@@ -6,14 +6,16 @@ import { SubmitButton } from '@jisane/ui/submit-button'
 import { MoneyInput } from '@jisane/ui/money-input'
 import { Input } from '@jisane/ui/input'
 import { Textarea } from '@jisane/ui/textarea'
+import { useUnsavedGuard } from '@jisane/ui/use-unsaved-guard'
 import { CATEGORY_LABELS } from '@jisane/shared/categories'
 
 export function RequestForm() {
   const [state, formAction] = useActionState(createRequest, {})
   const [selectedChip, setSelectedChip] = useState<string | null>(null)
+  const guard = useUnsavedGuard()
 
   return (
-    <form action={formAction} className="flex flex-col gap-5">
+    <form action={formAction} onChange={guard.markDirty} onSubmit={guard.reset} className="flex flex-col gap-5">
       {/* 분야 선택 (평면 12) */}
       <div>
         <label className="mb-2 block text-sm font-medium text-text">

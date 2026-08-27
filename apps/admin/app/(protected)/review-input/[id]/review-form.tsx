@@ -5,6 +5,7 @@ import { submitReview, generateAiReview } from '@/lib/admin/actions'
 import { SubmitButton } from '@jisane/ui/submit-button'
 import { FilterRadioGroup } from '@jisane/ui/filter-radio-group'
 import { StarRating as StarDisplay } from '@jisane/ui/star-rating'
+import { useUnsavedGuard } from '@jisane/ui/use-unsaved-guard'
 import { Star } from 'lucide-react'
 
 type ReviewState = { error?: string; success?: boolean }
@@ -88,6 +89,7 @@ export function ReviewForm({
   }
 
   const [state, formAction] = useActionState(action, {})
+  const guard = useUnsavedGuard()
 
   async function handleGenerateAi() {
     setGeneratingAi(true)
@@ -173,7 +175,7 @@ export function ReviewForm({
       )}
 
       {/* 리뷰 입력 폼 */}
-      <form action={formAction} className="rounded-xl border border-border p-4">
+      <form action={formAction} onChange={guard.markDirty} onSubmit={guard.reset} className="rounded-xl border border-border p-4">
         {state.error && (
           <p className="mb-3 text-xs text-error" role="alert" aria-live="polite">
             {state.error}

@@ -6,6 +6,7 @@ import { SubmitButton } from '@jisane/ui/submit-button'
 import { Input } from '@jisane/ui/input'
 import { Select } from '@jisane/ui/select'
 import { Textarea } from '@jisane/ui/textarea'
+import { useUnsavedGuard } from '@jisane/ui/use-unsaved-guard'
 import { PILLAR_ORDER, PILLAR_LABELS } from '@jisane/shared/service-catalog'
 
 export interface EnterprisePackageFormDefaults {
@@ -45,9 +46,10 @@ export function EnterprisePackageForm({
   )
 
   const priceLocked = isFree || priceTbd
+  const guard = useUnsavedGuard()
 
   return (
-    <form action={formAction} className="flex max-w-xl flex-col gap-5">
+    <form action={formAction} onChange={guard.markDirty} onSubmit={guard.reset} className="flex max-w-xl flex-col gap-5">
       {isEdit && <input type="hidden" name="package_id" value={defaults.packageId} />}
 
       <div>

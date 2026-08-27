@@ -38,6 +38,7 @@
     "./scroll-reveal": "./components/scroll-reveal.tsx",
     "./search-box": "./components/search-box.tsx",
     "./use-seeded-state": "./components/use-seeded-state.ts",
+    "./use-unsaved-guard": "./hooks/use-unsaved-guard.ts",
     "./page-hero": "./components/page-hero.tsx",
     "./section-header": "./components/section-header.tsx",
     "./hero-backdrop": "./components/hero-backdrop.tsx",

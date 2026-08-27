@@ -6,6 +6,7 @@ import { SubmitButton } from '@jisane/ui/submit-button'
 import { Input } from '@jisane/ui/input'
 import { Select } from '@jisane/ui/select'
 import { HeroBackdrop } from '@jisane/ui/hero-backdrop'
+import { useUnsavedGuard } from '@jisane/ui/use-unsaved-guard'
 // 전문 분야 칩 로직·UI는 편집기와 공유하는 단일 소스로 추출
 import { useFieldChips, FieldChips } from '@/components/field-chips'
 
@@ -28,6 +29,7 @@ export interface RegisterDefaults {
 export function RegisterForm({ rejoin, defaults }: { rejoin?: boolean; defaults?: RegisterDefaults }) {
   const [state, formAction] = useActionState(updateExpertProfile, {})
   const chips = useFieldChips(defaults?.field ? defaults.field.split(',').map((s) => s.trim()).filter(Boolean) : [])
+  const guard = useUnsavedGuard()
 
   return (
     <div className="flex flex-1 flex-col animate-fade-in">
@@ -57,7 +59,8 @@ export function RegisterForm({ rejoin, defaults }: { rejoin?: boolean; defaults?
 
         <form
           action={formAction}
-          onSubmit={(e) => chips.validate(e)}
+          onChange={guard.markDirty}
+          onSubmit={(e) => { chips.validate(e); guard.reset() }}
           className="flex flex-col gap-5"
         >
           <FieldChips chips={chips} showCounter />

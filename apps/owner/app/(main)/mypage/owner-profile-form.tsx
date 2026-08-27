@@ -4,6 +4,7 @@ import { useActionState } from 'react'
 import { updateOwnerProfile } from '@/lib/profile/actions'
 import { SubmitButton } from '@jisane/ui/submit-button'
 import { Input } from '@jisane/ui/input'
+import { useUnsavedGuard } from '@jisane/ui/use-unsaved-guard'
 
 export function OwnerProfileForm({
   defaults,
@@ -17,9 +18,10 @@ export function OwnerProfileForm({
   }
 }) {
   const [state, formAction] = useActionState(updateOwnerProfile, {})
+  const guard = useUnsavedGuard()
 
   return (
-    <form action={formAction} className="flex flex-col gap-5">
+    <form action={formAction} onChange={guard.markDirty} onSubmit={guard.reset} className="flex flex-col gap-5">
       <div>
         <label htmlFor="company" className="mb-1 block text-sm font-medium text-text">
           회사명 또는 상호 <span className="text-error">*</span>

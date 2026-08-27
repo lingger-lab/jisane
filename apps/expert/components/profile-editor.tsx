@@ -5,6 +5,7 @@ import { updateExpertProfile } from '@/lib/expert/actions'
 import { SubmitButton } from '@jisane/ui/submit-button'
 import { Input } from '@jisane/ui/input'
 import { Select } from '@jisane/ui/select'
+import { useUnsavedGuard } from '@jisane/ui/use-unsaved-guard'
 // 전문 분야 칩 로직·UI는 등록 페이지와 공유하는 단일 소스로 추출
 import { useFieldChips, FieldChips } from '@/components/field-chips'
 
@@ -30,12 +31,14 @@ interface ExpertProfile {
 export function ProfileEditor({ profile }: { profile: ExpertProfile }) {
   const [state, formAction] = useActionState(updateExpertProfile, {})
   const chips = useFieldChips(profile.field ? profile.field.split(',') : [])
+  const guard = useUnsavedGuard()
 
   return (
     <form
       action={formAction}
+      onChange={guard.markDirty}
       // 필수 칩그룹은 제출 전에 클라이언트에서 검증 — 서버 왕복 후 하단 에러만 보이던 문제(감사 docs/10 P3-49)
-      onSubmit={(e) => chips.validate(e)}
+      onSubmit={(e) => { chips.validate(e); guard.reset() }}
       className="flex flex-col gap-5"
     >
       <input type="hidden" name="redirect_to" value="/mypage" />
