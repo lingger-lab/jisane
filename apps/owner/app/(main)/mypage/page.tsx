@@ -10,6 +10,7 @@ import { EmptyState } from '@jisane/ui/empty-state'
 import { StatusBadge } from '@jisane/ui/status-badge'
 import { StarRating } from '@jisane/ui/star-rating'
 import { DangerZone } from '@jisane/ui/danger-zone'
+import { Button } from '@jisane/ui/button'
 import { OwnerProfileForm } from './owner-profile-form'
 import { withdrawOwnerSelf } from '@/lib/profile/actions'
 
@@ -323,12 +324,9 @@ export default async function OwnerMyPage() {
 
         {/* 로그아웃 */}
         <form action={signOut}>
-          <button
-            type="submit"
-            className="w-full rounded-xl border border-border-light px-6 py-3 text-sm font-medium text-text-muted transition-colors hover:bg-surface hover:text-text"
-          >
+          <Button type="submit" variant="outline" className="w-full text-text-muted">
             로그아웃
-          </button>
+          </Button>
         </form>
 
         {/* 회원 탈퇴 */}

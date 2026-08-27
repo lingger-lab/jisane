@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { useConfirmDialog } from '@jisane/ui/confirm-dialog'
+import { Button } from '@jisane/ui/button'
 import { updateOwnerStatus } from '@/lib/admin/actions'
 
 export interface OwnerMemberItem {
@@ -84,23 +85,13 @@ export function OwnerMembersTab({ members }: { members: OwnerMemberItem[] }) {
                 </Link>
                 <div className="flex shrink-0 items-center gap-2">
                   {m.status === 'active' ? (
-                    <button
-                      type="button"
-                      disabled={busy === m.id}
-                      onClick={() => handleStatus(m, 'inactive')}
-                      className="rounded-lg border border-border-light px-2.5 py-1 text-xs text-text-muted transition-colors hover:border-error/30 hover:text-error disabled:opacity-50"
-                    >
+                    <Button variant="outline" size="sm" disabled={busy === m.id} onClick={() => handleStatus(m, 'inactive')}>
                       비활성화
-                    </button>
+                    </Button>
                   ) : (
-                    <button
-                      type="button"
-                      disabled={busy === m.id}
-                      onClick={() => handleStatus(m, 'active')}
-                      className="rounded-lg border border-border-light px-2.5 py-1 text-xs text-text-muted transition-colors hover:border-primary/30 hover:text-primary disabled:opacity-50"
-                    >
+                    <Button variant="outline" size="sm" disabled={busy === m.id} onClick={() => handleStatus(m, 'active')}>
                       활성화
-                    </button>
+                    </Button>
                   )}
                 </div>
               </div>

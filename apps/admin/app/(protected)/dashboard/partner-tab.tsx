@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { useConfirmDialog } from '@jisane/ui/confirm-dialog'
+import { Button } from '@jisane/ui/button'
 import { updateProviderStatus, updatePackageStatus } from '@/lib/admin/actions'
 import { PROVIDER_KIND_LABELS } from '@jisane/shared/labels'
 import { PROVIDER_STATUS_BADGE_CLASSES } from '@jisane/shared/status-badges'
@@ -115,22 +116,12 @@ export function PartnerTab({
                     )}
                   </div>
                   <div className="flex shrink-0 gap-2">
-                    <button
-                      type="button"
-                      disabled={busy === p.id}
-                      onClick={() => handleProviderStatus(p.id, 'active', `${p.name} 전문가회원을 승인할까요?`)}
-                      className="rounded-lg bg-success-solid px-3 py-1.5 text-xs font-medium text-white hover:bg-success-solid/90 disabled:opacity-50"
-                    >
+                    <Button variant="accent" size="sm" disabled={busy === p.id} onClick={() => handleProviderStatus(p.id, 'active', `${p.name} 전문가회원을 승인할까요?`)}>
                       승인
-                    </button>
-                    <button
-                      type="button"
-                      disabled={busy === p.id}
-                      onClick={() => handleProviderStatus(p.id, 'rejected', `${p.name} 전문가회원 신청을 반려할까요?`)}
-                      className="rounded-lg border border-error/30 px-3 py-1.5 text-xs font-medium text-error hover:bg-error-light disabled:opacity-50"
-                    >
+                    </Button>
+                    <Button variant="outline" size="sm" disabled={busy === p.id} onClick={() => handleProviderStatus(p.id, 'rejected', `${p.name} 전문가회원 신청을 반려할까요?`)}>
                       반려
-                    </button>
+                    </Button>
                   </div>
                 </div>
               </div>
@@ -162,22 +153,12 @@ export function PartnerTab({
                     </p>
                   </div>
                   <div className="flex shrink-0 gap-2">
-                    <button
-                      type="button"
-                      disabled={busy === pkg.id}
-                      onClick={() => handlePackageStatus(pkg.id, 'published', `"${pkg.name}" 서비스를 공개할까요?`)}
-                      className="rounded-lg bg-success-solid px-3 py-1.5 text-xs font-medium text-white hover:bg-success-solid/90 disabled:opacity-50"
-                    >
+                    <Button variant="accent" size="sm" disabled={busy === pkg.id} onClick={() => handlePackageStatus(pkg.id, 'published', `"${pkg.name}" 서비스를 공개할까요?`)}>
                       공개 승인
-                    </button>
-                    <button
-                      type="button"
-                      disabled={busy === pkg.id}
-                      onClick={() => handlePackageStatus(pkg.id, 'archived', `"${pkg.name}" 서비스를 보관 처리할까요?`)}
-                      className="rounded-lg border border-error/30 px-3 py-1.5 text-xs font-medium text-error hover:bg-error-light disabled:opacity-50"
-                    >
+                    </Button>
+                    <Button variant="outline" size="sm" disabled={busy === pkg.id} onClick={() => handlePackageStatus(pkg.id, 'archived', `"${pkg.name}" 서비스를 보관 처리할까요?`)}>
                       보관
-                    </button>
+                    </Button>
                   </div>
                 </div>
               </div>
@@ -211,23 +192,13 @@ export function PartnerTab({
                       {badge.label}
                     </span>
                     {p.status === 'active' ? (
-                      <button
-                        type="button"
-                        disabled={busy === p.id}
-                        onClick={() => handleProviderStatus(p.id, 'suspended', `${p.name} 전문가회원을 중지할까요? 등록 서비스 노출은 유지됩니다.`)}
-                        className="rounded-lg border border-border-light px-2.5 py-1 text-xs text-text-muted hover:border-error/30 hover:text-error disabled:opacity-50"
-                      >
+                      <Button variant="outline" size="sm" disabled={busy === p.id} onClick={() => handleProviderStatus(p.id, 'suspended', `${p.name} 전문가회원을 중지할까요? 등록 서비스 노출은 유지됩니다.`)}>
                         중지
-                      </button>
+                      </Button>
                     ) : (
-                      <button
-                        type="button"
-                        disabled={busy === p.id}
-                        onClick={() => handleProviderStatus(p.id, 'active', `${p.name} 전문가회원을 다시 활성화할까요?`)}
-                        className="rounded-lg border border-border-light px-2.5 py-1 text-xs text-text-muted hover:border-success/30 hover:text-success disabled:opacity-50"
-                      >
+                      <Button variant="outline" size="sm" disabled={busy === p.id} onClick={() => handleProviderStatus(p.id, 'active', `${p.name} 전문가회원을 다시 활성화할까요?`)}>
                         활성화
-                      </button>
+                      </Button>
                     )}
                   </div>
                 </div>
