@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { expressInterest, withdrawInterest } from '@/lib/interest/actions'
+import { Button } from '@jisane/ui/button'
 
 interface InterestButtonProps {
   requestId: string
@@ -39,18 +40,17 @@ export function InterestButton({ requestId, initialInterested }: InterestButtonP
   return (
     <div>
       {error && <p className="mb-2 text-xs text-error text-center">{error}</p>}
-      <button
+      <Button
         type="button"
+        variant={isInterested ? 'outline' : 'accent'}
         onClick={handleClick}
         disabled={isLoading}
-        className={`w-full rounded-xl px-4 py-3 text-sm font-semibold transition-all disabled:opacity-50 ${
-          isInterested
-            ? 'border border-accent/30 bg-accent/5 text-accent'
-            : 'bg-accent text-white shadow-sm hover:bg-accent/90 hover:shadow-md'
+        className={`h-12 w-full font-semibold ${
+          isInterested ? 'border-accent/30 bg-accent/5 text-accent' : 'shadow-sm hover:shadow-md'
         }`}
       >
         {isLoading ? '처리 중...' : isInterested ? '관심 표현 완료' : '관심 표현하기'}
-      </button>
+      </Button>
     </div>
   )
 }
