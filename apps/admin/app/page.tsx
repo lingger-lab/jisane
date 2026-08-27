@@ -47,7 +47,7 @@ export default async function AdminHome() {
     .map((c) => c.label)
 
   return (
-    <div className="flex flex-1 flex-col">
+    <div className="landing-snap flex flex-1 flex-col">
       {/* 네비게이션 */}
       <nav className="container-marketing flex items-center justify-end gap-3 px-4 md:px-6 py-2">
         <Link href="/ax" className="text-xs text-text-muted hover:text-text transition-colors">AX 전환</Link>
@@ -60,9 +60,9 @@ export default async function AdminHome() {
       <SplashOverlay />
 
       {/* 히어로 — 브랜드 딥그린 다크 밴드 (렐라랩 벤치마킹: 아이브로우→제목→서브→수치) */}
-      <div className="hero-dark w-full">
+      <div className="hero-dark w-full snap-section">
         <HeroBackdrop intensity="hero" />
-        <section className="container-marketing relative z-10 flex flex-col items-center gap-4 px-4 md:px-6 pt-14 md:pt-20 pb-12 md:pb-16 text-center">
+        <section className="hero-parallax-content container-marketing relative z-10 flex flex-col items-center gap-4 px-4 md:px-6 pt-14 md:pt-20 pb-12 md:pb-16 text-center">
           <span className="hero-eyebrow animate-slide-up stagger-1">기업의 곁에, 언제나 당신곁에</span>
           <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold font-serif text-white leading-snug animate-slide-up stagger-2">
             지역 기업의 든든한 성장
@@ -86,10 +86,10 @@ export default async function AdminHome() {
       <div className="flex flex-1 flex-col items-center px-4 md:px-6 py-10 md:py-14">
         <main className="container-marketing flex flex-col items-center gap-10 md:gap-14 lg:gap-16">
           {/* 공간 선택 카드 */}
-          <section className="w-full animate-fade-in stagger-1">
+          <section className="w-full animate-fade-in stagger-1 snap-section">
             {/* 외곽 패널(bg-surface-warm) 제거 — 패널 테두리+카드 테두리 2중 프레임/회색 화면 원인.
                 카드들은 페이지 배경 위에 각자 단일 테두리로. */}
-            <div className="flex flex-col gap-4">
+            <div className="reveal-cards flex flex-col gap-4">
               <a
                 href={ownerUrl}
                 className="rounded-2xl border border-border-light bg-card p-6 md:p-8 text-left group shadow-sm card-hover card-glow transition-all"
@@ -144,9 +144,9 @@ export default async function AdminHome() {
           </section>
 
           {/* FAQ — 답변형 콘텐츠(AEO). FAQPage JSON-LD와 동일 소스(FAQS). */}
-          <section className="container-marketing px-4 md:px-6 pb-12">
+          <section className="container-marketing px-4 md:px-6 pb-12 snap-section">
             <h2 className="mb-5 text-xl md:text-2xl font-bold font-serif text-text">자주 묻는 질문</h2>
-            <dl className="flex flex-col gap-3">
+            <dl className="reveal-cards flex flex-col gap-3">
               {FAQS.map((f) => (
                 <div key={f.q} className="rounded-xl border border-border-light bg-card p-4 shadow-xs">
                   <dt className="text-sm md:text-base font-semibold text-text">{f.q}</dt>
