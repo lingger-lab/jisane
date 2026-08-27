@@ -42,6 +42,7 @@ vi.mock('../supabase/admin', () => ({
           return chain
         },
         single: async () => ({ data: mockState.expertRow, error: null }),
+        maybeSingle: async () => ({ data: mockState.expertRow, error: null }),
       }
       return chain
     },

@@ -18,7 +18,7 @@ async function getOwnerId(): Promise<string> {
     .from('owner')
     .select('id')
     .eq('auth_user_id', user.id)
-    .single()
+    .maybeSingle()
 
   if (!owner) redirect('/')
 

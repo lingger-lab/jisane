@@ -19,21 +19,21 @@ export function ProfileForm({
         <label htmlFor="name" className="mb-1 block text-sm font-medium text-text">
           기관명 또는 성함 <span className="text-error">*</span>
         </label>
-        <Input id="name" name="name" type="text" required defaultValue={defaults.name} tone="info" />
+        <Input id="name" name="name" type="text" required defaultValue={defaults.name} tone="partner" />
       </div>
 
       <div>
         <label htmlFor="contact" className="mb-1 block text-sm font-medium text-text">
           연락처
         </label>
-        <Input id="contact" name="contact" type="tel" defaultValue={defaults.contact} placeholder="예: 010-1234-5678" tone="info" />
+        <Input id="contact" name="contact" type="tel" defaultValue={defaults.contact} placeholder="예: 010-1234-5678" tone="partner" />
       </div>
 
       <div>
         <label htmlFor="website" className="mb-1 block text-sm font-medium text-text">
           웹사이트
         </label>
-        <Input id="website" name="website" type="url" defaultValue={defaults.website} placeholder="https://" tone="info" />
+        <Input id="website" name="website" type="url" defaultValue={defaults.website} placeholder="https://" tone="partner" />
       </div>
 
       <div>
@@ -46,7 +46,7 @@ export function ProfileForm({
           rows={5}
           defaultValue={defaults.description}
           placeholder="기업회원·시니어지식인회원에게 보여줄 소개를 적어주세요."
-          tone="info"
+          tone="partner"
         />
       </div>
 

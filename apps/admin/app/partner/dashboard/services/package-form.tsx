@@ -39,7 +39,7 @@ export function PackageForm({ defaults = {} }: { defaults?: PackageFormDefaults 
         <label htmlFor="name" className="mb-1 block text-sm font-medium text-text">
           서비스명 <span className="text-error">*</span>
         </label>
-        <Input id="name" name="name" type="text" required defaultValue={defaults.name} placeholder="예: AI 도입 진단" tone="info" />
+        <Input id="name" name="name" type="text" required defaultValue={defaults.name} placeholder="예: AI 도입 진단" tone="partner" />
       </div>
 
       {!isEdit && (
@@ -48,7 +48,7 @@ export function PackageForm({ defaults = {} }: { defaults?: PackageFormDefaults 
             <label htmlFor="category" className="mb-1 block text-sm font-medium text-text">
               카테고리 <span className="text-error">*</span>
             </label>
-            <Select id="category" name="category" required defaultValue={defaults.category ?? ''} tone="info">
+            <Select id="category" name="category" required defaultValue={defaults.category ?? ''} tone="partner">
               <option value="" disabled>선택</option>
               <option value="ax_consulting">AX 컨설팅</option>
               <option value="biz_consulting">경영 컨설팅</option>
@@ -59,7 +59,7 @@ export function PackageForm({ defaults = {} }: { defaults?: PackageFormDefaults 
             <label htmlFor="target_audience" className="mb-1 block text-sm font-medium text-text">
               제공 대상 <span className="text-error">*</span>
             </label>
-            <Select id="target_audience" name="target_audience" required defaultValue={defaults.targetAudience ?? ''} tone="info">
+            <Select id="target_audience" name="target_audience" required defaultValue={defaults.targetAudience ?? ''} tone="partner">
               <option value="" disabled>선택</option>
               <option value="owner">기업회원</option>
               <option value="expert">시니어지식인회원</option>
@@ -79,7 +79,7 @@ export function PackageForm({ defaults = {} }: { defaults?: PackageFormDefaults 
           required
           defaultValue={defaults.description}
           placeholder="무엇을, 어떻게 제공하는지 구체적으로 적어주세요."
-          tone="info"
+          tone="partner"
         />
       </div>
 
@@ -87,7 +87,7 @@ export function PackageForm({ defaults = {} }: { defaults?: PackageFormDefaults 
         <label htmlFor="value_desc" className="mb-1 block text-sm font-medium text-text">
           한 줄 가치 설명 <span className="text-xs text-text-subtle">(목록 카드에 표시)</span>
         </label>
-        <Input id="value_desc" name="value_desc" type="text" defaultValue={defaults.valueDesc} placeholder="예: 데이터 기반 의사결정 진단" tone="info" />
+        <Input id="value_desc" name="value_desc" type="text" defaultValue={defaults.valueDesc} placeholder="예: 데이터 기반 의사결정 진단" tone="partner" />
       </div>
 
       <div className="grid grid-cols-2 gap-3">
@@ -109,7 +109,7 @@ export function PackageForm({ defaults = {} }: { defaults?: PackageFormDefaults 
               setPriceDisplay(digits ? Number(digits).toLocaleString('ko-KR') : '')
             }}
             placeholder="예: 300,000"
-            tone="info"
+            tone="partner"
             className="disabled:opacity-60"
           />
         </div>
@@ -117,7 +117,7 @@ export function PackageForm({ defaults = {} }: { defaults?: PackageFormDefaults 
           <label htmlFor="duration" className="mb-1 block text-sm font-medium text-text">
             소요 기간 <span className="text-xs text-text-subtle">(선택)</span>
           </label>
-          <Input id="duration" name="duration" type="text" defaultValue={defaults.duration} placeholder="예: 1주" tone="info" />
+          <Input id="duration" name="duration" type="text" defaultValue={defaults.duration} placeholder="예: 1주" tone="partner" />
         </div>
       </div>
 
@@ -142,7 +142,7 @@ export function PackageForm({ defaults = {} }: { defaults?: PackageFormDefaults 
           rows={4}
           defaultValue={(defaults.deliverables || []).join('\n')}
           placeholder={'진단 리포트\n실행 로드맵\n수료증'}
-          tone="info"
+          tone="partner"
         />
       </div>
 

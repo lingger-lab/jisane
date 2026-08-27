@@ -16,7 +16,7 @@ export function ApplyForm() {
         <label htmlFor="name" className="mb-1 block text-sm font-medium text-text">
           기관명 또는 성함 <span className="text-error">*</span>
         </label>
-        <Input id="name" name="name" type="text" required placeholder="예: 엔터랩스" tone="info" />
+        <Input id="name" name="name" type="text" required placeholder="예: 엔터랩스" tone="partner" />
       </div>
 
       <div className="grid grid-cols-2 gap-3">
@@ -24,7 +24,7 @@ export function ApplyForm() {
           <label htmlFor="kind" className="mb-1 block text-sm font-medium text-text">
             전문가회원 유형 <span className="text-error">*</span>
           </label>
-          <Select id="kind" name="kind" required defaultValue="" tone="info">
+          <Select id="kind" name="kind" required defaultValue="" tone="partner">
             <option value="" disabled>선택</option>
             <option value="company">기업</option>
             <option value="senior">시니어지식인</option>
@@ -34,7 +34,7 @@ export function ApplyForm() {
           <label htmlFor="type" className="mb-1 block text-sm font-medium text-text">
             전문 분야 <span className="text-error">*</span>
           </label>
-          <Select id="type" name="type" required defaultValue="" tone="info">
+          <Select id="type" name="type" required defaultValue="" tone="partner">
             <option value="" disabled>선택</option>
             <option value="consulting">컨설팅</option>
             <option value="legal">법무</option>
@@ -49,14 +49,14 @@ export function ApplyForm() {
         <label htmlFor="contact" className="mb-1 block text-sm font-medium text-text">
           연락처 <span className="text-xs text-text-subtle">(선택)</span>
         </label>
-        <Input id="contact" name="contact" type="tel" placeholder="예: 010-1234-5678" tone="info" />
+        <Input id="contact" name="contact" type="tel" placeholder="예: 010-1234-5678" tone="partner" />
       </div>
 
       <div>
         <label htmlFor="website" className="mb-1 block text-sm font-medium text-text">
           웹사이트 <span className="text-xs text-text-subtle">(선택)</span>
         </label>
-        <Input id="website" name="website" type="url" placeholder="https://" tone="info" />
+        <Input id="website" name="website" type="url" placeholder="https://" tone="partner" />
       </div>
 
       <div>
@@ -68,7 +68,7 @@ export function ApplyForm() {
           name="description"
           rows={4}
           placeholder="제공하려는 서비스와 경력을 간단히 소개해주세요."
-          tone="info"
+          tone="partner"
         />
       </div>
 

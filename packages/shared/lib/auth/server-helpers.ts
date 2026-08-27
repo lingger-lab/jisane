@@ -34,11 +34,12 @@ export async function resolveExpertFromAuth<T = { id: string }>(
 
   if (!user) return { user: null, expert: null }
 
+  // .maybeSingle(): "행 없음(정상)"과 "조회 오류"를 구분 — .single()의 0행-에러 오판 방지(감사 P2-2).
   const { data: expert } = await adminClient
     .from('expert')
     .select(columns)
     .eq('auth_user_id', user.id)
-    .single()
+    .maybeSingle()
 
   return { user, expert: (expert as T | null) ?? null }
 }
