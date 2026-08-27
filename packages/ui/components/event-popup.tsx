@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState, type KeyboardEvent } from 'react'
 import { usePathname } from 'next/navigation'
+import { X } from 'lucide-react'
 import { resolveTrapKey } from './focus-trap'
 
 /** 이벤트 마감(이 날짜 이후 자동 미노출) */
@@ -119,7 +120,7 @@ export function EventPopup({
           aria-label="닫기"
           className="focus-ring absolute right-3 top-3 flex h-8 w-8 items-center justify-center rounded-full text-text-subtle transition-colors hover:bg-surface hover:text-text"
         >
-          ✕
+          <X className="h-4 w-4" aria-hidden="true" />
         </button>
 
         <p className="text-xs font-semibold tracking-wide text-accent">시니어지식인 회원 이벤트</p>

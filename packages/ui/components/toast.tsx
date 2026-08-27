@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { useSearchParams, useRouter } from 'next/navigation'
+import { X } from 'lucide-react'
 import { successDismissMs, errorDismissMs } from './toast-policy'
 
 /**
@@ -78,7 +79,7 @@ export function SuccessToast() {
           // 24×24px 최소 타깃(WCAG 2.5.8) — -my-1로 토스트 높이는 종전과 동일하게 유지
           className="focus-ring -my-1 -mr-2 flex h-6 w-6 shrink-0 items-center justify-center rounded text-white/70 transition-colors hover:text-white"
         >
-          ✕
+          <X className="h-4 w-4" aria-hidden="true" />
         </button>
       </div>
     </div>
@@ -155,7 +156,7 @@ export function ErrorToast() {
           // 24×24px 최소 타깃(WCAG 2.5.8) — -my-1로 토스트 높이는 종전과 동일하게 유지
           className="focus-ring -my-1 -mr-2 flex h-6 w-6 shrink-0 items-center justify-center rounded text-white/70 transition-colors hover:text-white"
         >
-          ✕
+          <X className="h-4 w-4" aria-hidden="true" />
         </button>
       </div>
     </div>
