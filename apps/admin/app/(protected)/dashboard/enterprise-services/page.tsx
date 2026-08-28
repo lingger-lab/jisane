@@ -2,13 +2,11 @@ import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import { adminClient } from '@jisane/shared/supabase/admin'
 import { verifyAdmin } from '@jisane/shared/auth/server-helpers'
-import type { EnterprisePillar } from '@jisane/shared/service-catalog'
+import { PLATFORM_PROVIDER_IDS, JISANE_OFFICIAL_ID, type EnterprisePillar } from '@jisane/shared/service-catalog'
 import { EnterpriseServicesList } from './enterprise-services-list'
 import { SyncSkillsButton } from './sync-skills-button'
 
 export const metadata = { title: '기업 전문서비스 관리 | 지사네 관리자' }
-
-const ENTERLABS_ID = 'd0000001-0000-0000-0000-000000000001'
 
 export default async function EnterpriseServicesPage() {
   // page-레벨 admin 게이트 재확인 (layout은 soft nav에서 재실행되지 않는 신뢰경계가 아님)
@@ -18,29 +16,33 @@ export default async function EnterpriseServicesPage() {
 
   const { data } = await adminClient
     .from('service_package')
-    .select('id, name, price, is_free, status, pillar, sort_order, visible, source_ref')
-    .eq('provider_id', ENTERLABS_ID)
+    .select('id, name, price, is_free, status, pillar, sort_order, visible, source_ref, provider_id')
+    .in('provider_id', PLATFORM_PROVIDER_IDS) // 엔터랩스 5대 + 지사네 동기화 스킬 함께 관리
     .eq('target_audience', 'owner')
     .order('sort_order', { ascending: true })
 
-  const items = (data ?? []) as {
-    id: string
-    name: string
-    price: number
-    is_free: boolean
-    status: string
-    pillar: EnterprisePillar | null
-    visible: boolean
-    source_ref: string | null
-  }[]
+  const items = (data ?? []).map((r) => ({
+    ...(r as {
+      id: string
+      name: string
+      price: number
+      is_free: boolean
+      status: string
+      pillar: EnterprisePillar | null
+      visible: boolean
+      source_ref: string | null
+      provider_id: string
+    }),
+    isJisane: (r as { provider_id: string }).provider_id === JISANE_OFFICIAL_ID,
+  }))
 
   return (
     <div className="mx-auto max-w-3xl px-4 md:px-6 py-6 animate-fade-in">
       <div className="mb-5 flex items-start justify-between gap-3">
         <div>
-          <h1 className="text-lg font-serif font-bold text-text">기업 전문서비스 관리</h1>
+          <h1 className="text-lg font-serif font-bold text-text">기업 전문서비스 · 지식서비스 관리</h1>
           <p className="mt-0.5 text-sm text-text-muted">
-            기업회원 화면 &ldquo;5대 지원&rdquo;에 노출되는 서비스를 직접 등록·수정·보관합니다.
+            엔터랩스 &ldquo;5대 지원&rdquo; 등록·수정과, AX대시보드 동기화 지식서비스(지사네)의 노출·5대지원 매칭을 함께 관리합니다.
           </p>
         </div>
         <div className="flex shrink-0 items-center gap-2">

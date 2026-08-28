@@ -7,7 +7,7 @@ import {
   type SyncPackageFields,
   type ExistingSlugRow,
 } from './axdashboard-sync'
-import { ENTERLABS_ID } from '@jisane/shared/service-catalog'
+import { ENTERLABS_ID, JISANE_OFFICIAL_ID } from '@jisane/shared/service-catalog'
 
 function row(overrides: Partial<SkillHubRow> = {}): SkillHubRow {
   return {
@@ -29,9 +29,9 @@ function row(overrides: Partial<SkillHubRow> = {}): SkillHubRow {
 }
 
 describe('mapSkillToPackage', () => {
-  it('고정 필드·엔터랩스 소속·source_ref를 매핑한다', () => {
+  it('고정 필드·지사네 소속·source_ref를 매핑한다', () => {
     const p = mapSkillToPackage(row())
-    expect(p.provider_id).toBe(ENTERLABS_ID)
+    expect(p.provider_id).toBe(JISANE_OFFICIAL_ID)
     expect(p.slug).toBe('ai-diagnosis')
     expect(p.name).toBe('AX 무료 진단')
     expect(p.value_desc).toBe('한 줄 설명')
@@ -146,11 +146,17 @@ describe('partitionForUpsert — 충돌 가드', () => {
     expect(r.skipped).toEqual(['a'])
   })
 
-  it('이전 동기화분(엔터랩스 + axd:)은 upsert(재동기화)', () => {
-    const existing: ExistingSlugRow[] = [{ slug: 'a', provider_id: ENTERLABS_ID, source_ref: 'axd:a' }]
+  it('이전 동기화분(지사네 + axd:)은 upsert(재동기화)', () => {
+    const existing: ExistingSlugRow[] = [{ slug: 'a', provider_id: JISANE_OFFICIAL_ID, source_ref: 'axd:a' }]
     const r = partitionForUpsert([payload('a')], existing)
     expect(r.toUpsert.map((p) => p.slug)).toEqual(['a'])
     expect(r.skipped).toEqual([])
+  })
+
+  it('엔터랩스 5대(비-sync provider)에 axd slug 충돌 시 skip(덮어쓰기 금지)', () => {
+    const existing: ExistingSlugRow[] = [{ slug: 'a', provider_id: ENTERLABS_ID, source_ref: 'axd:a' }]
+    const r = partitionForUpsert([payload('a')], existing)
+    expect(r.skipped).toEqual(['a'])
   })
 })
 

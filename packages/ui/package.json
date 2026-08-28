@@ -27,6 +27,7 @@
     "./icons/claude": "./components/icons/claude.tsx",
     "./avatar": "./components/avatar.tsx",
     "./service-banner": "./components/service-banner.tsx",
+    "./service-carousel": "./components/service-carousel.tsx",
     "./banner-uploader": "./components/banner-uploader.tsx",
     "./app-header": "./components/app-header.tsx",
     "./theme-toggle": "./components/theme-toggle.tsx",

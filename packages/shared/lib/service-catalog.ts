@@ -45,6 +45,15 @@ export const PILLAR_ORDER: EnterprisePillar[] = [
   'ai_ax',
 ]
 
+/** category(3값) → 한글 라벨. 공개 카탈로그 필터·카드 배지 단일 소스(3앱 공용). */
+export type ServiceCategory = 'ax_consulting' | 'biz_consulting' | 'education'
+export const CATEGORY_LABELS: Record<ServiceCategory, string> = {
+  ax_consulting: 'AX 컨설팅',
+  biz_consulting: '경영 컨설팅',
+  education: '교육',
+}
+export const CATEGORY_ORDER: ServiceCategory[] = ['ax_consulting', 'biz_consulting', 'education']
+
 export interface ServicePackage {
   /** service_package 테이블 PK — DB 조회 경로에서 채워짐 */
   id?: string
@@ -72,6 +81,8 @@ export interface ServicePackage {
   bannerUrl?: string
   /** 플랫폼(지사네/엔터랩스) 소유 서비스 — "지사네 공식" 뱃지 */
   isOfficial?: boolean
+  /** 등록 시각 — 쇼케이스 '신규' 정렬용(DB created_at) */
+  createdAt?: string
 }
 
 /**

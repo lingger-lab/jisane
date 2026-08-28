@@ -101,14 +101,15 @@ export function ServicesView({
   initialPillar?: string
 }) {
   // 실제 서비스가 있는 pillar만 탭으로 노출(self-healing) — 빈 분류 탭을 만들지 않는다.
+  // '전체'(all)는 항상 선두 — pillar=NULL(지사네 동기화 스킬 등)도 포함해 전 서비스를 노출.
   const availablePillars = PILLAR_ORDER.filter((code) => packages.some((p) => p.pillar === code))
-  const initialActive: EnterprisePillar =
+  const initialActive: EnterprisePillar | 'all' =
     initialPillar && availablePillars.includes(initialPillar as EnterprisePillar)
       ? (initialPillar as EnterprisePillar)
-      : (availablePillars[0] ?? 'biz_marketing')
+      : 'all'
 
   const [search, setSearch] = useState('')
-  const [activePillar, setActivePillar] = useState<EnterprisePillar>(initialActive)
+  const [activePillar, setActivePillar] = useState<EnterprisePillar | 'all'>(initialActive)
   const [priceFilter, setPriceFilter] = useState<'all' | 'free' | 'paid'>('all')
   const [expandedProvider, setExpandedProvider] = useState<string | null>(providers[0]?.id ?? null)
 
@@ -131,7 +132,7 @@ export function ServicesView({
 
   const filtered = packages.filter(
     (p) =>
-      p.pillar === activePillar &&
+      (activePillar === 'all' || p.pillar === activePillar) &&
       (expandedProvider === null || p.providerId === expandedProvider) &&
       priceMatch(p)
   )
@@ -246,7 +247,7 @@ export function ServicesView({
           {expandedProvider && (
             <div id="provider-packages-panel">
               <FilterRadioGroup
-                options={availablePillars.map((code) => ({ value: code, label: PILLAR_LABELS[code] }))}
+                options={[{ value: 'all' as const, label: '전체' }, ...availablePillars.map((code) => ({ value: code, label: PILLAR_LABELS[code] }))]}
                 value={activePillar}
                 onChange={setActivePillar}
                 label="서비스 분류 필터"

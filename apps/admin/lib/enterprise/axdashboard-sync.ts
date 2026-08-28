@@ -1,5 +1,5 @@
 import { createClient } from '@supabase/supabase-js'
-import { ENTERLABS_ID } from '@jisane/shared/service-catalog'
+import { JISANE_OFFICIAL_ID } from '@jisane/shared/service-catalog'
 
 /**
  * axdashboard(자산허브/앱스킬) → jisane 지식서비스 동기화 순수 로직.
@@ -23,6 +23,9 @@ export interface SkillHubRow {
   display_order: number | null
   category_slug: string | null
 }
+
+/** 동기화 스킬의 소속 provider — 지사네 공식(엔터랩스 아님). 카드에 "지사네"·"지사네 공식" 표시. */
+export const SYNC_PROVIDER_ID = JISANE_OFFICIAL_ID
 
 /** service_package로 upsert할 필드 — **pillar·visible은 절대 포함하지 않는다**(관리자 소유·동기화 보존). */
 export interface SyncPackageFields {
@@ -73,7 +76,7 @@ export function mapSkillToPackage(row: SkillHubRow): SyncPackageFields {
   const banner = row.thumbnail_url && row.thumbnail_url.startsWith('https://') ? row.thumbnail_url : null
   const { price, is_free } = priceFrom(row)
   return {
-    provider_id: ENTERLABS_ID,
+    provider_id: SYNC_PROVIDER_ID,
     slug: row.slug,
     name: row.title,
     value_desc: row.short_description ?? '',
@@ -111,7 +114,7 @@ export function partitionForUpsert(
     const ex = bySlug.get(p.slug)
     if (!ex) return true
     const isPriorSync =
-      ex.provider_id === ENTERLABS_ID && typeof ex.source_ref === 'string' && ex.source_ref.startsWith('axd:')
+      ex.provider_id === SYNC_PROVIDER_ID && typeof ex.source_ref === 'string' && ex.source_ref.startsWith('axd:')
     if (!isPriorSync) {
       skipped.push(p.slug)
       return false

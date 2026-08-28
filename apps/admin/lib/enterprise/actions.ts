@@ -5,12 +5,13 @@ import { revalidatePath } from 'next/cache'
 import { adminClient } from '@jisane/shared/supabase/admin'
 import { verifyAdmin } from '@jisane/shared/auth/server-helpers'
 import { issueBannerUploadUrl, isOwnBannerUrl } from '@jisane/shared/service-package/banner'
-import { PILLAR_ORDER, type EnterprisePillar } from '@jisane/shared/service-catalog'
+import { PILLAR_ORDER, PLATFORM_PROVIDER_IDS, type EnterprisePillar } from '@jisane/shared/service-catalog'
 import {
   mapSkillToPackage,
   createAxdashboardClient,
   partitionForUpsert,
   selectStaleIds,
+  SYNC_PROVIDER_ID,
   type SkillHubRow,
   type ExistingSlugRow,
 } from './axdashboard-sync'
@@ -279,7 +280,7 @@ export async function syncEnterlabsSkills(): Promise<SyncResult> {
   const { data: existingAxd } = await adminClient
     .from('service_package')
     .select('id, source_ref')
-    .eq('provider_id', ENTERLABS_ID)
+    .eq('provider_id', SYNC_PROVIDER_ID)
     .like('source_ref', 'axd:%')
     .neq('status', 'archived')
   const staleIds = selectStaleIds(
@@ -307,7 +308,7 @@ export async function setEnterpriseVisibility(id: string, visible: boolean): Pro
     .from('service_package')
     .update({ visible })
     .eq('id', id)
-    .eq('provider_id', ENTERLABS_ID)
+    .in('provider_id', PLATFORM_PROVIDER_IDS) // 엔터랩스 5대 + 지사네 동기화 공용
 
   if (error) return { error: '노출 설정에 실패했습니다.' }
 
@@ -330,7 +331,7 @@ export async function setEnterprisePillar(id: string, pillar: EnterprisePillar |
     .from('service_package')
     .update(patch)
     .eq('id', id)
-    .eq('provider_id', ENTERLABS_ID)
+    .in('provider_id', PLATFORM_PROVIDER_IDS) // 엔터랩스 5대 + 지사네 동기화 공용
 
   if (error) return { error: '분류 매칭에 실패했습니다.' }
 

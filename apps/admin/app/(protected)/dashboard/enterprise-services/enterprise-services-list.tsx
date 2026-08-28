@@ -17,6 +17,7 @@ export interface EnterpriseItem {
   pillar: EnterprisePillar | null
   visible: boolean
   source_ref: string | null
+  isJisane: boolean
 }
 
 export function EnterpriseServicesList({ items }: { items: EnterpriseItem[] }) {
@@ -60,6 +61,9 @@ function EnterpriseRow({ pkg }: { pkg: EnterpriseItem }) {
           <div className="flex items-center gap-2">
             <p className="truncate text-sm font-medium text-text">{pkg.name}</p>
             <StatusBadge kind="package" status={pkg.status} />
+            <span className={`shrink-0 rounded px-1.5 py-0.5 text-[11px] font-medium ${pkg.isJisane ? 'bg-primary/10 text-primary' : 'bg-surface text-text-subtle'}`}>
+              {pkg.isJisane ? '지사네' : '엔터랩스'}
+            </span>
             {isSynced && (
               <span className="shrink-0 rounded bg-surface px-1.5 py-0.5 text-[11px] font-medium text-text-subtle">동기화</span>
             )}

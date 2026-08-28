@@ -8,9 +8,10 @@ import { ExpertDashboard } from './expert-dashboard'
 import { OAuthButtons } from '@jisane/ui/oauth-buttons'
 import { fetchExpertLandingStats } from '@jisane/shared/landing-stats'
 import { ADMIN_URL, OWNER_URL } from '@/lib/urls'
-import { getPackagesByAudience, getRecentPackagesByProviderKind } from '@jisane/shared/service-package/queries'
-import { formatPackagePrice } from '@jisane/shared/service-catalog'
-import { ServiceBanner } from '@jisane/ui/service-banner'
+import { getPackagesByAudience, getAllPublishedPackages } from '@jisane/shared/service-package/queries'
+import { pickShowcase } from '@jisane/shared/service-package/showcase'
+import { formatPackagePrice, CATEGORY_LABELS } from '@jisane/shared/service-catalog'
+import { ServiceCarousel, type ServiceCarouselItem } from '@jisane/ui/service-carousel'
 import { CategoryBrowse } from '@jisane/ui/category-browse'
 import { SectionHeader } from '@jisane/ui/section-header'
 import { AnimatedCounter } from '@jisane/ui/animated-counter'
@@ -61,7 +62,18 @@ export default async function ExpertHome() {
 
   const stats = await fetchExpertLandingStats()
   const education = await getPackagesByAudience('expert')
-  const seniorServices = await getRecentPackagesByProviderKind('senior', 3)
+  const catalog = await getAllPublishedPackages()
+  const showcase: ServiceCarouselItem[] = pickShowcase(catalog, 9).map((pkg) => ({
+    key: pkg.slug,
+    href: `${ADMIN_URL}/knowledge/${pkg.slug}`,
+    name: pkg.name,
+    provider: pkg.provider,
+    bannerUrl: pkg.bannerUrl ?? null,
+    priceLabel: formatPackagePrice(pkg),
+    categoryLabel: CATEGORY_LABELS[pkg.category],
+    isOfficial: pkg.isOfficial,
+    isFree: pkg.isFree,
+  }))
   const adminUrl = ADMIN_URL
   const ownerUrl = OWNER_URL
 
@@ -103,35 +115,17 @@ export default async function ExpertHome() {
         </section>
       </ScrollReveal>
 
-      {/* [3] ② 시니어가 제공하는 서비스 — 배너 중심 최근 등록 3개(쇼케이스) */}
+      {/* [3] ② 지사네 지식서비스 — 배너 캐러셀(대표+전체보기 → /knowledge) */}
       <ScrollReveal className="w-full snap-section">
         <div className="w-full bg-surface-warm py-8 md:py-12">
           <section className="container-marketing px-4 md:px-6">
-            <SectionHeader sticky num={2} tone="primary" title="시니어가 제공하는 서비스" subtitle="경험 많은 시니어지식인이 직접 제공" />
-            {seniorServices.length > 0 ? (
-              <div className="reveal-cards grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                {seniorServices.map((pkg) => (
-                  <a
-                    key={pkg.slug}
-                    href={`${ownerUrl}/services/${pkg.slug}`}
-                    className="group flex flex-col overflow-hidden rounded-xl border border-border-light bg-card shadow-xs card-hover transition-colors hover:border-primary/30"
-                  >
-                    <ServiceBanner src={pkg.bannerUrl} alt={pkg.name} className="rounded-none" />
-                    <div className="flex flex-1 flex-col gap-1 p-4">
-                      <h3 className="font-semibold text-text">{pkg.name}</h3>
-                      {pkg.valueDesc && <p className="line-clamp-2 text-sm text-text-muted leading-relaxed">{pkg.valueDesc}</p>}
-                      <div className="mt-auto flex items-center justify-between pt-2">
-                        <span className="text-xs text-text-subtle">제공: {pkg.provider}</span>
-                        <span className="text-sm font-semibold text-primary tabular-nums">{formatPackagePrice(pkg)}</span>
-                      </div>
-                    </div>
-                  </a>
-                ))}
-              </div>
+            <SectionHeader sticky num={2} tone="primary" title="지사네 지식서비스" subtitle="지사네가 제공하는 전문 서비스를 만나보세요" />
+            {showcase.length > 0 ? (
+              <ServiceCarousel items={showcase} seeAllHref={`${adminUrl}/knowledge`} />
             ) : (
               <div className="flex flex-col items-center gap-3 rounded-xl border border-dashed border-border-light bg-card py-10 text-center">
                 <OwlIcon className="h-8 w-8 text-primary/40" />
-                <p className="text-sm text-text-muted">곧 시니어지식인들의 서비스가 열립니다.</p>
+                <p className="text-sm text-text-muted">곧 지식서비스가 열립니다.</p>
               </div>
             )}
             <div className="mt-4 text-center">

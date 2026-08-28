@@ -26,6 +26,7 @@ interface PackageRowWithProvider {
   value_desc: string
   ax_dashboard_url: string | null
   banner_url: string | null
+  created_at: string
   provider_id: string
   provider: { name: string }
 }
@@ -50,11 +51,12 @@ function toServicePackage(row: PackageRowWithProvider): ServicePackage {
     isFree: row.is_free,
     bannerUrl: row.banner_url ?? undefined,
     isOfficial: PLATFORM_PROVIDER_IDS.includes(row.provider_id) || undefined,
+    createdAt: row.created_at,
   }
 }
 
 const PACKAGE_SELECT =
-  'id, slug, category, pillar, name, description, price, is_free, deliverables, duration, target_audience, featured, value_desc, ax_dashboard_url, banner_url, provider_id, provider:provider!inner(name)'
+  'id, slug, category, pillar, name, description, price, is_free, deliverables, duration, target_audience, featured, value_desc, ax_dashboard_url, banner_url, created_at, provider_id, provider:provider!inner(name)'
 
 export async function getPackagesByAudience(
   audience: ServicePackage['targetAudience']

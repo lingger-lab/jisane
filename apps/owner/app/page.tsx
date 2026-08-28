@@ -1,6 +1,5 @@
 import Link from 'next/link'
 import { cookies } from 'next/headers'
-import { TrendingUp, Calculator, Settings, Megaphone, Cpu } from 'lucide-react'
 import { createClient } from '@jisane/shared/supabase/server'
 import { adminClient } from '@jisane/shared/supabase/admin'
 import { signInWithGoogle, signInWithKakao } from '@jisane/shared/auth/actions'
@@ -8,23 +7,16 @@ import { OwnerDashboard } from './owner-dashboard'
 import { OAuthButtons } from '@jisane/ui/oauth-buttons'
 import { fetchOwnerLandingStats } from '@jisane/shared/landing-stats'
 import { getPackagesByAudience } from '@jisane/shared/service-package/queries'
+import { pickShowcase } from '@jisane/shared/service-package/showcase'
+import { formatPackagePrice, CATEGORY_LABELS, PILLAR_LABELS, PILLAR_ORDER } from '@jisane/shared/service-catalog'
 import { CategoryBrowse } from '@jisane/ui/category-browse'
+import { ServiceCarousel, type ServiceCarouselItem } from '@jisane/ui/service-carousel'
 import { SectionHeader } from '@jisane/ui/section-header'
-import { Badge } from '@jisane/ui/badge'
 import { OwlIcon } from '@jisane/ui/icons/owl'
 import { ScrollReveal } from '@jisane/ui/scroll-reveal'
 import { HeroBackdrop } from '@jisane/ui/hero-backdrop'
 import { TextRotator } from '@jisane/ui/text-rotator'
 import { ADMIN_URL, EXPERT_URL } from '@/lib/urls'
-
-// 지사네가 제공하는 기업 전문 서비스 5대 분류 — 각 서비스를 나타내는 라인 아이콘.
-const ENTERPRISE_PILLARS = [
-  { code: 'biz_marketing' as const, title: '경영·마케팅 사업화 지원', desc: '사업 아이템 구체화 · 시장 진입 전략', Icon: TrendingUp },
-  { code: 'finance_tax' as const, title: '재무·세무·회계 경영컨설팅', desc: '자금 · 세무 · 회계 구조 진단과 자문', Icon: Calculator },
-  { code: 'tech_quality' as const, title: '기술·생산 품질관리 지원', desc: '생산 공정 · 품질 체계 개선', Icon: Settings },
-  { code: 'online_sales' as const, title: '온라인·홍보 판로개척 지원', desc: '온라인 채널 · 홍보로 판로 확대', Icon: Megaphone },
-  { code: 'ai_ax' as const, title: 'AI·AX 지원', desc: 'AI 도입 · 업무 전환(AX)으로 생산성 향상', Icon: Cpu },
-] as const
 
 export default async function OwnerHome() {
   const cookieStore = await cookies()
@@ -48,10 +40,18 @@ export default async function OwnerHome() {
   const adminUrl = ADMIN_URL
   const expertUrl = EXPERT_URL
 
-  // 랜딩 ①은 featured(추천) 서비스만 노출 — 나머지는 "전체 전문 서비스 둘러보기"(/services)에서.
-  // featured 0건이면 섹션이 비지 않게 상위 3개로 폴백.
-  const featuredServices = services.filter((s) => s.featured)
-  const landingServices = featuredServices.length > 0 ? featuredServices : services.slice(0, 3)
+  // 랜딩 ①은 전체 지식서비스(46)의 대표(featured→최신)를 배너 캐러셀로 — 전체는 /services.
+  const showcase: ServiceCarouselItem[] = pickShowcase(services, 9).map((pkg) => ({
+    key: pkg.slug,
+    href: `/services/${pkg.slug}`,
+    name: pkg.name,
+    provider: pkg.provider,
+    bannerUrl: pkg.bannerUrl ?? null,
+    priceLabel: formatPackagePrice(pkg),
+    categoryLabel: CATEGORY_LABELS[pkg.category],
+    isOfficial: pkg.isOfficial,
+    isFree: pkg.isFree,
+  }))
 
   return (
     <div className="landing-snap flex flex-1 flex-col items-center">
@@ -76,35 +76,15 @@ export default async function OwnerHome() {
         </section>
       </div>
 
-      {/* [2] ① 기업 운영 전문 서비스 */}
+      {/* [2] ① 기업 지식서비스 — 배너 캐러셀(대표3+살짝가림), 전체 → /services */}
       <ScrollReveal className="w-full snap-section">
         <section className="container-marketing px-4 md:px-6 py-8 md:py-12">
-          <SectionHeader sticky num={1} tone="primary" title="기업 운영 전문 서비스" subtitle="기업 운영에 필요한 전문 서비스 신청" />
-          <div className="reveal-cards flex flex-col gap-3">
-            {landingServices.map((pkg) => (
-              <Link
-                key={pkg.slug}
-                href={`/services/${pkg.slug}`}
-                className="rounded-xl border border-border-light bg-card p-4 md:p-5 shadow-xs card-hover transition-colors hover:border-primary/30"
-              >
-                <div className="flex items-start justify-between gap-2">
-                  <div className="min-w-0 flex-1">
-                    <div className="flex items-center gap-2">
-                      <h3 className="font-semibold text-text">{pkg.name}</h3>
-                      {pkg.isFree && (
-                        <Badge variant="primary">무료</Badge>
-                      )}
-                    </div>
-                    <p className="mt-1 text-sm text-text-muted leading-relaxed">{pkg.valueDesc}</p>
-                  </div>
-                  {pkg.duration && <span className="shrink-0 text-xs text-text-subtle">{pkg.duration}</span>}
-                </div>
-              </Link>
-            ))}
-          </div>
-          <Link href="/services" className="mt-4 inline-flex items-center text-sm font-semibold text-primary hover:underline">
-            전체 전문 서비스 둘러보기 &rarr;
-          </Link>
+          <SectionHeader sticky num={1} tone="primary" title="기업 지식서비스" subtitle="기업 운영에 바로 쓰는 전문 서비스" />
+          {showcase.length > 0 ? (
+            <ServiceCarousel items={showcase} seeAllHref={`${adminUrl}/knowledge`} />
+          ) : (
+            <p className="text-sm text-text-muted">준비 중입니다.</p>
+          )}
         </section>
       </ScrollReveal>
 
@@ -126,25 +106,18 @@ export default async function OwnerHome() {
         </div>
       </ScrollReveal>
 
-      {/* [4] ③ 지사네가 제공하는 기업 전문 서비스 (5) */}
+      {/* [4] ③ 5대 지원 분류로 찾기 — 서비스 검색 분류(칩) */}
       <ScrollReveal className="w-full snap-section">
         <section className="container-marketing px-4 md:px-6 py-8 md:py-12">
-          <SectionHeader sticky num={3} tone="primary" title="지사네가 제공하는 기업 전문 서비스" subtitle="지역 기업 성장을 위한 5대 지원" />
-          <div className="reveal-cards flex flex-col gap-2.5">
-            {ENTERPRISE_PILLARS.map((p) => (
+          <SectionHeader sticky num={3} tone="primary" title="5대 지원 분류로 찾기" subtitle="필요한 지원 분야를 골라 서비스를 탐색하세요" />
+          <div className="flex flex-wrap gap-2">
+            {PILLAR_ORDER.map((code) => (
               <Link
-                key={p.title}
-                href={`/services?pillar=${p.code}`}
-                className="group flex items-center gap-3 rounded-xl border border-border-light bg-card p-4 shadow-xs card-hover transition-colors hover:border-primary/30"
+                key={code}
+                href={`/services?pillar=${code}`}
+                className="rounded-full border border-border-light bg-card px-4 py-2 text-sm font-medium text-text-muted transition-colors hover:border-primary/30 hover:text-primary"
               >
-                <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
-                  <p.Icon className="h-[18px] w-[18px]" strokeWidth={1.75} aria-hidden="true" />
-                </span>
-                <div className="min-w-0 flex-1">
-                  <p className="font-semibold text-text">{p.title}</p>
-                  <p className="mt-0.5 text-sm text-text-muted">{p.desc}</p>
-                </div>
-                <span aria-hidden="true" className="shrink-0 text-text-subtle transition-transform group-hover:translate-x-0.5 group-hover:text-primary">&rarr;</span>
+                {PILLAR_LABELS[code]}
               </Link>
             ))}
           </div>
