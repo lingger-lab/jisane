@@ -30,14 +30,19 @@ const gowunBatang = Gowun_Batang({
   display: "swap",
 });
 
-export const metadata: Metadata = rootMetadata("expert", {
-  titleDefault: "지사네 시니어지식인회원",
-  description: "경험으로 일하고, 정당한 대가를 받으세요 — 작업료 전액 수령. 지사네 시니어지식인 플랫폼.",
-});
+export const metadata: Metadata = {
+  ...rootMetadata("expert", {
+    titleDefault: "지사네 시니어지식인회원",
+    description: "경험으로 일하고, 정당한 대가를 받으세요 — 작업료 전액 수령. 지사네 시니어지식인 플랫폼.",
+  }),
+  // iOS "홈 화면에 추가" 시 앱처럼 전체화면 실행 + 아이콘 타이틀
+  appleWebApp: { capable: true, title: "지사네", statusBarStyle: "default" },
+};
 
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
+  themeColor: "#1f5c46", // 모바일 브라우저 크롬/PWA 상태바 — 브랜드 딥그린
   // maximumScale는 지정하지 않는다 — 핀치줌을 막으면 WCAG 2.1 AA 1.4.4(Resize Text)
   // 위반. 시니어 대상 서비스라 확대 필요성이 특히 큼. initialScale:1만으로 iOS 입력
   // 포커스 확대 점프는 방지됨(입력 폰트 ≥16px).

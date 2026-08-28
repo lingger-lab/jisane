@@ -29,15 +29,20 @@ const gowunBatang = Gowun_Batang({
   display: "swap",
 });
 
-export const metadata: Metadata = rootMetadata("admin", {
-  titleDefault: "지사네 — 지역 기업의 든든한 성장 파트너",
-  description:
-    "부울경(부산·울산·경남) 중소기업을 위한 전문 서비스와 시니어 전문가 정보. AI(RAG) 상담 제공 — 지식나눔 사업협력 네트워크, 지사네 당신곁에.",
-});
+export const metadata: Metadata = {
+  ...rootMetadata("admin", {
+    titleDefault: "지사네 — 지역 기업의 든든한 성장 파트너",
+    description:
+      "부울경(부산·울산·경남) 중소기업을 위한 전문 서비스와 시니어 전문가 정보. AI(RAG) 상담 제공 — 지식나눔 사업협력 네트워크, 지사네 당신곁에.",
+  }),
+  // iOS "홈 화면에 추가" 시 앱처럼 전체화면 실행 + 아이콘 타이틀
+  appleWebApp: { capable: true, title: "지사네", statusBarStyle: "default" },
+};
 
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
+  themeColor: "#1f5c46", // 모바일 브라우저 크롬/PWA 상태바 — 브랜드 딥그린
   // maximumScale는 지정하지 않는다 — 핀치줌을 막으면 WCAG 2.1 AA 1.4.4(Resize Text)
   // 위반. initialScale:1만으로 iOS 입력 포커스 확대 점프는 방지됨(입력 폰트 ≥16px).
 };
