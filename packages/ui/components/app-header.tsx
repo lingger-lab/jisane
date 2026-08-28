@@ -1,5 +1,6 @@
 import { LoginDropdown } from './login-dropdown'
 import { OwlIcon } from './icons/owl'
+import { ClaudeIcon } from './icons/claude'
 import { ThemeToggle } from './theme-toggle'
 import { RoleSwitchMenu, type RoleSwitchItem } from './role-switch-menu'
 
@@ -53,6 +54,18 @@ export function AppHeader({
         <div className="flex items-center gap-2 md:gap-3">
           {/* 테마 토글을 그룹 맨 앞에 — 디자인 위계상 우선 */}
           {showThemeToggle && <ThemeToggle />}
+
+          {/* Claude 바로가기 — 누구나 쉽게 Claude(claude.ai) 접근 */}
+          <a
+            href="https://claude.ai"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Claude 열기 (새 탭)"
+            title="Claude"
+            className="focus-ring inline-flex h-8 w-8 items-center justify-center rounded-lg text-[#d97757] transition-colors hover:bg-surface"
+          >
+            <ClaudeIcon className="h-5 w-5" />
+          </a>
 
           {children}
 
