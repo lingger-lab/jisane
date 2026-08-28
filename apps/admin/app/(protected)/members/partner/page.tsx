@@ -1,6 +1,7 @@
 import { redirect } from 'next/navigation'
 import { adminClient } from '@jisane/shared/supabase/admin'
 import { verifyAdmin } from '@jisane/shared/auth/server-helpers'
+import { PLATFORM_PROVIDER_IDS } from '@jisane/shared/service-catalog'
 import { PartnerTab, type ProviderItem, type DraftPackageItem } from '../../dashboard/partner-tab'
 
 export const metadata = { title: '전문가회원 | 지사네 관리자' }
@@ -26,7 +27,7 @@ export default async function PartnerMembersPage() {
     <div className="mx-auto max-w-5xl px-4 md:px-6 py-6 animate-fade-in">
       <h1 className="mb-4 text-lg font-serif font-bold text-text">전문가회원</h1>
       <PartnerTab
-        providers={(allProviders ?? []) as ProviderItem[]}
+        providers={((allProviders ?? []) as ProviderItem[]).filter((p) => !PLATFORM_PROVIDER_IDS.includes(p.id))}
         draftPackages={(draftPackages ?? []) as unknown as DraftPackageItem[]}
       />
     </div>

@@ -26,6 +26,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
           <Link href="/dashboard" className="text-sm text-text-muted hover:text-text">대시보드</Link>
           <MembersNav />
           <Link href="/dashboard/enterprise-services" className="text-sm text-text-muted hover:text-text">기업 전문서비스</Link>
+          <Link href="/dashboard/knowledge-studio" className="text-sm text-text-muted hover:text-text">지식서비스 스튜디오</Link>
           <Link href="/dashboard/event-referrals" className="text-sm text-text-muted hover:text-text">이벤트 접수</Link>
         </div>
       </nav>

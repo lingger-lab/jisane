@@ -2,6 +2,7 @@
 
 import { revalidatePath } from 'next/cache'
 import { adminClient } from '@jisane/shared/supabase/admin'
+import { PLATFORM_PROVIDER_IDS } from '@jisane/shared/service-catalog'
 import { findCandidates } from '@jisane/shared/matching-algo'
 import { calculateAiRating } from '@jisane/shared/review-algo'
 import { recalcExpertScores, batchRecalcExpertScores } from '@jisane/shared/expert-scoring'
@@ -445,6 +446,11 @@ export async function updateProviderStatus(
 ): Promise<{ error?: string }> {
   await verifyAdmin()
 
+  // 플랫폼 provider(지사네/엔터랩스)는 회원이 아니므로 상태 변경 불가
+  if (PLATFORM_PROVIDER_IDS.includes(providerId)) {
+    return { error: '플랫폼 제공자는 상태를 변경할 수 없습니다.' }
+  }
+
   // 탈퇴(withdrawn) 행은 이 경로로 되살리지 않는다(감사 P2-4) — 정식 재활성은 reactivateMemberByAdmin.
   const { error } = await adminClient
     .from('provider')
@@ -557,6 +563,10 @@ async function hasInProgressWork(role: MemberRole, id: string): Promise<boolean>
 /** 관리자 강제 탈퇴 — soft-delete + 개인정보 익명화(비가역). 거래·정산 기록은 보존. */
 export async function withdrawMemberByAdmin(role: MemberRole, id: string): Promise<{ error?: string }> {
   await verifyAdmin()
+  // 플랫폼 provider(지사네/엔터랩스)는 회원이 아니므로 강제탈퇴 불가(소속 서비스 증발 방지).
+  if (role === 'provider' && PLATFORM_PROVIDER_IDS.includes(id)) {
+    return { error: '플랫폼 제공자는 탈퇴 처리할 수 없습니다.' }
+  }
   // 진행 중 거래·주문이 있으면 차단(감사 P1-5, 본인 탈퇴 가드와 동일 기준).
   if (await hasInProgressWork(role, id)) {
     return { error: '진행 중인 거래·주문이 있어 탈퇴 처리할 수 없습니다. 완료 후 다시 시도해주세요.' }
