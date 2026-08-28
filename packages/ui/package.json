@@ -24,6 +24,7 @@
     "./icons/google": "./components/icons/google.tsx",
     "./icons/kakao": "./components/icons/kakao.tsx",
     "./icons/owl": "./components/icons/owl.tsx",
+    "./avatar": "./components/avatar.tsx",
     "./app-header": "./components/app-header.tsx",
     "./theme-toggle": "./components/theme-toggle.tsx",
     "./category-browse": "./components/category-browse.tsx",

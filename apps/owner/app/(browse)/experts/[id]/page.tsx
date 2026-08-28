@@ -7,6 +7,7 @@ import { getCachedCategories } from '@jisane/shared/categories'
 import { EXPERT_GRADE_LABELS } from '@jisane/shared/labels'
 import { InviteButton } from '@/components/invite-button'
 import { PageHero } from '@jisane/ui/page-hero'
+import { Avatar } from '@jisane/ui/avatar'
 
 interface PageProps {
   params: Promise<{ id: string }>
@@ -115,7 +116,14 @@ export default async function ExpertDetailPage(props: PageProps) {
       <div className="container-app w-full px-4 md:px-6 py-6 md:py-8">
         {/* 시니어지식인 프로필 */}
         <section className="rounded-2xl border border-border-light bg-card p-5 md:p-6 lg:p-8 shadow-xs">
-          <div className="flex items-center justify-end gap-3">
+          <div className="flex items-center justify-between gap-3">
+            <div className="flex min-w-0 items-center gap-3">
+              <Avatar id={expert.id} name={expert.name} size="lg" />
+              <div className="min-w-0">
+                <p className="truncate font-bold text-text">{expert.name ?? '시니어지식인'}</p>
+                {expert.field && <p className="truncate text-xs text-text-muted">{expert.field}</p>}
+              </div>
+            </div>
             <span
               className={`shrink-0 rounded-full px-2.5 py-1 text-xs font-semibold ${
                 expert.grade === 'veteran'

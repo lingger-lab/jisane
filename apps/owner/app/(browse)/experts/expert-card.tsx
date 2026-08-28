@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import { EXPERT_GRADE_LABELS } from '@jisane/shared/labels'
+import { Avatar } from '@jisane/ui/avatar'
 
 export interface ExpertCardData {
   id: string
@@ -19,7 +20,8 @@ export function ExpertCard({ expert, className = '' }: { expert: ExpertCardData;
       href={`/experts/${expert.id}`}
       className={`rounded-xl border border-border-light p-4 md:p-5 shadow-xs card-hover block ${className}`}
     >
-      <div className="flex items-start justify-between gap-2">
+      <div className="flex items-start gap-3">
+        <Avatar id={expert.id} name={expert.name} size="sm" />
         <div className="min-w-0 flex-1">
           <h3 className="font-medium text-text">{expert.name ?? '시니어지식인'}</h3>
           {expert.field && <p className="mt-0.5 text-xs text-text-muted">{expert.field}</p>}

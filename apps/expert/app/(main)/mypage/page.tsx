@@ -6,6 +6,7 @@ import { adminClient } from '@jisane/shared/supabase/admin'
 import { signOut } from '@jisane/shared/auth/actions'
 import { ACTIVITY_TYPE_LABELS } from '@jisane/shared/labels'
 import { PageHero } from '@jisane/ui/page-hero'
+import { Avatar } from '@jisane/ui/avatar'
 import { ErrorState } from '@jisane/ui/error-state'
 import { EmptyState } from '@jisane/ui/empty-state'
 import { StatusBadge } from '@jisane/ui/status-badge'
@@ -144,9 +145,7 @@ export default async function MyPage() {
         {/* 프로필 요약 카드 */}
         <div className="rounded-xl border border-border-light bg-surface-warm p-4 shadow-sm">
           <div className="flex items-center gap-3">
-            <div className="flex h-12 w-12 items-center justify-center rounded-full bg-accent/10 text-lg font-bold text-accent">
-              {(expert.name || expert.email)[0].toUpperCase()}
-            </div>
+            <Avatar id={expert.id} name={expert.name || expert.email} size="md" />
             <div className="min-w-0">
               <p className="truncate font-medium text-text">{expert.name || '이름 미등록'}</p>
               <p className="truncate text-xs text-text-muted">{expert.email}</p>
