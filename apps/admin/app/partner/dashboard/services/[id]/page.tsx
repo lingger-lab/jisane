@@ -23,7 +23,7 @@ export default async function EditServicePackagePage(props: {
   // 소유권 필터 포함 조회 — 타 전문가회원 패키지는 404
   const { data: pkg } = await adminClient
     .from('service_package')
-    .select('id, name, category, target_audience, description, value_desc, price, is_free, duration, deliverables, status')
+    .select('id, name, category, target_audience, description, value_desc, price, is_free, duration, deliverables, banner_url, status')
     .eq('id', id)
     .eq('provider_id', provider.id)
     .single()
@@ -50,6 +50,7 @@ export default async function EditServicePackagePage(props: {
           isFree: pkg.is_free,
           duration: pkg.duration ?? '',
           deliverables: pkg.deliverables,
+          bannerUrl: (pkg as { banner_url?: string | null }).banner_url ?? null,
         }}
       />
     </div>

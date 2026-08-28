@@ -38,7 +38,7 @@ export default async function PartnerDashboardLayout({
         {[
           { href: '/partner/dashboard', label: '개요' },
           { href: '/partner/dashboard/profile', label: '전문가회원 정보' },
-          { href: '/partner/dashboard/services', label: '서비스 관리' },
+          { href: '/partner/dashboard/services', label: '지식서비스 스튜디오' },
           { href: '/partner/dashboard/orders', label: '신청 확인' },
         ].map((t) => (
           <Link

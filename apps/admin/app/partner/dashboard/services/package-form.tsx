@@ -1,11 +1,12 @@
 'use client'
 
 import { useActionState, useState } from 'react'
-import { createServicePackage, updateServicePackage } from '@/lib/partner/actions'
+import { createServicePackage, updateServicePackage, requestBannerUpload } from '@/lib/partner/actions'
 import { SubmitButton } from '@jisane/ui/submit-button'
 import { Input } from '@jisane/ui/input'
 import { Select } from '@jisane/ui/select'
 import { Textarea } from '@jisane/ui/textarea'
+import { BannerUploader } from '@jisane/ui/banner-uploader'
 
 export interface PackageFormDefaults {
   packageId?: string
@@ -18,6 +19,7 @@ export interface PackageFormDefaults {
   isFree?: boolean
   duration?: string
   deliverables?: string[]
+  bannerUrl?: string | null
 }
 
 export function PackageForm({ defaults = {} }: { defaults?: PackageFormDefaults }) {
@@ -40,6 +42,16 @@ export function PackageForm({ defaults = {} }: { defaults?: PackageFormDefaults 
           서비스명 <span className="text-error">*</span>
         </label>
         <Input id="name" name="name" type="text" required defaultValue={defaults.name} placeholder="예: AI 도입 진단" tone="partner" />
+      </div>
+
+      <div>
+        <label className="mb-1 block text-sm font-medium text-text">배너 이미지</label>
+        <BannerUploader
+          name="banner_url"
+          defaultValue={defaults.bannerUrl ?? null}
+          requestUpload={requestBannerUpload}
+          tone="partner"
+        />
       </div>
 
       {!isEdit && (

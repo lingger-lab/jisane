@@ -14,6 +14,8 @@ import { DangerZone } from '@jisane/ui/danger-zone'
 import { Button } from '@jisane/ui/button'
 import { ProfileEditor } from '@/components/profile-editor'
 import { withdrawExpertSelf } from '@/lib/expert/actions'
+import { getProviderByAuthUser } from '@jisane/shared/provider/auth'
+import { ADMIN_URL } from '@/lib/urls'
 
 // 목록 행 공통 스타일 — radius·보더·서피스·그림자를 한 곳에서 고정(정렬 일관).
 const ROW = 'rounded-xl border border-border-light bg-surface-warm p-4 shadow-xs'
@@ -41,6 +43,9 @@ export default async function MyPage() {
     .single()
 
   if (!expert) redirect('/register')
+
+  // 지식서비스 스튜디오 진입 상태 — 시니어가 provider(kind='senior')로 서비스를 등록하는 경로.
+  const studioProvider = await getProviderByAuthUser(user.id)
 
   // 전문 분야 파싱 (콤마 구분)
   const expertFields = (expert.field || '').split(',').map((f: string) => f.trim()).filter(Boolean)
@@ -158,6 +163,32 @@ export default async function MyPage() {
             <span className="tabular-nums">가입: {fmtDate(expert.created_at)}</span>
           </div>
         </div>
+
+        {/* 지식서비스 스튜디오 진입 — 시니어가 지식서비스를 등록·배너 셋팅(전문가 provider 경유) */}
+        <a
+          href={
+            studioProvider?.status === 'active'
+              ? `${ADMIN_URL}/partner/dashboard/services`
+              : studioProvider
+                ? `${ADMIN_URL}/partner/apply`
+                : `${ADMIN_URL}/partner/apply?kind=senior`
+          }
+          className="block rounded-xl border border-accent/20 bg-accent/5 p-4 shadow-xs card-hover transition-colors hover:border-accent/40"
+        >
+          <div className="flex items-center justify-between gap-3">
+            <div className="min-w-0">
+              <p className="font-semibold text-text">지식서비스 스튜디오</p>
+              <p className="mt-0.5 text-xs text-text-muted">
+                {studioProvider?.status === 'active'
+                  ? '내 지식서비스를 등록하고 배너를 셋팅하세요 — 검수 후 공개 허브에 노출됩니다.'
+                  : studioProvider?.status === 'pending'
+                    ? '전문가 등록 승인 대기 중입니다. 승인되면 지식서비스를 등록할 수 있어요.'
+                    : '내 경험을 지식서비스로 등록해 보세요 — 시작하려면 전문가 등록(1회)이 필요합니다.'}
+              </p>
+            </div>
+            <span aria-hidden="true" className="shrink-0 text-accent">&rarr;</span>
+          </div>
+        </a>
 
         {/* 프로필 편집 (개인정보 수정) */}
         <section>

@@ -1,6 +1,7 @@
 import 'server-only'
 
 import { adminClient } from '../supabase/admin'
+import { PLATFORM_PROVIDER_IDS } from '../service-catalog'
 import type { ServicePackage, ProviderInfo } from '../service-catalog'
 
 /**
@@ -24,6 +25,7 @@ interface PackageRowWithProvider {
   featured: boolean
   value_desc: string
   ax_dashboard_url: string | null
+  banner_url: string | null
   provider_id: string
   provider: { name: string }
 }
@@ -46,11 +48,13 @@ function toServicePackage(row: PackageRowWithProvider): ServicePackage {
     providerId: row.provider_id,
     valueDesc: row.value_desc,
     isFree: row.is_free,
+    bannerUrl: row.banner_url ?? undefined,
+    isOfficial: PLATFORM_PROVIDER_IDS.includes(row.provider_id) || undefined,
   }
 }
 
 const PACKAGE_SELECT =
-  'id, slug, category, pillar, name, description, price, is_free, deliverables, duration, target_audience, featured, value_desc, ax_dashboard_url, provider_id, provider:provider!inner(name)'
+  'id, slug, category, pillar, name, description, price, is_free, deliverables, duration, target_audience, featured, value_desc, ax_dashboard_url, banner_url, provider_id, provider:provider!inner(name)'
 
 export async function getPackagesByAudience(
   audience: ServicePackage['targetAudience']

@@ -18,6 +18,15 @@ export type EnterprisePillar =
   | 'online_sales'
   | 'ai_ax'
 
+/**
+ * 플랫폼 소유 provider(회원 아님) 고정 UUID — '지사네 공식' 서비스의 소속.
+ * 엔터랩스(기존 5대 기업전문서비스면)와 지사네 공식(knowledge-studio 자체등록)을 구분.
+ * 이 provider들은 회원관리·강제탈퇴에서 제외되고, 공개 카드에 "지사네 공식" 뱃지가 붙는다.
+ */
+export const ENTERLABS_ID = 'd0000001-0000-0000-0000-000000000001'
+export const JISANE_OFFICIAL_ID = 'd0000002-0000-0000-0000-000000000002'
+export const PLATFORM_PROVIDER_IDS: readonly string[] = [ENTERLABS_ID, JISANE_OFFICIAL_ID]
+
 /** pillar 코드 → 한글 라벨 (랜딩 카드·탭·관리자폼 단일 소스) */
 export const PILLAR_LABELS: Record<EnterprisePillar, string> = {
   biz_marketing: '경영·마케팅 사업화 지원',
@@ -59,6 +68,10 @@ export interface ServicePackage {
   valueDesc: string
   /** 무료 여부 */
   isFree: boolean
+  /** 배너 이미지 URL (Storage public URL). 없으면 폴백 렌더 */
+  bannerUrl?: string
+  /** 플랫폼(지사네/엔터랩스) 소유 서비스 — "지사네 공식" 뱃지 */
+  isOfficial?: boolean
 }
 
 /**
