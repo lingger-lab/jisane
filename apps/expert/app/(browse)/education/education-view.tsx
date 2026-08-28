@@ -5,6 +5,7 @@ import { ChevronDown } from 'lucide-react'
 import Link from 'next/link'
 import type { ServicePackage, ProviderInfo } from '@jisane/shared/service-catalog'
 import { PageHero } from '@jisane/ui/page-hero'
+import { ServiceBanner } from '@jisane/ui/service-banner'
 import { FilterRadioGroup } from '@jisane/ui/filter-radio-group'
 import { ADMIN_URL } from '@/lib/urls'
 
@@ -96,10 +97,20 @@ export function EducationView({
               key={pkg.slug}
               className={`rounded-xl border border-border-light p-4 shadow-xs card-hover animate-appear stagger-${Math.min(i + 1, 5)}`}
             >
+              {pkg.bannerUrl && (
+                <div className="mb-3">
+                  <ServiceBanner src={pkg.bannerUrl} sizes="(max-width: 768px) 100vw, 640px" />
+                </div>
+              )}
               <div className="flex items-start justify-between gap-3">
                 <div className="min-w-0 flex-1">
-                  <div className="flex items-center gap-2">
+                  <div className="flex flex-wrap items-center gap-2">
                     <h3 className="font-medium text-text">{pkg.name}</h3>
+                    {pkg.isOfficial && (
+                      <span className="rounded-full bg-primary/10 px-2 py-0.5 text-xs font-bold text-primary">
+                        지사네 공식
+                      </span>
+                    )}
                     {pkg.isFree ? (
                       <span className="rounded-full bg-primary/10 px-2 py-0.5 text-xs font-bold text-primary">
                         무료

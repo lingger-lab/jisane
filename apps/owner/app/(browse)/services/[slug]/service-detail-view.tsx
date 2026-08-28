@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { formatPackagePrice, type ServicePackage } from '@jisane/shared/service-catalog'
 import { SubmitButton } from '@jisane/ui/submit-button'
 import { PageHero } from '@jisane/ui/page-hero'
+import { ServiceBanner } from '@jisane/ui/service-banner'
 import { createServiceOrder } from '@/lib/services/actions'
 import { ADMIN_URL } from '@/lib/urls'
 
@@ -30,6 +31,11 @@ export function ServiceDetailView({ pkg }: { pkg: ServicePackage }) {
       />
 
       <div className="container-app px-4 md:px-6 py-6">
+      {pkg.bannerUrl && (
+        <div className="mb-5 max-w-2xl">
+          <ServiceBanner src={pkg.bannerUrl} sizes="(max-width: 768px) 100vw, 640px" />
+        </div>
+      )}
       {/* 패키지 정보 */}
       <div className="mb-6">
         <p className="text-sm text-text-muted leading-relaxed">{pkg.description}</p>
