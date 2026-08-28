@@ -4,6 +4,7 @@ import { adminClient } from '@jisane/shared/supabase/admin'
 import { verifyAdmin } from '@jisane/shared/auth/server-helpers'
 import type { EnterprisePillar } from '@jisane/shared/service-catalog'
 import { EnterpriseServicesList } from './enterprise-services-list'
+import { SyncSkillsButton } from './sync-skills-button'
 
 export const metadata = { title: '기업 전문서비스 관리 | 지사네 관리자' }
 
@@ -17,7 +18,7 @@ export default async function EnterpriseServicesPage() {
 
   const { data } = await adminClient
     .from('service_package')
-    .select('id, name, price, is_free, status, pillar, sort_order')
+    .select('id, name, price, is_free, status, pillar, sort_order, visible, source_ref')
     .eq('provider_id', ENTERLABS_ID)
     .eq('target_audience', 'owner')
     .order('sort_order', { ascending: true })
@@ -29,6 +30,8 @@ export default async function EnterpriseServicesPage() {
     is_free: boolean
     status: string
     pillar: EnterprisePillar | null
+    visible: boolean
+    source_ref: string | null
   }[]
 
   return (
@@ -40,12 +43,15 @@ export default async function EnterpriseServicesPage() {
             기업회원 화면 &ldquo;5대 지원&rdquo;에 노출되는 서비스를 직접 등록·수정·보관합니다.
           </p>
         </div>
-        <Link
-          href="/dashboard/enterprise-services/new"
-          className="shrink-0 rounded-xl bg-primary px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-primary-light"
-        >
-          + 서비스 등록
-        </Link>
+        <div className="flex shrink-0 items-center gap-2">
+          <SyncSkillsButton />
+          <Link
+            href="/dashboard/enterprise-services/new"
+            className="rounded-xl bg-primary px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-primary-light"
+          >
+            + 서비스 등록
+          </Link>
+        </div>
       </div>
 
       {items.length === 0 ? (
