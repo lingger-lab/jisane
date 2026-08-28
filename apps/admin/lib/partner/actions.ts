@@ -11,6 +11,7 @@ import {
   verifyPackageOwnership,
 } from '@jisane/shared/provider/auth'
 import { applyPackageEdit } from '@jisane/shared/service-package/edit-review-gate'
+import { issueBannerUploadUrl, isOwnBannerUrl } from '@jisane/shared/service-package/banner'
 import { withdrawProvider } from '@jisane/shared/member/withdrawal'
 import { signOut } from '@jisane/shared/auth/actions'
 
@@ -185,6 +186,12 @@ export async function createServicePackage(
     .map((s) => s.trim())
     .filter(Boolean)
 
+  // 배너 URL은 반드시 본인 provider 경로여야 한다(임의 URL·타인 배너 주입 차단)
+  const bannerUrl = (formData.get('banner_url') as string | null)?.trim() || null
+  if (!isOwnBannerUrl(bannerUrl, guard.provider.id)) {
+    return { error: '배너 이미지가 올바르지 않습니다. 다시 올려주세요.' }
+  }
+
   // slug 충돌 시 랜덤 suffix 재시도 (생성 후 불변 정책)
   const slug = slugify(name)
   for (let attempt = 0; attempt < 3; attempt++) {
@@ -201,6 +208,7 @@ export async function createServicePackage(
       duration: duration || null,
       target_audience: targetAudience,
       value_desc: valueDesc || '',
+      banner_url: bannerUrl,
       status: 'draft',
     })
     if (!error) {
@@ -249,6 +257,11 @@ export async function updateServicePackage(
     .map((s) => s.trim())
     .filter(Boolean)
 
+  const bannerUrl = (formData.get('banner_url') as string | null)?.trim() || null
+  if (!isOwnBannerUrl(bannerUrl, guard.provider.id)) {
+    return { error: '배너 이미지가 올바르지 않습니다. 다시 올려주세요.' }
+  }
+
   // 소유권 검증 + published→draft 재검수 회귀 + CAS는 applyPackageEdit이 수행
   const result = await applyPackageEdit(adminClient, {
     packageId,
@@ -261,6 +274,7 @@ export async function updateServicePackage(
       deliverables,
       duration: (formData.get('duration') as string | null)?.trim() || null,
       value_desc: (formData.get('value_desc') as string | null)?.trim() || '',
+      banner_url: bannerUrl,
     },
   })
 
@@ -274,6 +288,15 @@ export async function updateServicePackage(
 
   revalidatePath('/partner/dashboard/services')
   redirect('/partner/dashboard/services?success=saved')
+}
+
+/** 배너 업로드용 signed URL 발급 — 활동 중인 전문가회원 본인 provider 경로에만. Storage 미구성 시 null. */
+export async function requestBannerUpload() {
+  const user = await getSessionUser()
+  if (!user) return null
+  const guard = await requireActiveProvider(user.id)
+  if (!guard.ok) return null
+  return issueBannerUploadUrl(guard.provider.id)
 }
 
 /** 서비스 보관 (노출 중단) */

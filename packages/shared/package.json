@@ -32,6 +32,7 @@
     "./automation/audit-sampling": "./lib/automation/audit-sampling.ts",
     "./service-package/queries": "./lib/service-package/queries.ts",
     "./service-package/edit-review-gate": "./lib/service-package/edit-review-gate.ts",
+    "./service-package/banner": "./lib/service-package/banner.ts",
     "./provider/auth": "./lib/provider/auth.ts",
     "./member/withdrawal": "./lib/member/withdrawal.ts"
   },

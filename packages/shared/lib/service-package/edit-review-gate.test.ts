@@ -12,6 +12,7 @@ const fields: PackageEditFields = {
   deliverables: ['리포트'],
   duration: '1주',
   value_desc: '가치 설명',
+  banner_url: null,
 }
 
 interface MockResult {

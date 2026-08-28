@@ -20,6 +20,8 @@ export interface PackageEditFields {
   deliverables: string[]
   duration: string | null
   value_desc: string
+  // 배너 교체도 재검수 대상(이미지가 가장 어뷰징되기 쉬운 필드) — published→draft 회귀에 포함
+  banner_url: string | null
 }
 
 export type PackageEditOutcome =
