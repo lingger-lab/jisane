@@ -1,8 +1,9 @@
 'use client'
 
 import { useActionState, useState } from 'react'
-import { createEnterpriseService, updateEnterpriseService } from '@/lib/enterprise/actions'
+import { createEnterpriseService, updateEnterpriseService, requestEnterpriseBannerUpload } from '@/lib/enterprise/actions'
 import { SubmitButton } from '@jisane/ui/submit-button'
+import { BannerUploader } from '@jisane/ui/banner-uploader'
 import { Input } from '@jisane/ui/input'
 import { Select } from '@jisane/ui/select'
 import { Textarea } from '@jisane/ui/textarea'
@@ -21,6 +22,7 @@ export interface EnterprisePackageFormDefaults {
   duration?: string
   deliverables?: string[]
   status?: string
+  bannerUrl?: string | null
 }
 
 const STATUS_OPTIONS = [
@@ -57,6 +59,11 @@ export function EnterprisePackageForm({
           서비스명 <span className="text-error">*</span>
         </label>
         <Input id="name" name="name" type="text" required defaultValue={defaults.name} placeholder="예: 생산·품질 공정 진단" />
+      </div>
+
+      <div>
+        <span className="mb-1 block text-sm font-medium text-text">배너 이미지</span>
+        <BannerUploader name="banner_url" defaultValue={defaults.bannerUrl ?? null} requestUpload={requestEnterpriseBannerUpload} />
       </div>
 
       <div>

@@ -18,7 +18,7 @@ export default async function EditEnterpriseServicePage(props: {
 
   const { data: pkg } = await adminClient
     .from('service_package')
-    .select('id, name, pillar, description, value_desc, price, is_free, duration, deliverables, status')
+    .select('id, name, pillar, description, value_desc, price, is_free, duration, deliverables, status, banner_url')
     .eq('id', id)
     .eq('provider_id', ENTERLABS_ID)
     .single()
@@ -42,6 +42,7 @@ export default async function EditEnterpriseServicePage(props: {
           duration: pkg.duration ?? '',
           deliverables: pkg.deliverables,
           status: pkg.status,
+          bannerUrl: pkg.banner_url ?? null,
         }}
       />
     </div>
