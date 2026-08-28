@@ -7,7 +7,11 @@ import { MATCHING_STATUS_LABELS } from '@jisane/shared/labels'
 import { MATCHING_STATUS_BADGE_CLASSES } from '@jisane/shared/status-badges'
 import { StatusBadge } from '@jisane/ui/status-badge'
 import { StatCard } from '@jisane/ui/stat-card'
+import { ServiceBanner } from '@jisane/ui/service-banner'
 import { HeroBackdrop } from '@jisane/ui/hero-backdrop'
+import { getRecentPackagesByProvider } from '@jisane/shared/service-package/queries'
+import { formatPackagePrice } from '@jisane/shared/service-catalog'
+import { ADMIN_URL } from '@/lib/urls'
 import { OpportunitySection } from './(main)/matching/opportunity-section'
 
 // 매칭 배지는 이 화면에서 rejected를 에러색이 아닌 중립색으로 표시해 온 의도적 오버라이드가 있어
@@ -26,10 +30,13 @@ export async function ExpertDashboard({
   expertId,
   name,
   field,
+  providerId,
 }: {
   expertId: string
   name: string | null
   field: string | null
+  /** 공급자(provider) 연결 시 본인 등록 지식서비스를 노출. 미연결이면 null */
+  providerId?: string | null
 }) {
   const [
     { data: matchings, error: matchingsError },
@@ -91,6 +98,9 @@ export async function ExpertDashboard({
 
   if (workingCountError) console.error('[ExpertDashboard] working deal count failed:', workingCountError.message)
 
+  // 본인이 공급자로 등록한 지식서비스(배너 3개) — provider 미연결이면 빈 배열
+  const myServices = providerId ? await getRecentPackagesByProvider(providerId, 3) : []
+
   const profileIncomplete = !field
 
   return (
@@ -128,6 +138,40 @@ export async function ExpertDashboard({
         <div className="mb-6 grid grid-cols-2 gap-3">
           <StatCard countTo={matchingsError ? undefined : proposedCount} value={matchingsError ? '—' : undefined} label="새 매칭 제안" accent="accent" emphasis />
           <StatCard href="/work" countTo={workingCountError ? undefined : (workingCount || 0)} value={workingCountError ? '—' : undefined} label="진행 중 작업" accent="accent" />
+        </div>
+
+        {/* 내 지식서비스 — 공급자로 등록한 서비스(배너 3개) + 등록·관리 진입(전문가회원과 동형 대시보드로) */}
+        <div className="mb-6">
+          <div className="mb-3 flex items-center justify-between">
+            <h2 className="text-lg font-serif font-bold text-text">내 지식서비스</h2>
+            <a href={`${ADMIN_URL}/partner/dashboard`} className="text-sm font-medium text-accent hover:underline">
+              서비스 등록·관리 &rarr;
+            </a>
+          </div>
+          {myServices.length > 0 ? (
+            <div className="grid gap-4 sm:grid-cols-3">
+              {myServices.map((pkg) => (
+                <a
+                  key={pkg.slug}
+                  href={`${ADMIN_URL}/partner/dashboard/services/${pkg.id}`}
+                  className="flex flex-col overflow-hidden rounded-xl border border-border-light bg-card shadow-xs card-hover transition-colors hover:border-accent/30"
+                >
+                  <ServiceBanner src={pkg.bannerUrl} alt={pkg.name} className="rounded-none" />
+                  <div className="flex flex-1 flex-col gap-1 p-3">
+                    <h3 className="truncate text-sm font-semibold text-text">{pkg.name}</h3>
+                    <span className="text-xs font-medium text-accent tabular-nums">{formatPackagePrice(pkg)}</span>
+                  </div>
+                </a>
+              ))}
+            </div>
+          ) : (
+            <div className="flex flex-col items-center gap-3 rounded-xl border border-dashed border-border-light py-8 text-center">
+              <p className="text-sm text-text-muted">아직 등록한 지식서비스가 없습니다.</p>
+              <a href={`${ADMIN_URL}/partner/dashboard/services/new`} className="text-sm font-medium text-accent hover:underline">
+                첫 지식서비스를 등록하세요 &rarr;
+              </a>
+            </div>
+          )}
         </div>
 
         {/* 매칭 리스트 — 조회 실패(에러)와 제안 없음(빈)을 구분한다 */}

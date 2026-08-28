@@ -9,7 +9,9 @@ import { ExpertDashboard } from './expert-dashboard'
 import { OAuthButtons } from '@jisane/ui/oauth-buttons'
 import { fetchExpertLandingStats } from '@jisane/shared/landing-stats'
 import { ADMIN_URL, OWNER_URL } from '@/lib/urls'
-import { getPackagesByAudience } from '@jisane/shared/service-package/queries'
+import { getPackagesByAudience, getRecentPackagesByProviderKind } from '@jisane/shared/service-package/queries'
+import { formatPackagePrice } from '@jisane/shared/service-catalog'
+import { ServiceBanner } from '@jisane/ui/service-banner'
 import { CategoryBrowse } from '@jisane/ui/category-browse'
 import { SectionHeader } from '@jisane/ui/section-header'
 import { AnimatedCounter } from '@jisane/ui/animated-counter'
@@ -39,7 +41,20 @@ export default async function ExpertHome() {
       .single()
 
     if (expert) {
-      return <ExpertDashboard expertId={expert.id} name={expert.name} field={expert.field} />
+      // 공급자(provider) 연결 여부 — '내 지식서비스' 카드에 본인 등록 서비스를 노출하기 위함
+      const { data: provider } = await adminClient
+        .from('provider')
+        .select('id')
+        .eq('auth_user_id', user.id)
+        .maybeSingle()
+      return (
+        <ExpertDashboard
+          expertId={expert.id}
+          name={expert.name}
+          field={expert.field}
+          providerId={(provider?.id as string | undefined) ?? null}
+        />
+      )
     }
     // 신규 시니어지식인: 온보딩(프로필 등록)으로
     redirect('/register')
@@ -47,6 +62,7 @@ export default async function ExpertHome() {
 
   const stats = await fetchExpertLandingStats()
   const education = await getPackagesByAudience('expert')
+  const seniorServices = await getRecentPackagesByProviderKind('senior', 3)
   const adminUrl = ADMIN_URL
   const ownerUrl = OWNER_URL
 
@@ -88,35 +104,50 @@ export default async function ExpertHome() {
         </section>
       </ScrollReveal>
 
-      {/* [3] ② 작업에 필요한 전문 도구 — 풀블리드 warm */}
+      {/* [3] ② 시니어가 제공하는 서비스 — 배너 중심 최근 등록 3개(쇼케이스) */}
       <ScrollReveal className="w-full snap-section">
         <div className="w-full bg-surface-warm py-8 md:py-12">
           <section className="container-marketing px-4 md:px-6">
-            <SectionHeader sticky num={2} tone="primary" title="작업에 필요한 전문 도구" subtitle="시니어 작업을 돕는 S/W 도구" />
-            <div className="reveal-cards flex flex-col gap-3">
-              {EXPERT_TOOLS.map((tool) => (
-                <div key={tool.name} className="flex items-start gap-3 rounded-xl border border-border-light bg-card p-4 shadow-xs card-hover">
-                  <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-accent/10 text-accent">
-                    <tool.Icon className="h-[18px] w-[18px]" strokeWidth={1.75} aria-hidden="true" />
-                  </span>
-                  <div className="min-w-0">
-                    <div className="flex items-center gap-2">
-                      <p className="font-semibold text-text">{tool.name}</p>
-                      <Badge variant={tool.badge === '무료' ? 'primary' : 'accent'}>{tool.badge}</Badge>
+            <SectionHeader sticky num={2} tone="primary" title="시니어가 제공하는 서비스" subtitle="경험 많은 시니어지식인이 직접 제공" />
+            {seniorServices.length > 0 ? (
+              <div className="reveal-cards grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                {seniorServices.map((pkg) => (
+                  <a
+                    key={pkg.slug}
+                    href={`${ownerUrl}/services/${pkg.slug}`}
+                    className="group flex flex-col overflow-hidden rounded-xl border border-border-light bg-card shadow-xs card-hover transition-colors hover:border-primary/30"
+                  >
+                    <ServiceBanner src={pkg.bannerUrl} alt={pkg.name} className="rounded-none" />
+                    <div className="flex flex-1 flex-col gap-1 p-4">
+                      <h3 className="font-semibold text-text">{pkg.name}</h3>
+                      {pkg.valueDesc && <p className="line-clamp-2 text-sm text-text-muted leading-relaxed">{pkg.valueDesc}</p>}
+                      <div className="mt-auto flex items-center justify-between pt-2">
+                        <span className="text-xs text-text-subtle">제공: {pkg.provider}</span>
+                        <span className="text-sm font-semibold text-primary tabular-nums">{formatPackagePrice(pkg)}</span>
+                      </div>
                     </div>
-                    <p className="mt-0.5 text-sm text-text-muted">{tool.desc}</p>
-                  </div>
-                </div>
-              ))}
+                  </a>
+                ))}
+              </div>
+            ) : (
+              <div className="flex flex-col items-center gap-3 rounded-xl border border-dashed border-border-light bg-card py-10 text-center">
+                <OwlIcon className="h-8 w-8 text-primary/40" />
+                <p className="text-sm text-text-muted">곧 시니어지식인들의 서비스가 열립니다.</p>
+              </div>
+            )}
+            <div className="mt-4 text-center">
+              <a href="#expert-join" className="text-sm font-medium text-primary hover:underline">
+                경험을 서비스로 — 지금 등록하고 여세요 →
+              </a>
             </div>
           </section>
         </div>
       </ScrollReveal>
 
-      {/* [4] ③ 지사네가 제공하는 시니어 전문 서비스 — 역량 강화·교육 */}
+      {/* [4] ③ 지사네가 제공하는 시니어 전문 서비스 — 역량 강화·교육 + 업무 도구 */}
       <ScrollReveal className="w-full snap-section">
         <section className="container-marketing px-4 md:px-6 py-8 md:py-12">
-          <SectionHeader sticky num={3} tone="accent" title="지사네가 제공하는 시니어 전문 서비스" subtitle="역량 강화 · 교육 프로그램" />
+          <SectionHeader sticky num={3} tone="accent" title="지사네가 제공하는 시니어 전문 서비스" subtitle="역량 강화 · 교육 · 업무 도구" />
           <div className="reveal-cards flex flex-col gap-3">
             {education.map((pkg) => (
               <Link
@@ -134,12 +165,31 @@ export default async function ExpertHome() {
               </Link>
             ))}
           </div>
+
+          {/* 업무 도구 — 지사네 제공물이므로 이 섹션에 포함 */}
+          <h3 className="mb-3 mt-6 text-sm font-semibold text-text-muted">업무 도구</h3>
+          <div className="reveal-cards flex flex-col gap-3">
+            {EXPERT_TOOLS.map((tool) => (
+              <div key={tool.name} className="flex items-start gap-3 rounded-xl border border-border-light bg-card p-4 shadow-xs card-hover">
+                <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-accent/10 text-accent">
+                  <tool.Icon className="h-[18px] w-[18px]" strokeWidth={1.75} aria-hidden="true" />
+                </span>
+                <div className="min-w-0">
+                  <div className="flex items-center gap-2">
+                    <p className="font-semibold text-text">{tool.name}</p>
+                    <Badge variant={tool.badge === '무료' ? 'primary' : 'accent'}>{tool.badge}</Badge>
+                  </div>
+                  <p className="mt-0.5 text-sm text-text-muted">{tool.desc}</p>
+                </div>
+              </div>
+            ))}
+          </div>
         </section>
       </ScrollReveal>
 
       {/* [5] 회원가입/로그인 CTA — 하단 */}
       <ScrollReveal className="w-full snap-section">
-        <section className="container-marketing px-4 md:px-6 py-8 md:py-12">
+        <section id="expert-join" className="container-marketing px-4 md:px-6 py-8 md:py-12 scroll-mt-16">
           <div className="rounded-2xl bg-accent/10 p-6 md:p-8">
             <p className="mb-5 text-center text-base md:text-lg font-semibold text-text leading-relaxed">
               지금 등록하고 열린 의뢰 <AnimatedCounter end={stats.totalOpenRequests} suffix="건" />을 확인하세요

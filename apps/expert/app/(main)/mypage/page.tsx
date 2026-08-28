@@ -169,9 +169,9 @@ export default async function MyPage() {
           >
             <div className="flex items-center justify-between gap-3">
               <div className="min-w-0">
-                <p className="font-semibold text-text">지식서비스 스튜디오</p>
+                <p className="font-semibold text-text">지식서비스 대시보드</p>
                 <p className="mt-0.5 text-xs text-text-muted">
-                  내 지식을 서비스로 등록하고 배너를 셋팅하세요 — 관리자 검수 후 공개됩니다.
+                  내 서비스 현황을 한눈에 보고, 새 서비스를 등록·관리하세요 — 관리자 검수 후 공개됩니다.
                 </p>
               </div>
               <span aria-hidden="true" className="shrink-0 text-accent">&rarr;</span>

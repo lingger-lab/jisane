@@ -26,18 +26,21 @@ export default async function PartnerDashboardLayout({
     redirect('/partner/apply')
   }
 
+  // 시니어지식인·전문가회원이 같은 provider 대시보드를 공유 — kind로 호칭만 분기(전문가와 동형 유지)
+  const kindLabel = guard.provider.kind === 'senior' ? '시니어지식인' : '전문가회원'
+
   return (
     <div className="flex flex-1 flex-col">
       <PageHero
-        eyebrow="전문가회원"
+        eyebrow={kindLabel}
         title={guard.provider.name}
-        subtitle="전문가회원 대시보드 · 활동 중"
+        subtitle={`${kindLabel} 대시보드 · 활동 중`}
       />
       <div className="mx-auto w-full max-w-4xl px-4 md:px-6 py-6">
       <nav className="mb-6 flex gap-1 overflow-x-auto rounded-lg bg-surface p-1">
         {[
           { href: '/partner/dashboard', label: '개요' },
-          { href: '/partner/dashboard/profile', label: '전문가회원 정보' },
+          { href: '/partner/dashboard/profile', label: `${kindLabel} 정보` },
           { href: '/partner/dashboard/services', label: '지식서비스 스튜디오' },
           { href: '/partner/dashboard/orders', label: '신청 확인' },
         ].map((t) => (

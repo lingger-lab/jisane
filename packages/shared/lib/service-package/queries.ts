@@ -64,6 +64,7 @@ export async function getPackagesByAudience(
     .select(PACKAGE_SELECT)
     .eq('target_audience', audience)
     .eq('status', 'published')
+    .eq('visible', true)
     .order('sort_order', { ascending: true })
 
   if (error) {
@@ -79,11 +80,54 @@ export async function getAllPublishedPackages(): Promise<ServicePackage[]> {
     .from('service_package')
     .select(PACKAGE_SELECT)
     .eq('status', 'published')
+    .eq('visible', true)
     .order('featured', { ascending: false })
     .order('sort_order', { ascending: true })
 
   if (error) {
     console.error('[service-package] getAllPublishedPackages failed:', error.message)
+    return []
+  }
+  return (data as unknown as PackageRowWithProvider[]).map(toServicePackage)
+}
+
+/** 제공자 kind별(시니어/기업) 최근 등록 published 서비스 N개 — 배너 중심 쇼케이스용. */
+export async function getRecentPackagesByProviderKind(
+  kind: 'senior' | 'company',
+  limit: number
+): Promise<ServicePackage[]> {
+  const { data, error } = await adminClient
+    .from('service_package')
+    .select(PACKAGE_SELECT)
+    .eq('provider.kind', kind)
+    .eq('status', 'published')
+    .eq('visible', true)
+    .order('created_at', { ascending: false })
+    .limit(limit)
+
+  if (error) {
+    console.error('[service-package] getRecentPackagesByProviderKind failed:', error.message)
+    return []
+  }
+  return (data as unknown as PackageRowWithProvider[]).map(toServicePackage)
+}
+
+/** 특정 제공자의 최근 등록 published 서비스 N개 — 본인 대시보드 카드용. */
+export async function getRecentPackagesByProvider(
+  providerId: string,
+  limit: number
+): Promise<ServicePackage[]> {
+  const { data, error } = await adminClient
+    .from('service_package')
+    .select(PACKAGE_SELECT)
+    .eq('provider_id', providerId)
+    .eq('status', 'published')
+    .eq('visible', true)
+    .order('created_at', { ascending: false })
+    .limit(limit)
+
+  if (error) {
+    console.error('[service-package] getRecentPackagesByProvider failed:', error.message)
     return []
   }
   return (data as unknown as PackageRowWithProvider[]).map(toServicePackage)
@@ -95,6 +139,7 @@ export async function getPackageBySlug(slug: string): Promise<ServicePackage | n
     .select(PACKAGE_SELECT)
     .eq('slug', slug)
     .eq('status', 'published')
+    .eq('visible', true)
     .single()
 
   if (error || !data) return null

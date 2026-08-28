@@ -42,5 +42,5 @@ export async function enterKnowledgeStudio() {
     await adminClient.from('provider').update({ status: 'active' }).eq('auth_user_id', user.id)
   }
 
-  redirect(`${ADMIN_URL}/partner/dashboard/services`)
+  redirect(`${ADMIN_URL}/partner/dashboard`)
 }
