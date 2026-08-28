@@ -5,6 +5,7 @@ import { redirect } from 'next/navigation'
 import { revalidatePath } from 'next/cache'
 import { createClient } from '@jisane/shared/supabase/server'
 import { adminClient } from '@jisane/shared/supabase/admin'
+import { flagIfRisky } from '@jisane/shared/audit/message-audit'
 import {
   getProviderByAuthUser,
   requireActiveProvider,
@@ -333,7 +334,7 @@ export async function completeOrder(orderId: string): Promise<ActionState> {
 
   const { data: order } = await adminClient
     .from('service_order')
-    .select('id, status, provider_id')
+    .select('id, status, provider_id, delivered_at')
     .eq('id', orderId)
     .single()
 
@@ -345,6 +346,11 @@ export async function completeOrder(orderId: string): Promise<ActionState> {
     return { error: '진행 중인 주문만 완료 처리할 수 있습니다.' }
   }
 
+  // 공급자 완료는 산출물 전달 후에만(관리자 PATCH는 이 가드 없이 오프라인 재량 유지)
+  if (!order.delivered_at) {
+    return { error: '산출물을 먼저 전달해주세요.' }
+  }
+
   const { error } = await adminClient
     .from('service_order')
     .update({ status: 'completed' })
@@ -354,6 +360,52 @@ export async function completeOrder(orderId: string): Promise<ActionState> {
   if (error) return { error: '완료 처리에 실패했습니다.' }
 
   revalidatePath('/partner/dashboard/orders')
+  return {}
+}
+
+/**
+ * 산출물 전달 — 공급자가 processing 단계에서 링크+메모 1건 전달(완료 처리의 선행조건).
+ * 무료기간 §0상 Storage 신설 없이 링크+메모만 추적하고, 스레드에도 전달 사실을 남긴다.
+ */
+export async function submitDeliverable(orderId: string, url: string, note: string): Promise<ActionState> {
+  const user = await getSessionUser()
+  if (!user) return { error: '로그인이 필요합니다.' }
+
+  const guard = await requireActiveProvider(user.id)
+  if (!guard.ok) return { error: '접근 권한이 없습니다.' }
+
+  const link = url.trim()
+  if (!link) return { error: '산출물 링크를 입력해주세요.' }
+  if (!/^https?:\/\//.test(link)) return { error: '링크는 http(s):// 로 시작해야 합니다.' }
+
+  const { data: order } = await adminClient
+    .from('service_order')
+    .select('id, provider_id, status')
+    .eq('id', orderId)
+    .single()
+
+  if (!order || order.provider_id !== guard.provider.id) return { error: '접근 권한이 없습니다.' }
+  if (order.status !== 'processing') return { error: '진행 중인 주문만 산출물을 전달할 수 있습니다.' }
+
+  const noteTrim = note.trim()
+  const { error } = await adminClient
+    .from('service_order')
+    .update({ deliverable_url: link, deliverable_note: noteTrim || null, delivered_at: new Date().toISOString() })
+    .eq('id', orderId)
+    .eq('status', 'processing')
+
+  if (error) return { error: '산출물 전달에 실패했습니다.' }
+
+  // 스레드에 전달 사실 기록 → 발주자·관리자에게 노출
+  const body = `[산출물 전달] ${link}${noteTrim ? `\n${noteTrim}` : ''}`
+  const { data: msg } = await adminClient
+    .from('service_order_message')
+    .insert({ service_order_id: orderId, sender_type: 'provider', sender_id: guard.provider.id, content: body })
+    .select('id')
+    .single()
+  if (msg?.id) await flagIfRisky('service_order', msg.id as string, body)
+
+  revalidatePath(`/partner/dashboard/orders/${orderId}`)
   return {}
 }
 
@@ -379,17 +431,18 @@ export async function sendServiceOrderMessage(
 
   if (!order || order.provider_id !== guard.provider.id) return { error: '접근 권한이 없습니다.' }
 
-  const { error } = await adminClient.from('service_order_message').insert({
-    service_order_id: orderId,
-    sender_type: 'provider',
-    sender_id: guard.provider.id,
-    content: content.trim(),
-  })
+  const trimmed = content.trim()
+  const { data: msg, error } = await adminClient
+    .from('service_order_message')
+    .insert({ service_order_id: orderId, sender_type: 'provider', sender_id: guard.provider.id, content: trimmed })
+    .select('id')
+    .single()
 
   if (error) {
     console.error('[partner/actions] sendServiceOrderMessage 저장 실패:', error.message)
     return { error: '메시지 전송에 실패했습니다.' }
   }
+  if (msg?.id) await flagIfRisky('service_order', msg.id as string, trimmed)
 
   revalidatePath(`/partner/dashboard/orders/${orderId}`)
   return {}

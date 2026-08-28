@@ -3,6 +3,7 @@
 import { redirect } from 'next/navigation'
 import { revalidatePath } from 'next/cache'
 import { adminClient } from '@jisane/shared/supabase/admin'
+import { flagIfRisky } from '@jisane/shared/audit/message-audit'
 import { resolveExpertFromAuth } from '@jisane/shared/auth/server-helpers'
 
 async function getExpertId(): Promise<string> {
@@ -33,19 +34,18 @@ export async function sendDealMessage(
     return { error: '접근 권한이 없습니다.' }
   }
 
-  const { error } = await adminClient
+  const trimmed = content.trim()
+  const { data: msg, error } = await adminClient
     .from('deal_message')
-    .insert({
-      deal_id: dealId,
-      sender_type: 'expert',
-      sender_id: expertId,
-      content: content.trim(),
-    })
+    .insert({ deal_id: dealId, sender_type: 'expert', sender_id: expertId, content: trimmed })
+    .select('id')
+    .single()
 
   if (error) {
     console.error('[sendDealMessage] insert failed:', error.message)
     return { error: '메시지 전송에 실패했습니다. 다시 시도해주세요.' }
   }
+  if (msg?.id) await flagIfRisky('deal', msg.id as string, trimmed)
 
   revalidatePath(`/work/${dealId}`)
   return {}

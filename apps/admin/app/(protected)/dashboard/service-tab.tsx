@@ -5,6 +5,7 @@ import { Package } from 'lucide-react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useSeededState } from '@jisane/ui/use-seeded-state'
+import { nextServiceOrderStatuses } from '@jisane/shared/service-order/transitions'
 
 /** 서버(dashboard page)에서 service_package를 조회해 slug 맵으로 내려준다 */
 export interface PackageInfoBySlug {
@@ -48,8 +49,6 @@ const CATEGORY_FILTERS = [
   { key: 'education', label: '교육' },
 ] as const
 
-const STATUS_OPTIONS = ['pending', 'paid', 'processing', 'completed', 'cancelled']
-
 export function ServiceTab({
   orders,
   packagesBySlug,
@@ -85,7 +84,9 @@ export function ServiceTab({
         // 서버 스냅샷(orders prop)도 갱신해 두 소스가 수렴하도록 (감사 P2-6)
         router.refresh()
       } else {
-        setUpdateError('상태 변경에 실패했습니다. 다시 시도해 주세요.')
+        // 전이 불가(400)·경합(409) 등 서버 메시지를 그대로 노출
+        const data = (await res.json().catch(() => null)) as { error?: string } | null
+        setUpdateError(data?.error || '상태 변경에 실패했습니다. 다시 시도해 주세요.')
       }
     } catch {
       setUpdateError('네트워크 오류가 발생했습니다. 연결을 확인해 주세요.')
@@ -192,14 +193,16 @@ export function ServiceTab({
                     <span className={`rounded-full px-2 py-0.5 text-xs font-medium ${statusInfo.color}`}>
                       {statusInfo.label}
                     </span>
+                    {/* 유효 전이만 노출 — 임의 점프 차단(서버 가드 미러). 터미널 상태면 비활성. */}
                     <select
                       value={order.status}
-                      disabled={updating === order.id}
+                      disabled={updating === order.id || nextServiceOrderStatuses(order.status).length === 0}
                       onChange={(e) => handleStatusChange(order.id, e.target.value)}
                       aria-label="주문 상태 변경"
                       className="rounded border border-border bg-surface px-2 py-1 text-xs text-text disabled:opacity-50"
                     >
-                      {STATUS_OPTIONS.map((s) => (
+                      <option value={order.status}>{STATUS_LABELS[order.status]?.label || order.status}</option>
+                      {nextServiceOrderStatuses(order.status).map((s) => (
                         <option key={s} value={s}>
                           {STATUS_LABELS[s]?.label || s}
                         </option>

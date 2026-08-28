@@ -5,6 +5,7 @@ import { redirect } from 'next/navigation'
 import { revalidatePath } from 'next/cache'
 import { createClient } from '@jisane/shared/supabase/server'
 import { adminClient } from '@jisane/shared/supabase/admin'
+import { flagIfRisky } from '@jisane/shared/audit/message-audit'
 import type { DealWithOwnerId } from '@jisane/shared/query-types'
 
 async function getOwnerId(): Promise<string> {
@@ -52,19 +53,18 @@ export async function sendOwnerMessage(
   const ownership = await verifyDealOwnership(dealId, ownerId)
   if (!ownership) return { error: '접근 권한이 없습니다.' }
 
-  const { error } = await adminClient
+  const trimmed = content.trim()
+  const { data: msg, error } = await adminClient
     .from('deal_message')
-    .insert({
-      deal_id: dealId,
-      sender_type: 'owner',
-      sender_id: ownerId,
-      content: content.trim(),
-    })
+    .insert({ deal_id: dealId, sender_type: 'owner', sender_id: ownerId, content: trimmed })
+    .select('id')
+    .single()
 
   if (error) {
     console.error('[message/actions] sendOwnerMessage 저장 실패:', error)
     return { error: '메시지 전송에 실패했습니다. 잠시 후 다시 시도해주세요.' }
   }
+  if (msg?.id) await flagIfRisky('deal', msg.id as string, trimmed)
 
   revalidatePath(`/status/${ownership.requestId}`)
   return {}
@@ -88,17 +88,18 @@ export async function sendServiceOrderMessage(
 
   if (!order || order.owner_id !== ownerId) return { error: '접근 권한이 없습니다.' }
 
-  const { error } = await adminClient.from('service_order_message').insert({
-    service_order_id: orderId,
-    sender_type: 'owner',
-    sender_id: ownerId,
-    content: content.trim(),
-  })
+  const trimmed = content.trim()
+  const { data: msg, error } = await adminClient
+    .from('service_order_message')
+    .insert({ service_order_id: orderId, sender_type: 'owner', sender_id: ownerId, content: trimmed })
+    .select('id')
+    .single()
 
   if (error) {
     console.error('[message/actions] sendServiceOrderMessage(owner) 저장 실패:', error)
     return { error: '메시지 전송에 실패했습니다. 잠시 후 다시 시도해주세요.' }
   }
+  if (msg?.id) await flagIfRisky('service_order', msg.id as string, trimmed)
 
   revalidatePath(`/orders/${orderId}`)
   return {}

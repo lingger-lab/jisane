@@ -28,7 +28,7 @@ export default async function ServiceOrderDetailPage(props: { params: Promise<{ 
 
   const { data: order } = await adminClient
     .from('service_order')
-    .select('id, package_name, price, is_free, status, detail, created_at, owner_id')
+    .select('id, package_name, price, is_free, status, detail, created_at, owner_id, deliverable_url, deliverable_note, delivered_at')
     .eq('id', id)
     .single()
   if (!order || order.owner_id !== owner.id) notFound()
@@ -93,6 +93,26 @@ export default async function ServiceOrderDetailPage(props: { params: Promise<{ 
             </p>
           )}
         </div>
+
+        {/* 산출물 — 공급자가 전달한 결과물 링크 */}
+        {order.delivered_at && (
+          <div className="rounded-xl border border-primary/20 bg-primary/5 p-4">
+            <p className="mb-1 text-sm font-semibold text-text">전달된 산출물</p>
+            {order.deliverable_url && (
+              <a
+                href={order.deliverable_url as string}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="break-all text-sm font-medium text-primary hover:underline"
+              >
+                {order.deliverable_url as string}
+              </a>
+            )}
+            {order.deliverable_note && (
+              <p className="mt-1.5 whitespace-pre-wrap text-sm text-text-muted">{order.deliverable_note as string}</p>
+            )}
+          </div>
+        )}
 
         {/* 메시지 스레드 — 전문가회원·매니저와 소통, 산출물 링크 전달 */}
         <OrderMessageThread

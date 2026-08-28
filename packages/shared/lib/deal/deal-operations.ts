@@ -1,42 +1,10 @@
 import { adminClient } from '../supabase/admin'
 import { getAuthUserId, verifyDealOwnership } from '../auth/server-helpers'
 
-/**
- * 견적 승인 — deal.status: quoted → working
- * redirect는 호출 측에서 처리합니다.
- */
-export async function approveDealOp(dealId: string): Promise<{ error?: string; requestId?: string }> {
-  const authUserId = await getAuthUserId()
-  const result = await verifyDealOwnership(dealId, authUserId)
-
-  if ('error' in result && result.error) {
-    return { error: result.error }
-  }
-
-  const { deal, requestId } = result as { deal: { id: string; status: string }; requestId: string }
-
-  if (deal.status !== 'quoted') {
-    return { error: '승인할 수 없는 상태입니다.' }
-  }
-
-  // CAS: SELECT 이후 상태가 바뀐 경쟁 전이(취소·중복 제출)를 덮어쓰지 않도록
-  // quoted일 때만 갱신하고, 0행이면 실패로 처리한다(감사 docs/11 P2-58)
-  const { data: updated, error } = await adminClient
-    .from('deal')
-    .update({ status: 'working' })
-    .eq('id', dealId)
-    .eq('status', 'quoted')
-    .select('id')
-
-  if (error) {
-    return { error: '견적 승인에 실패했습니다.' }
-  }
-  if (!updated || updated.length === 0) {
-    return { error: '승인할 수 없는 상태입니다.' }
-  }
-
-  return { requestId }
-}
+// quoted→working 전이는 **입금 확인 전용**이다(confirm-deposit.ts의 온라인 입금 /
+// admin/actions.ts confirmDepositManual의 오프라인 입금). 결제 없이 working으로 넘기는
+// 별도 경로(구 approveDealOp)는 confirmDealOp의 deposited 게이트를 우회 준비시키는
+// 무결성 구멍이라 제거했다(고아·UI 호출 0, 감사 docs/09·11). 재도입 금지.
 
 /**
  * 검수 확인 — deal.status: working → done, settlement.escrow_status → reviewing

@@ -51,7 +51,7 @@ vi.mock('../auth/server-helpers', () => ({
   verifyDealOwnership: vi.fn(),
 }))
 
-import { approveDealOp, confirmDealOp } from './deal-operations'
+import { confirmDealOp } from './deal-operations'
 import { verifyDealOwnership } from '../auth/server-helpers'
 
 function setOwnership(status: string) {
@@ -67,28 +67,6 @@ beforeEach(() => {
   mockState.dealUpdatedRows = []
   mockState.settlementStatus = 'deposited'
   mockState.settlementUpdateError = null
-})
-
-describe('approveDealOp — quoted→working CAS', () => {
-  it('UPDATE에 status=quoted predicate가 붙는다', async () => {
-    setOwnership('quoted')
-    mockState.dealUpdatedRows = [{ id: 'd1' }]
-
-    const result = await approveDealOp('d1')
-
-    expect(result).toEqual({ requestId: 'r1' })
-    expect(mockState.dealUpdateEqs).toContainEqual({ col: 'status', val: 'quoted' })
-  })
-
-  it('0행 매칭(경쟁 전이로 상태 변경)이면 성공을 위조하지 않고 에러를 반환한다', async () => {
-    setOwnership('quoted')
-    mockState.dealUpdatedRows = [] // SELECT 이후 다른 전이가 선점
-
-    const result = await approveDealOp('d1')
-
-    expect(result.error).toBe('승인할 수 없는 상태입니다.')
-    expect(result.requestId).toBeUndefined()
-  })
 })
 
 describe('confirmDealOp — working→done CAS', () => {

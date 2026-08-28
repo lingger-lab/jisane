@@ -5,6 +5,7 @@ import { redirect } from 'next/navigation'
 import { revalidatePath } from 'next/cache'
 import { createClient } from '@jisane/shared/supabase/server'
 import { adminClient } from '@jisane/shared/supabase/admin'
+import { flagIfRisky } from '@jisane/shared/audit/message-audit'
 import type { WorkflowStep, StepStatus } from '@jisane/shared/types'
 
 async function verifyDealExpertOwnership(dealId: string) {
@@ -119,8 +120,27 @@ export async function submitWork(dealId: string): Promise<{ error?: string }> {
     return { error: '납품 단계를 먼저 완료해주세요.' }
   }
 
-  // 안내: 관리자 확인 후 기업 검수로 전환됨
-  // Phase 6에서 관리자가 deal.status 변경 처리
+  // 작업 제출 시각 기록(멱등 CAS) — working이고 아직 미제출일 때만. status enum은 그대로(working 유지),
+  // 검수(confirmDealOp)는 계속 발주자가 트리거한다. 이 타임스탬프로 '검수 대기'를 표시(파생).
+  const deal = 'deal' in result ? result.deal : null
+  await adminClient
+    .from('deal')
+    .update({ work_submitted_at: new Date().toISOString() })
+    .eq('id', dealId)
+    .eq('status', 'working')
+    .is('work_submitted_at', null)
+
+  // 스레드에 제출 알림 — 발주자·관리자에게 검수요청이 상태+메시지로 동시에 도달(submitWork no-op 해소)
+  if (deal?.expert_id) {
+    const body = '[작업 제출] 납품을 완료했습니다 — 검수를 요청드립니다.'
+    const { data: msg } = await adminClient
+      .from('deal_message')
+      .insert({ deal_id: dealId, sender_type: 'expert', sender_id: deal.expert_id, content: body })
+      .select('id')
+      .single()
+    if (msg?.id) await flagIfRisky('deal', msg.id as string, body)
+  }
+
   revalidatePath(`/work/${dealId}`)
   return {}
 }

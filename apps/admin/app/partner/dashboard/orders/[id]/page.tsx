@@ -9,6 +9,7 @@ import { ORDER_STATUS_LABELS } from '@jisane/shared/labels'
 import { ORDER_STATUS_BADGE_CLASSES } from '@jisane/shared/status-badges'
 import { formatPackagePrice } from '@jisane/shared/service-catalog'
 import { CompleteOrderButton } from '../complete-order-button'
+import { DeliverableForm } from './deliverable-form'
 import { sendServiceOrderMessage } from '@/lib/partner/actions'
 
 export const metadata = { title: '신청 상세 | 지사네 전문가회원' }
@@ -32,7 +33,7 @@ export default async function PartnerOrderDetailPage(props: { params: Promise<{ 
 
   const { data: order } = await adminClient
     .from('service_order')
-    .select('id, package_name, price, is_free, status, detail, created_at, provider_id, owner:owner(company, ceo_name), expert:expert(name)')
+    .select('id, package_name, price, is_free, status, detail, created_at, provider_id, deliverable_url, deliverable_note, delivered_at, owner:owner(company, ceo_name), expert:expert(name)')
     .eq('id', id)
     .single()
   if (!order || order.provider_id !== provider.id) notFound()
@@ -90,9 +91,17 @@ export default async function PartnerOrderDetailPage(props: { params: Promise<{ 
           </div>
         )}
         {order.status === 'processing' && (
-          <div className="mt-4 flex items-center justify-end gap-2">
-            <CompleteOrderButton orderId={order.id} />
-          </div>
+          <>
+            <DeliverableForm
+              orderId={order.id}
+              deliverableUrl={order.deliverable_url as string | null}
+              deliverableNote={order.deliverable_note as string | null}
+              deliveredAt={order.delivered_at as string | null}
+            />
+            <div className="mt-4 flex items-center justify-end gap-2">
+              <CompleteOrderButton orderId={order.id} />
+            </div>
+          </>
         )}
       </div>
 

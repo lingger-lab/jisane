@@ -7,10 +7,12 @@ export const REQUEST_STATUS_LABELS: Record<string, string> = {
   closed: '완료',
 }
 
+// done = 검수 완료(작업 인수). 거래완료(정산 릴리스)는 settlement.escrow_status='released'가
+// 유일 진실원 — escrow 맥락이 있는 화면은 deriveDealPhase(deal-completion.ts)로 '거래완료'를 파생한다.
 export const DEAL_STATUS_LABELS: Record<string, string> = {
   quoted: '견적',
   working: '진행 중',
-  done: '완료',
+  done: '검수 완료',
   cancelled: '취소',
 }
 

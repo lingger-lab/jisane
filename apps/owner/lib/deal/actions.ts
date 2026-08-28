@@ -4,14 +4,9 @@ import { redirect } from 'next/navigation'
 import { revalidatePath } from 'next/cache'
 import { adminClient } from '@jisane/shared/supabase/admin'
 import { getAuthUserId, verifyDealOwnership } from '@jisane/shared/auth/server-helpers'
-import { approveDealOp, confirmDealOp, requestRevisionOp } from '@jisane/shared/deal/deal-operations'
+import { confirmDealOp, requestRevisionOp } from '@jisane/shared/deal/deal-operations'
 import { recalcExpertScores } from '@jisane/shared/expert-scoring'
-
-export async function approveDeal(dealId: string): Promise<{ error?: string }> {
-  const result = await approveDealOp(dealId)
-  if (result.error) return { error: result.error }
-  redirect(`/status/${result.requestId}?success=deal_approved`)
-}
+import { flagIfRisky } from '@jisane/shared/audit/message-audit'
 
 export async function confirmDeal(dealId: string): Promise<{ error?: string }> {
   const result = await confirmDealOp(dealId)
@@ -25,14 +20,13 @@ export async function requestRevision(dealId: string, reason: string): Promise<{
 
   // owner-specific: 시니어지식인에게 수정 요청 알림 (deal_message)
   if (result.ownerId) {
-    await adminClient
+    const body = `[수정 요청] ${reason}`
+    const { data: msg } = await adminClient
       .from('deal_message')
-      .insert({
-        deal_id: dealId,
-        sender_type: 'owner',
-        sender_id: result.ownerId,
-        content: `[수정 요청] ${reason}`,
-      })
+      .insert({ deal_id: dealId, sender_type: 'owner', sender_id: result.ownerId, content: body })
+      .select('id')
+      .single()
+    if (msg?.id) await flagIfRisky('deal', msg.id as string, body)
   }
 
   return {}
