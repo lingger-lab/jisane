@@ -1,6 +1,5 @@
 import Link from 'next/link'
 import { cookies } from 'next/headers'
-import { LayoutGrid, Sparkles } from 'lucide-react'
 import { redirect } from 'next/navigation'
 import { createClient } from '@jisane/shared/supabase/server'
 import { adminClient } from '@jisane/shared/supabase/admin'
@@ -21,10 +20,10 @@ import { ScrollReveal } from '@jisane/ui/scroll-reveal'
 import { HeroBackdrop } from '@jisane/ui/hero-backdrop'
 import { TextRotator } from '@jisane/ui/text-rotator'
 
-// 시니어 작업에 필요한 전문 도구 — 무료 S/W를 미끼로, 고급 도구는 유료.
+// 지사네가 시니어에게 제공하는 업무 도구 — 교육과 함께 '지사네 제공' 서비스로 동일 카드 스타일 노출.
 const EXPERT_TOOLS = [
-  { name: '지사네 업무 S/W', badge: '무료', desc: '의뢰 관리 · 문서 작성 · 정산까지 기본 도구 무료 제공', Icon: LayoutGrid },
-  { name: 'AI 작업 도구 (프로)', badge: '유료', desc: '제안서 · 보고서 AI 초안, 고급 분석 템플릿', Icon: Sparkles },
+  { name: '지사네 업무 S/W', badge: '무료', desc: '의뢰 관리 · 문서 작성 · 정산까지 기본 도구 무료 제공' },
+  { name: 'AI 작업 도구 (프로)', badge: '유료', desc: '제안서 · 보고서 AI 초안, 고급 분석 템플릿' },
 ] as const
 
 export default async function ExpertHome() {
@@ -148,6 +147,7 @@ export default async function ExpertHome() {
       <ScrollReveal className="w-full snap-section">
         <section className="container-marketing px-4 md:px-6 py-8 md:py-12">
           <SectionHeader sticky num={3} tone="accent" title="지사네가 제공하는 시니어 전문 서비스" subtitle="역량 강화 · 교육 · 업무 도구" />
+          {/* 교육 pkg + 업무 도구를 동일한 카드 스타일로 통합(별도 '업무 도구' 라벨·아이콘칩 제거) */}
           <div className="reveal-cards flex flex-col gap-3">
             {education.map((pkg) => (
               <Link
@@ -164,22 +164,17 @@ export default async function ExpertHome() {
                 </div>
               </Link>
             ))}
-          </div>
-
-          {/* 업무 도구 — 지사네 제공물이므로 이 섹션에 포함 */}
-          <h3 className="mb-3 mt-6 text-sm font-semibold text-text-muted">업무 도구</h3>
-          <div className="reveal-cards flex flex-col gap-3">
             {EXPERT_TOOLS.map((tool) => (
-              <div key={tool.name} className="flex items-start gap-3 rounded-xl border border-border-light bg-card p-4 shadow-xs card-hover">
-                <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-accent/10 text-accent">
-                  <tool.Icon className="h-[18px] w-[18px]" strokeWidth={1.75} aria-hidden="true" />
-                </span>
-                <div className="min-w-0">
-                  <div className="flex items-center gap-2">
-                    <p className="font-semibold text-text">{tool.name}</p>
-                    <Badge variant={tool.badge === '무료' ? 'primary' : 'accent'}>{tool.badge}</Badge>
+              <div
+                key={tool.name}
+                className="rounded-xl border border-border-light bg-card p-4 md:p-5 shadow-xs card-hover transition-colors"
+              >
+                <div className="flex items-start justify-between gap-2">
+                  <div className="min-w-0 flex-1">
+                    <h3 className="font-semibold text-text">{tool.name}</h3>
+                    <p className="mt-1 text-sm text-text-muted leading-relaxed">{tool.desc}</p>
                   </div>
-                  <p className="mt-0.5 text-sm text-text-muted">{tool.desc}</p>
+                  <Badge variant={tool.badge === '무료' ? 'primary' : 'accent'}>{tool.badge}</Badge>
                 </div>
               </div>
             ))}
