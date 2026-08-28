@@ -1,7 +1,10 @@
 import { LoginDropdown } from './login-dropdown'
 import { OwlIcon } from './icons/owl'
 import { ClaudeIcon } from './icons/claude'
+import { KakaoIcon } from './icons/kakao'
+import { GoogleIcon } from './icons/google'
 import { ThemeToggle } from './theme-toggle'
+import { NavDrawer } from './nav-drawer'
 import { RoleSwitchMenu, type RoleSwitchItem } from './role-switch-menu'
 
 export function AppHeader({
@@ -69,35 +72,101 @@ export function AppHeader({
 
           {children}
 
-          {roleSwitch && roleSwitch.length > 0 && (
-            <RoleSwitchMenu items={roleSwitch} loggedIn={!!userEmail} />
-          )}
+          {/* 데스크탑: 회원전환·인증을 인라인으로 (모바일에선 아래 햄버거로 접힘) */}
+          <div className="hidden items-center gap-2 md:flex md:gap-3">
+            {roleSwitch && roleSwitch.length > 0 && (
+              <RoleSwitchMenu items={roleSwitch} loggedIn={!!userEmail} />
+            )}
 
-          {userEmail && signOutAction ? (
-            <form action={signOutAction}>
-              <button
-                type="submit"
-                className="inline-flex min-h-6 items-center text-xs text-text-subtle hover:text-text transition-colors"
-              >
-                로그아웃
-              </button>
-            </form>
-          ) : signInWithKakao && signInWithGoogle ? (
-            <>
-              {joinUrl && (
-                <a
-                  href={joinUrl}
-                  className="inline-flex min-h-6 items-center text-xs font-medium text-primary hover:text-primary-light transition-colors"
+            {userEmail && signOutAction ? (
+              <form action={signOutAction}>
+                <button
+                  type="submit"
+                  className="inline-flex min-h-6 items-center text-xs text-text-subtle hover:text-text transition-colors"
                 >
-                  회원가입
-                </a>
+                  로그아웃
+                </button>
+              </form>
+            ) : signInWithKakao && signInWithGoogle ? (
+              <>
+                {joinUrl && (
+                  <a
+                    href={joinUrl}
+                    className="inline-flex min-h-6 items-center text-xs font-medium text-primary hover:text-primary-light transition-colors"
+                  >
+                    회원가입
+                  </a>
+                )}
+                <LoginDropdown
+                  signInWithKakao={signInWithKakao}
+                  signInWithGoogle={signInWithGoogle}
+                />
+              </>
+            ) : null}
+          </div>
+
+          {/* 모바일: 회원전환·인증을 햄버거 드로어로 (혼잡·2줄 넘침 방지) */}
+          {((roleSwitch && roleSwitch.length > 0) ||
+            (userEmail && signOutAction) ||
+            (signInWithKakao && signInWithGoogle)) && (
+            <NavDrawer label="메뉴">
+              {roleSwitch && roleSwitch.length > 0 && (
+                <nav className="flex flex-col gap-1">
+                  <p className="px-1 pb-1 text-xs font-medium text-text-subtle">회원 전환</p>
+                  {roleSwitch.map((it) => (
+                    <a
+                      key={it.url}
+                      href={it.url}
+                      className="rounded-lg px-3 py-2.5 text-sm text-text-muted transition-colors hover:bg-surface hover:text-text"
+                    >
+                      {it.label}
+                    </a>
+                  ))}
+                </nav>
               )}
-              <LoginDropdown
-                signInWithKakao={signInWithKakao}
-                signInWithGoogle={signInWithGoogle}
-              />
-            </>
-          ) : null}
+              <div className="mt-4 border-t border-border-light pt-4">
+                {userEmail && signOutAction ? (
+                  <form action={signOutAction}>
+                    <button
+                      type="submit"
+                      className="focus-ring w-full rounded-lg px-3 py-2.5 text-left text-sm text-text-muted transition-colors hover:bg-surface hover:text-text"
+                    >
+                      로그아웃
+                    </button>
+                  </form>
+                ) : signInWithKakao && signInWithGoogle ? (
+                  <div className="flex flex-col gap-1">
+                    {joinUrl && (
+                      <a
+                        href={joinUrl}
+                        className="rounded-lg px-3 py-2.5 text-sm font-medium text-primary transition-colors hover:bg-surface"
+                      >
+                        회원가입
+                      </a>
+                    )}
+                    <form action={signInWithKakao}>
+                      <button
+                        type="submit"
+                        className="focus-ring flex w-full items-center gap-2 rounded-lg px-3 py-2.5 text-sm font-medium text-text transition-colors hover:bg-[#FEE500]/20"
+                      >
+                        <KakaoIcon className="h-4 w-4" />
+                        카카오로 로그인
+                      </button>
+                    </form>
+                    <form action={signInWithGoogle}>
+                      <button
+                        type="submit"
+                        className="focus-ring flex w-full items-center gap-2 rounded-lg px-3 py-2.5 text-sm font-medium text-text transition-colors hover:bg-surface"
+                      >
+                        <GoogleIcon className="h-4 w-4" />
+                        Google로 로그인
+                      </button>
+                    </form>
+                  </div>
+                ) : null}
+              </div>
+            </NavDrawer>
+          )}
         </div>
       </div>
     </header>

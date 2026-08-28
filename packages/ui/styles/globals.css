@@ -325,6 +325,17 @@ body {
   to { opacity: 0; transform: translateY(-100%); }
 }
 
+/* 모바일 내비 드로어 슬라이드인 (우/좌) */
+@keyframes drawer-in-right {
+  from { transform: translateX(100%); }
+  to { transform: translateX(0); }
+}
+
+@keyframes drawer-in-left {
+  from { transform: translateX(-100%); }
+  to { transform: translateX(0); }
+}
+
 /* 유틸리티 클래스 */
 .animate-fade-in {
   animation: fade-in 0.4s ease-out both;
@@ -342,6 +353,14 @@ body {
    card-hover의 호버 리프트(translateY)와 충돌하지 않음. 카드 그리드 등장에 사용. */
 .animate-appear {
   animation: appear 0.5s ease-out both;
+}
+
+.animate-drawer-in-right {
+  animation: drawer-in-right 0.2s ease-out both;
+}
+
+.animate-drawer-in-left {
+  animation: drawer-in-left 0.2s ease-out both;
 }
 
 /* 브랜드 유틸리티 */
@@ -362,6 +381,8 @@ body {
   .animate-scale-in,
   .animate-slide-up,
   .animate-appear,
+  .animate-drawer-in-right,
+  .animate-drawer-in-left,
   .splash-stagger-1,
   .splash-stagger-2,
   .splash-stagger-3,
