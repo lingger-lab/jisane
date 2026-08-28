@@ -5,6 +5,7 @@ import { ChevronDown } from 'lucide-react'
 import Link from 'next/link'
 import { Badge } from '@jisane/ui/badge'
 import { PageHero } from '@jisane/ui/page-hero'
+import { ServiceBanner } from '@jisane/ui/service-banner'
 import { FilterRadioGroup } from '@jisane/ui/filter-radio-group'
 import {
   PILLAR_ORDER,
@@ -32,11 +33,17 @@ const PRICE_FILTERS = [
 function PackageCard({ pkg, className = '' }: { pkg: ServicePackage; className?: string }) {
   return (
     <div className={`rounded-xl border border-border-light p-4 shadow-xs card-hover ${className}`}>
+      {pkg.bannerUrl && (
+        <div className="mb-3">
+          <ServiceBanner src={pkg.bannerUrl} sizes="(max-width: 768px) 100vw, 640px" />
+        </div>
+      )}
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0 flex-1">
           <div className="flex flex-wrap items-center gap-2">
             <h3 className="font-medium text-text">{pkg.name}</h3>
             <Badge variant="neutral">{CATEGORY_LABELS[pkg.category] || pkg.category}</Badge>
+            {pkg.isOfficial && <Badge variant="primary">지사네 공식</Badge>}
             {pkg.featured && <Badge variant="accent">추천</Badge>}
             {pkg.isFree && <Badge variant="primary">무료</Badge>}
           </div>

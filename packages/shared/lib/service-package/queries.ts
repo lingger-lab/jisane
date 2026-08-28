@@ -73,6 +73,22 @@ export async function getPackagesByAudience(
   return (data as unknown as PackageRowWithProvider[]).map(toServicePackage)
 }
 
+/** 공개 허브(/knowledge) — audience 무관 전체 published. featured 우선, 최신순. */
+export async function getAllPublishedPackages(): Promise<ServicePackage[]> {
+  const { data, error } = await adminClient
+    .from('service_package')
+    .select(PACKAGE_SELECT)
+    .eq('status', 'published')
+    .order('featured', { ascending: false })
+    .order('sort_order', { ascending: true })
+
+  if (error) {
+    console.error('[service-package] getAllPublishedPackages failed:', error.message)
+    return []
+  }
+  return (data as unknown as PackageRowWithProvider[]).map(toServicePackage)
+}
+
 export async function getPackageBySlug(slug: string): Promise<ServicePackage | null> {
   const { data, error } = await adminClient
     .from('service_package')
