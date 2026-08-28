@@ -102,8 +102,8 @@ export default async function AdminHome() {
                   <span className="rounded-full bg-primary/10 px-3 py-1.5 text-xs font-medium text-primary">전문가 정보</span>
                 </div>
                 {topExpertMajors.length > 0 && (
-                  <p className="mt-3 text-xs text-text-subtle">
-                    인기 분야: {topExpertMajors.join(' / ')}
+                  <p className="mt-3 truncate text-xs text-text-subtle">
+                    {topExpertMajors.join(' / ')}
                   </p>
                 )}
                 <div className="mt-4 flex items-center text-sm font-semibold text-primary">기업회원 바로가기<ArrowRight className="ml-1 h-4 w-4 transition-transform group-hover:translate-x-1" aria-hidden="true" /></div>
@@ -121,8 +121,8 @@ export default async function AdminHome() {
                   <span className="rounded-full bg-accent/10 px-3 py-1.5 text-xs font-medium text-accent">전문 도구</span>
                 </div>
                 {topRequestMajors.length > 0 && (
-                  <p className="mt-3 text-xs text-text-subtle">
-                    의뢰 많은 분야: {topRequestMajors.join(' / ')}
+                  <p className="mt-3 truncate text-xs text-text-subtle">
+                    {topRequestMajors.join(' / ')}
                   </p>
                 )}
                 <div className="mt-4 flex items-center text-sm font-semibold text-accent">시니어지식인회원 바로가기<ArrowRight className="ml-1 h-4 w-4 transition-transform group-hover:translate-x-1" aria-hidden="true" /></div>

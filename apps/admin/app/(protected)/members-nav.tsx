@@ -47,7 +47,7 @@ export function MembersNav() {
         <div
           role="menu"
           aria-label="회원 관리"
-          className="absolute left-0 top-full z-50 mt-1.5 min-w-40 rounded-lg border border-border-light bg-background p-1 shadow-md"
+          className="absolute left-0 top-full z-50 mt-1.5 min-w-40 max-w-[calc(100vw-2rem)] rounded-lg border border-border-light bg-background p-1 shadow-md"
         >
           {ITEMS.map((it) => (
             <Link
