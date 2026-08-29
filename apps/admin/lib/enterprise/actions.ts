@@ -139,7 +139,7 @@ export async function createEnterpriseService(
   const parsed = parseForm(formData)
   if (!parsed.ok) return { error: parsed.error }
 
-  if (!isOwnBannerUrl(parsed.fields.banner_url, ENTERLABS_ID)) {
+  if (!isPlatformBanner(parsed.fields.banner_url)) {
     return { error: '배너 이미지가 올바르지 않습니다(경로 불일치).' }
   }
 
@@ -160,7 +160,7 @@ export async function createEnterpriseService(
   for (let attempt = 0; attempt < 3; attempt++) {
     const candidate = attempt === 0 ? baseSlug : `${baseSlug}-${Math.random().toString(36).slice(2, 7)}`
     const { error } = await adminClient.from('service_package').insert({
-      provider_id: ENTERLABS_ID,
+      provider_id: SYNC_PROVIDER_ID, // 지사네 일원화 — 신규 등록도 지사네
       slug: candidate,
       target_audience: 'owner',
       status: parsed.status,
@@ -193,7 +193,7 @@ export async function updateEnterpriseService(
   const parsed = parseForm(formData)
   if (!parsed.ok) return { error: parsed.error }
 
-  if (!isOwnBannerUrl(parsed.fields.banner_url, ENTERLABS_ID)) {
+  if (!isPlatformBanner(parsed.fields.banner_url)) {
     return { error: '배너 이미지가 올바르지 않습니다(경로 불일치).' }
   }
 
@@ -201,7 +201,7 @@ export async function updateEnterpriseService(
     .from('service_package')
     .update({ status: parsed.status, ...parsed.fields })
     .eq('id', id)
-    .eq('provider_id', ENTERLABS_ID)
+    .in('provider_id', PLATFORM_PROVIDER_IDS)
 
   if (error) {
     console.error('[updateEnterpriseService] update failed:', error.message)
@@ -220,7 +220,7 @@ export async function archiveEnterpriseService(id: string): Promise<ActionState>
     .from('service_package')
     .update({ status: 'archived' })
     .eq('id', id)
-    .eq('provider_id', ENTERLABS_ID)
+    .in('provider_id', PLATFORM_PROVIDER_IDS)
 
   if (error) return { error: '보관 처리에 실패했습니다.' }
 
@@ -228,19 +228,32 @@ export async function archiveEnterpriseService(id: string): Promise<ActionState>
   return {}
 }
 
-/** 배너 업로드 URL 발급 — 엔터랩스 고정 경로(banners/{ENTERLABS_ID}/…). Storage 미구성 시 null. */
+/** 배너 업로드 URL 발급 — 지사네 고정 경로(banners/{JISANE_OFFICIAL_ID}/…). Storage 미구성 시 null. */
 export async function requestEnterpriseBannerUpload() {
   if (!(await isAdmin())) return null
-  return issueBannerUploadUrl(ENTERLABS_ID)
+  return issueBannerUploadUrl(SYNC_PROVIDER_ID)
+}
+
+/** 플랫폼(엔터랩스/지사네) 배너 경로 검증 — 재배정 전환기라 둘 다 허용. null(미설정)은 통과. */
+function isPlatformBanner(url: string | null): boolean {
+  return isOwnBannerUrl(url, ENTERLABS_ID) || isOwnBannerUrl(url, SYNC_PROVIDER_ID)
 }
 
 /**
- * axdashboard(자산허브/앱스킬) 스킬을 엔터랩스 지식서비스로 동기화(멱등).
- * 규칙: (1) 회원/엔터랩스 seed slug 충돌은 skip+보고(덮어쓰기 금지) (2) upsert는 pillar·visible을
- * 기입하지 않아 관리자 매칭·노출설정을 보존 (3) 이전 동기화분(axd:) 중 이번 수신에 없는 것은 archived.
+ * axdashboard(자산허브/앱스킬) 스킬을 **지사네** 지식서비스로 동기화(멱등).
+ * 규칙: (0) 시작 시 잔존 엔터랩스 owner 서비스를 지사네로 재배정(일원화) (1) 회원/지사네 seed slug
+ * 충돌은 skip+보고(덮어쓰기 금지) (2) upsert는 **pillar를 classifyPillar로 자동분류해 포함**하되
+ * visible은 미기입(관리자 노출설정 보존) (3) 이전 동기화분(axd:) 중 이번 수신에 없는 것은 archived.
  */
 export async function syncEnterlabsSkills(): Promise<SyncResult> {
   if (!(await isAdmin())) return { ok: false, error: '관리자 권한이 필요합니다.' }
+
+  // (0) 지사네 일원화 — 잔존 엔터랩스 owner 서비스(5대 seed·구 동기화 중복)를 지사네로 재배정(멱등).
+  await adminClient
+    .from('service_package')
+    .update({ provider_id: SYNC_PROVIDER_ID })
+    .eq('provider_id', ENTERLABS_ID)
+    .eq('target_audience', 'owner')
 
   const axd = createAxdashboardClient()
   if (!axd) return { ok: false, error: 'axdashboard 연결 설정(AXDASHBOARD_SUPABASE_URL/ANON_KEY)이 없습니다.' }
@@ -317,8 +330,9 @@ export async function setEnterpriseVisibility(id: string, visible: boolean): Pro
 }
 
 /**
- * 5대 지원 pillar 매칭 — null이면 미매칭(오너 탭 미편입, 검색·허브만). pillar 지정 시 category도 파생.
- * 동기화가 보존하는 관리자 소유 컬럼(재동기화해도 매칭 유지).
+ * 5대 지원 pillar 수동 매칭 — null이면 미매칭. pillar 지정 시 category도 파생.
+ * 주의: 동기화 스킬의 pillar는 classifyPillar로 자동분류되며 **재동기화 시 이 수동값이 덮어써진다**
+ * (자동분류 정책). 영구 override가 필요하면 후속으로 override 플래그 도입.
  */
 export async function setEnterprisePillar(id: string, pillar: EnterprisePillar | null): Promise<ActionState> {
   if (!(await isAdmin())) return { error: '관리자 권한이 필요합니다.' }

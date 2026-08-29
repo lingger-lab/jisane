@@ -20,7 +20,7 @@ export function ClientNav() {
   const pathname = usePathname()
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 border-t border-border-light bg-background/80 backdrop-blur-lg pb-safe md:hidden">
+    <nav className="fixed bottom-0 left-0 right-0 z-40 border-t border-border-light bg-background/80 backdrop-blur-lg pb-safe md:hidden">
       <div className="container-app flex items-center justify-around px-4 md:px-6">
         {TABS.map((tab) => {
           const isActive = isTabActive(pathname, tab.href)

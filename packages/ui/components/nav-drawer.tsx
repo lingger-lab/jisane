@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useRef, useState, type ReactNode, type KeyboardEvent } from 'react'
+import { createPortal } from 'react-dom'
 import { Menu, X } from 'lucide-react'
 import { resolveTrapKey } from './focus-trap'
 import { cn } from '../lib/cn'
@@ -20,8 +21,14 @@ export function NavDrawer({
   children: ReactNode
 }) {
   const [open, setOpen] = useState(false)
+  const [mounted, setMounted] = useState(false)
   const panelRef = useRef<HTMLDivElement>(null)
   const triggerRef = useRef<HTMLButtonElement>(null)
+
+  // 오버레이를 body로 포탈 — 헤더의 backdrop-filter/transform이 fixed를 헤더 박스에 가두는 것을 회피.
+  useEffect(() => {
+    setMounted(true)
+  }, [])
 
   useEffect(() => {
     if (!open) return
@@ -74,7 +81,7 @@ export function NavDrawer({
         <Menu className="h-5 w-5" aria-hidden="true" />
       </button>
 
-      {open && (
+      {open && mounted && createPortal(
         <div
           className="fixed inset-0 z-[100] bg-black/40 animate-fade-in md:hidden"
           onClick={close}
@@ -108,7 +115,8 @@ export function NavDrawer({
             </div>
             {children}
           </div>
-        </div>
+        </div>,
+        document.body,
       )}
     </>
   )

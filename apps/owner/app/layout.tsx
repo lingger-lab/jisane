@@ -36,8 +36,7 @@ export const metadata: Metadata = {
     titleDefault: "지사네 기업회원",
     description: "기업 운영에 필요한 전문 서비스와 시니어 전문가 정보 — 조건을 먼저 볼 수 있는 에스크로 직거래. 지사네 당신곁에.",
   }),
-  // iOS "홈 화면에 추가" 시 앱처럼 전체화면 실행 + 아이콘 타이틀(매니페스트 링크는 Next 자동)
-  appleWebApp: { capable: true, title: "지사네", statusBarStyle: "default" },
+  // PWA 설치는 관리자 허브(jisane.cloud)만 — owner/expert는 manifest·appleWebApp 미제공.
 };
 
 export const viewport: Viewport = {
@@ -59,7 +58,7 @@ export default async function RootLayout({
 
   return (
     <html lang="ko" className={`h-full antialiased ${pretendard.variable} ${gowunBatang.variable}`} suppressHydrationWarning>
-      <body className="min-h-full flex flex-col bg-background text-foreground font-sans pb-16 md:pb-0" suppressHydrationWarning>
+      <body className="min-h-full flex flex-col bg-background text-foreground font-sans pb-[calc(4rem+env(safe-area-inset-bottom))] md:pb-0" suppressHydrationWarning>
         {/* 다크모드 플래시 방지 — 페인트 전 저장된 테마를 <html>에 스탬프(첫 body 자식으로 동기 실행).
             기본=라이트(저장값 없으면 light 스탬프 — 모든 디스플레이 기본), 'dark'=다크,
             'system'=data-theme="system" 스탬프→[data-theme=system]에서만 OS 추종.

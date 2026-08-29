@@ -43,9 +43,9 @@ describe('mapSkillToPackage', () => {
     expect(p.source_ref).toBe('axd:abc-123')
   })
 
-  it('pillar·visible을 절대 포함하지 않는다(관리자 소유·동기화 보존)', () => {
-    const p = mapSkillToPackage(row())
-    expect('pillar' in p).toBe(false)
+  it('pillar는 자동분류로 포함, visible은 미포함(관리자 노출 보존)', () => {
+    const p = mapSkillToPackage(row({ category_slug: 'ai-automation' }))
+    expect(p.pillar).toBe('ai_ax')
     expect('visible' in p).toBe(false)
   })
 

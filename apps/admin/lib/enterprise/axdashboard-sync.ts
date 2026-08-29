@@ -1,5 +1,6 @@
 import { createClient } from '@supabase/supabase-js'
-import { JISANE_OFFICIAL_ID } from '@jisane/shared/service-catalog'
+import { JISANE_OFFICIAL_ID, type EnterprisePillar } from '@jisane/shared/service-catalog'
+import { classifyPillar } from './classify-pillar'
 
 /**
  * axdashboard(자산허브/앱스킬) → jisane 지식서비스 동기화 순수 로직.
@@ -27,7 +28,10 @@ export interface SkillHubRow {
 /** 동기화 스킬의 소속 provider — 지사네 공식(엔터랩스 아님). 카드에 "지사네"·"지사네 공식" 표시. */
 export const SYNC_PROVIDER_ID = JISANE_OFFICIAL_ID
 
-/** service_package로 upsert할 필드 — **pillar·visible은 절대 포함하지 않는다**(관리자 소유·동기화 보존). */
+/**
+ * service_package로 upsert할 필드. pillar는 classifyPillar로 **자동분류해 포함**(재동기화 재분류).
+ * **visible은 절대 포함하지 않는다**(관리자 노출 설정 보존).
+ */
 export interface SyncPackageFields {
   provider_id: string
   slug: string
@@ -41,6 +45,7 @@ export interface SyncPackageFields {
   featured: boolean
   sort_order: number
   category: 'ax_consulting' | 'biz_consulting' | 'education'
+  pillar: EnterprisePillar
   target_audience: 'owner'
   status: 'published'
   source_ref: string
@@ -88,6 +93,7 @@ export function mapSkillToPackage(row: SkillHubRow): SyncPackageFields {
     featured: row.is_featured ?? false,
     sort_order: row.display_order ?? 0,
     category: categoryForSlug(row.category_slug),
+    pillar: classifyPillar(row.title, row.description, row.category_slug),
     target_audience: 'owner',
     status: 'published',
     source_ref: `axd:${row.id}`,

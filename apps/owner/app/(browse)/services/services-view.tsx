@@ -1,7 +1,6 @@
 'use client'
 
 import { useState } from 'react'
-import { ChevronDown } from 'lucide-react'
 import Link from 'next/link'
 import { Badge } from '@jisane/ui/badge'
 import { PageHero } from '@jisane/ui/page-hero'
@@ -12,7 +11,6 @@ import {
   PILLAR_LABELS,
   formatPackagePrice,
   type ServicePackage,
-  type ProviderInfo,
   type EnterprisePillar,
 } from '@jisane/shared/service-catalog'
 import { ADMIN_URL } from '@/lib/urls'
@@ -93,15 +91,12 @@ function PackageCard({ pkg, className = '' }: { pkg: ServicePackage; className?:
 
 export function ServicesView({
   packages,
-  providers,
   initialPillar,
 }: {
   packages: ServicePackage[]
-  providers: ProviderInfo[]
   initialPillar?: string
 }) {
-  // 실제 서비스가 있는 pillar만 탭으로 노출(self-healing) — 빈 분류 탭을 만들지 않는다.
-  // '전체'(all)는 항상 선두 — pillar=NULL(지사네 동기화 스킬 등)도 포함해 전 서비스를 노출.
+  // 실제 서비스가 있는 pillar만 탭으로 노출(self-healing). '전체'(all)는 항상 선두.
   const availablePillars = PILLAR_ORDER.filter((code) => packages.some((p) => p.pillar === code))
   const initialActive: EnterprisePillar | 'all' =
     initialPillar && availablePillars.includes(initialPillar as EnterprisePillar)
@@ -111,35 +106,25 @@ export function ServicesView({
   const [search, setSearch] = useState('')
   const [activePillar, setActivePillar] = useState<EnterprisePillar | 'all'>(initialActive)
   const [priceFilter, setPriceFilter] = useState<'all' | 'free' | 'paid'>('all')
-  const [expandedProvider, setExpandedProvider] = useState<string | null>(providers[0]?.id ?? null)
 
   const q = search.trim().toLowerCase()
   const priceMatch = (p: ServicePackage) =>
     priceFilter === 'all' || (priceFilter === 'free' ? p.isFree : !p.isFree)
+  const searchMatch = (p: ServicePackage) =>
+    q === '' ||
+    p.name.toLowerCase().includes(q) ||
+    p.provider.toLowerCase().includes(q) ||
+    p.description.toLowerCase().includes(q) ||
+    (CATEGORY_LABELS[p.category] || '').toLowerCase().includes(q) ||
+    p.deliverables.some((d) => d.toLowerCase().includes(q))
 
-  // 검색 모드: 전 제공기관·분류를 가로질러 텍스트 매칭 (무료/유료 필터는 유지)
-  const searchResults = q
-    ? packages.filter(
-        (p) =>
-          priceMatch(p) &&
-          (p.name.toLowerCase().includes(q) ||
-            p.provider.toLowerCase().includes(q) ||
-            p.description.toLowerCase().includes(q) ||
-            (CATEGORY_LABELS[p.category] || '').toLowerCase().includes(q) ||
-            p.deliverables.some((d) => d.toLowerCase().includes(q)))
-      )
-    : []
-
-  const filtered = packages.filter(
-    (p) =>
-      (activePillar === 'all' || p.pillar === activePillar) &&
-      (expandedProvider === null || p.providerId === expandedProvider) &&
-      priceMatch(p)
-  )
+  // 플랫 배너 그리드 — pillar 카테고리 + 무료/유료 + 검색을 한 번에 적용(제공자 아코디언 제거).
+  const filtered = packages.filter((p) => (activePillar === 'all' || p.pillar === activePillar) && priceMatch(p) && searchMatch(p))
+  const hasFilter = q !== '' || activePillar !== 'all' || priceFilter !== 'all'
 
   return (
     <div className="flex flex-1 flex-col animate-fade-in">
-      <PageHero eyebrow="기업회원" title="전문서비스" subtitle="기업 맞춤 전문 서비스를 신청하세요." />
+      <PageHero eyebrow="기업회원" title="지식서비스" subtitle="기업 운영에 바로 쓰는 전문 서비스를 한곳에서" />
 
       <div className="container-app px-4 md:px-6 py-6">
       {/* 검색 — 입력 즉시 필터(라이브). 공용 SearchBox와 동일한 돋보기+검색버튼으로 일관.
@@ -181,94 +166,41 @@ export function ServicesView({
         }
       />
 
-      {q ? (
-        /* ── 검색 결과 (전 제공기관·분류) ── */
-        <div>
-          <p className="mb-3 text-sm text-text-muted">&ldquo;{search.trim()}&rdquo; 검색 결과 {searchResults.length}건</p>
-          {searchResults.length === 0 ? (
-            <div className="rounded-xl border border-dashed border-border-light py-8 text-center">
-              <p className="text-sm text-text-muted">검색 결과가 없습니다.</p>
-              <button type="button" onClick={() => setSearch('')} className="mt-2 text-xs text-primary hover:underline">
-                전체 서비스 보기
-              </button>
-            </div>
-          ) : (
-            <div className="flex flex-col gap-4">
-              {searchResults.map((pkg, i) => <PackageCard key={pkg.slug} pkg={pkg} className={`animate-appear stagger-${Math.min(i + 1, 5)}`} />)}
-            </div>
+      {/* 5대 지원 카테고리 필터 (전체+5) */}
+      <FilterRadioGroup
+        options={[{ value: 'all' as const, label: '전체' }, ...availablePillars.map((code) => ({ value: code, label: PILLAR_LABELS[code] }))]}
+        value={activePillar}
+        onChange={setActivePillar}
+        label="서비스 분류 필터"
+        selectOnArrow
+        className="mb-5 flex flex-wrap gap-1.5"
+        optionClassName={(selected) =>
+          `rounded-full px-3 py-1.5 text-sm font-medium transition-colors ${
+            selected ? 'bg-primary text-white' : 'bg-surface text-text-muted hover:text-text'
+          }`
+        }
+      />
+
+      {/* 전체 배너 그리드 (제공자 아코디언 제거) */}
+      {filtered.length === 0 ? (
+        <div className="rounded-xl border border-dashed border-border-light py-8 text-center">
+          <p className="text-sm text-text-muted">조건에 맞는 서비스가 없습니다.</p>
+          {hasFilter && (
+            <button
+              type="button"
+              onClick={() => { setSearch(''); setActivePillar('all'); setPriceFilter('all') }}
+              className="mt-2 text-xs text-primary hover:underline"
+            >
+              전체 서비스 보기
+            </button>
           )}
         </div>
       ) : (
         <>
-          {/* AX 소개 배너 */}
-          <a
-            href={`${ADMIN_URL}/ax`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="mb-5 block rounded-xl border border-primary/20 bg-surface-warm p-4 transition-all hover:border-primary/40 hover:shadow-sm"
-          >
-            <p className="text-xs font-semibold text-primary tracking-wide mb-0.5">AI Transformation</p>
-            <p className="text-sm font-medium text-text">AX(AI Transformation) 전환이란?</p>
-            <p className="mt-1 text-xs text-text-muted">
-              AI로 비용 절감·수익 향상·새 수익 모델을 만드는 전환 과정을 알아보세요.
-            </p>
-          </a>
-
-          {/* 제공기관 카드 — 아코디언(aria-expanded), 펼친 기관의 패키지 패널을 제어 */}
-          <div className="mb-5 flex flex-col gap-2">
-            {providers.map((prov) => (
-              <button
-                key={prov.id}
-                type="button"
-                aria-expanded={expandedProvider === prov.id}
-                aria-controls={expandedProvider === prov.id ? 'provider-packages-panel' : undefined}
-                onClick={() => setExpandedProvider(expandedProvider === prov.id ? null : prov.id)}
-                className={`flex items-center justify-between rounded-xl border p-3 text-left transition-colors ${
-                  expandedProvider === prov.id ? 'border-primary bg-primary/5' : 'border-border-light hover:border-primary/30'
-                }`}
-              >
-                <div>
-                  <p className="text-sm font-bold text-text">{prov.name}</p>
-                  <p className="mt-0.5 text-xs text-text-muted">
-                    서비스 {prov.packageCount}개
-                    {prov.freeCount > 0 && (
-                      <span className="ml-1.5 rounded-full bg-primary/10 px-1.5 py-0.5 text-xs font-medium text-primary">
-                        무료 {prov.freeCount}
-                      </span>
-                    )}
-                  </p>
-                </div>
-                <ChevronDown aria-hidden="true" className={`h-4 w-4 shrink-0 text-text-subtle transition-transform ${expandedProvider === prov.id ? 'rotate-180' : ''}`} />
-              </button>
-            ))}
+          <p className="mb-3 text-sm text-text-muted">{filtered.length}개 서비스</p>
+          <div className="grid gap-4 sm:grid-cols-2">
+            {filtered.map((pkg, i) => <PackageCard key={pkg.slug} pkg={pkg} className={`animate-appear stagger-${Math.min(i + 1, 5)}`} />)}
           </div>
-
-          {/* 카테고리 탭 + 패키지 목록 */}
-          {expandedProvider && (
-            <div id="provider-packages-panel">
-              <FilterRadioGroup
-                options={[{ value: 'all' as const, label: '전체' }, ...availablePillars.map((code) => ({ value: code, label: PILLAR_LABELS[code] }))]}
-                value={activePillar}
-                onChange={setActivePillar}
-                label="서비스 분류 필터"
-                selectOnArrow
-                className="mb-5 flex flex-wrap gap-1.5"
-                optionClassName={(selected) =>
-                  `rounded-full px-3 py-1.5 text-sm font-medium transition-colors ${
-                    selected ? 'bg-primary text-white' : 'bg-surface text-text-muted hover:text-text'
-                  }`
-                }
-              />
-
-              <div className="flex flex-col gap-4">
-                {filtered.length === 0 ? (
-                  <p className="py-6 text-center text-sm text-text-muted">해당 조건의 서비스가 없습니다.</p>
-                ) : (
-                  filtered.map((pkg, i) => <PackageCard key={pkg.slug} pkg={pkg} className={`animate-appear stagger-${Math.min(i + 1, 5)}`} />)
-                )}
-              </div>
-            </div>
-          )}
         </>
       )}
       </div>
