@@ -41,12 +41,20 @@ export default async function KnowledgeStudioPage() {
             지사네 자체 서비스 등록 + 회원 대리등록(승인 무관). 엔터랩스 5대 서비스는 [기업 전문서비스]에서 관리합니다.
           </p>
         </div>
-        <Link
-          href="/dashboard/knowledge-studio/new"
-          className="shrink-0 rounded-xl bg-primary px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-primary-light"
-        >
-          + 지식서비스 등록
-        </Link>
+        <div className="flex shrink-0 items-center gap-2">
+          <Link
+            href="/dashboard/knowledge-studio/banner-setting"
+            className="rounded-xl border border-border-light px-4 py-2.5 text-sm font-medium text-text-muted transition-colors hover:border-primary/30 hover:text-primary"
+          >
+            배너 이미지 셋팅
+          </Link>
+          <Link
+            href="/dashboard/knowledge-studio/new"
+            className="rounded-xl bg-primary px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-primary-light"
+          >
+            + 지식서비스 등록
+          </Link>
+        </div>
       </div>
 
       <details className="mb-5 rounded-xl border border-border-light bg-surface-warm p-4">
