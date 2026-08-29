@@ -32,8 +32,29 @@ function setDismissCookie(value: string): void {
     // 프로드(*.jisane.cloud)는 서브도메인 공유, 로컬/기타는 host-only.
     const host = window.location.hostname
     const domain = host.endsWith('jisane.cloud') ? '; domain=.jisane.cloud' : ''
+    const secure = window.location.protocol === 'https:' ? '; Secure' : ''
     // max-age 1일(정리용); 실제 "오늘" 판정은 저장된 날짜 문자열 === 오늘 비교로 한다.
-    document.cookie = `${DISMISS_KEY}=${value}; path=/; max-age=86400; SameSite=Lax${domain}`
+    document.cookie = `${DISMISS_KEY}=${value}; path=/; max-age=86400; SameSite=Lax${secure}${domain}`
+  } catch {
+    /* 무시 */
+  }
+}
+
+// 닫힘 상태 이중 저장(회복력): 쿠키(3앱 공유)를 우선으로 하되, 쿠키가 차단된 브라우저를 위해
+// localStorage도 함께 쓴다. 읽을 때는 둘 중 하나라도 "오늘"이면 닫힌 것으로 본다.
+function readDismissed(): string | null {
+  const c = getCookie(DISMISS_KEY)
+  if (c) return c
+  try {
+    return localStorage.getItem(DISMISS_KEY)
+  } catch {
+    return null
+  }
+}
+function persistDismiss(value: string): void {
+  setDismissCookie(value)
+  try {
+    localStorage.setItem(DISMISS_KEY, value)
   } catch {
     /* 무시 */
   }
@@ -61,7 +82,7 @@ export function EventPopup({
   useEffect(() => {
     const today = todayStr()
     if (today > EVENT_END) return // 마감 후 미노출
-    if (getCookie(DISMISS_KEY) === today) return // 오늘 이미 닫음(쿠키, 3앱 공유)
+    if (readDismissed() === today) return // 오늘 이미 닫음(쿠키 공유 + localStorage 백업)
 
     // 허브 스플래시 오버레이와 겹치지 않도록: 스플래시가 떠 있으면 닫힌 뒤 노출.
     // (owner/expert엔 스플래시가 없어 플래그가 없으므로 즉시 노출)
@@ -93,7 +114,7 @@ export function EventPopup({
     setOpen(false)
   }
   function dismissToday() {
-    setDismissCookie(todayStr())
+    persistDismiss(todayStr())
     setOpen(false)
   }
 
