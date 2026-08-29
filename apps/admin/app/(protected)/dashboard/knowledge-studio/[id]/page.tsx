@@ -21,6 +21,8 @@ interface PkgRow {
   deliverables: string[]
   banner_url: string | null
   status: string
+  pillar: string | null
+  visible: boolean
 }
 
 export default async function EditStudioServicePage({ params }: { params: Promise<{ id: string }> }) {
@@ -32,7 +34,7 @@ export default async function EditStudioServicePage({ params }: { params: Promis
 
   const { data } = await adminClient
     .from('service_package')
-    .select('id, provider_id, name, category, target_audience, description, value_desc, price, is_free, duration, deliverables, banner_url, status')
+    .select('id, provider_id, name, category, target_audience, description, value_desc, price, is_free, duration, deliverables, banner_url, status, pillar, visible')
     .eq('id', id)
     .neq('provider_id', ENTERLABS_ID)
     .single()
@@ -74,6 +76,8 @@ export default async function EditStudioServicePage({ params }: { params: Promis
           deliverables: pkg.deliverables,
           bannerUrl: pkg.banner_url,
           status: pkg.status,
+          pillar: pkg.pillar,
+          visible: pkg.visible,
         }}
       />
     </div>

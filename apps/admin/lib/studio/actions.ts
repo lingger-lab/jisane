@@ -5,7 +5,7 @@ import { revalidatePath } from 'next/cache'
 import { adminClient } from '@jisane/shared/supabase/admin'
 import { verifyAdmin } from '@jisane/shared/auth/server-helpers'
 import { issueBannerUploadUrl, isOwnBannerUrl } from '@jisane/shared/service-package/banner'
-import { ENTERLABS_ID, PLATFORM_PROVIDER_IDS } from '@jisane/shared/service-catalog'
+import { ENTERLABS_ID, PLATFORM_PROVIDER_IDS, PILLAR_ORDER, type EnterprisePillar } from '@jisane/shared/service-catalog'
 
 /**
  * 배너 경로 검증. 플랫폼(지사네·엔터랩스) 서비스는 관리자 통제 — 지사네 스토리지 업로드 또는
@@ -62,6 +62,8 @@ interface ParsedFields {
   duration: string | null
   deliverables: string[]
   banner_url: string | null
+  pillar: EnterprisePillar | null
+  visible: boolean
 }
 
 function parseForm(formData: FormData): { fields: ParsedFields } | { error: string } {
@@ -99,6 +101,9 @@ function parseForm(formData: FormData): { fields: ParsedFields } | { error: stri
     .map((s) => s.trim())
     .filter(Boolean)
 
+  const pillarRaw = formData.get('pillar') as string | null
+  const pillar = pillarRaw && PILLAR_ORDER.includes(pillarRaw as EnterprisePillar) ? (pillarRaw as EnterprisePillar) : null
+
   return {
     fields: {
       name,
@@ -111,6 +116,8 @@ function parseForm(formData: FormData): { fields: ParsedFields } | { error: stri
       duration: duration || null,
       deliverables,
       banner_url: (formData.get('banner_url') as string | null)?.trim() || null,
+      pillar,
+      visible: formData.get('visible') === 'on',
     },
   }
 }
@@ -119,7 +126,7 @@ function parseForm(formData: FormData): { fields: ParsedFields } | { error: stri
 async function resolveTargetProvider(providerId: string | null): Promise<{ id: string } | { error: string }> {
   if (!providerId) return { error: '제공자를 선택해주세요.' }
   if (providerId === ENTERLABS_ID) {
-    return { error: '엔터랩스 5대 기업전문서비스는 [기업 전문서비스] 관리에서 등록합니다.' }
+    return { error: '은퇴한 제공자(엔터랩스)에는 등록할 수 없습니다. 지사네 공식으로 등록하세요.' }
   }
   const { data, error } = await adminClient
     .from('provider')
@@ -149,12 +156,22 @@ export async function createServiceFor(_prev: ActionState, formData: FormData): 
   const status = (formData.get('status') as string | null) || 'published'
   if (!VALID_STATUS.includes(status)) return { error: '상태값이 올바르지 않습니다.' }
 
+  // sort_order = 현재 최댓값 + 1 (공개 쿼리가 sort_order 오름차순 정렬 — 신규가 맨 앞 점프 방지)
+  const { data: maxRow } = await adminClient
+    .from('service_package')
+    .select('sort_order')
+    .order('sort_order', { ascending: false })
+    .limit(1)
+    .maybeSingle()
+  const sortOrder = ((maxRow?.sort_order as number | undefined) ?? 0) + 1
+
   const slug = slugify(parsed.fields.name)
   for (let attempt = 0; attempt < 3; attempt++) {
     const candidate = attempt === 0 ? slug : `${slug}-${Math.random().toString(36).slice(2, 7)}`
     const { error } = await adminClient.from('service_package').insert({
       provider_id: providerId,
       slug: candidate,
+      sort_order: sortOrder,
       ...parsed.fields,
       status,
     })
@@ -237,4 +254,44 @@ export async function createStudioProvider(_prev: ActionState, formData: FormDat
   }
   revalidatePath(LIST_PATH)
   redirect(`${LIST_PATH}?success=provider_created`)
+}
+
+/** 노출 on/off — 오너 화면·공개 허브 노출 토글. 스튜디오 관장(비엔터랩스) 전체. */
+export async function setStudioVisibility(id: string, visible: boolean): Promise<ActionState> {
+  if (!(await isAdmin())) return { error: '관리자 권한이 필요합니다.' }
+  const { error } = await adminClient
+    .from('service_package')
+    .update({ visible })
+    .eq('id', id)
+    .neq('provider_id', ENTERLABS_ID)
+  if (error) return { error: '노출 설정에 실패했습니다.' }
+  revalidatePath(LIST_PATH)
+  return {}
+}
+
+/** 5대 지원 매칭 — null이면 미매칭(오너 탭 미편입). category는 파생하지 않음(독립 축). */
+export async function setStudioPillar(id: string, pillar: EnterprisePillar | null): Promise<ActionState> {
+  if (!(await isAdmin())) return { error: '관리자 권한이 필요합니다.' }
+  if (pillar !== null && !PILLAR_ORDER.includes(pillar)) return { error: '분류값이 올바르지 않습니다.' }
+  const { error } = await adminClient
+    .from('service_package')
+    .update({ pillar })
+    .eq('id', id)
+    .neq('provider_id', ENTERLABS_ID)
+  if (error) return { error: '분류 매칭에 실패했습니다.' }
+  revalidatePath(LIST_PATH)
+  return {}
+}
+
+/** 보관 — 오너 화면·공개 허브 노출 중단. */
+export async function archiveStudioService(id: string): Promise<ActionState> {
+  if (!(await isAdmin())) return { error: '관리자 권한이 필요합니다.' }
+  const { error } = await adminClient
+    .from('service_package')
+    .update({ status: 'archived' })
+    .eq('id', id)
+    .neq('provider_id', ENTERLABS_ID)
+  if (error) return { error: '보관 처리에 실패했습니다.' }
+  revalidatePath(LIST_PATH)
+  return {}
 }

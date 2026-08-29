@@ -2,7 +2,8 @@
 
 import { useActionState, useState } from 'react'
 import { createServiceFor, updateServiceFor, requestBannerUploadFor } from '@/lib/studio/actions'
-import { JISANE_OFFICIAL_ID } from '@jisane/shared/service-catalog'
+import { classifyPillar } from '@/lib/studio/classify-pillar'
+import { JISANE_OFFICIAL_ID, PILLAR_ORDER, PILLAR_LABELS } from '@jisane/shared/service-catalog'
 import { SubmitButton } from '@jisane/ui/submit-button'
 import { Input } from '@jisane/ui/input'
 import { Select } from '@jisane/ui/select'
@@ -31,6 +32,8 @@ export interface StudioFormDefaults {
   deliverables?: string[]
   bannerUrl?: string | null
   status?: string
+  pillar?: string | null
+  visible?: boolean
 }
 
 export function StudioPackageForm({
@@ -45,9 +48,20 @@ export function StudioPackageForm({
   const [providerId, setProviderId] = useState(defaults.providerId ?? JISANE_OFFICIAL_ID)
   const [isFree, setIsFree] = useState(defaults.isFree ?? false)
   const [priceTbd, setPriceTbd] = useState(defaults.priceTbd ?? false)
+  const [pillar, setPillar] = useState(defaults.pillar ?? '')
+  const [pillarTouched, setPillarTouched] = useState(!!defaults.pillar)
+  const [visible, setVisible] = useState(defaults.visible ?? true)
   const priceLocked = isFree || priceTbd
 
   const memberProviders = providers.filter((p) => p.id !== JISANE_OFFICIAL_ID)
+
+  // 제목·설명으로 5대 pillar 자동 제안(신규 등록·미수정 상태에서만). 관리자가 바꾸면 고정.
+  function suggestPillar(form: HTMLFormElement | null) {
+    if (!form || pillarTouched || isEdit) return
+    const nm = (form.elements.namedItem('name') as HTMLInputElement | null)?.value?.trim() ?? ''
+    const desc = (form.elements.namedItem('description') as HTMLTextAreaElement | null)?.value ?? ''
+    if (nm) setPillar(classifyPillar(nm, desc, null))
+  }
 
   return (
     <form action={formAction} className="flex max-w-xl flex-col gap-5">
@@ -90,7 +104,7 @@ export function StudioPackageForm({
         <label htmlFor="name" className="mb-1 block text-sm font-medium text-text">
           서비스명 <span className="text-error">*</span>
         </label>
-        <Input id="name" name="name" type="text" required defaultValue={defaults.name} placeholder="예: AI 도입 진단" />
+        <Input id="name" name="name" type="text" required defaultValue={defaults.name} placeholder="예: AI 도입 진단" onBlur={(e) => suggestPillar(e.currentTarget.form)} />
       </div>
 
       <div>
@@ -135,7 +149,22 @@ export function StudioPackageForm({
         <label htmlFor="description" className="mb-1 block text-sm font-medium text-text">
           서비스 설명 <span className="text-error">*</span>
         </label>
-        <Textarea id="description" name="description" required rows={4} defaultValue={defaults.description} />
+        <Textarea id="description" name="description" required rows={4} defaultValue={defaults.description} onBlur={(e) => suggestPillar(e.currentTarget.form)} />
+      </div>
+
+      <div>
+        <label htmlFor="pillar" className="mb-1 block text-sm font-medium text-text">
+          5대 지원 매칭 <span className="text-xs text-text-subtle">(오너 화면 분류 · 선택)</span>
+        </label>
+        <Select id="pillar" name="pillar" value={pillar} onChange={(e) => { setPillar(e.target.value); setPillarTouched(true) }}>
+          <option value="">미매칭</option>
+          {PILLAR_ORDER.map((code) => (
+            <option key={code} value={code}>{PILLAR_LABELS[code]}</option>
+          ))}
+        </Select>
+        {!pillarTouched && pillar && (
+          <p className="mt-1 text-xs text-text-subtle">제목·설명으로 자동 제안됨 — 필요시 변경하세요.</p>
+        )}
       </div>
 
       <div>
@@ -179,6 +208,13 @@ export function StudioPackageForm({
           <option value="archived">보관</option>
         </Select>
         <p className="mt-1 text-xs text-text-subtle">관리자 등록은 검수 없이 즉시 반영됩니다.</p>
+      </div>
+
+      <div>
+        <label className="inline-flex items-center gap-2 text-sm text-text">
+          <input type="checkbox" name="visible" checked={visible} onChange={(e) => setVisible(e.target.checked)} className="h-4 w-4 rounded border-border accent-primary" />
+          오너 화면·공개 허브에 노출
+        </label>
       </div>
 
       {state.error && <p className="text-sm text-error" role="alert">{state.error}</p>}
