@@ -8,9 +8,11 @@ import { MATCHING_STATUS_BADGE_CLASSES } from '@jisane/shared/status-badges'
 import { StatusBadge } from '@jisane/ui/status-badge'
 import { StatCard } from '@jisane/ui/stat-card'
 import { ServiceBanner } from '@jisane/ui/service-banner'
+import { ServiceCarousel, type ServiceCarouselItem } from '@jisane/ui/service-carousel'
 import { HeroBackdrop } from '@jisane/ui/hero-backdrop'
-import { getRecentPackagesByProvider } from '@jisane/shared/service-package/queries'
-import { formatPackagePrice } from '@jisane/shared/service-catalog'
+import { getRecentPackagesByProvider, getAllPublishedPackages } from '@jisane/shared/service-package/queries'
+import { pickShowcase } from '@jisane/shared/service-package/showcase'
+import { formatPackagePrice, CATEGORY_LABELS } from '@jisane/shared/service-catalog'
 import { ADMIN_URL } from '@/lib/urls'
 import { OpportunitySection } from './(main)/matching/opportunity-section'
 
@@ -101,6 +103,20 @@ export async function ExpertDashboard({
   // 본인이 공급자로 등록한 지식서비스(배너 3개) — provider 미연결이면 빈 배열
   const myServices = providerId ? await getRecentPackagesByProvider(providerId, 3) : []
 
+  // 지사네가 제공하는 공개 지식서비스 카탈로그 — 로그인 후에도 홈에서 접근(랜딩과 동일 캐러셀).
+  const catalog = await getAllPublishedPackages()
+  const showcase: ServiceCarouselItem[] = pickShowcase(catalog, 9).map((pkg) => ({
+    key: pkg.slug,
+    href: `${ADMIN_URL}/knowledge/${pkg.slug}`,
+    name: pkg.name,
+    provider: pkg.provider,
+    bannerUrl: pkg.bannerUrl ?? null,
+    priceLabel: formatPackagePrice(pkg),
+    categoryLabel: CATEGORY_LABELS[pkg.category],
+    isOfficial: pkg.isOfficial,
+    isFree: pkg.isFree,
+  }))
+
   const profileIncomplete = !field
 
   return (
@@ -139,6 +155,19 @@ export async function ExpertDashboard({
           <StatCard countTo={matchingsError ? undefined : proposedCount} value={matchingsError ? '—' : undefined} label="새 매칭 제안" accent="accent" emphasis />
           <StatCard href="/work" countTo={workingCountError ? undefined : (workingCount || 0)} value={workingCountError ? '—' : undefined} label="진행 중 작업" accent="accent" />
         </div>
+
+        {/* 지사네 지식서비스 — 지사네가 제공하는 전문 서비스 카탈로그(로그인 후에도 노출) */}
+        {showcase.length > 0 && (
+          <div className="mb-6">
+            <div className="mb-3 flex items-center justify-between">
+              <h2 className="text-lg font-serif font-bold text-text">지사네 지식서비스</h2>
+              <a href={`${ADMIN_URL}/knowledge`} className="text-sm font-medium text-accent hover:underline">
+                전체보기 &rarr;
+              </a>
+            </div>
+            <ServiceCarousel items={showcase} seeAllHref={`${ADMIN_URL}/knowledge`} />
+          </div>
+        )}
 
         {/* 내 지식서비스 — 공급자로 등록한 서비스(배너 3개) + 등록·관리 진입(전문가회원과 동형 대시보드로) */}
         <div className="mb-6">

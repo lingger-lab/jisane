@@ -2,7 +2,8 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { Home, Bell, ClipboardList, GraduationCap, UserRound } from 'lucide-react'
+import { Home, Bell, ClipboardList, GraduationCap, UserRound, LayoutGrid } from 'lucide-react'
+import { ADMIN_URL } from '@/lib/urls'
 
 const TABS = [
   { href: '/', label: '홈', Icon: Home },
@@ -67,6 +68,14 @@ export function ExpertHeaderNav() {
           </Link>
         )
       })}
+      {/* 지사네 지식서비스 카탈로그(관리자 허브 /knowledge, 크로스앱) — 로그인 후에도 헤더에서 상시 접근 */}
+      <a
+        href={`${ADMIN_URL}/knowledge`}
+        className="inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-sm text-text-muted transition-colors hover:bg-surface hover:text-text"
+      >
+        <LayoutGrid className="h-4 w-4" strokeWidth={1.75} aria-hidden="true" />
+        지식서비스
+      </a>
     </nav>
   )
 }

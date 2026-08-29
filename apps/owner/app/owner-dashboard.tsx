@@ -6,6 +6,11 @@ import { SearchBox } from '@jisane/ui/search-box'
 import { StatusBadge } from '@jisane/ui/status-badge'
 import { StatCard } from '@jisane/ui/stat-card'
 import { HeroBackdrop } from '@jisane/ui/hero-backdrop'
+import { ServiceCarousel, type ServiceCarouselItem } from '@jisane/ui/service-carousel'
+import { getPackagesByAudience } from '@jisane/shared/service-package/queries'
+import { pickShowcase } from '@jisane/shared/service-package/showcase'
+import { formatPackagePrice, CATEGORY_LABELS } from '@jisane/shared/service-catalog'
+import { ADMIN_URL } from '@/lib/urls'
 import { ExpertCard, type ExpertCardData } from './(browse)/experts/expert-card'
 
 /**
@@ -21,7 +26,7 @@ export async function OwnerDashboard({
   email: string
   company: string | null
 }) {
-  const [reqCountRes, dealCountRes, orderCountRes, recentReqRes, stats, topExpertsRes] = await Promise.all([
+  const [reqCountRes, dealCountRes, orderCountRes, recentReqRes, stats, topExpertsRes, services] = await Promise.all([
     adminClient.from('request').select('id', { count: 'exact', head: true })
       .eq('owner_id', ownerId).in('status', ['open', 'matching']),
     adminClient.from('deal').select('id, request:request!inner(owner_id)', { count: 'exact', head: true })
@@ -37,7 +42,21 @@ export async function OwnerDashboard({
       .order('total_score', { ascending: false })
       .order('activity_points', { ascending: false })
       .limit(10),
+    getPackagesByAudience('owner'),
   ])
+
+  // 지사네가 제공하는 공개 지식서비스 카탈로그 — 로그인 후에도 홈에서 접근(랜딩과 동일 캐러셀).
+  const showcase: ServiceCarouselItem[] = pickShowcase(services, 9).map((pkg) => ({
+    key: pkg.slug,
+    href: `/services/${pkg.slug}`,
+    name: pkg.name,
+    provider: pkg.provider,
+    bannerUrl: pkg.bannerUrl ?? null,
+    priceLabel: formatPackagePrice(pkg),
+    categoryLabel: CATEGORY_LABELS[pkg.category],
+    isOfficial: pkg.isOfficial,
+    isFree: pkg.isFree,
+  }))
 
   const progressRequests = reqCountRes.count || 0
   const progressDeals = dealCountRes.count || 0
@@ -96,6 +115,17 @@ export async function OwnerDashboard({
             <StatCard href="/status" countTo={progressOrders} label="진행 서비스" />
           </div>
         </section>
+
+        {/* 기업 지식서비스 — 지사네가 제공하는 전문 서비스 카탈로그(로그인 후에도 노출) */}
+        {showcase.length > 0 && (
+          <section>
+            <div className="mb-3 flex items-center justify-between">
+              <h2 className="text-lg font-serif font-bold text-text">기업 지식서비스</h2>
+              <Link href="/services" className="text-xs font-medium text-primary hover:underline">전체 보기</Link>
+            </div>
+            <ServiceCarousel items={showcase} seeAllHref={`${ADMIN_URL}/knowledge`} />
+          </section>
+        )}
 
         {/* 최근 의뢰 */}
         {recent.length > 0 && (
