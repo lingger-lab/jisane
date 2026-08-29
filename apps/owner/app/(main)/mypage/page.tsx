@@ -11,6 +11,7 @@ import { StatusBadge } from '@jisane/ui/status-badge'
 import { StarRating } from '@jisane/ui/star-rating'
 import { DangerZone } from '@jisane/ui/danger-zone'
 import { Button } from '@jisane/ui/button'
+import { Avatar } from '@jisane/ui/avatar'
 import { OwnerProfileForm } from './owner-profile-form'
 import { withdrawOwnerSelf } from '@/lib/profile/actions'
 
@@ -125,9 +126,7 @@ export default async function OwnerMyPage() {
       <div className="container-app flex flex-col gap-8 px-4 md:px-6 py-6">
         {/* 계정 요약 */}
         <div className="flex items-center gap-3 rounded-xl border border-border-light bg-surface-warm p-4 shadow-sm">
-          <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10 text-lg font-bold text-primary">
-            {(owner.company || owner.email)[0].toUpperCase()}
-          </div>
+          <Avatar id={owner.id} name={owner.company || owner.email} size="md" />
           <div className="min-w-0">
             <p className="truncate font-medium text-text">{owner.email}</p>
             <p className="text-xs text-text-muted tabular-nums">가입: {fmtDate(owner.created_at)}</p>
