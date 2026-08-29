@@ -4,7 +4,7 @@ import { redirect } from 'next/navigation'
 import { revalidatePath } from 'next/cache'
 import { adminClient } from '@jisane/shared/supabase/admin'
 import { verifyAdmin } from '@jisane/shared/auth/server-helpers'
-import { issueBannerUploadUrl, isOwnBannerUrl } from '@jisane/shared/service-package/banner'
+import { issueBannerUploadUrl } from '@jisane/shared/service-package/banner'
 import { PILLAR_ORDER, PLATFORM_PROVIDER_IDS, type EnterprisePillar } from '@jisane/shared/service-catalog'
 import {
   mapSkillToPackage,
@@ -234,9 +234,13 @@ export async function requestEnterpriseBannerUpload() {
   return issueBannerUploadUrl(SYNC_PROVIDER_ID)
 }
 
-/** 플랫폼(엔터랩스/지사네) 배너 경로 검증 — 재배정 전환기라 둘 다 허용. null(미설정)은 통과. */
+/**
+ * 플랫폼(엔터랩스/지사네) 배너 검증 — 관리자 통제 서비스라 지사네 스토리지 업로드 또는
+ * axdashboard 동기화 배너(외부 https) 모두 허용(https만 확인). null(미설정)은 통과.
+ */
 function isPlatformBanner(url: string | null): boolean {
-  return isOwnBannerUrl(url, ENTERLABS_ID) || isOwnBannerUrl(url, SYNC_PROVIDER_ID)
+  if (!url) return true
+  return /^https:\/\//.test(url)
 }
 
 /**

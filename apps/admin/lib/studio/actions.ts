@@ -5,13 +5,15 @@ import { revalidatePath } from 'next/cache'
 import { adminClient } from '@jisane/shared/supabase/admin'
 import { verifyAdmin } from '@jisane/shared/auth/server-helpers'
 import { issueBannerUploadUrl, isOwnBannerUrl } from '@jisane/shared/service-package/banner'
-import { ENTERLABS_ID, JISANE_OFFICIAL_ID, PLATFORM_PROVIDER_IDS } from '@jisane/shared/service-catalog'
+import { ENTERLABS_ID, PLATFORM_PROVIDER_IDS } from '@jisane/shared/service-catalog'
 
-/** 배너 경로 검증 — 플랫폼(엔터랩스↔지사네 재배정) provider면 두 경로 모두 허용, 회원은 본인 경로만. */
+/**
+ * 배너 경로 검증. 플랫폼(지사네·엔터랩스) 서비스는 관리자 통제 — 지사네 스토리지 업로드 또는
+ * axdashboard 동기화 배너(외부 https) 모두 허용(https만 확인). 회원 대리등록은 본인 경로만.
+ */
 function isValidStudioBanner(url: string | null, providerId: string): boolean {
-  if (PLATFORM_PROVIDER_IDS.includes(providerId)) {
-    return isOwnBannerUrl(url, ENTERLABS_ID) || isOwnBannerUrl(url, JISANE_OFFICIAL_ID)
-  }
+  if (!url) return true
+  if (PLATFORM_PROVIDER_IDS.includes(providerId)) return /^https:\/\//.test(url)
   return isOwnBannerUrl(url, providerId)
 }
 
