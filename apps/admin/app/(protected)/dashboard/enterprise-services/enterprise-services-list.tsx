@@ -56,10 +56,11 @@ function EnterpriseRow({ pkg }: { pkg: EnterpriseItem }) {
 
   return (
     <div className="rounded-xl border border-border-light bg-card p-4 shadow-xs">
-      <div className="flex items-center justify-between gap-3">
+      {/* 모바일: 세로 스택(배지·버튼 겹침 방지) / sm+: 좌우 배치 */}
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div className="min-w-0 flex-1">
-          <div className="flex items-center gap-2">
-            <p className="truncate text-sm font-medium text-text">{pkg.name}</p>
+          <div className="flex flex-wrap items-center gap-2">
+            <p className="min-w-0 truncate text-sm font-medium text-text">{pkg.name}</p>
             <StatusBadge kind="package" status={pkg.status} />
             <span className={`shrink-0 rounded px-1.5 py-0.5 text-[11px] font-medium ${pkg.isJisane ? 'bg-primary/10 text-primary' : 'bg-surface text-text-subtle'}`}>
               {pkg.isJisane ? '지사네' : '엔터랩스'}
@@ -72,7 +73,7 @@ function EnterpriseRow({ pkg }: { pkg: EnterpriseItem }) {
             {formatPackagePrice({ isFree: pkg.is_free, price: pkg.price })}
           </p>
         </div>
-        <div className="flex shrink-0 items-center gap-2">
+        <div className="flex shrink-0 flex-wrap items-center gap-2">
           {/* 노출 토글 — 오너 화면·공개 허브 노출 on/off(동기화 보존) */}
           <button
             type="button"
@@ -98,8 +99,8 @@ function EnterpriseRow({ pkg }: { pkg: EnterpriseItem }) {
       </div>
 
       {/* 5대 지원 매칭 — 오너 화면 분류(미매칭이면 검색·허브만 노출) */}
-      <div className="mt-3 flex items-center gap-2 border-t border-border-light pt-3">
-        <label htmlFor={`pillar-${pkg.id}`} className="text-xs text-text-subtle">
+      <div className="mt-3 flex flex-wrap items-center gap-2 border-t border-border-light pt-3">
+        <label htmlFor={`pillar-${pkg.id}`} className="shrink-0 text-xs text-text-subtle">
           5대 지원 매칭
         </label>
         <select
