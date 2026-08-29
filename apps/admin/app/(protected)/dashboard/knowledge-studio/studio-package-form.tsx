@@ -52,6 +52,8 @@ export function StudioPackageForm({
   return (
     <form action={formAction} className="flex max-w-xl flex-col gap-5">
       {isEdit && <input type="hidden" name="package_id" value={defaults.packageId} />}
+      {/* disabled select는 폼 제출에서 빠지므로(제공자 변경 불가), 편집 시 provider_id를 hidden으로 함께 보낸다 */}
+      {isEdit && <input type="hidden" name="provider_id" value={providerId} />}
 
       <div>
         <label htmlFor="provider_id" className="mb-1 block text-sm font-medium text-text">

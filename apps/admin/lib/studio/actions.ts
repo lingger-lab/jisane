@@ -5,7 +5,15 @@ import { revalidatePath } from 'next/cache'
 import { adminClient } from '@jisane/shared/supabase/admin'
 import { verifyAdmin } from '@jisane/shared/auth/server-helpers'
 import { issueBannerUploadUrl, isOwnBannerUrl } from '@jisane/shared/service-package/banner'
-import { ENTERLABS_ID } from '@jisane/shared/service-catalog'
+import { ENTERLABS_ID, JISANE_OFFICIAL_ID, PLATFORM_PROVIDER_IDS } from '@jisane/shared/service-catalog'
+
+/** 배너 경로 검증 — 플랫폼(엔터랩스↔지사네 재배정) provider면 두 경로 모두 허용, 회원은 본인 경로만. */
+function isValidStudioBanner(url: string | null, providerId: string): boolean {
+  if (PLATFORM_PROVIDER_IDS.includes(providerId)) {
+    return isOwnBannerUrl(url, ENTERLABS_ID) || isOwnBannerUrl(url, JISANE_OFFICIAL_ID)
+  }
+  return isOwnBannerUrl(url, providerId)
+}
 
 /**
  * 관리자 지식서비스 스튜디오 — 지사네 자체 등록 + 회원 대리등록.
@@ -132,7 +140,7 @@ export async function createServiceFor(_prev: ActionState, formData: FormData): 
   const parsed = parseForm(formData)
   if ('error' in parsed) return { error: parsed.error }
 
-  if (!isOwnBannerUrl(parsed.fields.banner_url, providerId)) {
+  if (!isValidStudioBanner(parsed.fields.banner_url, providerId)) {
     return { error: '배너 이미지가 올바르지 않습니다(제공자 경로 불일치).' }
   }
 
@@ -170,7 +178,7 @@ export async function updateServiceFor(_prev: ActionState, formData: FormData): 
 
   const parsed = parseForm(formData)
   if ('error' in parsed) return { error: parsed.error }
-  if (!isOwnBannerUrl(parsed.fields.banner_url, providerId)) {
+  if (!isValidStudioBanner(parsed.fields.banner_url, providerId)) {
     return { error: '배너 이미지가 올바르지 않습니다(제공자 경로 불일치).' }
   }
 
