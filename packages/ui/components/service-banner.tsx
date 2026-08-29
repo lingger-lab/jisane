@@ -17,10 +17,12 @@ export function ServiceBanner({
   className?: string
   sizes?: string
 }) {
-  if (src) {
+  // 구 업로드 배너에 붙던 캐시버스터(?v=타임스탬프)는 next/image remotePatterns와 충돌하므로 제거.
+  const cleanSrc = src ? src.replace(/\?v=\d+$/, '') : src
+  if (cleanSrc) {
     return (
       <div className={cn('relative aspect-[16/9] w-full overflow-hidden rounded-xl bg-surface', className)}>
-        <Image src={src} alt={alt} fill sizes={sizes} className="object-cover" />
+        <Image src={cleanSrc} alt={alt} fill sizes={sizes} className="object-cover" />
       </div>
     )
   }

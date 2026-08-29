@@ -92,7 +92,8 @@ export function BannerUploader({
         setError('업로드에 실패했어요. 잠시 후 다시 시도해주세요.')
         return
       }
-      setValue(`${target.publicUrl}?v=${Date.now()}`) // 캐시 무효화
+      // 파일명이 매번 새 UUID라 URL이 이미 고유 — 쿼리(?v=)는 next/image remotePatterns와 충돌하므로 붙이지 않는다.
+      setValue(target.publicUrl)
     } catch {
       setError('이미지 처리 중 문제가 발생했어요.')
     } finally {
