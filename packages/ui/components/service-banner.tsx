@@ -17,8 +17,9 @@ export function ServiceBanner({
   className?: string
   sizes?: string
 }) {
-  // 구 업로드 배너에 붙던 캐시버스터(?v=타임스탬프)는 next/image remotePatterns와 충돌하므로 제거.
-  const cleanSrc = src ? src.replace(/\?v=\d+$/, '') : src
+  // env(NEXT_PUBLIC_SUPABASE_URL)에 섞인 CR/LF·공백이 URL 중간에 박혀 이미지가 깨진 사고가 있었다.
+  // URL은 공백을 포함할 수 없으므로 모든 공백문자를 제거해 이미 저장된 값도 안전하게 렌더한다.
+  const cleanSrc = src ? src.replace(/\s+/g, '') : src
   if (cleanSrc) {
     return (
       <div className={cn('relative aspect-[16/9] w-full overflow-hidden rounded-xl bg-surface', className)}>

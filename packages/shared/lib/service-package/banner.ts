@@ -15,9 +15,17 @@ export interface BannerUploadTarget {
   publicUrl: string
 }
 
+/**
+ * NEXT_PUBLIC_SUPABASE_URL은 배포/로컬에서 끝에 공백·CR/LF(\r\n)가 섞여 들어오는 사고가 있었다
+ * (env 값에 개행 혼입 → URL 중간에 \r\n이 박혀 이미지 깨짐). 여기서 한 번 정규화해 뒤따르는 모든
+ * URL 조합이 깨끗하도록 방어한다. 후행 슬래시도 정리.
+ */
+function supabaseBase(): string {
+  return (process.env.NEXT_PUBLIC_SUPABASE_URL ?? '').trim().replace(/\/+$/, '')
+}
+
 function publicUrlFor(path: string): string {
-  const base = process.env.NEXT_PUBLIC_SUPABASE_URL ?? ''
-  return `${base}/storage/v1/object/public/${SERVICE_BANNER_BUCKET}/${path}`
+  return `${supabaseBase()}/storage/v1/object/public/${SERVICE_BANNER_BUCKET}/${path}`
 }
 
 /**
@@ -44,7 +52,6 @@ export async function issueBannerUploadUrl(providerId: string): Promise<BannerUp
  */
 export function isOwnBannerUrl(url: string | null | undefined, providerId: string): boolean {
   if (!url) return true
-  const base = process.env.NEXT_PUBLIC_SUPABASE_URL ?? ''
-  const prefix = `${base}/storage/v1/object/public/${SERVICE_BANNER_BUCKET}/banners/${providerId}/`
-  return url.startsWith(prefix)
+  const prefix = `${supabaseBase()}/storage/v1/object/public/${SERVICE_BANNER_BUCKET}/banners/${providerId}/`
+  return url.trim().startsWith(prefix)
 }

@@ -115,7 +115,8 @@ function parseForm(formData: FormData): { fields: ParsedFields } | { error: stri
       is_free: isFree,
       duration: duration || null,
       deliverables,
-      banner_url: (formData.get('banner_url') as string | null)?.trim() || null,
+      // URL은 공백을 포함하지 않는다 — env 개행 혼입 등으로 섞인 CR/LF·공백을 저장 전 제거.
+      banner_url: (formData.get('banner_url') as string | null)?.replace(/\s+/g, '') || null,
       pillar,
       visible: formData.get('visible') === 'on',
     },
