@@ -1,10 +1,12 @@
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { getPackageBySlug } from '@jisane/shared/service-package/queries'
-import { formatPackagePrice, isConsultEligible, isConsultPriced } from '@jisane/shared/service-catalog'
+import { formatPackagePrice, isConsultEligible, isConsultPriced, CATEGORY_LABELS } from '@jisane/shared/service-catalog'
+import { pageMetadata, serviceJsonLd, breadcrumbJsonLd, SITES } from '@jisane/shared/seo'
 import { PageHero } from '@jisane/ui/page-hero'
 import { ServiceBanner } from '@jisane/ui/service-banner'
 import { Badge } from '@jisane/ui/badge'
+import { JsonLd } from '@jisane/ui/json-ld'
 import { ConsultInquiryForm } from '@jisane/ui/consult-inquiry-form'
 import { FreeConsultNote } from '@jisane/ui/free-consult-note'
 import { submitHubConsultInquiry } from '@/lib/consultation/public-actions'
@@ -14,10 +16,13 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const { slug } = await params
   const pkg = await getPackageBySlug(slug)
   if (!pkg) return { title: '지식서비스 | 지사네' }
-  return {
-    title: `${pkg.name} | 지사네 지식서비스`,
+  // 허브(/knowledge/[slug])를 카탈로그 항목의 canonical로 — owner/expert 중복 상세는 여기로 집약.
+  return pageMetadata('admin', {
+    title: pkg.name,
     description: pkg.valueDesc || pkg.description.slice(0, 120),
-  }
+    path: `/knowledge/${slug}`,
+    image: pkg.bannerUrl,
+  })
 }
 
 export default async function KnowledgeDetailPage({ params }: { params: Promise<{ slug: string }> }) {
@@ -25,6 +30,7 @@ export default async function KnowledgeDetailPage({ params }: { params: Promise<
   const pkg = await getPackageBySlug(slug)
   if (!pkg) notFound()
 
+  const canonicalUrl = `${SITES.admin.baseUrl}/knowledge/${slug}`
   const consultMode = isConsultEligible(pkg)
   // 유료 결제는 기존 앱에 유지 — audience에 따라 핸드오프. 무료·상담문의는 허브에서 직접 접수.
   const applyUrl =
@@ -34,6 +40,24 @@ export default async function KnowledgeDetailPage({ params }: { params: Promise<
 
   return (
     <div className="flex flex-1 flex-col">
+      {/* 구조화 데이터 — Service(+Offer)·Breadcrumb: AEO/리치결과에서 카탈로그 항목을 인용 가능하게 */}
+      <JsonLd
+        data={[
+          serviceJsonLd({
+            name: pkg.name,
+            description: pkg.valueDesc || pkg.description.slice(0, 160),
+            url: canonicalUrl,
+            category: CATEGORY_LABELS[pkg.category],
+            price: pkg.price,
+            isFree: pkg.isFree,
+            image: pkg.bannerUrl,
+          }),
+          breadcrumbJsonLd('admin', [
+            { name: '지식서비스', path: '/knowledge' },
+            { name: pkg.name, path: `/knowledge/${slug}` },
+          ]),
+        ]}
+      />
       <PageHero container="marketing" title={pkg.name} subtitle={pkg.provider} />
       <div className="container-read px-4 md:px-6 py-6 md:py-8">
         <Link href="/knowledge" className="mb-4 inline-block text-sm text-text-muted hover:text-text">

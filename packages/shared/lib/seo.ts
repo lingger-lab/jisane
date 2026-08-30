@@ -174,6 +174,43 @@ export function faqJsonLd(qas: { q: string; a: string }[]) {
   }
 }
 
+/**
+ * 개별 지식서비스 — Service(+Offer). AEO/리치결과에서 카탈로그 항목을 "인용 가능한 사실"로 만든다.
+ * 가격 미정(상담 문의: !isFree && price===0)이면 offers를 생략 — 잘못된 가격 표기(리치결과 위반) 회피.
+ */
+export function serviceJsonLd(opts: {
+  name: string
+  description: string
+  url: string
+  category?: string
+  price?: number
+  isFree?: boolean
+  image?: string
+}) {
+  const hasPrice = opts.isFree || (typeof opts.price === 'number' && opts.price > 0)
+  const data: Record<string, unknown> = {
+    '@context': 'https://schema.org',
+    '@type': 'Service',
+    name: opts.name,
+    description: opts.description,
+    url: opts.url,
+    provider: { '@type': 'Organization', name: BRAND, url: SITES.admin.baseUrl },
+    areaServed: AREA_SERVED,
+    ...(opts.category ? { category: opts.category } : {}),
+    ...(opts.image ? { image: opts.image } : {}),
+  }
+  if (hasPrice) {
+    data.offers = {
+      '@type': 'Offer',
+      priceCurrency: 'KRW',
+      price: opts.isFree ? 0 : opts.price,
+      availability: 'https://schema.org/InStock',
+      url: opts.url,
+    }
+  }
+  return data
+}
+
 /** 브레드크럼 — 중첩 공개 페이지 */
 export function breadcrumbJsonLd(app: AppKey, items: { name: string; path: string }[]) {
   const base = SITES[app].baseUrl

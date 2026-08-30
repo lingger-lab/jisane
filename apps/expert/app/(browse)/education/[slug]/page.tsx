@@ -4,10 +4,23 @@ import { createClient } from '@jisane/shared/supabase/server'
 import { adminClient } from '@jisane/shared/supabase/admin'
 import { getPackageBySlug } from '@jisane/shared/service-package/queries'
 import { isConsultEligible } from '@jisane/shared/service-catalog'
+import { SITES } from '@jisane/shared/seo'
 import { EducationDetailView } from './education-detail-view'
 
 interface PageProps {
   params: Promise<{ slug: string }>
+}
+
+// 같은 카탈로그 항목이 허브 /knowledge 에도 있으므로 canonical을 허브로 집약(중복콘텐츠 방지).
+export async function generateMetadata({ params }: PageProps) {
+  const { slug } = await params
+  const pkg = await getPackageBySlug(slug)
+  if (!pkg || pkg.targetAudience !== 'expert') return {}
+  return {
+    title: pkg.name,
+    description: pkg.valueDesc || pkg.description.slice(0, 120),
+    alternates: { canonical: `${SITES.admin.baseUrl}/knowledge/${slug}` },
+  }
 }
 
 export default async function EducationDetailPage(props: PageProps) {
