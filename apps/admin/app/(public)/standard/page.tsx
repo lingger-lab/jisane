@@ -1,12 +1,14 @@
 import Link from 'next/link'
+import { pageMetadata } from '@jisane/shared/seo'
 import { PageHero } from '@jisane/ui/page-hero'
 import { FreePeriodBanner } from '@jisane/ui/free-period-banner'
 
-export const metadata = {
-  title: '지사네 표준 | 먼저 꺼내놓는 다섯 가지',
+export const metadata = pageMetadata('admin', {
+  title: '거래 표준 — 먼저 꺼내놓는 다섯 가지',
   description:
     '지사네가 거래 전에 먼저 꺼내놓는 다섯 가지 — 값·범위·약속·몫·복구. 감추지 않는 것이 표준입니다.',
-}
+  path: '/standard',
+})
 
 const PRINCIPLES = [
   {

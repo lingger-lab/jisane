@@ -1,9 +1,11 @@
+import { pageMetadata } from '@jisane/shared/seo'
 import { PageHero } from '@jisane/ui/page-hero'
 
-export const metadata = {
-  title: '용역 명세서 | 지사네 거래 표준',
+export const metadata = pageMetadata('admin', {
+  title: '용역 명세서 — 지사네 거래 표준',
   description: '지사네 용역 명세서 양식 — 착수 전에 범위를 동사와 숫자로 못 박습니다.',
-}
+  path: '/standard/scope',
+})
 
 export default function ScopePage() {
   return (

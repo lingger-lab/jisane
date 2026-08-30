@@ -2,6 +2,7 @@ import Link from 'next/link'
 import { getAllPublishedPackages } from '@jisane/shared/service-package/queries'
 import { pickShowcase, filterCatalog } from '@jisane/shared/service-package/showcase'
 import { formatPackagePrice, CATEGORY_LABELS, type ServiceCategory, type ServicePackage } from '@jisane/shared/service-catalog'
+import { pageMetadata } from '@jisane/shared/seo'
 import { PageHero } from '@jisane/ui/page-hero'
 import { ServiceBanner } from '@jisane/ui/service-banner'
 import { ServiceCarousel, type ServiceCarouselItem } from '@jisane/ui/service-carousel'
@@ -9,10 +10,11 @@ import { SearchBox } from '@jisane/ui/search-box'
 import { Badge } from '@jisane/ui/badge'
 import { CatalogFilter } from './catalog-filter'
 
-export const metadata = {
-  title: '지식서비스 | 지사네',
+export const metadata = pageMetadata('admin', {
+  title: '지식서비스',
   description: '시니어지식인·전문가·지사네가 제공하는 지식서비스를 한곳에서 둘러보세요.',
-}
+  path: '/knowledge',
+})
 
 function toCarouselItem(pkg: ServicePackage): ServiceCarouselItem {
   return {

@@ -4,6 +4,9 @@ import Link from 'next/link'
 import { createClient } from '@jisane/shared/supabase/server'
 import { MembersNav } from './members-nav'
 
+// 관리자 전용 영역 — 색인 억제(robots.txt disallow에 더해 명시적 noindex 2중 방어).
+export const metadata = { robots: { index: false, follow: false } }
+
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
   const cookieStore = await cookies()
   const supabase = createClient(cookieStore)

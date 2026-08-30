@@ -1,9 +1,11 @@
+import { pageMetadata } from '@jisane/shared/seo'
 import { PageHero } from '@jisane/ui/page-hero'
 
-export const metadata = {
-  title: '책임 적립금 운영 규정 | 지사네 거래 표준',
+export const metadata = pageMetadata('admin', {
+  title: '책임 적립금 운영 규정 — 지사네 거래 표준',
   description: '지사네 책임 적립금 운영 규정 — 문제가 생기면 고객보다 지사네가 먼저 움직입니다.',
-}
+  path: '/standard/guarantee',
+})
 
 export default function GuaranteePage() {
   return (
