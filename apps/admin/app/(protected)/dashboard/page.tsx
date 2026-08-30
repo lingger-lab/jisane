@@ -24,6 +24,7 @@ import { SettlementTab } from './settlement-tab'
 import { ServiceTab } from './service-tab'
 import { DisputeTab } from './dispute-tab'
 import { InquiryTab } from './inquiry-tab'
+import { ConsultationTab, type ConsultationRow } from './consultation-tab'
 import { DashboardTabs } from './dashboard-tabs'
 import { SummaryCard } from './summary-card'
 import { PageHero } from '@jisane/ui/page-hero'
@@ -187,6 +188,14 @@ export default async function AdminDashboardPage() {
   const serviceOrders = serviceOrdersRes2.data
   const allInvitations = allInvitationsRes.data
   const allDisputes = allDisputesRes.data
+
+  // 상담문의 접수 큐 — 최신순(관리자 '상담 접수' 탭)
+  const { data: consultationRows } = await adminClient
+    .from('consultation_inquiry')
+    .select('id, name, phone, detail, package_name, status, assigned_admin, admin_note, marketing_consent_at, created_at')
+    .order('created_at', { ascending: false })
+    .limit(100)
+  const consultationInquiries = (consultationRows ?? []) as ConsultationRow[]
   const rawInquiries = rawInquiriesRes.data
 
   // 주문 카드의 제공 내용/소요 표시용 — service_package를 slug 맵으로 (하드코딩 카탈로그 대체)
@@ -317,6 +326,7 @@ export default async function AdminDashboardPage() {
         disputeTab={
           <DisputeTab disputes={allDisputes || []} />
         }
+        consultationTab={<ConsultationTab inquiries={consultationInquiries} />}
         serviceTab={
           <ServiceTab orders={serviceOrders || []} packagesBySlug={packagesBySlug} />
         }

@@ -38,6 +38,8 @@
     "./service-package/showcase": "./lib/service-package/showcase.ts",
     "./service-package/edit-review-gate": "./lib/service-package/edit-review-gate.ts",
     "./service-package/banner": "./lib/service-package/banner.ts",
+    "./consultation/validate": "./lib/consultation/validate.ts",
+    "./consultation/create": "./lib/consultation/create.ts",
     "./provider/auth": "./lib/provider/auth.ts",
     "./member/withdrawal": "./lib/member/withdrawal.ts"
   },

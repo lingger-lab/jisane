@@ -12,6 +12,7 @@ interface DashboardTabsProps {
   invitationTab: ReactNode
   settlementTab: ReactNode
   disputeTab: ReactNode
+  consultationTab: ReactNode
   serviceTab: ReactNode
   inquiryTab: ReactNode
   urgentCount: number
@@ -25,6 +26,7 @@ export function DashboardTabs({
   invitationTab,
   settlementTab,
   disputeTab,
+  consultationTab,
   serviceTab,
   inquiryTab,
   urgentCount,
@@ -118,6 +120,7 @@ export function DashboardTabs({
         {activeTab === 'invitation' && invitationTab}
         {activeTab === 'settlement' && settlementTab}
         {activeTab === 'dispute' && disputeTab}
+        {activeTab === 'consultation' && consultationTab}
         {activeTab === 'service' && serviceTab}
         {activeTab === 'inquiry' && inquiryTab}
       </div>

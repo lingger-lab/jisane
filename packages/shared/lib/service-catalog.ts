@@ -95,6 +95,22 @@ export function formatPackagePrice(pkg: Pick<ServicePackage, 'isFree' | 'price'>
   return '상담 문의'
 }
 
+/**
+ * 가격정책 미확정(sentinel) 서비스 판정 — price=0 & isFree=false → "상담 문의" 표시 케이스.
+ * "무료 상담" 마찰제거 microcopy(무료상담 pill·안내문)는 이 케이스에만 노출한다.
+ */
+export function isConsultPriced(pkg: Pick<ServicePackage, 'isFree' | 'price'>): boolean {
+  return !pkg.isFree && pkg.price === 0
+}
+
+/**
+ * 상담문의 접수 경로 대상 여부 — 무료(isFree) + 상담문의(sentinel), 즉 price===0.
+ * 유료(price>0) 서비스는 기존 service_order 결제 주문 경로를 유지한다.
+ */
+export function isConsultEligible(pkg: Pick<ServicePackage, 'isFree' | 'price'>): boolean {
+  return pkg.price === 0
+}
+
 /** 제공기관 정보 */
 export interface ProviderInfo {
   id: string

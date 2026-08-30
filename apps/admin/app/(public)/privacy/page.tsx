@@ -13,7 +13,7 @@ export default function PrivacyPage() {
       <PageHero container="read"
         eyebrow="지사네"
         title="개인정보처리방침"
-        subtitle="시행일: 2026년 6월 15일"
+        subtitle="시행일: 2026년 9월 1일"
         size="lg"
       />
       <div className="container-read px-4 md:px-6 py-6">
@@ -30,6 +30,8 @@ export default function PrivacyPage() {
             <li>시니어지식인 검증 및 신뢰도 평가</li>
             <li>결제 및 정산 처리</li>
             <li>고객 문의 응대 및 공지사항 전달</li>
+            <li>상담 문의 접수 및 응대(이름·연락처 기반 연락)</li>
+            <li>(선택 동의 시) 카카오톡·문자 등을 통한 마케팅·혜택·이벤트 정보 전송</li>
             <li>서비스 개선 및 통계 분석</li>
           </ul>
         </section>
@@ -62,6 +64,11 @@ export default function PrivacyPage() {
                   <td className="py-2">서비스 이용 중 입력</td>
                 </tr>
                 <tr className="border-b border-border-light">
+                  <td className="py-2 pr-4">상담 문의(비회원 포함)</td>
+                  <td className="py-2 pr-4">이름, 휴대폰 번호, 문의 내용, 마케팅 수신 동의 여부</td>
+                  <td className="py-2">상담 문의 접수 시 입력</td>
+                </tr>
+                <tr className="border-b border-border-light">
                   <td className="py-2 pr-4">결제</td>
                   <td className="py-2 pr-4">결제 수단 정보, 거래 내역</td>
                   <td className="py-2">결제 시 자동 수집</td>
@@ -86,6 +93,8 @@ export default function PrivacyPage() {
             <li>계약 또는 청약 철회에 관한 기록: 5년 (전자상거래법)</li>
             <li>대금 결제 및 재화 공급에 관한 기록: 5년 (전자상거래법)</li>
             <li>소비자 불만 또는 분쟁 처리에 관한 기록: 3년 (전자상거래법)</li>
+            <li>상담 문의 접수·응대 기록: 상담 완료 후 1년</li>
+            <li>마케팅 수신 동의 정보: 동의 철회 시 또는 회원 탈퇴 시까지</li>
             <li>접속 로그 기록: 3개월 (통신비밀보호법)</li>
           </ul>
         </section>
@@ -177,7 +186,7 @@ export default function PrivacyPage() {
         <section>
           <h2 className="mb-3 text-base font-semibold text-text">10. 개인정보처리방침 변경</h2>
           <p>
-            본 방침은 2026년 6월 15일부터 시행됩니다.
+            본 방침은 2026년 9월 1일부터 시행됩니다.(개정: 상담 문의·마케팅 정보 수신 항목 추가)
             내용이 변경될 경우 시행 7일 전부터 서비스 내 공지사항을 통해 안내합니다.
           </p>
         </section>

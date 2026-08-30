@@ -2,15 +2,29 @@
 
 import { useActionState } from 'react'
 import Link from 'next/link'
-import type { ServicePackage } from '@jisane/shared/service-catalog'
+import { isConsultEligible, isConsultPriced, type ServicePackage } from '@jisane/shared/service-catalog'
 import { SubmitButton } from '@jisane/ui/submit-button'
 import { PageHero } from '@jisane/ui/page-hero'
 import { ServiceBanner } from '@jisane/ui/service-banner'
+import { ConsultInquiryForm } from '@jisane/ui/consult-inquiry-form'
+import { FreeConsultNote } from '@jisane/ui/free-consult-note'
 import { createEducationOrder } from '@/lib/education/actions'
+import { submitConsultInquiry } from '@/lib/consultation/actions'
 import { ADMIN_URL } from '@/lib/urls'
 
-export function EducationDetailView({ pkg }: { pkg: ServicePackage }) {
+export function EducationDetailView({
+  pkg,
+  isLoggedIn = false,
+  defaultName = '',
+  defaultPhone = '',
+}: {
+  pkg: ServicePackage
+  isLoggedIn?: boolean
+  defaultName?: string
+  defaultPhone?: string
+}) {
   const [state, formAction] = useActionState(createEducationOrder, {})
+  const consultMode = isConsultEligible(pkg)
 
   const axDashboardBase = ADMIN_URL
 
@@ -32,10 +46,11 @@ export function EducationDetailView({ pkg }: { pkg: ServicePackage }) {
       <div className="mb-6">
         <p className="text-sm text-text-muted leading-relaxed">{pkg.description}</p>
 
-        <div className="mt-4 flex items-baseline gap-2">
+        <div className="mt-4 flex flex-wrap items-baseline gap-2">
           <span className="text-2xl font-bold text-accent">
             {pkg.price === 0 ? '무료' : `${pkg.price.toLocaleString('ko-KR')}원`}
           </span>
+          {isConsultPriced(pkg) && <FreeConsultNote variant="pill" />}
           {pkg.duration && (
             <span className="text-sm text-text-subtle">· 소요 {pkg.duration}</span>
           )}
@@ -70,35 +85,46 @@ export function EducationDetailView({ pkg }: { pkg: ServicePackage }) {
         </a>
       )}
 
-      {/* 수강 신청 폼 */}
-      <form action={formAction} className="flex flex-col gap-5">
-        <input type="hidden" name="slug" value={pkg.slug} />
+      {/* 신청 폼 — 무료·상담문의는 단일 상담문의 접수, 유료는 기존 결제 주문 */}
+      {consultMode ? (
+        <ConsultInquiryForm
+          action={submitConsultInquiry}
+          isLoggedIn={isLoggedIn}
+          defaultName={defaultName}
+          defaultPhone={defaultPhone}
+          privacyUrl={`${ADMIN_URL}/privacy`}
+          tone="accent"
+        />
+      ) : (
+        <form action={formAction} className="flex flex-col gap-5">
+          <input type="hidden" name="slug" value={pkg.slug} />
 
-        <div>
-          <label htmlFor="detail" className="mb-1 block text-sm font-medium text-text">
-            요청 사항 <span className="text-xs text-text-subtle">(선택)</span>
-          </label>
-          <textarea
-            id="detail"
-            name="detail"
-            rows={4}
-            placeholder="추가로 전달하고 싶은 내용이 있으면 적어주세요."
-            className="w-full resize-none rounded-xl border border-border-light bg-background px-4 py-3 text-sm text-text placeholder:text-text-subtle focus:border-accent focus:ring-1 focus:ring-accent/20 focus:outline-none transition-colors"
-          />
-        </div>
+          <div>
+            <label htmlFor="detail" className="mb-1 block text-sm font-medium text-text">
+              요청 사항 <span className="text-xs text-text-subtle">(선택)</span>
+            </label>
+            <textarea
+              id="detail"
+              name="detail"
+              rows={4}
+              placeholder="추가로 전달하고 싶은 내용이 있으면 적어주세요."
+              className="w-full resize-none rounded-xl border border-border-light bg-background px-4 py-3 text-sm text-text placeholder:text-text-subtle focus:border-accent focus:ring-1 focus:ring-accent/20 focus:outline-none transition-colors"
+            />
+          </div>
 
-        {state.error && (
-          <p className="text-sm text-error">{state.error}</p>
-        )}
+          {state.error && (
+            <p className="text-sm text-error">{state.error}</p>
+          )}
 
-        <SubmitButton variant="accent" className="rounded-xl px-6 py-3 font-semibold shadow-sm hover:shadow-md">
-          {pkg.price === 0 ? '무료 수강 신청' : '상담 신청'}
-        </SubmitButton>
+          <SubmitButton variant="accent" className="rounded-xl px-6 py-3 font-semibold shadow-sm hover:shadow-md">
+            신청하기
+          </SubmitButton>
 
-        <p className="text-center text-xs text-text-subtle">
-          신청 후 담당 매니저가 연락드립니다.
-        </p>
-      </form>
+          <p className="text-center text-xs text-text-subtle">
+            신청 후 담당 매니저가 연락드립니다.
+          </p>
+        </form>
+      )}
       </div>
     </div>
   )

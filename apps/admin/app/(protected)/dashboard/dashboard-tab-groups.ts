@@ -24,6 +24,7 @@ export const TAB_GROUPS = [
   {
     label: '지원',
     tabs: [
+      { key: 'consultation', label: '상담 접수' },
       { key: 'service', label: '서비스 주문' },
       { key: 'inquiry', label: '문의' },
     ],

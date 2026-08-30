@@ -2,15 +2,36 @@
 
 import { useActionState } from 'react'
 import Link from 'next/link'
-import { formatPackagePrice, type ServicePackage } from '@jisane/shared/service-catalog'
+import {
+  formatPackagePrice,
+  isConsultEligible,
+  isConsultPriced,
+  type ServicePackage,
+} from '@jisane/shared/service-catalog'
 import { SubmitButton } from '@jisane/ui/submit-button'
 import { PageHero } from '@jisane/ui/page-hero'
 import { ServiceBanner } from '@jisane/ui/service-banner'
+import { ConsultInquiryForm } from '@jisane/ui/consult-inquiry-form'
+import { FreeConsultNote } from '@jisane/ui/free-consult-note'
 import { createServiceOrder } from '@/lib/services/actions'
+import { submitConsultInquiry } from '@/lib/consultation/actions'
 import { ADMIN_URL } from '@/lib/urls'
 
-export function ServiceDetailView({ pkg }: { pkg: ServicePackage }) {
+export function ServiceDetailView({
+  pkg,
+  isLoggedIn = false,
+  defaultName = '',
+  defaultPhone = '',
+  joinUrl,
+}: {
+  pkg: ServicePackage
+  isLoggedIn?: boolean
+  defaultName?: string
+  defaultPhone?: string
+  joinUrl?: string
+}) {
   const [state, formAction] = useActionState(createServiceOrder, {})
+  const consultMode = isConsultEligible(pkg)
 
   const axDashboardBase = ADMIN_URL
 
@@ -40,10 +61,11 @@ export function ServiceDetailView({ pkg }: { pkg: ServicePackage }) {
       <div className="mb-6">
         <p className="text-sm text-text-muted leading-relaxed">{pkg.description}</p>
 
-        <div className="mt-4 flex items-baseline gap-2">
+        <div className="mt-4 flex flex-wrap items-baseline gap-2">
           <span className="text-2xl font-bold text-primary">
             {formatPackagePrice(pkg)}
           </span>
+          {isConsultPriced(pkg) && <FreeConsultNote variant="pill" />}
           {pkg.duration && (
             <span className="text-sm text-text-subtle">· 소요 {pkg.duration}</span>
           )}
@@ -78,35 +100,47 @@ export function ServiceDetailView({ pkg }: { pkg: ServicePackage }) {
         </a>
       )}
 
-      {/* 신청 폼 */}
-      <form action={formAction} className="flex flex-col gap-5">
-        <input type="hidden" name="slug" value={pkg.slug} />
+      {/* 신청 폼 — 무료·상담문의는 단일 상담문의 접수, 유료는 기존 결제 주문 */}
+      {consultMode ? (
+        <ConsultInquiryForm
+          action={submitConsultInquiry}
+          isLoggedIn={isLoggedIn}
+          defaultName={defaultName}
+          defaultPhone={defaultPhone}
+          privacyUrl={`${ADMIN_URL}/privacy`}
+          joinUrl={joinUrl}
+          tone="primary"
+        />
+      ) : (
+        <form action={formAction} className="flex flex-col gap-5">
+          <input type="hidden" name="slug" value={pkg.slug} />
 
-        <div>
-          <label htmlFor="detail" className="mb-1 block text-sm font-medium text-text">
-            요청 사항 <span className="text-xs text-text-subtle">(선택)</span>
-          </label>
-          <textarea
-            id="detail"
-            name="detail"
-            rows={4}
-            placeholder="추가로 전달하고 싶은 내용이 있으면 적어주세요."
-            className="w-full resize-none rounded-xl border border-border-light bg-background px-4 py-3 text-sm text-text placeholder:text-text-subtle focus:border-primary focus:ring-1 focus:ring-primary/20 focus:outline-none transition-colors"
-          />
-        </div>
+          <div>
+            <label htmlFor="detail" className="mb-1 block text-sm font-medium text-text">
+              요청 사항 <span className="text-xs text-text-subtle">(선택)</span>
+            </label>
+            <textarea
+              id="detail"
+              name="detail"
+              rows={4}
+              placeholder="추가로 전달하고 싶은 내용이 있으면 적어주세요."
+              className="w-full resize-none rounded-xl border border-border-light bg-background px-4 py-3 text-sm text-text placeholder:text-text-subtle focus:border-primary focus:ring-1 focus:ring-primary/20 focus:outline-none transition-colors"
+            />
+          </div>
 
-        {state.error && (
-          <p className="text-sm text-error">{state.error}</p>
-        )}
+          {state.error && (
+            <p className="text-sm text-error">{state.error}</p>
+          )}
 
-        <SubmitButton variant="primary" className="rounded-xl px-6 py-3 font-semibold shadow-sm hover:shadow-md">
-          {pkg.isFree ? '신청하기' : '상담 신청'}
-        </SubmitButton>
+          <SubmitButton variant="primary" className="rounded-xl px-6 py-3 font-semibold shadow-sm hover:shadow-md">
+            신청하기
+          </SubmitButton>
 
-        <p className="text-center text-xs text-text-subtle">
-          신청 후 담당 매니저가 연락드립니다.
-        </p>
-      </form>
+          <p className="text-center text-xs text-text-subtle">
+            신청 후 담당 매니저가 연락드립니다.
+          </p>
+        </form>
+      )}
       </div>
     </div>
   )

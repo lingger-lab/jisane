@@ -28,6 +28,8 @@
     "./icons/gemini": "./components/icons/gemini.tsx",
     "./avatar": "./components/avatar.tsx",
     "./service-banner": "./components/service-banner.tsx",
+    "./consult-inquiry-form": "./components/consult-inquiry-form.tsx",
+    "./free-consult-note": "./components/free-consult-note.tsx",
     "./service-carousel": "./components/service-carousel.tsx",
     "./banner-uploader": "./components/banner-uploader.tsx",
     "./app-header": "./components/app-header.tsx",
