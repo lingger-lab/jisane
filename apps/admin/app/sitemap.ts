@@ -40,6 +40,7 @@ export default async function sitemap(): Promise<Entry[]> {
   const lastModified = new Date()
   const staticRoutes: { path: string; priority: number; changeFrequency: Entry['changeFrequency'] }[] = [
     { path: '/', priority: 1, changeFrequency: 'weekly' },
+    { path: '/about', priority: 0.8, changeFrequency: 'monthly' },
     { path: '/service', priority: 0.9, changeFrequency: 'monthly' },
     { path: '/knowledge', priority: 0.9, changeFrequency: 'weekly' },
     { path: '/ax', priority: 0.8, changeFrequency: 'monthly' },
