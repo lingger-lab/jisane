@@ -17,12 +17,19 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const pkg = await getPackageBySlug(slug)
   if (!pkg) return { title: '지식서비스 | 지사네' }
   // 허브(/knowledge/[slug])를 카탈로그 항목의 canonical로 — owner/expert 중복 상세는 여기로 집약.
-  return pageMetadata('admin', {
+  const meta = pageMetadata('admin', {
     title: pkg.name,
     description: pkg.valueDesc || pkg.description.slice(0, 120),
     path: `/knowledge/${slug}`,
-    image: pkg.bannerUrl,
+    ...(pkg.bannerUrl ? { image: pkg.bannerUrl } : {}),
   })
+  // 배너 있으면 배너를 OG로(실제 이미지). 없으면 metadata 이미지를 비워 파일기반 동적 OG 카드
+  // (opengraph-image.tsx)가 og:image를 공급하게 한다(generic 기본 OG 대신 브랜드 텍스트 카드).
+  if (!pkg.bannerUrl) {
+    if (meta.openGraph) delete (meta.openGraph as { images?: unknown }).images
+    if (meta.twitter) delete (meta.twitter as { images?: unknown }).images
+  }
+  return meta
 }
 
 export default async function KnowledgeDetailPage({ params }: { params: Promise<{ slug: string }> }) {
