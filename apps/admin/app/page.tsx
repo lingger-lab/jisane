@@ -11,6 +11,7 @@ import { ArrowRight, Building2, UserRound, Handshake } from 'lucide-react'
 import { OWNER_URL, EXPERT_URL } from '@/lib/urls'
 import { faqJsonLd } from '@jisane/shared/seo'
 import { JsonLd } from '@jisane/ui/json-ld'
+import { KakaoChannelButton } from '@jisane/ui/kakao-channel-button'
 
 // FAQ 단일 소스 — 화면 렌더 + FAQPage JSON-LD(AEO) + llms.txt가 같은 답변을 쓴다.
 const FAQS = [
@@ -178,8 +179,11 @@ export default async function AdminHome() {
             <span>사업자등록번호: 405-02-46113</span>
             <span>이메일: iamblackwhite86@gmail.com</span>
           </div>
+          {/* 카카오 채널 추가 — 채널 준비(NEXT_PUBLIC_KAKAO_CHANNEL_ID) 전에는 렌더 안 됨 */}
+          <KakaoChannelButton className="self-start" />
           {/* min-h-6: 24×24px 최소 타깃(WCAG 2.5.8) */}
-          <div className="flex gap-3 text-xs">
+          <div className="flex flex-wrap gap-3 text-xs">
+            <Link href="/about" className="inline-flex min-h-6 items-center text-text-subtle hover:text-text-muted transition-colors">지사네 소개</Link>
             <Link href="/privacy" className="inline-flex min-h-6 items-center text-text-subtle hover:text-text-muted transition-colors">개인정보처리방침</Link>
             <Link href="/service" className="inline-flex min-h-6 items-center text-text-subtle hover:text-text-muted transition-colors">서비스 안내</Link>
             <Link href="/standard/scope" className="inline-flex min-h-6 items-center text-text-subtle hover:text-text-muted transition-colors">거래 표준</Link>

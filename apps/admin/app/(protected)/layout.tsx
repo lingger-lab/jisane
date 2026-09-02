@@ -31,6 +31,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
           <span className="shrink-0"><MembersNav /></span>
           <Link href="/dashboard/knowledge-studio" className="shrink-0 whitespace-nowrap text-sm text-text-muted hover:text-text">스튜디오</Link>
           <Link href="/dashboard/event-referrals" className="shrink-0 whitespace-nowrap text-sm text-text-muted hover:text-text">이벤트 접수</Link>
+          <Link href="/messaging" className="shrink-0 whitespace-nowrap text-sm text-text-muted hover:text-text">마케팅 발송</Link>
           <Link href="/message-audit" className="shrink-0 whitespace-nowrap text-sm text-text-muted hover:text-text">메시지 감사</Link>
         </div>
       </nav>

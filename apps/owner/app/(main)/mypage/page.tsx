@@ -12,8 +12,12 @@ import { StarRating } from '@jisane/ui/star-rating'
 import { DangerZone } from '@jisane/ui/danger-zone'
 import { Button } from '@jisane/ui/button'
 import { Avatar } from '@jisane/ui/avatar'
+import { MarketingConsentToggle } from '@jisane/ui/marketing-consent-toggle'
+import { getMarketingConsentState } from '@jisane/shared/consent/consent'
+import { normalizePhone } from '@jisane/shared/consultation/validate'
 import { OwnerProfileForm } from './owner-profile-form'
 import { withdrawOwnerSelf } from '@/lib/profile/actions'
+import { setMarketingConsent } from '@/lib/consent/actions'
 
 // 목록 행 공통 스타일 — radius·보더·서피스·그림자를 한 곳에서 고정(정렬 일관).
 const ROW = 'rounded-xl border border-border-light bg-surface-warm p-4 shadow-xs'
@@ -41,6 +45,10 @@ export default async function OwnerMyPage() {
     .single()
 
   if (!owner) redirect('/')
+
+  // 마케팅 수신 동의 현재 상태(연락처 기준)
+  const consentPhone = normalizePhone(owner.contact)
+  const marketingEnabled = consentPhone ? await getMarketingConsentState(consentPhone) : false
 
   // 의뢰 / 전문서비스 / 거래 / 관심표현 / 초빙 / 리뷰 병렬 조회
   const [requestsRes, ordersRes, dealsRes, interestsRes, invitationsRes, reviewsRes] = await Promise.all([
@@ -132,6 +140,16 @@ export default async function OwnerMyPage() {
             <p className="text-xs text-text-muted tabular-nums">가입: {fmtDate(owner.created_at)}</p>
           </div>
         </div>
+
+        {/* 알림·수신 설정 */}
+        <section>
+          <h2 className="mb-3 text-lg font-serif font-bold text-text">알림·수신 설정</h2>
+          <MarketingConsentToggle
+            defaultEnabled={marketingEnabled}
+            hasPhone={!!consentPhone}
+            action={setMarketingConsent}
+          />
+        </section>
 
         {/* 회사 정보 */}
         <section>

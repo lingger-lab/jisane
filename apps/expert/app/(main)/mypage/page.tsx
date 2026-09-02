@@ -7,6 +7,10 @@ import { signOut } from '@jisane/shared/auth/actions'
 import { ACTIVITY_TYPE_LABELS } from '@jisane/shared/labels'
 import { PageHero } from '@jisane/ui/page-hero'
 import { Avatar } from '@jisane/ui/avatar'
+import { MarketingConsentToggle } from '@jisane/ui/marketing-consent-toggle'
+import { getMarketingConsentState } from '@jisane/shared/consent/consent'
+import { normalizePhone } from '@jisane/shared/consultation/validate'
+import { setMarketingConsent } from '@/lib/consent/actions'
 import { ErrorState } from '@jisane/ui/error-state'
 import { EmptyState } from '@jisane/ui/empty-state'
 import { StatusBadge } from '@jisane/ui/status-badge'
@@ -42,6 +46,10 @@ export default async function MyPage() {
     .single()
 
   if (!expert) redirect('/register')
+
+  // 마케팅 수신 동의 현재 상태(연락처 기준)
+  const consentPhone = normalizePhone(expert.contact)
+  const marketingEnabled = consentPhone ? await getMarketingConsentState(consentPhone) : false
 
   // 전문 분야 파싱 (콤마 구분)
   const expertFields = (expert.field || '').split(',').map((f: string) => f.trim()).filter(Boolean)
@@ -178,6 +186,16 @@ export default async function MyPage() {
             </div>
           </button>
         </form>
+
+        {/* 알림·수신 설정 */}
+        <section>
+          <h2 className="mb-4 text-lg font-serif font-bold text-text">알림·수신 설정</h2>
+          <MarketingConsentToggle
+            defaultEnabled={marketingEnabled}
+            hasPhone={!!consentPhone}
+            action={setMarketingConsent}
+          />
+        </section>
 
         {/* 프로필 편집 (개인정보 수정) */}
         <section>

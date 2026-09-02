@@ -30,6 +30,8 @@
     "./service-banner": "./components/service-banner.tsx",
     "./consult-inquiry-form": "./components/consult-inquiry-form.tsx",
     "./free-consult-note": "./components/free-consult-note.tsx",
+    "./marketing-consent-toggle": "./components/marketing-consent-toggle.tsx",
+    "./kakao-channel-button": "./components/kakao-channel-button.tsx",
     "./service-carousel": "./components/service-carousel.tsx",
     "./banner-uploader": "./components/banner-uploader.tsx",
     "./app-header": "./components/app-header.tsx",
