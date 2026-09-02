@@ -7,6 +7,7 @@ import { StatusBadge } from '@jisane/ui/status-badge'
 import { StatCard } from '@jisane/ui/stat-card'
 import { HeroBackdrop } from '@jisane/ui/hero-backdrop'
 import { ServiceCarousel, type ServiceCarouselItem } from '@jisane/ui/service-carousel'
+import { PartnerAdStrip } from '@jisane/ui/partner-ad-strip'
 import { getPackagesByAudience } from '@jisane/shared/service-package/queries'
 import { pickShowcase } from '@jisane/shared/service-package/showcase'
 import { formatPackagePrice, CATEGORY_LABELS } from '@jisane/shared/service-catalog'
@@ -191,6 +192,9 @@ export async function OwnerDashboard({
             <p className="mt-1 text-xs text-text-muted">S/W·P/G·컨설팅 둘러보기</p>
           </Link>
         </section>
+
+        {/* 제휴 파트너 광고 */}
+        <PartnerAdStrip className="pt-2" />
       </main>
     </div>
   )

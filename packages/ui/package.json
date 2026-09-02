@@ -32,6 +32,7 @@
     "./free-consult-note": "./components/free-consult-note.tsx",
     "./marketing-consent-toggle": "./components/marketing-consent-toggle.tsx",
     "./kakao-channel-button": "./components/kakao-channel-button.tsx",
+    "./partner-ad-strip": "./components/partner-ad-strip.tsx",
     "./service-carousel": "./components/service-carousel.tsx",
     "./banner-uploader": "./components/banner-uploader.tsx",
     "./app-header": "./components/app-header.tsx",

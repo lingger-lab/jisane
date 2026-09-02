@@ -12,6 +12,7 @@ import { OWNER_URL, EXPERT_URL } from '@/lib/urls'
 import { faqJsonLd } from '@jisane/shared/seo'
 import { JsonLd } from '@jisane/ui/json-ld'
 import { KakaoChannelButton } from '@jisane/ui/kakao-channel-button'
+import { PartnerAdStrip } from '@jisane/ui/partner-ad-strip'
 
 // FAQ 단일 소스 — 화면 렌더 + FAQPage JSON-LD(AEO) + llms.txt가 같은 답변을 쓴다.
 const FAQS = [
@@ -163,6 +164,8 @@ export default async function AdminHome() {
       <JsonLd data={faqJsonLd(FAQS)} />
 
       {/* 푸터 */}
+      <PartnerAdStrip className="py-8" />
+
       <footer className="border-t border-border-light bg-surface py-6">
         <div className="container-marketing flex flex-col gap-4 px-4 md:px-6">
           <div className="flex items-start justify-between">

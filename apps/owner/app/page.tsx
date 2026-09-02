@@ -11,6 +11,7 @@ import { pickShowcase } from '@jisane/shared/service-package/showcase'
 import { formatPackagePrice, CATEGORY_LABELS, PILLAR_LABELS, PILLAR_ORDER } from '@jisane/shared/service-catalog'
 import { CategoryBrowse } from '@jisane/ui/category-browse'
 import { ServiceCarousel, type ServiceCarouselItem } from '@jisane/ui/service-carousel'
+import { PartnerAdStrip } from '@jisane/ui/partner-ad-strip'
 import { SectionHeader } from '@jisane/ui/section-header'
 import { OwlIcon } from '@jisane/ui/icons/owl'
 import { ScrollReveal } from '@jisane/ui/scroll-reveal'
@@ -137,6 +138,8 @@ export default async function OwnerHome() {
       </ScrollReveal>
 
       {/* 푸터 (회원 전환은 헤더 "회원 전환" 메뉴로 이동) */}
+      <PartnerAdStrip className="py-8" />
+
       <footer className="w-full border-t border-border-light py-6">
         <div className="container-marketing flex flex-col gap-4 px-4 md:px-6">
           <div className="flex items-center gap-2">
