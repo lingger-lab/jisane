@@ -8,6 +8,7 @@ import { MATCHING_STATUS_BADGE_CLASSES } from '@jisane/shared/status-badges'
 import { StatusBadge } from '@jisane/ui/status-badge'
 import { StatCard } from '@jisane/ui/stat-card'
 import { ServiceBanner } from '@jisane/ui/service-banner'
+import { PartnerAdStrip } from '@jisane/ui/partner-ad-strip'
 import { ServiceCarousel, type ServiceCarouselItem } from '@jisane/ui/service-carousel'
 import { HeroBackdrop } from '@jisane/ui/hero-backdrop'
 import { getRecentPackagesByProvider, getAllPublishedPackages } from '@jisane/shared/service-package/queries'
@@ -288,6 +289,9 @@ export async function ExpertDashboard({
             ))}
           </ul>
         )}
+
+        {/* 제휴 파트너 광고 */}
+        <PartnerAdStrip className="pt-2" />
       </main>
     </div>
   )

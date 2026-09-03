@@ -12,6 +12,7 @@ import { getPackagesByAudience, getAllPublishedPackages } from '@jisane/shared/s
 import { pickShowcase } from '@jisane/shared/service-package/showcase'
 import { formatPackagePrice, CATEGORY_LABELS } from '@jisane/shared/service-catalog'
 import { ServiceCarousel, type ServiceCarouselItem } from '@jisane/ui/service-carousel'
+import { PartnerAdStrip } from '@jisane/ui/partner-ad-strip'
 import { CategoryBrowse } from '@jisane/ui/category-browse'
 import { SectionHeader } from '@jisane/ui/section-header'
 import { AnimatedCounter } from '@jisane/ui/animated-counter'
@@ -187,6 +188,8 @@ export default async function ExpertHome() {
           </div>
         </section>
       </ScrollReveal>
+
+      <PartnerAdStrip className="py-8" />
 
       {/* 푸터 (회원 전환은 헤더 "회원 전환" 메뉴로 이동) */}
       <footer className="w-full border-t border-border-light py-6">
